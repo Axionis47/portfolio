@@ -12,7 +12,7 @@
   :root{
     --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
     --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
-    --t1:#c8c8c8;--t2:#707070;--t3:#404044;
+    --t1:#d4d4d4;--t2:#8a8a8a;--t3:#555558;
     --accent:#d88c3a;--green:#5a9a5a;--red:#9a5a5a;
     --r:14px;
     --mono:'JetBrains Mono',monospace;
@@ -34,6 +34,13 @@
   .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
   .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
 
+  /* Engineering brief */
+  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 28px;margin-bottom:36px}
+  .brief-label{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+  .brief-key{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:right;white-space:nowrap}
+  .brief-val{font-family:var(--mono);font-size:.72rem;color:var(--t1);line-height:1.7}
+
   /* Prose */
   .prose{margin-bottom:1.8rem}
   .prose p{font-family:var(--serif);font-size:1rem;font-weight:300;color:var(--t2);line-height:2.1;margin-bottom:1.4rem}
@@ -48,11 +55,11 @@
   .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
   .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
   .dia-box-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
-  .dia-box-sub{font-family:var(--mono);font-size:.5rem;color:var(--t3);line-height:1.6}
+  .dia-box-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2);line-height:1.7}
   .dia-arrow{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;padding:0 10px;flex-shrink:0}
   .dia-arrow-down{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;text-align:center;padding:8px 0}
-  .dia-note{font-family:var(--mono);font-size:.56rem;color:var(--t3);text-align:center;margin-top:12px;line-height:1.7}
-  .dia-note-left{font-family:var(--mono);font-size:.56rem;color:var(--t3);margin-top:12px;line-height:1.7}
+  .dia-note{font-family:var(--mono);font-size:.62rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
+  .dia-note-left{font-family:var(--mono);font-size:.62rem;color:var(--t2);margin-top:12px;line-height:1.7}
   .dia-bad{border:1px solid rgba(154,90,90,0.2)}
   .dia-good{border:1px solid rgba(90,154,90,0.2)}
   .dia-result{font-family:var(--mono);font-size:.7rem;text-align:center;padding:10px 0;margin-top:8px}
@@ -63,18 +70,18 @@
   .example{background:var(--inset);border-radius:10px;padding:18px 20px;margin:12px 0;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
   .example-q{font-family:var(--mono);font-size:.7rem;color:var(--accent);margin-bottom:10px}
   .example-row{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
-  .example-doc{font-family:var(--serif);font-size:.82rem;color:var(--t2);flex:1;line-height:1.7}
+  .example-doc{font-family:var(--serif);font-size:.88rem;color:var(--t1);flex:1;line-height:1.7}
   .example-score{font-family:var(--mono);font-size:.62rem;flex-shrink:0;padding:2px 8px;border-radius:6px}
   .example-score.correct{color:var(--green);background:rgba(90,154,90,0.08)}
   .example-score.wrong{color:var(--red);background:rgba(154,90,90,0.08)}
-  .example-why{font-family:var(--mono);font-size:.54rem;color:var(--t3);margin-top:2px;margin-bottom:10px;padding-left:10px;border-left:1px solid rgba(255,255,255,0.04)}
+  .example-why{font-family:var(--mono);font-size:.62rem;color:var(--t2);margin-top:4px;margin-bottom:12px;padding-left:10px;border-left:1px solid rgba(255,255,255,0.06)}
 
   /* Results */
   .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
   .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:22px 16px;text-align:center;transition:all .3s}
   .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
   .stat-val{font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--accent);margin-bottom:5px}
-  .stat-label{font-family:var(--mono);font-size:.52rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase}
+  .stat-label{font-family:var(--mono);font-size:.58rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
 
   /* Compare cards */
   .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
@@ -82,16 +89,16 @@
   .compare-label{font-family:var(--mono);font-size:.52rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
   .compare-name{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--t1);margin-bottom:8px}
   .compare-desc{font-family:var(--serif);font-size:.82rem;color:var(--t2);line-height:1.9}
-  .compare-spec{font-family:var(--mono);font-size:.56rem;color:var(--t3);line-height:1.9;margin-top:10px}
-  .compare-when{font-family:var(--mono);font-size:.56rem;color:var(--green);margin-top:10px;line-height:1.8}
-  .compare-fail{font-family:var(--mono);font-size:.56rem;color:var(--red);margin-top:6px;line-height:1.8}
+  .compare-spec{font-family:var(--mono);font-size:.62rem;color:var(--t2);line-height:2;margin-top:10px}
+  .compare-when{font-family:var(--mono);font-size:.62rem;color:var(--green);margin-top:10px;line-height:1.9}
+  .compare-fail{font-family:var(--mono);font-size:.62rem;color:var(--red);margin-top:6px;line-height:1.9}
 
   /* Pipeline */
   .pipeline{position:relative;padding-left:32px;margin:20px 0}
   .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
   .pipe-step{position:relative;margin-bottom:24px}
   .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
-  .pipe-num{font-family:var(--mono);font-size:.52rem;color:var(--accent);opacity:.6;margin-bottom:3px}
+  .pipe-num{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;margin-bottom:3px}
   .pipe-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:6px}
   .pipe-desc{font-family:var(--serif);font-size:.86rem;color:var(--t2);line-height:1.95}
   .pipe-desc strong{color:var(--t1);font-weight:500}
@@ -102,12 +109,12 @@
   .flow-node:hover{box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl),0 0 12px var(--glow)}
   .flow-node.active{box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl),0 0 16px rgba(216,140,58,0.1);border:1px solid rgba(216,140,58,0.15)}
   .flow-node-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
-  .flow-node-sub{font-family:var(--mono);font-size:.5rem;color:var(--t3)}
+  .flow-node-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2)}
   .flow-detail{display:none;background:var(--inset);border-radius:10px;padding:20px 22px;margin-top:14px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
   .flow-detail.open{display:block}
   .flow-detail-title{font-family:var(--mono);font-size:.66rem;font-weight:500;color:var(--accent);margin-bottom:8px}
   .flow-detail p{font-family:var(--serif);font-size:.84rem;color:var(--t2);line-height:1.9;margin-bottom:6px}
-  .flow-detail .spec{font-family:var(--mono);font-size:.56rem;color:var(--t3);line-height:1.9}
+  .flow-detail .spec{font-family:var(--mono);font-size:.62rem;color:var(--t2);line-height:2}
 
   /* Stack / link / footer */
   .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
@@ -149,6 +156,23 @@
   <div class="proj-label fade">Project</div>
   <h1 class="proj-title fade">Semantic Search &middot; Knowledge Distillation</h1>
   <div class="divider"></div>
+
+  <!-- Engineering Brief -->
+  <div class="brief fade">
+    <div class="brief-label">Engineering Brief</div>
+    <div class="brief-grid">
+      <span class="brief-key">Problem</span>
+      <span class="brief-val">Cross-encoders are accurate but too slow for real-time search (100ms/pair &times; 1M docs = 28h). Bi-encoders are fast but less accurate.</span>
+      <span class="brief-key">Approach</span>
+      <span class="brief-val">Knowledge distillation &mdash; train a 33M-param bi-encoder to reproduce the ranking judgments of a 560M-param cross-encoder using 3-stage hard negative mining and multi-loss optimization.</span>
+      <span class="brief-key">Result</span>
+      <span class="brief-val">97% of teacher accuracy (0.882 vs 0.91 nDCG@10). 100x faster. 17x smaller. $4 to train.</span>
+      <span class="brief-key">Edge impact</span>
+      <span class="brief-val">At 33M params and 1ms latency on CPU, the student model runs on edge devices &mdash; phones, embedded systems, IoT gateways &mdash; enabling offline semantic search without cloud dependency.</span>
+      <span class="brief-key">Stack</span>
+      <span class="brief-val">PyTorch, Sentence-Transformers, FAISS, FastAPI, Docker, GCP Cloud Run, Prometheus</span>
+    </div>
+  </div>
 
   <!-- ═══════════════════════════════════════
        CH 1: WHAT IS SEARCH
@@ -526,9 +550,48 @@
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 10: MODEL CARDS
+       CH 10: EDGE DEVICE IMPACT
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 10 &mdash; Model cards</div>
+  <div class="sec fade">Chapter 10 &mdash; Why this matters for edge devices</div>
+  <div class="prose fade">
+    <p>
+      A 560M-parameter cross-encoder needs a GPU and a cloud server. A 33M-parameter bi-encoder with 1ms CPU latency changes what&rsquo;s possible. It runs on a <strong>phone</strong>. It runs on a <strong>Raspberry Pi</strong>. It runs on an <strong>IoT gateway</strong> in a factory with no internet connection.
+    </p>
+    <p>
+      This means: a field technician can search a 10,000-page equipment manual <strong>offline</strong>, on a tablet, in a remote location with no cell service. A hospital can run semantic search over patient records <strong>on-premises</strong>, with no data leaving the building. A drone can search its mission database <strong>on-board</strong>, without waiting for a satellite uplink.
+    </p>
+    <p>
+      The model is small enough to ship as part of a mobile app. The FAISS index for 10K documents is a few megabytes. The entire system &mdash; model + index + search logic &mdash; fits in under <strong>200MB of RAM</strong>. Knowledge distillation isn&rsquo;t just about making cloud search cheaper. It&rsquo;s about making <strong>intelligent search possible where cloud doesn&rsquo;t exist</strong>.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Where the distilled model runs</div>
+    <div class="dia-row" style="gap:12px;flex-wrap:wrap">
+      <div class="dia-box dia-good" style="flex:1;min-width:140px">
+        <div class="dia-box-title">Cloud server</div>
+        <div class="dia-box-sub">10K+ queries/day<br>~$40/month on Cloud Run</div>
+      </div>
+      <div class="dia-box dia-good" style="flex:1;min-width:140px">
+        <div class="dia-box-title">Laptop / Desktop</div>
+        <div class="dia-box-sub">local search, no API calls<br>runs on CPU, no GPU needed</div>
+      </div>
+      <div class="dia-box dia-good" style="flex:1;min-width:140px">
+        <div class="dia-box-title">Mobile / Tablet</div>
+        <div class="dia-box-sub">offline search in the field<br>&lt;200MB total footprint</div>
+      </div>
+      <div class="dia-box dia-good" style="flex:1;min-width:140px">
+        <div class="dia-box-title">IoT / Embedded</div>
+        <div class="dia-box-sub">on-device inference<br>no cloud dependency</div>
+      </div>
+    </div>
+    <div class="dia-note">The teacher (560M params) needs a GPU. The student (33M params) runs anywhere.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 11: MODEL CARDS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 11 &mdash; Model cards</div>
   <div class="compare fade">
     <div class="compare-card">
       <div class="compare-label">Teacher</div>
@@ -573,7 +636,7 @@
   <!-- ═══════════════════════════════════════
        CH 11: PRODUCTION
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 11 &mdash; How it runs in production</div>
+  <div class="sec fade">Chapter 12 &mdash; How it runs in production</div>
   <div class="prose fade">
     <p>
       Once trained, the student encodes all documents into fingerprints. These are loaded into a FAISS index &mdash; a data structure optimized for finding the closest vectors fast. When a query arrives, it&rsquo;s fingerprinted, the nearest vectors are found, and results are returned. Click any component below to see what&rsquo;s inside.
