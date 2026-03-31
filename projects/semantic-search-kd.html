@@ -164,11 +164,11 @@
       <span class="brief-key">Problem</span>
       <span class="brief-val">Cross-encoders are accurate but too slow for real-time search (100ms/pair &times; 1M docs = 28h). Bi-encoders are fast but less accurate.</span>
       <span class="brief-key">Approach</span>
-      <span class="brief-val">Knowledge distillation &mdash; train a 33M-param bi-encoder to reproduce the ranking judgments of a 560M-param cross-encoder using 3-stage hard negative mining and multi-loss optimization.</span>
+      <span class="brief-val">Knowledge distillation. Train a 33M-param bi-encoder to reproduce the ranking judgments of a 560M-param cross-encoder using 3-stage hard negative mining and multi-loss optimization.</span>
       <span class="brief-key">Result</span>
       <span class="brief-val">97% of teacher accuracy (0.882 vs 0.91 nDCG@10). 100x faster. 17x smaller. $4 to train.</span>
-      <span class="brief-key">Edge impact</span>
-      <span class="brief-val">At 33M params and 1ms latency on CPU, the student model runs on edge devices &mdash; phones, embedded systems, IoT gateways &mdash; enabling offline semantic search without cloud dependency.</span>
+      <span class="brief-key">Why it matters</span>
+      <span class="brief-val">Cuts GPU cost to CPU cost. Enables real-time UX (1ms). Scales flat to millions of docs. Vectors reusable for clustering, RAG, dedup. Runs on edge devices offline.</span>
       <span class="brief-key">Stack</span>
       <span class="brief-val">PyTorch, Sentence-Transformers, FAISS, FastAPI, Docker, GCP Cloud Run, Prometheus</span>
     </div>
@@ -177,7 +177,7 @@
   <!-- ═══════════════════════════════════════
        CH 1: WHAT IS SEARCH
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 1 &mdash; What is search, really?</div>
+  <div class="sec fade">Chapter 1.What is search, really?</div>
   <div class="prose fade">
     <p>
       You have a million documents. Someone types a question. You need to find the 10 documents that best answer it. How?
@@ -186,7 +186,7 @@
       The obvious way: read every document, check if it answers the question, rank the best ones. This is what a human librarian does. It works perfectly. But a computer reading one document takes about 100 milliseconds. For a million documents, that&rsquo;s <strong>28 hours per question</strong>. Nobody is waiting 28 hours for search results.
     </p>
     <p>
-      So we need a shortcut. Instead of reading documents, we turn them into <strong>fingerprints</strong> &mdash; lists of numbers that capture what the text <em>means</em>. The word &ldquo;king&rdquo; might become [0.8, 0.2, 0.9, ...]. The word &ldquo;queen&rdquo; would have similar numbers. The word &ldquo;banana&rdquo; would have very different numbers. These fingerprints are called <strong>embeddings</strong> or <strong>vectors</strong> &mdash; but they&rsquo;re just numbers that represent meaning.
+      So we need a shortcut. Instead of reading documents, we turn them into <strong>fingerprints</strong>. Lists of numbers that capture what the text <em>means</em>. The word &ldquo;king&rdquo; might become [0.8, 0.2, 0.9, ...]. The word &ldquo;queen&rdquo; would have similar numbers. The word &ldquo;banana&rdquo; would have very different numbers. These fingerprints are called <strong>embeddings</strong> or <strong>vectors</strong>. But they&rsquo;re just numbers that represent meaning.
     </p>
   </div>
 
@@ -222,7 +222,7 @@
   <!-- ═══════════════════════════════════════
        CH 2: THE ACCURACY PROBLEM
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 2 &mdash; Why fingerprints aren&rsquo;t enough</div>
+  <div class="sec fade">Chapter 2.Why fingerprints aren&rsquo;t enough</div>
   <div class="prose fade">
     <p>
       The question and each document are fingerprinted <strong>separately</strong>. The model never sees them together. It doesn&rsquo;t know what the question is asking when it fingerprints a document. This means it can be fooled.
@@ -237,7 +237,7 @@
         <span class="example-doc">&ldquo;Python error handling with try/catch blocks...&rdquo;</span>
         <span class="example-score correct">0.82 &check;</span>
       </div>
-      <div class="example-why">Correctly ranked high &mdash; this answers the question.</div>
+      <div class="example-why">Correctly ranked high. This answers the question.</div>
       <div class="example-row">
         <span class="example-doc">&ldquo;The Python snake can grow up to 30 feet...&rdquo;</span>
         <span class="example-score wrong">0.71 &cross;</span>
@@ -260,7 +260,7 @@
   <!-- ═══════════════════════════════════════
        CH 3: THE CROSS-ENCODER
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 3 &mdash; The accurate model (and why you can&rsquo;t deploy it)</div>
+  <div class="sec fade">Chapter 3.The accurate model (and why you can&rsquo;t deploy it)</div>
   <div class="prose fade">
     <p>
       A cross-encoder takes the question and a document, concatenates them into one input, and reads them together. Every word in the question pays attention to every word in the document, and vice versa. It sees that &ldquo;Python&rdquo; in the context of &ldquo;exceptions&rdquo; means the programming language, not the snake. It sees that &ldquo;exception management&rdquo; is the same concept as &ldquo;handle exceptions&rdquo; even though the words are different.
@@ -314,7 +314,7 @@
   <!-- ═══════════════════════════════════════
        CH 4: HOW IS THIS DIFFERENT FROM RAG
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 4 &mdash; How is this different from RAG?</div>
+  <div class="sec fade">Chapter 4.How is this different from RAG?</div>
   <div class="prose fade">
     <p>
       If you&rsquo;ve heard of RAG (Retrieval-Augmented Generation), you might wonder how this project relates. RAG is a two-step process: first, <strong>search</strong> for relevant documents, then <strong>feed them to an LLM</strong> (like GPT or Claude) to generate an answer.
@@ -341,10 +341,10 @@
   <!-- ═══════════════════════════════════════
        CH 5: THE DATA
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 5 &mdash; The training data</div>
+  <div class="sec fade">Chapter 5.The training data</div>
   <div class="prose fade">
     <p>
-      The models are trained on <strong>MS MARCO</strong> (Microsoft Machine Reading Comprehension) &mdash; a dataset of real questions that real people typed into Bing, paired with passages from real web pages that answer them. 603 queries and 643 passages. This matters because the model learns from <strong>actual search behavior</strong>, not synthetic benchmarks.
+      The models are trained on <strong>MS MARCO</strong> (Microsoft Machine Reading Comprehension). A dataset of real questions that real people typed into Bing, paired with passages from real web pages that answer them. 603 queries and 643 passages. This matters because the model learns from <strong>actual search behavior</strong>, not synthetic benchmarks.
     </p>
     <p>
       Each passage is split into chunks of 512 tokens (roughly 400 words) with an 80-token overlap between chunks, so no information is lost at the boundaries.
@@ -371,19 +371,19 @@
   <!-- ═══════════════════════════════════════
        CH 6: THE IDEA
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 6 &mdash; The idea: teach the small model using the big one</div>
+  <div class="sec fade">Chapter 6.The idea: teach the small model using the big one</div>
   <div class="prose fade">
     <p>
       The cross-encoder can&rsquo;t serve search. But it can <strong>grade documents</strong>. What if we used it as a teacher?
     </p>
     <p>
-      Show the cross-encoder thousands of question-document pairs. It scores each one: &ldquo;9.2 &mdash; excellent match,&rdquo; &ldquo;7.1 &mdash; decent,&rdquo; &ldquo;2.3 &mdash; poor,&rdquo; &ldquo;0.8 &mdash; irrelevant.&rdquo; Now train the fingerprint model to reproduce those scores. It adjusts its fingerprints until its rankings match the teacher&rsquo;s rankings.
+      Show the cross-encoder thousands of question-document pairs. It scores each one: &ldquo;9.2: excellent match,&rdquo; &ldquo;7.1: decent,&rdquo; &ldquo;2.3: poor,&rdquo; &ldquo;0.8: irrelevant.&rdquo; Now train the fingerprint model to reproduce those scores. It adjusts its fingerprints until its rankings match the teacher&rsquo;s rankings.
     </p>
     <p>
-      This is <strong>knowledge distillation</strong>. The big model is the teacher. The small model is the student. The student can&rsquo;t replicate the teacher&rsquo;s architecture &mdash; it still makes fingerprints independently. But it learns the teacher&rsquo;s <em>judgment</em> about what makes a good answer.
+      This is <strong>knowledge distillation</strong>. The big model is the teacher. The small model is the student. The student can&rsquo;t replicate the teacher&rsquo;s architecture. It still makes fingerprints independently. But it learns the teacher&rsquo;s <em>judgment</em> about what makes a good answer.
     </p>
     <p>
-      Think of it like a master sommelier training a junior. The master can&rsquo;t give the junior 30 years of experience. But by rating hundreds of wines together &mdash; &ldquo;this one&rsquo;s excellent, this one&rsquo;s close but the finish is off, this one&rsquo;s wrong entirely&rdquo; &mdash; the junior develops <em>taste</em>. Not identical to the master. But surprisingly close.
+      Think of it like a master sommelier training a junior. The master can&rsquo;t give the junior 30 years of experience. But by rating hundreds of wines together: &ldquo;this one&rsquo;s excellent, this one&rsquo;s close but the finish is off, this one&rsquo;s wrong entirely&rdquo;. The junior develops <em>taste</em>. Not identical to the master. But surprisingly close.
     </p>
   </div>
 
@@ -414,13 +414,13 @@
   <!-- ═══════════════════════════════════════
        CH 7: HARD NEGATIVES
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 7 &mdash; The hard part: what you train on matters more than how you train</div>
+  <div class="sec fade">Chapter 7.The hard part: what you train on matters more than how you train</div>
   <div class="prose fade">
     <p>
-      Naive distillation &mdash; just showing the student random question-document pairs with teacher scores &mdash; gets you to about <strong>85% of the teacher&rsquo;s accuracy</strong>. That last 12% is where the real engineering happens. And the secret isn&rsquo;t in the training algorithm. It&rsquo;s in <strong>which examples you choose</strong>.
+      Naive distillation. Just showing the student random question-document pairs with teacher scores. That gets you to about <strong>85% of the teacher&rsquo;s accuracy</strong>. That last 12% is where the real engineering happens. And the secret isn&rsquo;t in the training algorithm. It&rsquo;s in <strong>which examples you choose</strong>.
     </p>
     <p>
-      If you only show the student obvious cases &mdash; a clearly relevant document and a clearly irrelevant one &mdash; it learns the easy stuff and stops improving. It&rsquo;s like only quizzing a student with questions they already know the answer to.
+      If you only show the student obvious cases. A clearly relevant document and a clearly irrelevant one. It learns the easy stuff and stops improving. It&rsquo;s like only quizzing a student with questions they already know the answer to.
     </p>
     <p>
       The breakthrough is showing it <strong>hard negatives</strong>: documents that <em>look</em> relevant but aren&rsquo;t. These force the student to learn fine-grained distinctions instead of surface-level pattern matching.
@@ -467,19 +467,19 @@
     <div class="dia-title">3-stage hard negative curriculum</div>
     <div class="pipeline">
       <div class="pipe-step">
-        <div class="pipe-num">Stage A &mdash; Learn to crawl</div>
+        <div class="pipe-num">Stage A.Learn to crawl</div>
         <div class="pipe-title">Keyword mining (BM25)</div>
-        <div class="pipe-desc">BM25 is a simple keyword-matching algorithm. It finds documents that share words with the question. &ldquo;Python snake&rdquo; shows up for &ldquo;Python exceptions&rdquo; because they share the word &ldquo;Python.&rdquo; These are the easiest hard negatives &mdash; the student learns: <strong>matching words isn&rsquo;t enough.</strong></div>
+        <div class="pipe-desc">BM25 is a simple keyword-matching algorithm. It finds documents that share words with the question. &ldquo;Python snake&rdquo; shows up for &ldquo;Python exceptions&rdquo; because they share the word &ldquo;Python.&rdquo; These are the easiest hard negatives. The student learns: <strong>matching words isn&rsquo;t enough.</strong></div>
       </div>
       <div class="pipe-step">
-        <div class="pipe-num">Stage B &mdash; Learn to walk</div>
+        <div class="pipe-num">Stage B.Learn to walk</div>
         <div class="pipe-title">Teacher-graded mining</div>
-        <div class="pipe-desc">Take the BM25 candidates and let the cross-encoder teacher score them. Keep only the ones where: keywords say it&rsquo;s relevant, but the teacher says it&rsquo;s not (confidence &gt;0.7). These are documents that are <strong>semantically deceptive</strong> &mdash; they pass the keyword test but fail the understanding test. Much harder to distinguish.</div>
+        <div class="pipe-desc">Take the BM25 candidates and let the cross-encoder teacher score them. Keep only the ones where: keywords say it&rsquo;s relevant, but the teacher says it&rsquo;s not (confidence &gt;0.7). These are documents that are <strong>semantically deceptive</strong>. They pass the keyword test but fail the understanding test. Much harder to distinguish.</div>
       </div>
       <div class="pipe-step">
-        <div class="pipe-num">Stage C &mdash; Learn to run</div>
+        <div class="pipe-num">Stage C.Learn to run</div>
         <div class="pipe-title">Adversarial self-mining (ANCE)</div>
-        <div class="pipe-desc">Every 500 training steps, the <strong>student itself</strong> retrieves what it thinks are the best documents for each question. The teacher checks them. The ones the student is most confident about but the teacher rejects &mdash; those become the next round of training data. The student is <strong>mining its own blind spots</strong>. Its confident mistakes become its hardest lessons. This is what pushed accuracy from 85% to <strong>97%</strong> of the teacher.</div>
+        <div class="pipe-desc">Every 500 training steps, the <strong>student itself</strong> retrieves what it thinks are the best documents for each question. The teacher checks them. The ones the student is most confident about but the teacher rejects. Those become the next round of training data. The student is <strong>mining its own blind spots</strong>. Its confident mistakes become its hardest lessons. This is what pushed accuracy from 85% to <strong>97%</strong> of the teacher.</div>
       </div>
     </div>
   </div>
@@ -487,7 +487,7 @@
   <!-- ═══════════════════════════════════════
        CH 8: HOW THE STUDENT LEARNS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 8 &mdash; The three signals the student learns from</div>
+  <div class="sec fade">Chapter 8.The three signals the student learns from</div>
   <div class="prose fade">
     <p>
       Each training step, the teacher and student both score the same set: 1 relevant document and 10 hard negatives. Then three different &ldquo;signals&rdquo; pull the student&rsquo;s scores toward the teacher&rsquo;s. Each signal teaches something different:
@@ -500,31 +500,31 @@
       <div class="pipe-step">
         <div class="pipe-num">60% of the training signal</div>
         <div class="pipe-title">&ldquo;Learn the gaps&rdquo; (Margin-MSE)</div>
-        <div class="pipe-desc">The teacher says Doc A scores 9.2 and Doc B scores 7.1. The student doesn&rsquo;t need to output those exact numbers &mdash; cross-encoders and fingerprint models use different score scales. But it must learn that <strong>A is about 2.1 better than B</strong>. This loss teaches relative differences between documents, not absolute scores.</div>
+        <div class="pipe-desc">The teacher says Doc A scores 9.2 and Doc B scores 7.1. The student doesn&rsquo;t need to output those exact numbers. Cross-encoders and fingerprint models use different score scales. But it must learn that <strong>A is about 2.1 better than B</strong>. This loss teaches relative differences between documents, not absolute scores.</div>
       </div>
       <div class="pipe-step">
         <div class="pipe-num">20% of the training signal</div>
         <div class="pipe-title">&ldquo;Learn the full ranking&rdquo; (Listwise KD)</div>
-        <div class="pipe-desc">The teacher produces a probability distribution: &ldquo;70% chance Doc A is the best answer, 20% Doc B, 10% Doc C.&rdquo; The student learns to match this entire distribution. This captures the teacher&rsquo;s <strong>uncertainty</strong> &mdash; not just which document wins, but how confident the teacher is about the ranking.</div>
+        <div class="pipe-desc">The teacher produces a probability distribution: &ldquo;70% chance Doc A is the best answer, 20% Doc B, 10% Doc C.&rdquo; The student learns to match this entire distribution. This captures the teacher&rsquo;s <strong>uncertainty</strong>. Not just which document wins, but how confident the teacher is about the ranking.</div>
       </div>
       <div class="pipe-step">
         <div class="pipe-num">20% of the training signal</div>
         <div class="pipe-title">&ldquo;Learn what relevant means&rdquo; (Contrastive)</div>
-        <div class="pipe-desc">Pull the relevant document&rsquo;s fingerprint <strong>closer</strong> to the question&rsquo;s fingerprint. Push all irrelevant documents&rsquo; fingerprints <strong>further away</strong>. This doesn&rsquo;t use the teacher at all &mdash; it organizes the fingerprint space itself so that similar meanings cluster together.</div>
+        <div class="pipe-desc">Pull the relevant document&rsquo;s fingerprint <strong>closer</strong> to the question&rsquo;s fingerprint. Push all irrelevant documents&rsquo; fingerprints <strong>further away</strong>. This doesn&rsquo;t use the teacher at all. It organizes the fingerprint space itself so that similar meanings cluster together.</div>
       </div>
     </div>
   </div>
 
   <div class="prose fade">
     <p>
-      One more trick: <strong>temperature annealing</strong>. Early in training, the teacher&rsquo;s scores are &ldquo;softened&rdquo; &mdash; a temperature of 4.0 makes the probability distribution gentle and forgiving, so the student learns the big picture: which documents are roughly good and which are roughly bad. As training progresses, the temperature drops to 2.0 &mdash; the distribution sharpens, and the student has to learn finer distinctions. It&rsquo;s like learning to draw: rough shapes first, details later.
+      One more trick: <strong>temperature annealing</strong>. Early in training, the teacher&rsquo;s scores are &ldquo;softened.&rdquo; A temperature of 4.0 makes the probability distribution gentle and forgiving, so the student learns the big picture: which documents are roughly good and which are roughly bad. As training progresses, the temperature drops to 2.0. The distribution sharpens, and the student has to learn finer distinctions. It&rsquo;s like learning to draw: rough shapes first, details later.
     </p>
   </div>
 
   <!-- ═══════════════════════════════════════
        CH 9: RESULTS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 9 &mdash; The result</div>
+  <div class="sec fade">Chapter 9.The result</div>
   <div class="results fade">
     <div class="stat">
       <div class="stat-val">0.882</div>
@@ -545,59 +545,71 @@
   </div>
   <div class="prose fade">
     <p>
-      nDCG@10 means: &ldquo;how often do the best documents appear near the top of the 10 results?&rdquo; A score of 1.0 is perfect ranking. The student scores 0.882 vs the teacher&rsquo;s 0.91 &mdash; <strong>97% of the teacher&rsquo;s ranking quality</strong>. Before distillation, the student scored 0.719. That&rsquo;s a <strong>22.7% improvement</strong> from learning from the teacher. The student is 17x smaller (33M vs 560M parameters), 100x faster (1ms vs 100ms), and the entire training costs $4 on a GCP CPU.
+      nDCG@10 means: &ldquo;how often do the best documents appear near the top of the 10 results?&rdquo; A score of 1.0 is perfect ranking. The student scores 0.882 vs the teacher&rsquo;s 0.91 -<strong>97% of the teacher&rsquo;s ranking quality</strong>. Before distillation, the student scored 0.719. That&rsquo;s a <strong>22.7% improvement</strong> from learning from the teacher. The student is 17x smaller (33M vs 560M parameters), 100x faster (1ms vs 100ms), and the entire training costs $4 on a GCP CPU.
     </p>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 10: EDGE DEVICE IMPACT
+       CH 10: WHY THIS MATTERS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 10 &mdash; Why this matters for edge devices</div>
+  <div class="sec fade">Chapter 10. Why this matters</div>
   <div class="prose fade">
     <p>
-      A 560M-parameter cross-encoder needs a GPU and a cloud server. A 33M-parameter bi-encoder with 1ms CPU latency changes what&rsquo;s possible. It runs on a <strong>phone</strong>. It runs on a <strong>Raspberry Pi</strong>. It runs on an <strong>IoT gateway</strong> in a factory with no internet connection.
+      Knowledge distillation is not just an academic exercise. It solves five real problems.
     </p>
     <p>
-      This means: a field technician can search a 10,000-page equipment manual <strong>offline</strong>, on a tablet, in a remote location with no cell service. A hospital can run semantic search over patient records <strong>on-premises</strong>, with no data leaving the building. A drone can search its mission database <strong>on-board</strong>, without waiting for a satellite uplink.
+      <strong>Cost.</strong> A cross-encoder at scale costs thousands per month in GPU compute. The student runs on a $5/month CPU. For a company doing a million queries a day, this is the difference between a viable product and a bankrupt one.
     </p>
     <p>
-      The model is small enough to ship as part of a mobile app. The FAISS index for 10K documents is a few megabytes. The entire system &mdash; model + index + search logic &mdash; fits in under <strong>200MB of RAM</strong>. Knowledge distillation isn&rsquo;t just about making cloud search cheaper. It&rsquo;s about making <strong>intelligent search possible where cloud doesn&rsquo;t exist</strong>.
+      <strong>Latency.</strong> 100ms versus 1ms is not just "faster." At 100ms per pair, you cannot do search-as-you-type. You cannot do real-time autocomplete. You cannot power a chatbot that retrieves context mid-conversation. At 1ms, all of these become possible.
+    </p>
+    <p>
+      <strong>Scale.</strong> The cross-encoder does not scale. 10x more documents means 10x more compute at query time. The bi-encoder scales flat. Documents are encoded once and indexed. Going from 10,000 to 10 million documents costs nothing extra per query.
+    </p>
+    <p>
+      <strong>Composability.</strong> The student produces vectors. Vectors are reusable. The same embeddings that power search can also be used for clustering documents, finding duplicates, building recommendation systems, detecting anomalies, and feeding a RAG pipeline. A cross-encoder only produces a score for a single pair. You cannot reuse it for anything else.
+    </p>
+    <p>
+      <strong>Edge deployment.</strong> At 33M parameters and 1ms CPU latency, the student runs on phones, tablets, Raspberry Pis, and IoT gateways. A field technician can search a 10,000-page equipment manual offline, on a tablet, with no cell service. A hospital can run semantic search over patient records on-premises with no data leaving the building. The entire system (model + index + search logic) fits in under 200MB of RAM.
     </p>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">Where the distilled model runs</div>
+    <div class="dia-title">What distillation unlocks</div>
     <div class="dia-row" style="gap:12px;flex-wrap:wrap">
-      <div class="dia-box dia-good" style="flex:1;min-width:140px">
-        <div class="dia-box-title">Cloud server</div>
-        <div class="dia-box-sub">10K+ queries/day<br>~$40/month on Cloud Run</div>
+      <div class="dia-box dia-good" style="flex:1;min-width:130px">
+        <div class="dia-box-title">Cost</div>
+        <div class="dia-box-sub">GPU thousands/mo<br>to CPU $5/mo</div>
       </div>
-      <div class="dia-box dia-good" style="flex:1;min-width:140px">
-        <div class="dia-box-title">Laptop / Desktop</div>
-        <div class="dia-box-sub">local search, no API calls<br>runs on CPU, no GPU needed</div>
+      <div class="dia-box dia-good" style="flex:1;min-width:130px">
+        <div class="dia-box-title">Latency</div>
+        <div class="dia-box-sub">100ms to 1ms<br>enables real-time UX</div>
       </div>
-      <div class="dia-box dia-good" style="flex:1;min-width:140px">
-        <div class="dia-box-title">Mobile / Tablet</div>
-        <div class="dia-box-sub">offline search in the field<br>&lt;200MB total footprint</div>
+      <div class="dia-box dia-good" style="flex:1;min-width:130px">
+        <div class="dia-box-title">Scale</div>
+        <div class="dia-box-sub">10K to 10M docs<br>zero extra query cost</div>
       </div>
-      <div class="dia-box dia-good" style="flex:1;min-width:140px">
-        <div class="dia-box-title">IoT / Embedded</div>
-        <div class="dia-box-sub">on-device inference<br>no cloud dependency</div>
+      <div class="dia-box dia-good" style="flex:1;min-width:130px">
+        <div class="dia-box-title">Composability</div>
+        <div class="dia-box-sub">vectors reused for<br>clustering, RAG, dedup</div>
+      </div>
+      <div class="dia-box dia-good" style="flex:1;min-width:130px">
+        <div class="dia-box-title">Edge</div>
+        <div class="dia-box-sub">runs on phones, IoT<br>no cloud dependency</div>
       </div>
     </div>
-    <div class="dia-note">The teacher (560M params) needs a GPU. The student (33M params) runs anywhere.</div>
   </div>
 
   <!-- ═══════════════════════════════════════
        CH 11: MODEL CARDS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 11 &mdash; Model cards</div>
+  <div class="sec fade">Chapter 11.Model cards</div>
   <div class="compare fade">
     <div class="compare-card">
       <div class="compare-label">Teacher</div>
       <div class="compare-name">BAAI/bge-reranker-large</div>
       <div class="compare-desc">
-        A cross-encoder that reads question and document together. 24 transformer layers, 560M parameters. Produces a single relevance score. The gold standard for understanding &mdash; but too slow for real-time search.
+        A cross-encoder that reads question and document together. 24 transformer layers, 560M parameters. Produces a single relevance score. The gold standard for understanding, but too slow for real-time search.
       </div>
       <div class="compare-spec">
         Architecture: XLM-RoBERTa &middot; 24 layers &middot; 560M params<br>
@@ -636,15 +648,15 @@
   <!-- ═══════════════════════════════════════
        CH 11: PRODUCTION
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 12 &mdash; How it runs in production</div>
+  <div class="sec fade">Chapter 12.How it runs in production</div>
   <div class="prose fade">
     <p>
-      Once trained, the student encodes all documents into fingerprints. These are loaded into a FAISS index &mdash; a data structure optimized for finding the closest vectors fast. When a query arrives, it&rsquo;s fingerprinted, the nearest vectors are found, and results are returned. Click any component below to see what&rsquo;s inside.
+      Once trained, the student encodes all documents into fingerprints. These are loaded into a FAISS index, a data structure optimized for finding the closest vectors fast. When a query arrives, it&rsquo;s fingerprinted, the nearest vectors are found, and results are returned. Click any component below to see what&rsquo;s inside.
     </p>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">Production architecture &mdash; click to expand</div>
+    <div class="dia-title">Production architecture.click to expand</div>
     <div class="flow">
       <div class="flow-node" onclick="toggleDetail('d-query')">
         <div class="flow-node-title">Query</div>
@@ -669,7 +681,7 @@
 
     <div class="flow-detail" id="d-query">
       <div class="flow-detail-title">Query Processing</div>
-      <p>The raw text is prefixed with <strong>&ldquo;query: &rdquo;</strong> before encoding. This is E5&rsquo;s convention &mdash; the prefix tells the model to produce a query-optimized fingerprint. Documents use a &ldquo;passage: &rdquo; prefix. Without the right prefix, query and document fingerprints would live in slightly different regions of the number space and search quality drops.</p>
+      <p>The raw text is prefixed with <strong>&ldquo;query: &rdquo;</strong> before encoding. This is E5&rsquo;s convention. The prefix tells the model to produce a query-optimized fingerprint. Documents use a &ldquo;passage: &rdquo; prefix. Without the right prefix, query and document fingerprints would live in slightly different regions of the number space and search quality drops.</p>
     </div>
 
     <div class="flow-detail" id="d-encoder">
