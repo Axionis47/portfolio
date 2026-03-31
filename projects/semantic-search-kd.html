@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semantic Search · Knowledge Distillation — Sai Siddharth Yalamanchili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
+    --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
+    --t1:#c8c8c8;--t2:#707070;--t3:#404044;
+    --accent:#d88c3a;--accent2:rgba(216,140,58,0.08);
+    --r:14px;
+    --mono:'JetBrains Mono',monospace;
+    --serif:'Source Serif 4',serif;
+    --sans:'DM Sans',sans-serif;
+  }
+  body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none;transition:color .2s}
+  a:hover{color:#eaa050}
+
+  nav{display:flex;justify-content:space-between;align-items:center;max-width:920px;width:100%;margin:0 auto;padding:2.5rem 1.5rem 1.5rem}
+  nav .logo{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--t1);text-decoration:none}
+  nav .back{font-family:var(--mono);font-size:.8rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  nav .back:hover{color:var(--accent)}
+
+  main{max-width:920px;width:100%;margin:0 auto;padding:1.5rem 1.5rem 4rem;flex:1}
+
+  /* ─── Header ─── */
+  .proj-label{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .proj-title{font-family:var(--mono);font-size:1.5rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:8px}
+  .proj-sub{font-family:var(--mono);font-size:.76rem;color:var(--t3);margin-bottom:2rem}
+  .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
+
+  /* ─── Story ─── */
+  .story{font-family:var(--serif);font-size:1.05rem;font-weight:300;color:var(--t2);line-height:2;max-width:680px;margin-bottom:2.5rem}
+  .story strong{color:var(--t1);font-weight:500}
+
+  /* ─── Section Labels ─── */
+  .sec{font-family:var(--mono);font-size:.6rem;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px;margin-top:52px}
+
+  /* ─── Results Bar ─── */
+  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:24px 20px;text-align:center;transition:all .3s}
+  .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+  .stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:6px}
+  .stat-label{font-family:var(--mono);font-size:.56rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase}
+
+  /* ─── Architecture Diagram ─── */
+  .arch{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:36px 32px;margin-bottom:24px}
+
+  .flow{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:20px 0}
+  .flow-node{background:var(--inset);border-radius:10px;padding:16px 20px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:120px;cursor:pointer;transition:all .3s;position:relative}
+  .flow-node:hover{box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl),0 0 12px var(--glow)}
+  .flow-node.active{box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl),0 0 16px rgba(216,140,58,0.1);border:1px solid rgba(216,140,58,0.15)}
+  .flow-node-title{font-family:var(--mono);font-size:.72rem;font-weight:500;color:var(--t1);margin-bottom:4px}
+  .flow-node-sub{font-family:var(--mono);font-size:.52rem;color:var(--t3)}
+  .flow-arrow{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;padding:0 10px;flex-shrink:0}
+
+  /* Expandable detail panel */
+  .flow-detail{display:none;background:var(--inset);border-radius:10px;padding:22px 24px;margin-top:16px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
+  .flow-detail.open{display:block}
+  .flow-detail-title{font-family:var(--mono);font-size:.7rem;font-weight:500;color:var(--accent);margin-bottom:10px}
+  .flow-detail p{font-family:var(--serif);font-size:.82rem;color:var(--t2);line-height:1.8;margin-bottom:8px}
+  .flow-detail .spec{font-family:var(--mono);font-size:.6rem;color:var(--t3);line-height:1.9}
+
+  /* ─── Comparison Table ─── */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+  .compare-card{background:var(--inset);border-radius:10px;padding:22px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
+  .compare-label{font-family:var(--mono);font-size:.56rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+  .compare-name{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--t1);margin-bottom:4px}
+  .compare-spec{font-family:var(--mono);font-size:.6rem;color:var(--t3);line-height:1.9}
+
+  /* ─── Training Pipeline (vertical) ─── */
+  .pipeline{position:relative;padding-left:32px;margin:20px 0}
+  .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
+  .pipe-step{position:relative;margin-bottom:20px}
+  .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
+  .pipe-num{font-family:var(--mono);font-size:.56rem;color:var(--accent);opacity:.6;margin-bottom:4px}
+  .pipe-title{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--t1);margin-bottom:4px}
+  .pipe-desc{font-family:var(--serif);font-size:.8rem;color:var(--t2);line-height:1.8}
+  .pipe-spec{font-family:var(--mono);font-size:.56rem;color:var(--t3);margin-top:6px;line-height:1.8}
+
+  /* ─── Hard Part callout ─── */
+  .callout{background:var(--raised);border-left:2px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:24px 28px;margin:28px 0;box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl)}
+  .callout-label{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .callout p{font-family:var(--serif);font-size:.88rem;color:var(--t2);line-height:1.9}
+  .callout strong{color:var(--t1);font-weight:500}
+
+  /* ─── Stack Tags ─── */
+  .stack{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+  .stack-tag{font-family:var(--mono);font-size:.58rem;color:var(--t2);padding:5px 12px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+
+  /* ─── Link ─── */
+  .proj-link{display:inline-block;font-family:var(--mono);font-size:.74rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+  .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+
+  /* ─── Footer ─── */
+  footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
+  .ft{max-width:920px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+  .ft-c{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
+  .ft-l{display:flex;gap:18px}
+  .ft-l a{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  .ft-l a:hover{color:var(--accent)}
+
+  @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+  .fade.v{opacity:1;transform:translateY(0)}
+
+  @media(max-width:768px){
+    main{padding:1rem 1rem 3rem}
+    .results{grid-template-columns:repeat(2,1fr)}
+    .compare{grid-template-columns:1fr}
+    .flow{flex-direction:column;gap:0}
+    .flow-arrow{transform:rotate(90deg);padding:6px 0}
+    .ft{flex-direction:column;gap:10px;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="logo">sai.</a>
+  <a href="../#projects" class="back">&larr; projects</a>
+</nav>
+
+<main>
+
+  <!-- Header -->
+  <div class="proj-label fade">Project</div>
+  <h1 class="proj-title fade">Semantic Search · Knowledge Distillation</h1>
+  <div class="proj-sub fade">Train a small model to think like a big one. 97% accuracy. 100x faster. $4.</div>
+  <div class="divider"></div>
+
+  <!-- Story -->
+  <p class="story fade">
+    A search system returns the right answer in 100 milliseconds. The user has already moved on. The large model <strong>knows</strong> the answer &mdash; it&rsquo;s just too slow to matter. So we taught a model 17x smaller to think like it. The student reaches <strong>97% of the teacher&rsquo;s accuracy</strong> at a fraction of the cost &mdash; $4 to train, 1ms to answer.
+  </p>
+
+  <!-- Results -->
+  <div class="sec fade">Results</div>
+  <div class="results">
+    <div class="stat fade">
+      <div class="stat-val">0.882</div>
+      <div class="stat-label">nDCG@10</div>
+    </div>
+    <div class="stat fade">
+      <div class="stat-val">100x</div>
+      <div class="stat-label">Faster</div>
+    </div>
+    <div class="stat fade">
+      <div class="stat-val">17x</div>
+      <div class="stat-label">Smaller</div>
+    </div>
+    <div class="stat fade">
+      <div class="stat-val">$4</div>
+      <div class="stat-label">Training Cost</div>
+    </div>
+  </div>
+
+  <!-- The Hard Part -->
+  <div class="callout fade">
+    <div class="callout-label">The hard part</div>
+    <p>
+      Without hard negative mining, the student plateaus at <strong>85% of the teacher</strong>. The breakthrough was a 3-stage curriculum: start with cheap BM25 keyword negatives, then let the teacher score and filter them (keeping only high-confidence disagreements), then let the student mine its own adversarial negatives every 500 steps. Each stage forces the student to learn harder distinctions. That&rsquo;s what got us from 85% to <strong>97%</strong>.
+    </p>
+  </div>
+
+  <!-- Architecture: Inference -->
+  <div class="sec fade">How it works &mdash; Inference</div>
+  <div class="arch fade">
+    <div class="flow">
+      <div class="flow-node" onclick="toggleDetail('d-query')">
+        <div class="flow-node-title">Query</div>
+        <div class="flow-node-sub">user input</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node" onclick="toggleDetail('d-encoder')">
+        <div class="flow-node-title">Student Encoder</div>
+        <div class="flow-node-sub">33M params &middot; 1ms</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node" onclick="toggleDetail('d-faiss')">
+        <div class="flow-node-title">FAISS Index</div>
+        <div class="flow-node-sub">HNSW &middot; 10ms</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node" onclick="toggleDetail('d-api')">
+        <div class="flow-node-title">FastAPI</div>
+        <div class="flow-node-sub">response &middot; &lt;12ms</div>
+      </div>
+    </div>
+
+    <div class="flow-detail" id="d-query">
+      <div class="flow-detail-title">Query Processing</div>
+      <p>Raw text is prefixed with <strong>"query: "</strong> to match E5&rsquo;s training format. This prefix tells the encoder to produce a query-optimized embedding rather than a passage embedding.</p>
+    </div>
+
+    <div class="flow-detail" id="d-encoder">
+      <div class="flow-detail-title">Student Encoder &mdash; intfloat/e5-small-v2</div>
+      <p>6-layer BERT bi-encoder. Encodes query <strong>independently</strong> from documents (unlike the teacher which needs both together). This is what makes it fast &mdash; documents are pre-encoded once and indexed.</p>
+      <div class="spec">
+        Architecture: BERT 6-layer &middot; 33M params &middot; 384-dim output<br>
+        Pooling: Mean pooling over token embeddings<br>
+        Latency: ~1ms per query on CPU
+      </div>
+    </div>
+
+    <div class="flow-detail" id="d-faiss">
+      <div class="flow-detail-title">FAISS HNSW Index</div>
+      <p>Hierarchical Navigable Small World graph for approximate nearest neighbor search. Trades a tiny amount of recall for massive speed gains over brute-force.</p>
+      <div class="spec">
+        M = 32 connections per node<br>
+        efConstruction = 200 (build quality)<br>
+        efSearch = 50 (query quality)<br>
+        Recall: &gt;97% &middot; Latency: ~10ms for 10K docs
+      </div>
+    </div>
+
+    <div class="flow-detail" id="d-api">
+      <div class="flow-detail-title">FastAPI Serving Layer</div>
+      <p>Production API with security middleware stack: rate limiting (100 req/min), API key auth (SHA-256 hashed), HSTS/CSP headers, CORS, health checks for Kubernetes readiness/liveness probes.</p>
+      <div class="spec">
+        Endpoints: POST /search &middot; POST /encode &middot; GET /health<br>
+        Monitoring: Prometheus metrics &middot; structured logging<br>
+        Deploy: Docker multi-stage &middot; Cloud Run &middot; ~$40/month
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture: Teacher vs Student -->
+  <div class="sec fade">The two models</div>
+  <div class="compare fade">
+    <div class="compare-card">
+      <div class="compare-label">Teacher &mdash; the slow, accurate one</div>
+      <div class="compare-name">BAAI/bge-reranker-large</div>
+      <div class="compare-spec">
+        Cross-encoder: sees query + doc together<br>
+        24-layer XLM-RoBERTa &middot; 560M params<br>
+        Full cross-attention between all tokens<br>
+        ~100ms per query-doc pair<br>
+        Cannot pre-index documents
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-label">Student &mdash; the fast, distilled one</div>
+      <div class="compare-name">intfloat/e5-small-v2</div>
+      <div class="compare-spec">
+        Bi-encoder: encodes query and doc separately<br>
+        6-layer BERT &middot; 33M params &middot; 384-dim<br>
+        Documents pre-encoded and indexed in FAISS<br>
+        ~1ms per query<br>
+        Trained to mimic teacher&rsquo;s ranking judgments
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture: Training Pipeline -->
+  <div class="sec fade">How it learns &mdash; Training Pipeline</div>
+  <div class="arch fade">
+    <div class="pipeline">
+
+      <div class="pipe-step">
+        <div class="pipe-num">01</div>
+        <div class="pipe-title">Data &mdash; MS MARCO</div>
+        <div class="pipe-desc">603 queries and 643 passages from Microsoft&rsquo;s passage ranking dataset. Chunked to 512 tokens with 80-token stride for overlapping context windows.</div>
+      </div>
+
+      <div class="pipe-step">
+        <div class="pipe-num">02</div>
+        <div class="pipe-title">Hard Negative Mining (3 stages)</div>
+        <div class="pipe-desc">Documents that <em>look</em> relevant but aren&rsquo;t. This is where the student learns to make fine distinctions.</div>
+        <div class="pipe-spec">
+          Stage A: BM25 keyword negatives (fast, cheap)<br>
+          Stage B: Teacher-scored semantic negatives (&gt;0.7 confidence filter)<br>
+          Stage C: ANCE adversarial &mdash; student mines its own negatives every 500 steps
+        </div>
+      </div>
+
+      <div class="pipe-step">
+        <div class="pipe-num">03</div>
+        <div class="pipe-title">Knowledge Distillation</div>
+        <div class="pipe-desc">Teacher scores every query-document pair. Student learns to reproduce those scores through three combined loss functions.</div>
+        <div class="pipe-spec">
+          60% Margin-MSE &mdash; learn score differences between documents<br>
+          20% Listwise KD &mdash; learn the full ranking distribution (KL divergence)<br>
+          20% Contrastive &mdash; learn query-doc similarity via in-batch negatives
+        </div>
+      </div>
+
+      <div class="pipe-step">
+        <div class="pipe-num">04</div>
+        <div class="pipe-title">Temperature Annealing</div>
+        <div class="pipe-desc">Teacher&rsquo;s score distribution starts soft (T=4.0) so the student learns coarse ranking, then sharpens (T=2.0) for fine distinctions. Linear decay over 3 epochs.</div>
+      </div>
+
+      <div class="pipe-step">
+        <div class="pipe-num">05</div>
+        <div class="pipe-title">Export &amp; Index</div>
+        <div class="pipe-desc">Trained student encodes all documents into 384-dim vectors. FAISS HNSW index is built. Model + index are packaged for Docker deployment on Cloud Run.</div>
+        <div class="pipe-spec">
+          Training: 8.5 hours on GCP CPU (~$4)<br>
+          Index: HNSW M=32 &middot; Docker multi-stage build &middot; Cloud Run deploy
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Stack -->
+  <div class="sec fade">Stack</div>
+  <div class="stack fade">
+    <span class="stack-tag">PyTorch</span>
+    <span class="stack-tag">Sentence-Transformers</span>
+    <span class="stack-tag">FAISS</span>
+    <span class="stack-tag">FastAPI</span>
+    <span class="stack-tag">BM25</span>
+    <span class="stack-tag">Docker</span>
+    <span class="stack-tag">GCP Cloud Run</span>
+    <span class="stack-tag">Prometheus</span>
+    <span class="stack-tag">Poetry</span>
+    <span class="stack-tag">pytest</span>
+    <span class="stack-tag">Ruff</span>
+    <span class="stack-tag">MyPy</span>
+  </div>
+
+  <!-- GitHub Link -->
+  <a href="https://github.com/Axionis47/semantic-search-kd" target="_blank" class="proj-link fade">View on GitHub &rarr;</a>
+
+</main>
+
+<footer>
+  <div class="ft">
+    <div class="ft-c">&copy; 2026 Sai Siddharth Yalamanchili</div>
+    <div class="ft-l">
+      <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
+      <a href="#" target="_blank">LinkedIn</a>
+      <a href="mailto:">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleDetail(id){
+  const el = document.getElementById(id);
+  const wasOpen = el.classList.contains('open');
+  document.querySelectorAll('.flow-detail').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.flow-node').forEach(n => n.classList.remove('active'));
+  if(!wasOpen){
+    el.classList.add('open');
+    // find which node index was clicked
+    const details = [...document.querySelectorAll('.flow-detail')];
+    const idx = details.indexOf(el);
+    const nodes = document.querySelectorAll('.flow-node');
+    if(nodes[idx]) nodes[idx].classList.add('active');
+  }
+}
+
+const obs = new IntersectionObserver(es => {
+  es.forEach((e, i) => {
+    if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 70); obs.unobserve(e.target); }
+  });
+}, { threshold: .12 });
+document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
