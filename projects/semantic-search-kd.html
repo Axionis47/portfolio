@@ -19,89 +19,83 @@
     --serif:'Source Serif 4',serif;
     --sans:'DM Sans',sans-serif;
   }
-  body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+  body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
   a{color:var(--accent);text-decoration:none;transition:color .2s}
   a:hover{color:#eaa050}
 
-  nav{display:flex;justify-content:space-between;align-items:center;max-width:920px;width:100%;margin:0 auto;padding:2.5rem 1.5rem 1.5rem}
+  nav{display:flex;justify-content:space-between;align-items:center;max-width:760px;width:100%;margin:0 auto;padding:2.5rem 1.5rem 1.5rem}
   nav .logo{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--t1);text-decoration:none}
   nav .back{font-family:var(--mono);font-size:.8rem;color:var(--t3);text-decoration:none;transition:color .2s}
   nav .back:hover{color:var(--accent)}
 
-  main{max-width:920px;width:100%;margin:0 auto;padding:1.5rem 1.5rem 4rem;flex:1}
+  main{max-width:760px;width:100%;margin:0 auto;padding:1.5rem 1.5rem 4rem;flex:1}
 
   /* ─── Header ─── */
   .proj-label{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
-  .proj-title{font-family:var(--mono);font-size:1.5rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:8px}
-  .proj-sub{font-family:var(--mono);font-size:.76rem;color:var(--t3);margin-bottom:2rem}
+  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
   .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
 
-  /* ─── Story ─── */
-  .story{font-family:var(--serif);font-size:1.05rem;font-weight:300;color:var(--t2);line-height:2;max-width:680px;margin-bottom:2.5rem}
-  .story strong{color:var(--t1);font-weight:500}
+  /* ─── Prose ─── */
+  .prose{margin-bottom:2rem}
+  .prose p{font-family:var(--serif);font-size:1rem;font-weight:300;color:var(--t2);line-height:2.1;margin-bottom:1.4rem}
+  .prose strong{color:var(--t1);font-weight:500}
+  .prose em{color:var(--t2);font-style:italic}
 
   /* ─── Section Labels ─── */
-  .sec{font-family:var(--mono);font-size:.6rem;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px;margin-top:52px}
+  .sec{font-family:var(--mono);font-size:.63rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:52px}
 
   /* ─── Results Bar ─── */
-  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
-  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:24px 20px;text-align:center;transition:all .3s}
+  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
+  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:22px 16px;text-align:center;transition:all .3s}
   .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
-  .stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:6px}
-  .stat-label{font-family:var(--mono);font-size:.56rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase}
+  .stat-val{font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--accent);margin-bottom:5px}
+  .stat-label{font-family:var(--mono);font-size:.52rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase}
 
   /* ─── Architecture Diagram ─── */
-  .arch{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:36px 32px;margin-bottom:24px}
+  .arch{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:32px 28px;margin:20px 0}
 
-  .flow{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:20px 0}
-  .flow-node{background:var(--inset);border-radius:10px;padding:16px 20px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:120px;cursor:pointer;transition:all .3s;position:relative}
+  .flow{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:16px 0}
+  .flow-node{background:var(--inset);border-radius:10px;padding:14px 18px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:110px;cursor:pointer;transition:all .3s;position:relative}
   .flow-node:hover{box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl),0 0 12px var(--glow)}
   .flow-node.active{box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl),0 0 16px rgba(216,140,58,0.1);border:1px solid rgba(216,140,58,0.15)}
-  .flow-node-title{font-family:var(--mono);font-size:.72rem;font-weight:500;color:var(--t1);margin-bottom:4px}
-  .flow-node-sub{font-family:var(--mono);font-size:.52rem;color:var(--t3)}
-  .flow-arrow{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;padding:0 10px;flex-shrink:0}
+  .flow-node-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
+  .flow-node-sub{font-family:var(--mono);font-size:.5rem;color:var(--t3)}
+  .flow-arrow{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;padding:0 8px;flex-shrink:0}
 
-  /* Expandable detail panel */
-  .flow-detail{display:none;background:var(--inset);border-radius:10px;padding:22px 24px;margin-top:16px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
+  .flow-detail{display:none;background:var(--inset);border-radius:10px;padding:20px 22px;margin-top:14px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
   .flow-detail.open{display:block}
-  .flow-detail-title{font-family:var(--mono);font-size:.7rem;font-weight:500;color:var(--accent);margin-bottom:10px}
-  .flow-detail p{font-family:var(--serif);font-size:.82rem;color:var(--t2);line-height:1.8;margin-bottom:8px}
-  .flow-detail .spec{font-family:var(--mono);font-size:.6rem;color:var(--t3);line-height:1.9}
+  .flow-detail-title{font-family:var(--mono);font-size:.66rem;font-weight:500;color:var(--accent);margin-bottom:8px}
+  .flow-detail p{font-family:var(--serif);font-size:.84rem;color:var(--t2);line-height:1.9;margin-bottom:6px}
+  .flow-detail .spec{font-family:var(--mono);font-size:.56rem;color:var(--t3);line-height:1.9}
 
-  /* ─── Comparison Table ─── */
-  .compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+  /* ─── Comparison ─── */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
   .compare-card{background:var(--inset);border-radius:10px;padding:22px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
-  .compare-label{font-family:var(--mono);font-size:.56rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
-  .compare-name{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--t1);margin-bottom:4px}
-  .compare-spec{font-family:var(--mono);font-size:.6rem;color:var(--t3);line-height:1.9}
+  .compare-label{font-family:var(--mono);font-size:.52rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .compare-name{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+  .compare-desc{font-family:var(--serif);font-size:.8rem;color:var(--t2);line-height:1.85}
 
-  /* ─── Training Pipeline (vertical) ─── */
+  /* ─── Pipeline ─── */
   .pipeline{position:relative;padding-left:32px;margin:20px 0}
   .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
-  .pipe-step{position:relative;margin-bottom:20px}
+  .pipe-step{position:relative;margin-bottom:24px}
   .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
-  .pipe-num{font-family:var(--mono);font-size:.56rem;color:var(--accent);opacity:.6;margin-bottom:4px}
-  .pipe-title{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--t1);margin-bottom:4px}
-  .pipe-desc{font-family:var(--serif);font-size:.8rem;color:var(--t2);line-height:1.8}
-  .pipe-spec{font-family:var(--mono);font-size:.56rem;color:var(--t3);margin-top:6px;line-height:1.8}
-
-  /* ─── Hard Part callout ─── */
-  .callout{background:var(--raised);border-left:2px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:24px 28px;margin:28px 0;box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl)}
-  .callout-label{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
-  .callout p{font-family:var(--serif);font-size:.88rem;color:var(--t2);line-height:1.9}
-  .callout strong{color:var(--t1);font-weight:500}
+  .pipe-num{font-family:var(--mono);font-size:.52rem;color:var(--accent);opacity:.6;margin-bottom:3px}
+  .pipe-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+  .pipe-desc{font-family:var(--serif);font-size:.86rem;color:var(--t2);line-height:1.95}
+  .pipe-desc strong{color:var(--t1);font-weight:500}
 
   /* ─── Stack Tags ─── */
-  .stack{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
-  .stack-tag{font-family:var(--mono);font-size:.58rem;color:var(--t2);padding:5px 12px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
+  .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
 
   /* ─── Link ─── */
-  .proj-link{display:inline-block;font-family:var(--mono);font-size:.74rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+  .proj-link{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
   .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
 
   /* ─── Footer ─── */
   footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
-  .ft{max-width:920px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+  .ft{max-width:760px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
   .ft-c{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
   .ft-l{display:flex;gap:18px}
   .ft-l a{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-decoration:none;transition:color .2s}
@@ -130,188 +124,239 @@
 
 <main>
 
-  <!-- Header -->
   <div class="proj-label fade">Project</div>
-  <h1 class="proj-title fade">Semantic Search · Knowledge Distillation</h1>
-  <div class="proj-sub fade">Train a small model to think like a big one. 97% accuracy. 100x faster. $4.</div>
+  <h1 class="proj-title fade">Semantic Search &middot; Knowledge Distillation</h1>
   <div class="divider"></div>
 
-  <!-- Story -->
-  <p class="story fade">
-    A search system returns the right answer in 100 milliseconds. The user has already moved on. The large model <strong>knows</strong> the answer &mdash; it&rsquo;s just too slow to matter. So we taught a model 17x smaller to think like it. The student reaches <strong>97% of the teacher&rsquo;s accuracy</strong> at a fraction of the cost &mdash; $4 to train, 1ms to answer.
-  </p>
+  <!-- ═══════════════════════════════════════
+       CHAPTER 1: THE PROBLEM
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">The problem</div>
+  <div class="prose fade">
+    <p>
+      Imagine you&rsquo;re building a search engine. A user types a question. You have a million documents. You need to find the 10 most relevant ones &mdash; fast.
+    </p>
+    <p>
+      There are two kinds of models that can do this. The first is called a <strong>cross-encoder</strong>. It reads the question and a document <em>together</em>, word by word, paying attention to how they relate. It&rsquo;s very accurate &mdash; it truly understands whether a document answers the question. But there&rsquo;s a catch: it has to read every document paired with the query. For a million documents, that means a million forward passes. At 100ms each, that&rsquo;s <strong>28 hours per query</strong>. Useless for real-time search.
+    </p>
+    <p>
+      The second kind is a <strong>bi-encoder</strong>. It encodes the query and each document <em>separately</em> into a small vector &mdash; a list of 384 numbers that capture meaning. Because documents are encoded independently, you can do it once, store the vectors, and never re-compute them. When a query comes in, you encode it (1ms), then find the nearest vectors (10ms). Fast. But because the model never sees the query and document together, it misses subtle relationships. It&rsquo;s less accurate.
+    </p>
+    <p>
+      So you have a choice: <strong>accurate but impossible to deploy</strong>, or <strong>fast but less accurate</strong>.
+    </p>
+  </div>
 
-  <!-- Results -->
-  <div class="sec fade">Results</div>
-  <div class="results">
-    <div class="stat fade">
+  <!-- ═══════════════════════════════════════
+       CHAPTER 2: THE IDEA
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">The idea</div>
+  <div class="prose fade">
+    <p>
+      What if the small, fast model could <em>learn</em> from the big, accurate one?
+    </p>
+    <p>
+      This is <strong>knowledge distillation</strong>. You take a large &ldquo;teacher&rdquo; model (the cross-encoder, 560 million parameters) and use it to train a small &ldquo;student&rdquo; model (the bi-encoder, 33 million parameters). The teacher scores thousands of query-document pairs. The student learns to reproduce those scores. It&rsquo;s not copying the teacher&rsquo;s weights &mdash; it&rsquo;s learning the teacher&rsquo;s <em>judgment</em>.
+    </p>
+    <p>
+      Think of it like an apprentice watching a master chef. The apprentice can&rsquo;t replicate the chef&rsquo;s 30 years of experience, but by watching thousands of dishes being rated &mdash; &ldquo;this one&rsquo;s great, this one&rsquo;s close but the seasoning&rsquo;s off, this one&rsquo;s wrong&rdquo; &mdash; the apprentice develops <em>taste</em>. Not perfect. But surprisingly close.
+    </p>
+  </div>
+
+  <!-- Two models side by side -->
+  <div class="compare fade">
+    <div class="compare-card">
+      <div class="compare-label">Teacher &mdash; accurate, too slow to deploy</div>
+      <div class="compare-name">BAAI/bge-reranker-large</div>
+      <div class="compare-desc">
+        Cross-encoder. Reads query + document together. 560M parameters, 24 transformer layers. Understands subtle context but costs ~100ms per pair. You can&rsquo;t pre-compute anything &mdash; every new query means re-reading every document.
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-label">Student &mdash; fast, learns from teacher</div>
+      <div class="compare-name">intfloat/e5-small-v2</div>
+      <div class="compare-desc">
+        Bi-encoder. Encodes query and document separately into 384-dim vectors. 33M parameters, 6 layers. Documents are encoded once and stored in an index. New queries take ~1ms. The tradeoff: it never sees query and document together, so it needs the teacher&rsquo;s guidance.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CHAPTER 3: THE HARD PART
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">The hard part &mdash; what you train on matters more than how you train</div>
+  <div class="prose fade">
+    <p>
+      Naive distillation gets you to about <strong>85% of the teacher</strong>. That last 12% is where the real engineering happens.
+    </p>
+    <p>
+      The key insight is about <strong>what examples you show the student</strong>. If you only show it obvious cases &mdash; clearly relevant documents and clearly irrelevant ones &mdash; it learns the easy stuff and stops improving. You need to show it <em>hard</em> cases: documents that <em>look</em> relevant but aren&rsquo;t. A document about &ldquo;Python snakes&rdquo; when the query is about &ldquo;Python programming.&rdquo; A document about &ldquo;Apple nutrition&rdquo; when the query is about &ldquo;Apple stock price.&rdquo; These are called <strong>hard negatives</strong> &mdash; they force the student to learn fine-grained distinctions instead of surface-level pattern matching.
+    </p>
+    <p>
+      But finding good hard negatives is its own problem. I used a three-stage curriculum:
+    </p>
+  </div>
+
+  <div class="arch fade">
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-num">Stage A</div>
+        <div class="pipe-title">BM25 keyword negatives</div>
+        <div class="pipe-desc">Start with the simplest approach. BM25 is a keyword-matching algorithm &mdash; it finds documents that share words with the query. These are easy negatives. A document about &ldquo;Python snakes&rdquo; shares the word &ldquo;Python&rdquo; with a query about &ldquo;Python programming,&rdquo; so BM25 retrieves it. The student learns: <strong>matching words isn&rsquo;t enough.</strong></div>
+      </div>
+
+      <div class="pipe-step">
+        <div class="pipe-num">Stage B</div>
+        <div class="pipe-title">Teacher-scored semantic negatives</div>
+        <div class="pipe-desc">Now it gets harder. Take the BM25 candidates and let the teacher cross-encoder score them. Keep only the ones where the teacher is confident they&rsquo;re irrelevant (confidence &gt;0.7) but BM25 ranked them highly. These are documents that are <strong>semantically close but factually wrong</strong>. The student learns: surface similarity is deceptive.</div>
+      </div>
+
+      <div class="pipe-step">
+        <div class="pipe-num">Stage C</div>
+        <div class="pipe-title">ANCE adversarial self-mining</div>
+        <div class="pipe-desc">The final stage is adversarial. Every 500 training steps, the <em>student itself</em> retrieves what it thinks are the best documents. The teacher then checks them. The ones the student is most confident about but the teacher rejects &mdash; those become the next round of training examples. The student is <strong>mining its own blind spots</strong>. This is what pushed accuracy from 85% to <strong>97%</strong> of the teacher.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CHAPTER 4: THE TRAINING
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">How the student learns</div>
+  <div class="prose fade">
+    <p>
+      Each training step, the teacher and student both score the same set of documents for a query &mdash; 1 relevant document and 10 hard negatives. Then three loss functions pull the student&rsquo;s scores toward the teacher&rsquo;s:
+    </p>
+  </div>
+
+  <div class="arch fade">
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-num">60% weight</div>
+        <div class="pipe-title">Margin-MSE &mdash; &ldquo;learn the gaps between documents&rdquo;</div>
+        <div class="pipe-desc">The teacher says document A is scored 8.5 and document B is scored 3.2. The student doesn&rsquo;t need to output 8.5 and 3.2 exactly (cross-encoders and bi-encoders have different score scales). But it must learn that <strong>A is much better than B by roughly this margin</strong>. This loss teaches relative differences, not absolute scores.</div>
+      </div>
+
+      <div class="pipe-step">
+        <div class="pipe-num">20% weight</div>
+        <div class="pipe-title">Listwise KD &mdash; &ldquo;learn the full ranking&rdquo;</div>
+        <div class="pipe-desc">The teacher produces a probability distribution over all 11 documents: &ldquo;70% chance this is the best, 15% that one, 5% the next...&rdquo; The student learns to match this entire distribution using KL divergence. This captures the teacher&rsquo;s <strong>uncertainty</strong> &mdash; not just which document wins, but by how much.</div>
+      </div>
+
+      <div class="pipe-step">
+        <div class="pipe-num">20% weight</div>
+        <div class="pipe-title">Contrastive &mdash; &ldquo;learn what relevant means&rdquo;</div>
+        <div class="pipe-desc">Push the relevant document&rsquo;s embedding closer to the query&rsquo;s embedding, and push all negatives further away. This is the student&rsquo;s own loss &mdash; it doesn&rsquo;t need the teacher. It ensures the student&rsquo;s vector space is well-organized even when the teacher&rsquo;s guidance is noisy.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      One more trick: <strong>temperature annealing</strong>. Early in training, the teacher&rsquo;s scores are &ldquo;softened&rdquo; (temperature = 4.0) so the student sees a gentle probability distribution and learns coarse ranking. As training progresses, the temperature drops to 2.0 &mdash; the distribution sharpens, and the student learns fine-grained distinctions. It&rsquo;s like learning to draw: rough shapes first, details later.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CHAPTER 5: THE RESULT
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">The result</div>
+  <div class="results fade">
+    <div class="stat">
       <div class="stat-val">0.882</div>
       <div class="stat-label">nDCG@10</div>
     </div>
-    <div class="stat fade">
+    <div class="stat">
       <div class="stat-val">100x</div>
       <div class="stat-label">Faster</div>
     </div>
-    <div class="stat fade">
+    <div class="stat">
       <div class="stat-val">17x</div>
       <div class="stat-label">Smaller</div>
     </div>
-    <div class="stat fade">
+    <div class="stat">
       <div class="stat-val">$4</div>
       <div class="stat-label">Training Cost</div>
     </div>
   </div>
-
-  <!-- The Hard Part -->
-  <div class="callout fade">
-    <div class="callout-label">The hard part</div>
+  <div class="prose fade">
     <p>
-      Without hard negative mining, the student plateaus at <strong>85% of the teacher</strong>. The breakthrough was a 3-stage curriculum: start with cheap BM25 keyword negatives, then let the teacher score and filter them (keeping only high-confidence disagreements), then let the student mine its own adversarial negatives every 500 steps. Each stage forces the student to learn harder distinctions. That&rsquo;s what got us from 85% to <strong>97%</strong>.
+      The student reaches <strong>97% of the teacher&rsquo;s ranking quality</strong> (0.882 vs 0.91 nDCG@10) while being 17x smaller (33M vs 560M parameters) and 100x faster (1ms vs 100ms). The entire training costs $4 on a GCP CPU. The untrained student scored 0.719 &mdash; distillation improved it by <strong>22.7%</strong>.
     </p>
   </div>
 
-  <!-- Architecture: Inference -->
-  <div class="sec fade">How it works &mdash; Inference</div>
+  <!-- ═══════════════════════════════════════
+       CHAPTER 6: HOW IT RUNS IN PRODUCTION
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">How it runs in production</div>
+  <div class="prose fade">
+    <p>
+      Once trained, the student encodes all documents into 384-dimensional vectors. These vectors are loaded into a FAISS HNSW index &mdash; a graph structure optimized for fast nearest-neighbor search. When a query arrives, it&rsquo;s encoded, the nearest vectors are found, and results are returned. The whole thing runs behind a FastAPI service with rate limiting, API key auth, health checks, and Prometheus monitoring. Click any component below to see the details.
+    </p>
+  </div>
+
   <div class="arch fade">
     <div class="flow">
       <div class="flow-node" onclick="toggleDetail('d-query')">
         <div class="flow-node-title">Query</div>
-        <div class="flow-node-sub">user input</div>
+        <div class="flow-node-sub">user text input</div>
       </div>
       <div class="flow-arrow">&rarr;</div>
       <div class="flow-node" onclick="toggleDetail('d-encoder')">
         <div class="flow-node-title">Student Encoder</div>
-        <div class="flow-node-sub">33M params &middot; 1ms</div>
+        <div class="flow-node-sub">33M params &middot; ~1ms</div>
       </div>
       <div class="flow-arrow">&rarr;</div>
       <div class="flow-node" onclick="toggleDetail('d-faiss')">
         <div class="flow-node-title">FAISS Index</div>
-        <div class="flow-node-sub">HNSW &middot; 10ms</div>
+        <div class="flow-node-sub">HNSW &middot; ~10ms</div>
       </div>
       <div class="flow-arrow">&rarr;</div>
       <div class="flow-node" onclick="toggleDetail('d-api')">
         <div class="flow-node-title">FastAPI</div>
-        <div class="flow-node-sub">response &middot; &lt;12ms</div>
+        <div class="flow-node-sub">response &middot; &lt;12ms total</div>
       </div>
     </div>
 
     <div class="flow-detail" id="d-query">
       <div class="flow-detail-title">Query Processing</div>
-      <p>Raw text is prefixed with <strong>"query: "</strong> to match E5&rsquo;s training format. This prefix tells the encoder to produce a query-optimized embedding rather than a passage embedding.</p>
+      <p>The raw query text is prefixed with <strong>"query: "</strong> before encoding. This is E5&rsquo;s convention &mdash; the prefix tells the encoder to produce a query-optimized embedding. Documents use a &ldquo;passage: &rdquo; prefix. Without this, query and document embeddings would live in slightly different regions of the vector space.</p>
     </div>
 
     <div class="flow-detail" id="d-encoder">
-      <div class="flow-detail-title">Student Encoder &mdash; intfloat/e5-small-v2</div>
-      <p>6-layer BERT bi-encoder. Encodes query <strong>independently</strong> from documents (unlike the teacher which needs both together). This is what makes it fast &mdash; documents are pre-encoded once and indexed.</p>
+      <div class="flow-detail-title">Student Encoder</div>
+      <p>The distilled E5-small model. 6 transformer layers, 33M parameters. Takes tokenized text, produces a 384-dimensional vector via mean pooling over all token embeddings. Because it encodes queries independently from documents, all document vectors are pre-computed once and stored in the index.</p>
       <div class="spec">
-        Architecture: BERT 6-layer &middot; 33M params &middot; 384-dim output<br>
-        Pooling: Mean pooling over token embeddings<br>
-        Latency: ~1ms per query on CPU
+        Architecture: BERT 6-layer &middot; 384-dim output &middot; mean pooling<br>
+        Latency: ~1ms per query on CPU<br>
+        Trained via 3-loss distillation from BAAI/bge-reranker-large
       </div>
     </div>
 
     <div class="flow-detail" id="d-faiss">
       <div class="flow-detail-title">FAISS HNSW Index</div>
-      <p>Hierarchical Navigable Small World graph for approximate nearest neighbor search. Trades a tiny amount of recall for massive speed gains over brute-force.</p>
+      <p>A graph-based index where each vector is a node connected to its nearest neighbors. To search, you enter the graph at a random point and greedily hop to closer nodes. HNSW (&ldquo;Hierarchical Navigable Small World&rdquo;) builds multiple layers of these graphs at different granularities for faster convergence.</p>
       <div class="spec">
-        M = 32 connections per node<br>
-        efConstruction = 200 (build quality)<br>
-        efSearch = 50 (query quality)<br>
-        Recall: &gt;97% &middot; Latency: ~10ms for 10K docs
+        M = 32 connections per node &middot; efConstruction = 200<br>
+        efSearch = 50 &middot; Recall: &gt;97%<br>
+        Latency: ~10ms for 10K documents
       </div>
     </div>
 
     <div class="flow-detail" id="d-api">
-      <div class="flow-detail-title">FastAPI Serving Layer</div>
-      <p>Production API with security middleware stack: rate limiting (100 req/min), API key auth (SHA-256 hashed), HSTS/CSP headers, CORS, health checks for Kubernetes readiness/liveness probes.</p>
+      <div class="flow-detail-title">Production API</div>
+      <p>FastAPI service running on GCP Cloud Run. Multi-stage Docker build (slim image, non-root user). Middleware stack handles security headers (HSTS, CSP), token-bucket rate limiting (100 req/min), API key authentication (SHA-256 hashed), and CORS. Prometheus exports latency and throughput metrics. Kubernetes-compatible health/readiness/liveness probes.</p>
       <div class="spec">
         Endpoints: POST /search &middot; POST /encode &middot; GET /health<br>
-        Monitoring: Prometheus metrics &middot; structured logging<br>
-        Deploy: Docker multi-stage &middot; Cloud Run &middot; ~$40/month
+        CI/CD: lint (Ruff) &rarr; type check (MyPy) &rarr; test (pytest) &rarr; Docker build &rarr; Cloud Run deploy<br>
+        Cost: ~$40/month for 10K queries/day
       </div>
     </div>
   </div>
 
-  <!-- Architecture: Teacher vs Student -->
-  <div class="sec fade">The two models</div>
-  <div class="compare fade">
-    <div class="compare-card">
-      <div class="compare-label">Teacher &mdash; the slow, accurate one</div>
-      <div class="compare-name">BAAI/bge-reranker-large</div>
-      <div class="compare-spec">
-        Cross-encoder: sees query + doc together<br>
-        24-layer XLM-RoBERTa &middot; 560M params<br>
-        Full cross-attention between all tokens<br>
-        ~100ms per query-doc pair<br>
-        Cannot pre-index documents
-      </div>
-    </div>
-    <div class="compare-card">
-      <div class="compare-label">Student &mdash; the fast, distilled one</div>
-      <div class="compare-name">intfloat/e5-small-v2</div>
-      <div class="compare-spec">
-        Bi-encoder: encodes query and doc separately<br>
-        6-layer BERT &middot; 33M params &middot; 384-dim<br>
-        Documents pre-encoded and indexed in FAISS<br>
-        ~1ms per query<br>
-        Trained to mimic teacher&rsquo;s ranking judgments
-      </div>
-    </div>
-  </div>
-
-  <!-- Architecture: Training Pipeline -->
-  <div class="sec fade">How it learns &mdash; Training Pipeline</div>
-  <div class="arch fade">
-    <div class="pipeline">
-
-      <div class="pipe-step">
-        <div class="pipe-num">01</div>
-        <div class="pipe-title">Data &mdash; MS MARCO</div>
-        <div class="pipe-desc">603 queries and 643 passages from Microsoft&rsquo;s passage ranking dataset. Chunked to 512 tokens with 80-token stride for overlapping context windows.</div>
-      </div>
-
-      <div class="pipe-step">
-        <div class="pipe-num">02</div>
-        <div class="pipe-title">Hard Negative Mining (3 stages)</div>
-        <div class="pipe-desc">Documents that <em>look</em> relevant but aren&rsquo;t. This is where the student learns to make fine distinctions.</div>
-        <div class="pipe-spec">
-          Stage A: BM25 keyword negatives (fast, cheap)<br>
-          Stage B: Teacher-scored semantic negatives (&gt;0.7 confidence filter)<br>
-          Stage C: ANCE adversarial &mdash; student mines its own negatives every 500 steps
-        </div>
-      </div>
-
-      <div class="pipe-step">
-        <div class="pipe-num">03</div>
-        <div class="pipe-title">Knowledge Distillation</div>
-        <div class="pipe-desc">Teacher scores every query-document pair. Student learns to reproduce those scores through three combined loss functions.</div>
-        <div class="pipe-spec">
-          60% Margin-MSE &mdash; learn score differences between documents<br>
-          20% Listwise KD &mdash; learn the full ranking distribution (KL divergence)<br>
-          20% Contrastive &mdash; learn query-doc similarity via in-batch negatives
-        </div>
-      </div>
-
-      <div class="pipe-step">
-        <div class="pipe-num">04</div>
-        <div class="pipe-title">Temperature Annealing</div>
-        <div class="pipe-desc">Teacher&rsquo;s score distribution starts soft (T=4.0) so the student learns coarse ranking, then sharpens (T=2.0) for fine distinctions. Linear decay over 3 epochs.</div>
-      </div>
-
-      <div class="pipe-step">
-        <div class="pipe-num">05</div>
-        <div class="pipe-title">Export &amp; Index</div>
-        <div class="pipe-desc">Trained student encodes all documents into 384-dim vectors. FAISS HNSW index is built. Model + index are packaged for Docker deployment on Cloud Run.</div>
-        <div class="pipe-spec">
-          Training: 8.5 hours on GCP CPU (~$4)<br>
-          Index: HNSW M=32 &middot; Docker multi-stage build &middot; Cloud Run deploy
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Stack -->
+  <!-- ═══════════════════════════════════════
+       STACK + LINK
+       ═══════════════════════════════════════ -->
   <div class="sec fade">Stack</div>
   <div class="stack fade">
     <span class="stack-tag">PyTorch</span>
@@ -328,7 +373,6 @@
     <span class="stack-tag">MyPy</span>
   </div>
 
-  <!-- GitHub Link -->
   <a href="https://github.com/Axionis47/semantic-search-kd" target="_blank" class="proj-link fade">View on GitHub &rarr;</a>
 
 </main>
@@ -352,7 +396,6 @@ function toggleDetail(id){
   document.querySelectorAll('.flow-node').forEach(n => n.classList.remove('active'));
   if(!wasOpen){
     el.classList.add('open');
-    // find which node index was clicked
     const details = [...document.querySelectorAll('.flow-detail')];
     const idx = details.indexOf(el);
     const nodes = document.querySelectorAll('.flow-node');
