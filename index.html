@@ -69,6 +69,23 @@
         .cmd-arrow{font-family:var(--mono);font-size:.7rem;color:var(--t3);transition:transform .3s,color .3s;position:absolute;bottom:28px;right:24px}
         .cmd:hover .cmd-arrow{transform:translateX(3px);color:var(--accent)}
 
+        /* ─── Projects ─── */
+        .projects{padding:40px 36px 80px}
+        .proj-wrap{max-width:1100px;margin:0 auto}
+        .proj-label{font-family:var(--mono);font-size:.63rem;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:36px}
+        .proj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+        .proj{position:relative;transition:all .3s;text-decoration:none;display:block;color:inherit;overflow:hidden}
+        .proj:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+        .proj-body{padding:28px 26px;display:flex;flex-direction:column;gap:10px;min-height:200px}
+        .proj-lang{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;letter-spacing:.04em;text-transform:uppercase}
+        .proj-name{font-family:var(--mono);font-size:.88rem;font-weight:500;line-height:1.4;color:var(--t1)}
+        .proj-desc{font-family:var(--serif);font-size:.82rem;font-weight:300;color:var(--t2);line-height:1.75;flex:1}
+        .proj-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:10px}
+        .proj-tag{font-family:var(--mono);font-size:.55rem;color:var(--t3);padding:3px 8px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+        .proj-arrow{font-family:var(--mono);font-size:.7rem;color:var(--t3);transition:transform .3s,color .3s;position:absolute;bottom:24px;right:22px}
+        .proj:hover .proj-arrow{transform:translateX(3px);color:var(--accent)}
+
+
         .quote{text-align:center;padding:64px 36px;max-width:680px;margin:0 auto;position:relative}
         .quote::before,.quote::after{content:'';display:block;width:40px;height:1px;background:var(--t3);opacity:.15;margin:0 auto 0}
         .quote::before{margin-bottom:48px}
@@ -100,6 +117,8 @@
             .commandments{padding:0 20px 72px}
             .cmd-list{grid-template-columns:repeat(2,1fr)}
             .cmd-hint{display:none}
+            .proj-grid{grid-template-columns:1fr}
+            .projects{padding:0 20px 60px}
             .ft{flex-direction:column;gap:10px;text-align:center}
             footer{padding:28px 20px}
         }
@@ -111,7 +130,10 @@
     <div class="nl">sai.</div>
     <button class="nh" onclick="document.querySelector('.nn').classList.toggle('open')" aria-label="Menu">&#9776;</button>
     <ul class="nn">
-        <li><a href="/" class="on">Manifesto</a></li>
+        <li><a href="#manifesto" class="on">Manifesto</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="experience.html">Experience</a></li>
+        <li><a href="education.html">Education</a></li>
         <li><a href="https://github.com/Axionis47" target="_blank">GitHub</a></li>
         <li><a href="#" target="_blank">LinkedIn</a></li>
         <li><a href="mailto:">Contact</a></li>
@@ -146,7 +168,7 @@
     </div>
 </section>
 
-<section class="commandments">
+<section id="manifesto" class="commandments">
     <div class="cmd-wrap">
         <div class="cmd-label fade">First Principles for Agentic AI</div>
         <div class="cmd-list">
@@ -220,6 +242,128 @@
                     <span class="cmd-title">If You Can't Eval It, You Don't Understand It</span>
                     <span class="cmd-hint">Eval-Driven Design</span>
                     <span class="cmd-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+<section id="projects" class="projects">
+    <div class="proj-wrap">
+        <div class="proj-label fade">Projects</div>
+        <div class="proj-grid">
+
+            <a href="https://github.com/Axionis47/ai-transformation-agent" target="_blank" class="proj neu fade">
+                <div class="proj-body">
+                    <span class="proj-lang">Python</span>
+                    <span class="proj-name">AI Transformation Agent</span>
+                    <span class="proj-desc">Multi-agent pipeline that takes a company URL and produces a consulting-grade AI maturity diagnostic in 90 seconds. Scraper, RAG, analysis, and report generation with eval-gated CI.</span>
+                    <div class="proj-tags">
+                        <span class="proj-tag">Multi-Agent</span>
+                        <span class="proj-tag">RAG</span>
+                        <span class="proj-tag">FastAPI</span>
+                    </div>
+                    <span class="proj-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="https://github.com/Axionis47/causal-inference-agent" target="_blank" class="proj neu fade">
+                <div class="proj-body">
+                    <span class="proj-lang">Python</span>
+                    <span class="proj-name">Causal Inference Agent</span>
+                    <span class="proj-desc">LLM-powered agentic platform for end-to-end causal inference. Automates study design, method selection, and interpretation with structured reasoning.</span>
+                    <div class="proj-tags">
+                        <span class="proj-tag">Causal ML</span>
+                        <span class="proj-tag">LLM Agents</span>
+                        <span class="proj-tag">Statistics</span>
+                    </div>
+                    <span class="proj-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="https://github.com/Axionis47/GAT-Recommendation" target="_blank" class="proj neu fade">
+                <div class="proj-body">
+                    <span class="proj-lang">Python &middot; PyTorch</span>
+                    <span class="proj-name">GAT Recommendation Engine</span>
+                    <span class="proj-desc">Multi-modal Graph Attention Network for e-commerce recommendations. Trained on 1.69M interactions across 498K items, deployed on GCP Vertex AI.</span>
+                    <div class="proj-tags">
+                        <span class="proj-tag">GNN</span>
+                        <span class="proj-tag">Vertex AI</span>
+                        <span class="proj-tag">RecSys</span>
+                    </div>
+                    <span class="proj-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="https://github.com/Axionis47/semantic-search-kd" target="_blank" class="proj neu fade">
+                <div class="proj-body">
+                    <span class="proj-lang">Python</span>
+                    <span class="proj-name">Semantic Search &middot; Knowledge Distillation</span>
+                    <span class="proj-desc">Production-grade help desk triage via teacher-student distillation. Calibrated ONNX export, Vertex AI training, FastAPI serving with Prometheus monitoring.</span>
+                    <div class="proj-tags">
+                        <span class="proj-tag">KD</span>
+                        <span class="proj-tag">ONNX</span>
+                        <span class="proj-tag">MLOps</span>
+                    </div>
+                    <span class="proj-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="https://github.com/Axionis47/AgentProbe" target="_blank" class="proj neu fade">
+                <div class="proj-body">
+                    <span class="proj-lang">Python</span>
+                    <span class="proj-name">AgentProbe</span>
+                    <span class="proj-desc">Agentic data science platform with AI-driven analysis spanning stats, ML, causal inference, time series, and automated reporting.</span>
+                    <div class="proj-tags">
+                        <span class="proj-tag">Agents</span>
+                        <span class="proj-tag">Data Science</span>
+                        <span class="proj-tag">AutoML</span>
+                    </div>
+                    <span class="proj-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="#" class="proj neu fade">
+                <div class="proj-body">
+                    <span class="proj-lang">Python &middot; PyTorch</span>
+                    <span class="proj-name">LaneGuard &middot; ADAS Conformal</span>
+                    <span class="proj-desc">Binary drivable-area segmentation for ADAS using SegFormer-B0 fine-tuned with LoRA on BDD100K. Includes Bird's Eye View projection via Inverse Perspective Mapping.</span>
+                    <div class="proj-tags">
+                        <span class="proj-tag">SegFormer</span>
+                        <span class="proj-tag">LoRA</span>
+                        <span class="proj-tag">ADAS</span>
+                        <span class="proj-tag">BEV</span>
+                    </div>
+                    <span class="proj-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="https://github.com/Axionis47/video-pii-redaction" target="_blank" class="proj neu fade">
+                <div class="proj-body">
+                    <span class="proj-lang">Python</span>
+                    <span class="proj-name">Video PII Redaction</span>
+                    <span class="proj-desc">Video face anonymization pipeline using diffusion models. Preserves temporal coherence while redacting identifiable faces across frames.</span>
+                    <div class="proj-tags">
+                        <span class="proj-tag">Diffusion</span>
+                        <span class="proj-tag">Privacy</span>
+                        <span class="proj-tag">CV</span>
+                    </div>
+                    <span class="proj-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="https://github.com/Axionis47/ml-algorithms-intuition" target="_blank" class="proj neu fade">
+                <div class="proj-body">
+                    <span class="proj-lang">Python &middot; NumPy</span>
+                    <span class="proj-name">ML Algorithms from Scratch</span>
+                    <span class="proj-desc">45+ machine learning algorithms implemented from scratch with NumPy. Intuition-first approach with visual walkthroughs and ablation experiments.</span>
+                    <div class="proj-tags">
+                        <span class="proj-tag">From Scratch</span>
+                        <span class="proj-tag">Education</span>
+                        <span class="proj-tag">ML</span>
+                    </div>
+                    <span class="proj-arrow">&rsaquo;</span>
                 </div>
             </a>
 
@@ -586,6 +730,13 @@ const obs = new IntersectionObserver(es => {
     });
 }, {threshold: .12});
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+document.querySelectorAll('.nn a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(){
+        document.querySelectorAll('.nn a').forEach(l => l.classList.remove('on'));
+        this.classList.add('on');
+    });
+});
 </script>
 </body>
 </html>
