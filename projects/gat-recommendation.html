@@ -315,9 +315,77 @@
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 3: HOW GRAPH NEURAL NETWORKS WORK
+       CH 6: SHAPE OF THE GRAPH
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 6. How a graph neural network learns</div>
+  <div class="sec fade">Chapter 6. What does this graph actually look like?</div>
+  <div class="prose fade">
+    <p>
+      Numbers alone do not tell the story. 82,173 nodes and 737,716 edges. But what does that mean in practice? What is the shape of this graph, and what does that shape tell you about how to model it?
+    </p>
+    <p>
+      <strong>Density.</strong> Each item is connected to about 18 other items on average. That is sparse. In a fully connected graph of 82K items, each node would have 82,172 edges. We have 18. This means most items are not directly related to most other items. The graph has clear structure, not noise.
+    </p>
+    <p>
+      <strong>Edge weight distribution.</strong> The median edge weight is 1. Most pairs of items co-occur in only a single session. The mean is 2.4. But the maximum is 1,424. This is a power law: a small number of item pairs are very strongly related (viewed together by thousands of users), while the vast majority are weakly related (co-occurred once or twice). The model needs to learn that a co-occurrence of 1,424 is a fundamentally different signal than a co-occurrence of 1.
+    </p>
+    <p>
+      <strong>Session structure.</strong> The average session has 5.6 items, but only 3.7 unique items (people revisit items). The median session is 4 items long and lasts about 6 minutes. Some sessions are as long as 417 items. This tells you: sessions are short. The model must extract signal from very few items.
+    </p>
+    <p>
+      <strong>What this means for model depth.</strong> With an average degree of 18, a 2-layer GNN lets each item "see" about 18 + 18&times;18 = 342 other items. That covers a meaningful neighborhood without over-smoothing (a known problem where too many layers cause all embeddings to converge to the same values). Deeper is not better here. 2 layers is the sweet spot.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Graph and session statistics</div>
+    <div class="dia-row" style="gap:14px;flex-wrap:wrap">
+      <div class="dia-box" style="flex:1;min-width:130px">
+        <div class="dia-box-title">82,173</div>
+        <div class="dia-box-sub">items (nodes)</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:130px">
+        <div class="dia-box-title">737,716</div>
+        <div class="dia-box-sub">co-occurrence edges</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:130px">
+        <div class="dia-box-title">18</div>
+        <div class="dia-box-sub">avg connections per item</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:130px">
+        <div class="dia-box-title">1,424</div>
+        <div class="dia-box-sub">strongest edge weight</div>
+      </div>
+    </div>
+    <div class="dia-row" style="gap:14px;flex-wrap:wrap;margin-top:14px">
+      <div class="dia-box" style="flex:1;min-width:130px">
+        <div class="dia-box-title">172,066</div>
+        <div class="dia-box-sub">sessions</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:130px">
+        <div class="dia-box-title">5.6 items</div>
+        <div class="dia-box-sub">mean session length</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:130px">
+        <div class="dia-box-title">6 min</div>
+        <div class="dia-box-sub">median session duration</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:130px">
+        <div class="dia-box-title">3.7</div>
+        <div class="dia-box-sub">unique items per session</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      This is a sparse, power-law graph with short sessions. A model that works here must handle weak signals (edge weight 1), exploit strong signals (edge weight 1,424), and extract recommendations from as few as 3 unique items per session.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 7: HOW GRAPH NEURAL NETWORKS WORK
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 7. How a graph neural network learns</div>
   <div class="prose fade">
     <p>
       A graph neural network (GNN) gives every item a set of numbers (an embedding) that captures its meaning and its position in the graph. But unlike a simple lookup table, these numbers are not fixed. Each item <strong>updates its embedding by looking at its neighbors</strong>.
@@ -346,7 +414,7 @@
   <!-- ═══════════════════════════════════════
        CH 4: THREE APPROACHES
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 7. Three approaches, compared</div>
+  <div class="sec fade">Chapter 8. Three approaches, compared</div>
   <div class="prose fade">
     <p>
       <strong>GraphSAGE</strong> is the simplest approach. Each item takes the <em>average</em> of all its neighbors&rsquo; embeddings and combines it with its own. Simple, fast, but it treats all neighbors equally. A keyboard connected to a mouse (strong signal) gets the same weight as a keyboard connected to a random novelty item someone browsed once (weak signal).
@@ -380,7 +448,7 @@
   <!-- ═══════════════════════════════════════
        CH 5: POSITIONAL ENCODING
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 8. The position problem</div>
+  <div class="sec fade">Chapter 9. The position problem</div>
   <div class="prose fade">
     <p>
       There is a subtle problem with graph neural networks. Two items can have <strong>identical neighborhoods</strong> but be in completely different parts of the graph. Imagine two keyboards: one connected to gaming mice, RGB lighting, and mechanical switches. The other connected to office mice, ergonomic wrist rests, and standing desks. Both are "keyboards with 18 neighbors." Without positional information, a GNN would give them the same embedding.
@@ -417,7 +485,7 @@
   <!-- ═══════════════════════════════════════
        CH 6: THE FFN INSIGHT
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 9. The engineering insight that changed everything</div>
+  <div class="sec fade">Chapter 10. The engineering insight that changed everything</div>
   <div class="prose fade">
     <p>
       The standard Graph Transformer architecture includes feed-forward network (FFN) layers after each attention layer. These are dense layers that expand the embedding dimension by 4x and then compress it back. In language models, FFN layers store factual knowledge ("Paris is the capital of France"). They are essential.
@@ -466,7 +534,7 @@
   <!-- ═══════════════════════════════════════
        CH 7: THE DATA
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 10. The data</div>
+  <div class="sec fade">Chapter 11. The data</div>
   <div class="prose fade">
     <p>
       The model is trained on <strong>RetailRocket</strong>, a public e-commerce dataset with 2.76 million events (views, add-to-carts, purchases) over 4.5 months. Events are sessionized with a 30-minute inactivity gap. Sessions shorter than 3 items are dropped. This leaves 172,066 sessions across 82,173 unique items.
@@ -505,7 +573,7 @@
   <!-- ═══════════════════════════════════════
        CH 8: HOW TRAINING WORKS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 11. How training works</div>
+  <div class="sec fade">Chapter 12. How training works</div>
   <div class="prose fade">
     <p>
       The model learns by predicting what comes next in a session. Given items [A, B, C], predict D. The training signal is a <strong>listwise loss</strong>: score the correct next item higher than 5 randomly sampled negative items. This is cross-entropy ranking, the same loss used in learning-to-rank systems.
@@ -536,7 +604,7 @@
   <!-- ═══════════════════════════════════════
        CH 9: RESULTS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 12. Results</div>
+  <div class="sec fade">Chapter 13. Results</div>
   <div class="results fade">
     <div class="stat">
       <div class="stat-val">38.28%</div>
@@ -579,7 +647,7 @@
   <!-- ═══════════════════════════════════════
        CH 10: SERVING
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 13. How it serves in production</div>
+  <div class="sec fade">Chapter 14. How it serves in production</div>
   <div class="prose fade">
     <p>
       Once trained, the item embeddings are frozen. The model is exported to ONNX for fast inference. A FastAPI service accepts a list of item IDs (the current session), looks up their embeddings, averages them into a session vector, and finds the nearest items via cosine similarity. Click any component to see details.
