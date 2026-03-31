@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Every Tool is a Failure Mode — Sai Siddharth Yalamanchili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #101012;
+    --raised: #1a1a1d;
+    --inset: #0a0a0c;
+    --shd: rgba(2,2,4,0.75);
+    --shl: rgba(42,42,46,0.16);
+    --t1: #c8c8c8;
+    --t2: #707070;
+    --t3: #404044;
+    --accent: #d88c3a;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Source Serif 4', serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--t2);
+    font-family: var(--serif);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 1.5rem;
+  }
+
+  nav .logo {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--t1);
+    text-decoration: none;
+  }
+
+  nav .back {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--t3);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  nav .back:hover {
+    color: var(--accent);
+  }
+
+  main {
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    flex: 1;
+  }
+
+  .article-number {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .article-title {
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--t1);
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+
+  .article-subtitle {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--t3);
+    margin-bottom: 2rem;
+  }
+
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+    margin-bottom: 2.5rem;
+  }
+
+  .article-body p {
+    font-family: var(--serif);
+    font-size: 1rem;
+    color: var(--t2);
+    line-height: 1.9;
+    margin-bottom: 1.5rem;
+  }
+
+  .article-body strong {
+    color: var(--t1);
+    font-weight: 500;
+  }
+
+  .article-body .closing {
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    color: var(--accent);
+    font-style: italic;
+    line-height: 1.7;
+    margin-top: 2rem;
+  }
+
+  .article-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem 3rem;
+    gap: 2rem;
+  }
+
+  .article-nav a {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--t3);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .article-nav a:hover {
+    color: var(--accent);
+  }
+
+  .article-nav .next {
+    margin-left: auto;
+  }
+
+  .article-nav .prev {
+    margin-right: auto;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--t3);
+    border-top: 1px solid var(--shl);
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">sai.</a>
+  <a href="/" class="back">← Back</a>
+</nav>
+
+<main>
+  <div class="article-number">03</div>
+  <h1 class="article-title">Every Tool is a Failure Mode</h1>
+  <div class="article-subtitle">Action-Surface Theory</div>
+  <div class="divider"></div>
+
+  <div class="article-body">
+    <p><strong>Every tool you give an agent expands its action surface.</strong> Every action surface expansion is a new class of failure you now have to detect, handle, and recover from.</p>
+
+    <p>Give an LLM thirty tools with overlapping functions and watch it confuse them. The fix isn't better prompting. The fix is narrowing the action space before the model ever sees it. Classify the problem type first, then expose only the relevant tools. If the user asks about code, don't show email tools. If the task is retrieval, don't offer write access.</p>
+
+    <p>This is action-surface minimization. Each added tool or modality or degree of autonomy increases the set of things the agent could misdo. For example, giving an LLM dozens of tools with overlapping functions is likely to confuse it. <strong>Use routing or stage-gating to classify the problem type first, then expose only relevant tools.</strong></p>
+
+    <p>Tools aren't just capabilities. They're constraints. A well-designed tool interface is a contract that says "this is the only way you can touch the world." Each tool should have a precisely specified I/O — API spec, schema, typed parameters. A mis-formatted query causes the tool to fail fast, not the LLM to hallucinate.</p>
+
+    <p><strong>MCP (Model Context Protocol) makes those contracts explicit and enforceable across agents.</strong> It's the protocol layer that turns informal tool descriptions into real interfaces with real boundaries. Tool design IS agent design.</p>
+
+    <p>The pattern: route first, expose second. First detect the problem class, then provide only the tools relevant to that class. This narrowing step is often more important than the tools themselves.</p>
+
+    <p class="closing"><em>Simpler action sets mean more predictable behavior. Always.</em></p>
+  </div>
+</main>
+
+<div class="article-nav">
+  <a href="context-budget.html" class="prev">← Context is a Budget</a>
+  <a href="recoverability.html" class="next">Design for Recovery, Not Perfection →</a>
+</div>
+
+<footer>© 2026 Sai Siddharth Yalamanchili</footer>
+
+</body>
+</html>

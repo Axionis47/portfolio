@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Memory is a Policy Layer — Sai Siddharth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
+--shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);
+--t1:#c8c8c8;--t2:#707070;--t3:#404044;
+--accent:#d88c3a;
+--mono:'JetBrains Mono',monospace;
+--serif:'Source Serif 4',serif;
+--sans:'DM Sans',sans-serif;
+}
+body{background:var(--bg);color:var(--t2);font-family:var(--serif);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--t2);text-decoration:none;transition:color .2s}
+a:hover{color:var(--t1)}
+nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;max-width:960px;width:100%;margin:0 auto}
+nav .logo{font-family:var(--mono);font-weight:600;font-size:.95rem;color:var(--t1);letter-spacing:-.02em}
+nav .back{font-family:var(--mono);font-size:.75rem;color:var(--t3);letter-spacing:.02em}
+nav .back:hover{color:var(--accent)}
+.article{max-width:680px;width:100%;margin:0 auto;padding:3rem 2rem 4rem}
+.article-number{font-family:var(--mono);font-size:.75rem;font-weight:500;color:var(--accent);letter-spacing:.06em;margin-bottom:1rem}
+.article-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.4;margin-bottom:.4rem}
+.article-subtitle{font-family:var(--mono);font-size:.75rem;color:var(--t3);letter-spacing:.04em;margin-bottom:1.5rem}
+.divider{width:40px;height:2px;background:var(--accent);margin-bottom:2.5rem}
+.article-body p{font-family:var(--serif);font-size:1rem;color:var(--t2);line-height:1.9;margin-bottom:1.4rem}
+.article-body strong{color:var(--t1);font-weight:400}
+.article-body em{color:var(--accent);font-family:var(--mono);font-style:normal;font-size:.9rem}
+.article-nav{display:flex;justify-content:space-between;align-items:flex-start;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--shl);gap:1rem}
+.article-nav a{font-family:var(--mono);font-size:.75rem;color:var(--t3);line-height:1.6;transition:color .2s}
+.article-nav a:hover{color:var(--accent)}
+.article-nav .next{text-align:right;margin-left:auto}
+footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--t3);letter-spacing:.04em}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">sai.</a>
+  <a href="/" class="back">← Back</a>
+</nav>
+
+<article class="article">
+  <div class="article-number">06</div>
+  <h1 class="article-title">Memory is a Policy Layer</h1>
+  <p class="article-subtitle">Governance, Not Storage</p>
+  <div class="divider"></div>
+
+  <div class="article-body">
+    <p>Most people think of agent memory as a retrieval problem. Embed, store, fetch. That's the easy part. <strong>The hard part is governance.</strong></p>
+
+    <p>What gets remembered? What gets expired? What gets withheld? When multiple agents share a retrieval layer, who has access to what? <strong>A planner that sees raw customer data it wasn't designed for is a liability, not a feature.</strong> Memory without access boundaries is a context pollution vector.</p>
+
+    <p><strong>Freshness is the one everyone ignores.</strong> A fact retrieved from memory is a claim that something was true at write time. It may have been renamed, removed, or never merged. If your system treats stale memory the same as current observation, you've built a hallucination machine with extra steps.</p>
+
+    <p>Expiry rules, staleness scoring, source-of-truth hierarchies — these are <strong>policy decisions, not implementation details</strong>. Memory should have the same rigor as access control in a traditional system: who can read what, under what conditions, with what confidence level.</p>
+
+    <p>Memory across agents sharing a retrieval layer needs <strong>explicit access boundaries</strong>. Agent A's working memory shouldn't leak into Agent B's context unless there's a deliberate, validated handoff. Every shared memory is a potential vector for cross-contamination.</p>
+
+    <p>The temporal dimension matters too. For video, multi-turn, or long-running processes, <strong>forgetting context</strong> — which frame had key info, which conversation turn established a constraint — is a real failure mode. Use sliding windows or explicit memory management, not unbounded accumulation.</p>
+
+    <p>The practical framework: treat every memory write as <strong>a claim with a timestamp and a trust level</strong>. Treat every memory read as a hypothesis that needs verification against current state. Before acting on remembered information, check that it still holds.</p>
+
+    <p><em>Bad memory is worse than no memory.</em></p>
+  </div>
+
+  <div class="article-nav">
+    <a href="delegation.html" class="prev">← Delegation is a Cost Function</a>
+    <a href="plumbing.html" class="next">Plumbing Kills →</a>
+  </div>
+</article>
+
+<footer>© 2026 Sai Siddharth Yalamanchili</footer>
+
+</body>
+</html>

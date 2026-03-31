@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>If You Can't Eval It, You Don't Understand It — Sai Siddharth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
+--shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);
+--t1:#c8c8c8;--t2:#707070;--t3:#404044;
+--accent:#d88c3a;
+--mono:'JetBrains Mono',monospace;
+--serif:'Source Serif 4',serif;
+--sans:'DM Sans',sans-serif;
+}
+body{background:var(--bg);color:var(--t2);font-family:var(--serif);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--t2);text-decoration:none;transition:color .2s}
+a:hover{color:var(--t1)}
+nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;max-width:960px;width:100%;margin:0 auto}
+nav .logo{font-family:var(--mono);font-weight:600;font-size:.95rem;color:var(--t1);letter-spacing:-.02em}
+nav .back{font-family:var(--mono);font-size:.75rem;color:var(--t3);letter-spacing:.02em}
+nav .back:hover{color:var(--accent)}
+.article{max-width:680px;width:100%;margin:0 auto;padding:3rem 2rem 4rem}
+.article-number{font-family:var(--mono);font-size:.75rem;font-weight:500;color:var(--accent);letter-spacing:.06em;margin-bottom:1rem}
+.article-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.4;margin-bottom:.4rem}
+.article-subtitle{font-family:var(--mono);font-size:.75rem;color:var(--t3);letter-spacing:.04em;margin-bottom:1.5rem}
+.divider{width:40px;height:2px;background:var(--accent);margin-bottom:2.5rem}
+.article-body p{font-family:var(--serif);font-size:1rem;color:var(--t2);line-height:1.9;margin-bottom:1.4rem}
+.article-body strong{color:var(--t1);font-weight:400}
+.article-body em{color:var(--accent);font-family:var(--mono);font-style:normal;font-size:.9rem}
+.article-nav{display:flex;justify-content:space-between;align-items:flex-start;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--shl);gap:1rem}
+.article-nav a{font-family:var(--mono);font-size:.75rem;color:var(--t3);line-height:1.6;transition:color .2s}
+.article-nav a:hover{color:var(--accent)}
+.article-nav .next{text-align:right;margin-left:auto}
+footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--t3);letter-spacing:.04em}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">sai.</a>
+  <a href="/" class="back">← Back</a>
+</nav>
+
+<article class="article">
+  <div class="article-number">08</div>
+  <h1 class="article-title">If You Can't Eval It, You Don't Understand It</h1>
+  <p class="article-subtitle">Eval-Driven Design</p>
+  <div class="divider"></div>
+
+  <div class="article-body">
+    <p>Feynman said "What I cannot create, I do not understand." For agentic systems: <strong>what you cannot test, you do not control.</strong></p>
+
+    <p>Design is incomplete until you can evaluate it. Not "we'll add tests later." <strong>From Day 1:</strong> define success criteria, build evaluation suites, and use a mix of deterministic checks and model-based grading appropriate to each component.</p>
+
+    <p><strong>Deterministic graders</strong> — exact match, regex, type checks, unit tests, API response validation — are fast and objective. If an agent writes code, run it through its test suite. If a tool call returns data, validate the schema. These catch the obvious failures.</p>
+
+    <p><strong>Model-based graders</strong> — rubric scoring, pairwise comparison, semantic similarity — handle the fuzzy stuff. Is this summary faithful? Is this plan coherent? Calibrate these against human judgments so you know what your automated scores actually mean.</p>
+
+    <p>But here's what most teams miss: <strong>measure the trajectory, not just the outcome.</strong> Did the agent pick the right tool? Did it retrieve the right evidence? Did it skip steps? A correct final answer produced by a broken reasoning chain is a time bomb. It works until it doesn't, and when it breaks, you have no idea why.</p>
+
+    <p><strong>Trajectory metrics</strong> — precision of tool usage, action sequence matching, intermediate state validation — tell you how the answer was reached. This is crucial for regression testing. When you change a prompt or swap a model, you need to know not just "did the final answer change?" but "did the reasoning path change?"</p>
+
+    <p>Keep two test suites. <strong>Capability tests</strong> push the agent's limits — new scenarios, hard cases. They start with low pass rates and measure improvement. <strong>Regression tests</strong> guard what already works — they should have near-100% pass rates and catch breakage immediately. Convert passing capability tests into regression tests as soon as possible.</p>
+
+    <p>In production: <strong>continuously monitor.</strong> Success rate drops, spikes in retries, unusual tool error rates, climbing latency — these are signals, not noise. Don't release and pray. Run your offline eval suite against production samples regularly. Catch drift before users do.</p>
+
+    <p>No single score suffices. Combine deterministic checks, rubric scores, and human review. <strong>Build executable specifications for your tasks:</strong> if Task X succeeds when conditions A, B, C are met, write those conditions in code.</p>
+
+    <p><em>Transform evaluation from guesswork into engineering.</em></p>
+  </div>
+
+  <div class="article-nav">
+    <a href="plumbing.html" class="prev">← Plumbing Kills</a>
+    <a href="/" class="next">← Back</a>
+  </div>
+</article>
+
+<footer>© 2026 Sai Siddharth Yalamanchili</footer>
+
+</body>
+</html>

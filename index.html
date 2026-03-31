@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sai Siddharth Yalamanchili</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --bg:#101012;--bg2:#151517;--raised:#1a1a1d;--inset:#0a0a0c;
+            --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
+            --t1:#c8c8c8;--t2:#707070;--t3:#404044;
+            --accent:#d88c3a;--as:rgba(216,140,58,0.08);
+            --r:14px;
+            --mono:'JetBrains Mono',monospace;
+            --serif:'Source Serif 4',serif;
+            --sans:'DM Sans',sans-serif;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+        body{font-family:var(--sans);background:var(--bg);color:var(--t1);line-height:1.7;overflow-x:hidden}
+        ::selection{background:var(--as);color:var(--accent)}
+        a{color:var(--accent);text-decoration:none;transition:color .2s}
+        a:hover{color:#eaa050}
+
+        .neu{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl)}
+
+        nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 36px;display:flex;justify-content:space-between;align-items:center;background:rgba(16,16,18,0.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.018)}
+        .nl{font-family:var(--mono);font-size:.84rem;font-weight:500;color:var(--t2)}
+        .nn{display:flex;gap:3px;list-style:none}
+        .nn a{display:block;padding:6px 13px;font-family:var(--mono);font-size:.7rem;color:var(--t3);border-radius:50px;transition:all .2s}
+        .nn a:hover{color:var(--t2);background:rgba(255,255,255,0.025)}
+        .nn a.on{color:var(--accent);background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl)}
+        .nh{display:none;background:none;border:none;color:var(--t2);font-size:1.2rem;cursor:pointer;padding:8px}
+
+        .hero{position:relative;min-height:auto;display:flex;align-items:center;padding:100px 36px 40px}
+        .hero canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
+        .hero-f{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(transparent,var(--bg));z-index:1}
+
+        .hc{position:relative;z-index:2;max-width:820px;margin:0 auto;width:100%;display:flex;align-items:flex-start;gap:52px;background:radial-gradient(ellipse 110% 120% at 40% 50%, rgba(16,16,18,0.85) 0%, rgba(16,16,18,0.6) 60%, transparent 100%);padding:40px 36px;border-radius:20px}
+
+        .photo{flex-shrink:0;width:170px;height:170px;border-radius:50%;background:var(--inset);box-shadow:inset 3px 3px 9px var(--shd),inset -2px -2px 6px var(--shl);display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:0;animation:up .5s ease .1s forwards}
+        .photo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+        .photo .ph{font-family:var(--mono);font-size:2.6rem;font-weight:300;color:var(--t3);user-select:none}
+
+        .intro{flex:1;padding-top:6px}
+        .intro h1{font-family:var(--mono);font-size:clamp(1.25rem,2.8vw,1.7rem);font-weight:600;line-height:1.3;letter-spacing:-.02em;margin-bottom:5px;opacity:0;animation:up .5s ease .18s forwards}
+        .role{font-family:var(--mono);font-size:.76rem;color:var(--t3);letter-spacing:.015em;margin-bottom:22px;opacity:0;animation:up .5s ease .26s forwards}
+        .bio{font-family:var(--serif);font-size:1rem;font-weight:300;color:var(--t2);line-height:1.9;max-width:460px;margin-bottom:28px;opacity:0;animation:up .5s ease .34s forwards}
+        .lk{display:flex;gap:16px;flex-wrap:wrap;opacity:0;animation:up .5s ease .42s forwards}
+        .lk a{font-family:var(--mono);font-size:.7rem;color:var(--t3);transition:color .2s}
+        .lk a:hover{color:var(--accent)}
+        .lk .s{color:var(--t3);opacity:.25;user-select:none}
+
+        /* ─── Commandments ─── */
+        .commandments{padding:40px 36px 108px}
+        .cmd-wrap{max-width:1100px;margin:0 auto}
+        .cmd-label{font-family:var(--mono);font-size:.63rem;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:36px}
+        .cmd-list{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+
+        .cmd{position:relative;transition:all .3s;text-decoration:none;display:block;color:inherit}
+        .cmd:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+        .cmd-head{padding:32px 28px;display:flex;flex-direction:column;gap:10px;min-height:190px}
+        .cmd-num{font-family:var(--mono);font-size:.66rem;color:var(--accent);opacity:.6}
+        .cmd-title{font-family:var(--mono);font-size:.92rem;font-weight:500;line-height:1.45}
+        .cmd-hint{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.01em;margin-top:auto}
+        .cmd-arrow{font-family:var(--mono);font-size:.7rem;color:var(--t3);transition:transform .3s,color .3s;position:absolute;bottom:28px;right:24px}
+        .cmd:hover .cmd-arrow{transform:translateX(3px);color:var(--accent)}
+
+        .quote{text-align:center;padding:64px 36px;max-width:680px;margin:0 auto;position:relative}
+        .quote::before,.quote::after{content:'';display:block;width:40px;height:1px;background:var(--t3);opacity:.15;margin:0 auto 0}
+        .quote::before{margin-bottom:48px}
+        .quote::after{margin-top:48px}
+        .quote p{font-family:var(--serif);font-size:1.1rem;font-weight:300;font-style:italic;color:var(--t2);line-height:2;margin-bottom:16px}
+        .quote span{font-family:var(--mono);font-size:.6rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase}
+
+        footer{padding:36px;border-top:1px solid rgba(255,255,255,0.018)}
+        .ft{max-width:820px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+        .ft-c{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
+        .ft-l{display:flex;gap:18px}
+        .ft-l a{font-family:var(--mono);font-size:.68rem;color:var(--t3);transition:color .2s}
+        .ft-l a:hover{color:var(--accent)}
+
+        @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+        .fade.v{opacity:1;transform:translateY(0)}
+
+        @media(max-width:768px){
+            nav{padding:14px 20px}
+            .nn{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;padding:14px 20px;background:rgba(16,16,18,0.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.02)}
+            .nn.open{display:flex}.nh{display:block}
+            .hero{padding:80px 20px 30px}
+            .hc{flex-direction:column;align-items:center;gap:24px;text-align:center}
+            .photo{width:130px;height:130px}
+            .intro{padding-top:0}
+            .bio{margin-left:auto;margin-right:auto}
+            .lk{justify-content:center}
+            .commandments{padding:0 20px 72px}
+            .cmd-list{grid-template-columns:repeat(2,1fr)}
+            .cmd-hint{display:none}
+            .ft{flex-direction:column;gap:10px;text-align:center}
+            footer{padding:28px 20px}
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nl">sai.</div>
+    <button class="nh" onclick="document.querySelector('.nn').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+    <ul class="nn">
+        <li><a href="/" class="on">Manifesto</a></li>
+        <li><a href="https://github.com/Axionis47" target="_blank">GitHub</a></li>
+        <li><a href="#" target="_blank">LinkedIn</a></li>
+        <li><a href="mailto:">Contact</a></li>
+    </ul>
+</nav>
+
+<section class="hero">
+    <canvas id="cosmos"></canvas>
+    <div class="hero-f"></div>
+    <div class="hc">
+        <div class="photo">
+            <span class="ph">S</span>
+        </div>
+        <div class="intro">
+            <h1>Sai Siddharth Yalamanchili</h1>
+            <div class="role">Applied AI Engineer</div>
+            <p class="bio">
+                Agentic AI is not a single omnipotent model. It is a tightly
+                constrained system of decisions under uncertainty. Everything
+                I build starts from that premise.
+            </p>
+            <div class="lk">
+                <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
+                <span class="s">&middot;</span>
+                <a href="#" target="_blank">LinkedIn</a>
+                <span class="s">&middot;</span>
+                <a href="/assets/resume.pdf" target="_blank">Resume</a>
+                <span class="s">&middot;</span>
+                <a href="mailto:">Email</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="commandments">
+    <div class="cmd-wrap">
+        <div class="cmd-label fade">First Principles for Agentic AI</div>
+        <div class="cmd-list">
+
+            <a href="/articles/bounded-responsibility.html" class="cmd neu fade">
+                <div class="cmd-head">
+                    <span class="cmd-num">01</span>
+                    <span class="cmd-title">One Component, One Decision</span>
+                    <span class="cmd-hint">Bounded Responsibility</span>
+                    <span class="cmd-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="/articles/context-budget.html" class="cmd neu fade">
+                <div class="cmd-head">
+                    <span class="cmd-num">02</span>
+                    <span class="cmd-title">Context is a Budget</span>
+                    <span class="cmd-hint">Minimum Sufficient Context</span>
+                    <span class="cmd-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="/articles/action-surface.html" class="cmd neu fade">
+                <div class="cmd-head">
+                    <span class="cmd-num">03</span>
+                    <span class="cmd-title">Every Tool is a Failure Mode</span>
+                    <span class="cmd-hint">Action-Surface Theory</span>
+                    <span class="cmd-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="/articles/recoverability.html" class="cmd neu fade">
+                <div class="cmd-head">
+                    <span class="cmd-num">04</span>
+                    <span class="cmd-title">Design for Recovery, Not Perfection</span>
+                    <span class="cmd-hint">Recoverability</span>
+                    <span class="cmd-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="/articles/delegation.html" class="cmd neu fade">
+                <div class="cmd-head">
+                    <span class="cmd-num">05</span>
+                    <span class="cmd-title">Delegation is a Cost Function</span>
+                    <span class="cmd-hint">Autonomy Calibration</span>
+                    <span class="cmd-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="/articles/memory.html" class="cmd neu fade">
+                <div class="cmd-head">
+                    <span class="cmd-num">06</span>
+                    <span class="cmd-title">Memory is a Policy Layer</span>
+                    <span class="cmd-hint">Governance, Not Storage</span>
+                    <span class="cmd-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="/articles/plumbing.html" class="cmd neu fade">
+                <div class="cmd-head">
+                    <span class="cmd-num">07</span>
+                    <span class="cmd-title">Plumbing Kills</span>
+                    <span class="cmd-hint">Runtime Resilience</span>
+                    <span class="cmd-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+            <a href="/articles/eval.html" class="cmd neu fade">
+                <div class="cmd-head">
+                    <span class="cmd-num">08</span>
+                    <span class="cmd-title">If You Can't Eval It, You Don't Understand It</span>
+                    <span class="cmd-hint">Eval-Driven Design</span>
+                    <span class="cmd-arrow">&rsaquo;</span>
+                </div>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+<section class="quote fade">
+    <p>&ldquo;The first principle is that you must not fool yourself &mdash; and you are the easiest person to fool.&rdquo;</p>
+    <span>Richard Feynman</span>
+</section>
+
+<footer>
+    <div class="ft">
+        <div class="ft-c">&copy; 2026 Sai Siddharth Yalamanchili</div>
+        <div class="ft-l">
+            <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
+            <a href="#" target="_blank">LinkedIn</a>
+            <a href="mailto:">Contact</a>
+        </div>
+    </div>
+</footer>
+
+
+<script>
+(function(){
+    const canvas = document.getElementById('cosmos');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+
+    function resize(){
+        const dpr = Math.min(devicePixelRatio || 1, 2);
+        W = canvas.clientWidth; H = canvas.clientHeight;
+        canvas.width = W * dpr; canvas.height = H * dpr;
+        ctx.scale(dpr, dpr);
+    }
+    canvas.style.cssText = 'width:100%;height:100%';
+    window.addEventListener('resize', () => { resize(); init(); });
+    resize();
+
+    let bgStars = [];
+    function makeStars(){
+        bgStars = [];
+        const count = Math.floor((W * H) / 3000);
+        for(let i = 0; i < count; i++){
+            bgStars.push({
+                x: Math.random() * W, y: Math.random() * H,
+                r: Math.random() * 1.3 + 0.15,
+                bright: Math.random() * 0.35 + 0.08,
+                flicker: Math.random() * Math.PI * 2,
+                speed: 0.004 + Math.random() * 0.018
+            });
+        }
+    }
+
+    let bodies = [];
+    function makeBodies(){
+        bodies = [];
+        const mobile = W < 768;
+        const layout = mobile
+            ? ['blackhole','blue_giant','amber_star','red_dwarf','planet','planet','planet','planet']
+            : ['blackhole','blue_giant','amber_star','amber_star','red_dwarf','red_dwarf','planet','planet','planet','planet','planet','planet'];
+
+        for(let i = 0; i < layout.length; i++){
+            const t = layout[i];
+            const m = 100;
+            const b = {
+                type: t,
+                x: m + Math.random() * (W - m*2),
+                y: m + Math.random() * (H - m*2),
+                vx: (Math.random() - 0.5) * 0.07,
+                vy: (Math.random() - 0.5) * 0.07,
+                phase: Math.random() * Math.PI * 2,
+                novaPhase: 'idle', novaTick: 0,
+                novaTimer: -1, originalRadius: 0, originalMass: 0,
+                pulsarAngle: 0, pulsarSpeed: 0,
+                mass: 0, radius: 0
+            };
+
+            if(t === 'blackhole'){ b.mass = 900 + Math.random() * 400; b.radius = 6; }
+            else if(t === 'blue_giant'){ b.mass = 600 + Math.random() * 300; b.radius = 6 + Math.random() * 2; b.novaTimer = 500 + Math.floor(Math.random() * 800); }
+            else if(t === 'amber_star'){ b.mass = 400 + Math.random() * 200; b.radius = 4 + Math.random() * 2; b.novaTimer = 700 + Math.floor(Math.random() * 1200); }
+            else if(t === 'red_dwarf'){ b.mass = 150 + Math.random() * 100; b.radius = 2.5 + Math.random() * 1; b.novaTimer = -1; }
+            else { b.mass = 150 + Math.random() * 120; b.radius = 2.5 + Math.random() * 1.5; b.novaTimer = -1; }
+            b.originalRadius = b.radius; b.originalMass = b.mass;
+            bodies.push(b);
+        }
+    }
+
+    let shockwaves = [];
+    let nebulae = [];
+
+    let comets = [];
+    function spawnComet(){
+        const edge = Math.floor(Math.random() * 4);
+        let x, y, vx, vy;
+        const speed = 1.2 + Math.random() * 1.5;
+        if(edge === 0){ x = -10; y = Math.random() * H; vx = speed; vy = (Math.random()-0.5)*0.8; }
+        else if(edge === 1){ x = W+10; y = Math.random() * H; vx = -speed; vy = (Math.random()-0.5)*0.8; }
+        else if(edge === 2){ x = Math.random() * W; y = -10; vx = (Math.random()-0.5)*0.8; vy = speed; }
+        else { x = Math.random() * W; y = H+10; vx = (Math.random()-0.5)*0.8; vy = -speed; }
+        return { x, y, vx, vy, trail: [], size: 1.5 + Math.random() * 1.5, age: 0 };
+    }
+
+    let particles = [];
+    function makeParticles(){
+        particles = [];
+        const count = W < 768 ? 120 : 280;
+        for(let i = 0; i < count; i++) particles.push(spawnP());
+    }
+    function spawnP(){
+        const orb = Math.random() < 0.65 && bodies.length > 0;
+        if(orb){
+            const b = bodies[Math.floor(Math.random() * bodies.length)];
+            const dist = b.radius * 4 + Math.random() * 110;
+            const ang = Math.random() * Math.PI * 2;
+            const os = Math.sqrt(b.mass * 0.0003 / Math.max(dist,1)) * (Math.random()<0.5?1:-1);
+            return { x: b.x+Math.cos(ang)*dist, y: b.y+Math.sin(ang)*dist,
+                     vx: -Math.sin(ang)*os+(Math.random()-0.5)*0.1,
+                     vy: Math.cos(ang)*os+(Math.random()-0.5)*0.1,
+                     size: 0.3+Math.random()*1, trail: [], debris: false, debrisAge: 0 };
+        }
+        return { x: Math.random()*W, y: Math.random()*H,
+                 vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
+                 size: 0.2+Math.random()*0.8, trail: [], debris: false, debrisAge: 0 };
+    }
+    function spawnDebris(x, y, color){
+        const a = Math.random()*Math.PI*2, s = 1.5+Math.random()*3.5;
+        return { x, y, vx: Math.cos(a)*s, vy: Math.sin(a)*s,
+                 size: 0.4+Math.random()*1.5, trail: [], debris: true, debrisAge: 0, debrisColor: color };
+    }
+
+    function init(){
+        makeStars(); makeBodies(); makeParticles();
+        shockwaves = []; nebulae = [];
+        const nebulaCount = W < 768 ? 2 : 4;
+        for(let i = 0; i < nebulaCount; i++){
+            const colors = [{r:80,g:140,b:220},{r:216,g:140,b:58},{r:160,g:80,b:60},{r:100,g:120,b:180}];
+            const c = colors[i % colors.length];
+            nebulae.push({
+                x: 60 + Math.random() * (W - 120), y: 60 + Math.random() * (H - 120),
+                radius: 25 + Math.random() * 30, age: Math.floor(Math.random() * 300),
+                lifetime: 2500 + Math.floor(Math.random() * 1000),
+                maxAlpha: 0.03 + Math.random() * 0.02, r: c.r, g: c.g, b: c.b
+            });
+        }
+        comets = []; if(W >= 768) comets.push(spawnComet());
+    }
+    init();
+
+    let time = 0;
+    let cometTimer = 300 + Math.floor(Math.random() * 400);
+
+    function draw(){
+        time++;
+        ctx.fillStyle = 'rgba(16,16,18,0.35)';
+        ctx.fillRect(0, 0, W, H);
+
+        for(const s of bgStars){
+            s.flicker += s.speed;
+            const b = s.bright + Math.sin(s.flicker) * 0.07;
+            ctx.fillStyle = `rgba(200,196,188,${b})`;
+            ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill();
+        }
+
+        for(let i = nebulae.length-1; i >= 0; i--){
+            const n = nebulae[i]; n.age++; n.radius += 0.18;
+            const life = 1 - n.age / n.lifetime;
+            const alpha = Math.max(0, n.maxAlpha * life);
+            if(alpha <= 0){ nebulae.splice(i,1); continue; }
+            const R = n.radius, r = n.r, g = n.g, b = n.b;
+            const g1 = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, R * 1.2);
+            g1.addColorStop(0, `rgba(${r},${g},${b},${alpha * 0.2})`);
+            g1.addColorStop(0.3, `rgba(${r},${g},${b},${alpha * 0.1})`);
+            g1.addColorStop(0.6, `rgba(${r},${g},${b},${alpha * 0.03})`);
+            g1.addColorStop(1, `rgba(${r},${g},${b},0)`);
+            ctx.fillStyle = g1; ctx.beginPath(); ctx.arc(n.x, n.y, R * 1.2, 0, Math.PI*2); ctx.fill();
+        }
+
+        for(const b of bodies){
+            if(b.novaTimer < 0) continue;
+            const isBlue = b.type === 'blue_giant';
+            if(b.novaPhase === 'idle'){
+                b.novaTimer--;
+                if(b.novaTimer <= 0){ b.novaPhase = 'buildup'; b.novaTick = 0; }
+            } else if(b.novaPhase === 'buildup'){
+                b.novaTick++;
+                const dur = isBlue ? 80 : 120;
+                const p = b.novaTick / dur;
+                b.radius = b.originalRadius * (1 + p * (isBlue ? 3 : 2.5));
+                b.mass = b.originalMass * (1 + p * 0.5);
+                if(b.novaTick >= dur){
+                    b.novaPhase = 'explode'; b.novaTick = 0;
+                    const sw_r = isBlue ? 280 : 200;
+                    shockwaves.push({ x:b.x, y:b.y, radius:0, maxRadius: sw_r, alpha: isBlue?0.45:0.35, speed: isBlue?4:3 });
+                    if(isBlue) shockwaves.push({ x:b.x, y:b.y, radius:0, maxRadius: sw_r*0.6, alpha:0.25, speed:2.5 });
+                    const dc = W<768?20:45;
+                    const col = isBlue ? 'blue' : 'amber';
+                    for(let j=0;j<dc;j++) particles.push(spawnDebris(b.x, b.y, col));
+                    const blastR = isBlue ? 200 : 150, blastF = isBlue ? 5 : 4;
+                    for(const p of particles){
+                        const dx=p.x-b.x, dy=p.y-b.y, d=Math.hypot(dx,dy);
+                        if(d<blastR && d>0){ const f=(1-d/blastR)*blastF; p.vx+=(dx/d)*f; p.vy+=(dy/d)*f; }
+                    }
+                    nebulae.push({ x: b.x, y: b.y, radius: 20, age: 0, lifetime: 2200,
+                        maxAlpha: isBlue ? 0.07 : 0.05,
+                        r: isBlue ? 80 : 216, g: isBlue ? 140 : 140, b: isBlue ? 220 : 58 });
+                }
+            } else if(b.novaPhase === 'explode'){
+                b.novaTick++;
+                if(b.novaTick < 15) b.radius = b.originalRadius * ((isBlue?4.5:3.5) - b.novaTick * 0.2);
+                else { const sp = (b.novaTick-15)/65; b.radius = b.originalRadius * Math.max(0.25, (isBlue?4.5:3.5 - 15*0.2)*(1-sp)); b.mass = b.originalMass * (0.2 + 0.8*(1-sp)); }
+                if(b.novaTick >= 80){
+                    b.novaPhase = 'pulsar'; b.novaTick = 0;
+                    b.radius = b.originalRadius * 0.3; b.mass = b.originalMass * 0.25;
+                    b.pulsarAngle = Math.random() * Math.PI * 2; b.pulsarSpeed = 0.06 + Math.random() * 0.04;
+                }
+            } else if(b.novaPhase === 'pulsar'){
+                b.novaTick++; b.pulsarAngle += b.pulsarSpeed;
+                if(b.novaTick > 500){
+                    const regen = Math.min((b.novaTick - 500) / 400, 1);
+                    b.radius = b.originalRadius * (0.3 + regen * 0.7); b.mass = b.originalMass * (0.25 + regen * 0.75);
+                    if(regen >= 1){ b.novaPhase = 'idle'; b.novaTimer = (isBlue ? 500 : 700) + Math.floor(Math.random() * 1000); b.novaTick = 0; }
+                }
+            }
+        }
+
+        for(const b of bodies){
+            b.x += b.vx; b.y += b.vy;
+            if(b.x<60||b.x>W-60) b.vx *= -1;
+            if(b.y<60||b.y>H-60) b.vy *= -1;
+            b.x = Math.max(30, Math.min(W-30, b.x)); b.y = Math.max(30, Math.min(H-30, b.y));
+        }
+
+        for(let i=shockwaves.length-1; i>=0; i--){
+            const s = shockwaves[i]; s.radius += s.speed; s.alpha *= 0.974;
+            if(s.alpha < 0.004 || s.radius > s.maxRadius){ shockwaves.splice(i,1); continue; }
+            ctx.strokeStyle = `rgba(216,170,90,${s.alpha})`; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.arc(s.x, s.y, s.radius, 0, Math.PI*2); ctx.stroke();
+        }
+
+        for(const b of bodies){
+            if(b.type === 'blackhole'){
+                const gr = ctx.createRadialGradient(b.x,b.y,0, b.x,b.y,38);
+                gr.addColorStop(0,'rgba(0,0,0,0.92)'); gr.addColorStop(0.25,'rgba(5,5,8,0.5)');
+                gr.addColorStop(0.5,'rgba(216,140,58,0.025)'); gr.addColorStop(1,'rgba(216,140,58,0)');
+                ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(b.x,b.y,38,0,Math.PI*2); ctx.fill();
+                ctx.strokeStyle = 'rgba(216,140,58,0.055)'; ctx.lineWidth = 0.8;
+                for(let r=10;r<32;r+=5){ ctx.beginPath(); ctx.arc(b.x,b.y,r+Math.sin(time*0.02+r)*2,0,Math.PI*2); ctx.stroke(); }
+                ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(b.x,b.y,b.radius,0,Math.PI*2); ctx.fill();
+            } else if(b.type === 'blue_giant'){
+                const resting = b.novaPhase==='pulsar' && b.novaTick < 500;
+                const isPulsar = b.novaPhase==='pulsar';
+                const glowR = resting ? 12 : 50;
+                const glowA = resting ? 0.03 : 0.1;
+                const gr = ctx.createRadialGradient(b.x,b.y,0, b.x,b.y,glowR);
+                gr.addColorStop(0,`rgba(100,160,235,${glowA})`); gr.addColorStop(0.4,`rgba(60,110,200,${glowA*0.25})`);
+                gr.addColorStop(1,'rgba(60,110,200,0)');
+                ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(b.x,b.y,glowR,0,Math.PI*2); ctx.fill();
+                const pulse = 1 + Math.sin(time*0.035+b.phase)*0.12;
+                ctx.fillStyle = `rgba(140,185,255,${resting?0.18:0.55})`;
+                ctx.beginPath(); ctx.arc(b.x,b.y,b.radius*pulse,0,Math.PI*2); ctx.fill();
+                if(isPulsar){
+                    const beamLen = 60+Math.sin(time*0.05)*10, ba = 0.12+Math.sin(time*0.08)*0.04;
+                    ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.pulsarAngle);
+                    const bg1 = ctx.createLinearGradient(0,0,beamLen,0);
+                    bg1.addColorStop(0,`rgba(140,185,255,${ba})`); bg1.addColorStop(1,'rgba(140,185,255,0)');
+                    ctx.fillStyle = bg1; ctx.beginPath(); ctx.moveTo(0,-1.5); ctx.lineTo(beamLen,-0.3); ctx.lineTo(beamLen,0.3); ctx.lineTo(0,1.5); ctx.fill();
+                    const bg2 = ctx.createLinearGradient(0,0,-beamLen,0);
+                    bg2.addColorStop(0,`rgba(140,185,255,${ba})`); bg2.addColorStop(1,'rgba(140,185,255,0)');
+                    ctx.fillStyle = bg2; ctx.beginPath(); ctx.moveTo(0,-1.5); ctx.lineTo(-beamLen,-0.3); ctx.lineTo(-beamLen,0.3); ctx.lineTo(0,1.5); ctx.fill();
+                    ctx.restore();
+                }
+            } else if(b.type === 'amber_star'){
+                const resting = b.novaPhase==='pulsar' && b.novaTick < 500;
+                const glowR = resting ? 12 : 40, glowA = resting ? 0.03 : 0.11;
+                const gr = ctx.createRadialGradient(b.x,b.y,0, b.x,b.y,glowR);
+                gr.addColorStop(0,`rgba(216,140,58,${glowA})`); gr.addColorStop(0.4,`rgba(216,140,58,${glowA*0.25})`);
+                gr.addColorStop(1,'rgba(216,140,58,0)');
+                ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(b.x,b.y,glowR,0,Math.PI*2); ctx.fill();
+                const pulse = 1+Math.sin(time*0.03+b.phase)*0.14;
+                ctx.fillStyle = `rgba(216,150,70,${resting?0.18:0.5})`;
+                ctx.beginPath(); ctx.arc(b.x,b.y,b.radius*pulse,0,Math.PI*2); ctx.fill();
+            } else if(b.type === 'red_dwarf'){
+                const gr = ctx.createRadialGradient(b.x,b.y,0, b.x,b.y,22);
+                gr.addColorStop(0,'rgba(180,60,50,0.07)'); gr.addColorStop(1,'rgba(180,60,50,0)');
+                ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(b.x,b.y,22,0,Math.PI*2); ctx.fill();
+                const pulse = 1+Math.sin(time*0.02+b.phase)*0.08;
+                ctx.fillStyle = 'rgba(180,75,60,0.4)';
+                ctx.beginPath(); ctx.arc(b.x,b.y,b.radius*pulse,0,Math.PI*2); ctx.fill();
+            } else {
+                const gr = ctx.createRadialGradient(b.x,b.y,0, b.x,b.y,22);
+                gr.addColorStop(0,'rgba(150,150,165,0.05)'); gr.addColorStop(1,'rgba(150,150,165,0)');
+                ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(b.x,b.y,22,0,Math.PI*2); ctx.fill();
+                ctx.fillStyle = 'rgba(130,130,145,0.32)';
+                ctx.beginPath(); ctx.arc(b.x,b.y,b.radius,0,Math.PI*2); ctx.fill();
+            }
+        }
+
+        cometTimer--;
+        if(cometTimer <= 0){ comets.push(spawnComet()); cometTimer = 400 + Math.floor(Math.random() * 600); }
+        for(let i=comets.length-1; i>=0; i--){
+            const c = comets[i];
+            for(const b of bodies){
+                const dx=b.x-c.x, dy=b.y-c.y, distSq=dx*dx+dy*dy, dist=Math.sqrt(distSq);
+                const f = Math.min(b.mass*0.0002/Math.max(distSq,200), 0.05);
+                c.vx += (dx/dist)*f; c.vy += (dy/dist)*f;
+            }
+            c.x += c.vx; c.y += c.vy; c.age++;
+            c.trail.push({x:c.x, y:c.y}); if(c.trail.length > 12) c.trail.shift();
+            if(c.x<-60||c.x>W+60||c.y<-60||c.y>H+60||c.age>800){ comets.splice(i,1); continue; }
+            if(c.trail.length > 2){
+                for(let t=1; t<c.trail.length; t++){
+                    ctx.strokeStyle = `rgba(200,190,170,${(t/c.trail.length)*0.15})`;
+                    ctx.lineWidth = (t/c.trail.length)*c.size*0.4;
+                    ctx.beginPath(); ctx.moveTo(c.trail[t-1].x,c.trail[t-1].y); ctx.lineTo(c.trail[t].x,c.trail[t].y); ctx.stroke();
+                }
+            }
+            ctx.fillStyle = 'rgba(230,225,210,0.6)';
+            ctx.beginPath(); ctx.arc(c.x,c.y,c.size,0,Math.PI*2); ctx.fill();
+        }
+
+        for(let i=particles.length-1; i>=0; i--){
+            const p = particles[i];
+            if(p.debris){ p.debrisAge++; p.vx *= 0.993; p.vy *= 0.993; if(p.debrisAge > 220){ particles.splice(i,1); continue; } }
+            for(const b of bodies){
+                const dx=b.x-p.x, dy=b.y-p.y, distSq=dx*dx+dy*dy, dist=Math.sqrt(distSq);
+                if(b.type==='blackhole' && dist<8){ if(p.debris) particles.splice(i,1); else particles[i]=spawnP(); continue; }
+                const f = Math.min(b.mass*0.00025/Math.max(distSq,100), 0.08);
+                p.vx += (dx/dist)*f; p.vy += (dy/dist)*f;
+            }
+            const spd = Math.hypot(p.vx,p.vy), mx = p.debris ? 4 : 2;
+            if(spd>mx){ p.vx=(p.vx/spd)*mx; p.vy=(p.vy/spd)*mx; }
+            p.x += p.vx; p.y += p.vy;
+            if(time%2===0){ p.trail.push({x:p.x,y:p.y}); if(p.trail.length>(p.debris?6:4)) p.trail.shift(); }
+            if(p.x<-40||p.x>W+40||p.y<-40||p.y>H+40){ if(p.debris) particles.splice(i,1); else particles[i]=spawnP(); continue; }
+
+            let minD=1e9, nearT='none';
+            for(const b of bodies){ const d=Math.hypot(b.x-p.x,b.y-p.y); if(d<minD){minD=d;nearT=b.type;} }
+
+            const nearBH = nearT==='blackhole' && minD<50;
+            if(p.debris){
+                const da = Math.max(0,1-p.debrisAge/220);
+                if(p.debrisColor==='blue') ctx.fillStyle = `rgba(100,150,220,${da*0.3})`;
+                else ctx.fillStyle = `rgba(216,140,58,${da*0.3})`;
+            } else if(nearBH){
+                ctx.fillStyle = `rgba(216,140,58,${0.3+(1-minD/50)*0.3})`;
+            } else {
+                ctx.fillStyle = `rgba(145,145,155,${0.15})`;
+            }
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size*(nearBH?0.6+(1-minD/50)*0.5:1), 0, Math.PI*2);
+            ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+const obs = new IntersectionObserver(es => {
+    es.forEach((e, i) => {
+        if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 70); obs.unobserve(e.target); }
+    });
+}, {threshold: .12});
+document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
