@@ -182,15 +182,80 @@
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 2: THE IDEA - GRAPHS
+       CH 2: WHAT DOES THE DATA LOOK LIKE
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 2. Why graphs?</div>
+  <div class="sec fade">Chapter 2. What does the raw data actually look like?</div>
   <div class="prose fade">
     <p>
-      Here is the key insight. Even without user profiles, you have something valuable: <strong>patterns in browsing behavior</strong>. If thousands of people look at a keyboard and then look at a mouse, there is a relationship between "keyboard" and "mouse." Not because they are similar products, but because people who want one tend to want the other.
+      Before choosing any model, you need to look at the data. The RetailRocket dataset has 2.76 million events: a user viewed an item, added it to cart, or bought it. Each event is a row in a table with a timestamp, a user ID, an item ID, and an event type. That is it. No product descriptions. No categories. No images. Just "user 4829 viewed item 1172 at 3:42 PM."
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">The raw data</div>
+    <div class="example">
+      <div class="example-q">A flat event log. Each row is one action.</div>
+      <div class="example-why">timestamp: 2015-06-01 14:32 | user: 4829 | item: 1172 | event: view</div>
+      <div class="example-why">timestamp: 2015-06-01 14:33 | user: 4829 | item: 3390 | event: view</div>
+      <div class="example-why">timestamp: 2015-06-01 14:35 | user: 4829 | item: 1172 | event: addtocart</div>
+      <div class="example-why">timestamp: 2015-06-01 14:36 | user: 4829 | item: 7241 | event: view</div>
+      <div class="example-why" style="margin-bottom:0">2.76 million rows like this. 92% views, 6% add-to-cart, 2% purchases.</div>
+    </div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      So the question becomes: what is the right way to represent this data for a recommendation model?
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 3: OBVIOUS APPROACHES AND WHY THEY FAIL
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 3. The obvious approaches (and why they fall short)</div>
+  <div class="prose fade">
+    <p>
+      <strong>Approach 1: Treat it as a table.</strong> Build a user-item matrix. Rows are users, columns are items, values are interaction counts. Apply collaborative filtering or matrix factorization. This is textbook. But it assumes you have a user identity to build a row for. Anonymous users do not have a row. And the matrix is extremely sparse: 2.76M events across 235K items means most cells are empty. Collaborative filtering struggles with this level of sparsity.
     </p>
     <p>
-      You can capture these relationships as a <strong>graph</strong>. A graph is a network of nodes (items) connected by edges (relationships). If two items appear in the same browsing session frequently, they get an edge between them. The more often they co-occur, the stronger the edge.
+      <strong>Approach 2: Treat it as a sequence.</strong> Each session is a sequence of item IDs: [1172, 3390, 7241]. Use an RNN or Transformer to predict the next item. This works, but it treats every session as independent. A session [keyboard, mouse] and a session [keyboard, monitor] share the keyboard, but a sequence model learns nothing from that overlap unless both sessions appear in training. It cannot generalize across sessions that share items.
+    </p>
+    <p>
+      <strong>Approach 3: Treat it as a graph.</strong> This is the insight. Instead of modeling users or sequences, model the <strong>relationships between items</strong>. If two items appear in the same session, they are connected. The more sessions they co-appear in, the stronger the connection. Now the keyboard is explicitly linked to mice, monitors, desk mats, and USB hubs. A model that learns on this graph can generalize: it knows that keyboards relate to mice <em>regardless</em> of which specific session the pair appeared in.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Three ways to represent the same data</div>
+    <div class="dia-row" style="gap:14px;flex-wrap:wrap">
+      <div class="dia-box dia-bad" style="flex:1;min-width:180px">
+        <div class="dia-box-title">Table (matrix)</div>
+        <div class="dia-box-sub">User-item matrix.<br>Fails for anonymous users.<br>Extremely sparse.</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:180px">
+        <div class="dia-box-title">Sequence</div>
+        <div class="dia-box-sub">Session as ordered list.<br>Works, but cannot share<br>knowledge across sessions.</div>
+      </div>
+      <div class="dia-box dia-good" style="flex:1;min-width:180px">
+        <div class="dia-box-title">Graph</div>
+        <div class="dia-box-sub">Items as nodes, co-occurrence<br>as edges. Captures cross-session<br>relationships. Generalizes.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 4: BUILDING THE GRAPH
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 4. Building the graph</div>
+  <div class="prose fade">
+    <p>
+      The raw event log is grouped into sessions. If a user is inactive for more than 30 minutes, a new session starts. Sessions shorter than 3 items are dropped (too little signal). This leaves 172,066 sessions across 82,173 unique items.
+    </p>
+    <p>
+      Then, for every session, each pair of items that appear within a sliding window of 5 positions gets an edge. If item A and item B co-appear in 200 sessions, their edge weight is 200. The result: a graph with 82,173 nodes and 737,716 edges. On average, each item is connected to 18 other items.
+    </p>
+    <p>
+      Now every product has neighbors. A keyboard is connected to mice, monitors, desk mats, and USB hubs. A winter coat is connected to scarves, gloves, and boots. The graph captures what people actually browse together, not what a product catalog says is related.
     </p>
   </div>
 
@@ -199,25 +264,19 @@
     <div class="dia-row">
       <div class="dia-box"><div class="dia-box-title">Raw events</div><div class="dia-box-sub">2.76M clicks, views,<br>add-to-carts, purchases</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Sessionize</div><div class="dia-box-sub">group by user session<br>30-min gap = new session</div></div>
+      <div class="dia-box"><div class="dia-box-title">Sessionize</div><div class="dia-box-sub">30-min inactivity gap<br>drop sessions &lt; 3 items</div></div>
       <div class="dia-arrow">&rarr;</div>
       <div class="dia-box"><div class="dia-box-title">Co-occurrence</div><div class="dia-box-sub">items viewed together<br>within 5-item window</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box dia-good"><div class="dia-box-title">Product graph</div><div class="dia-box-sub">82K items (nodes)<br>738K edges</div></div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Product graph</div><div class="dia-box-sub">82K nodes<br>738K edges</div></div>
     </div>
-    <div class="dia-note">172,066 sessions from RetailRocket dataset. Average session: 5-6 items. Average node degree: 18 connections.</div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      Now every product has neighbors. A keyboard is connected to mice, monitors, desk mats, and USB hubs. A winter coat is connected to scarves, gloves, and boots. The graph captures what people actually buy together, not what a product manager thinks is related.
-    </p>
+    <div class="dia-note">172,066 sessions. Average session: 5-6 items. Average node degree: 18 connections.</div>
   </div>
 
   <!-- ═══════════════════════════════════════
        CH 3: HOW GRAPH NEURAL NETWORKS WORK
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 3. How a graph neural network learns</div>
+  <div class="sec fade">Chapter 5. How a graph neural network learns</div>
   <div class="prose fade">
     <p>
       A graph neural network (GNN) gives every item a set of numbers (an embedding) that captures its meaning and its position in the graph. But unlike a simple lookup table, these numbers are not fixed. Each item <strong>updates its embedding by looking at its neighbors</strong>.
@@ -246,7 +305,7 @@
   <!-- ═══════════════════════════════════════
        CH 4: THREE APPROACHES
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 4. Three approaches, compared</div>
+  <div class="sec fade">Chapter 6. Three approaches, compared</div>
   <div class="prose fade">
     <p>
       <strong>GraphSAGE</strong> is the simplest approach. Each item takes the <em>average</em> of all its neighbors&rsquo; embeddings and combines it with its own. Simple, fast, but it treats all neighbors equally. A keyboard connected to a mouse (strong signal) gets the same weight as a keyboard connected to a random novelty item someone browsed once (weak signal).
@@ -280,7 +339,7 @@
   <!-- ═══════════════════════════════════════
        CH 5: POSITIONAL ENCODING
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 5. The position problem</div>
+  <div class="sec fade">Chapter 7. The position problem</div>
   <div class="prose fade">
     <p>
       There is a subtle problem with graph neural networks. Two items can have <strong>identical neighborhoods</strong> but be in completely different parts of the graph. Imagine two keyboards: one connected to gaming mice, RGB lighting, and mechanical switches. The other connected to office mice, ergonomic wrist rests, and standing desks. Both are "keyboards with 18 neighbors." Without positional information, a GNN would give them the same embedding.
@@ -317,7 +376,7 @@
   <!-- ═══════════════════════════════════════
        CH 6: THE FFN INSIGHT
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 6. The engineering insight that changed everything</div>
+  <div class="sec fade">Chapter 8. The engineering insight that changed everything</div>
   <div class="prose fade">
     <p>
       The standard Graph Transformer architecture includes feed-forward network (FFN) layers after each attention layer. These are dense layers that expand the embedding dimension by 4x and then compress it back. In language models, FFN layers store factual knowledge ("Paris is the capital of France"). They are essential.
@@ -366,7 +425,7 @@
   <!-- ═══════════════════════════════════════
        CH 7: THE DATA
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 7. The data</div>
+  <div class="sec fade">Chapter 9. The data</div>
   <div class="prose fade">
     <p>
       The model is trained on <strong>RetailRocket</strong>, a public e-commerce dataset with 2.76 million events (views, add-to-carts, purchases) over 4.5 months. Events are sessionized with a 30-minute inactivity gap. Sessions shorter than 3 items are dropped. This leaves 172,066 sessions across 82,173 unique items.
@@ -405,7 +464,7 @@
   <!-- ═══════════════════════════════════════
        CH 8: HOW TRAINING WORKS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 8. How training works</div>
+  <div class="sec fade">Chapter 10. How training works</div>
   <div class="prose fade">
     <p>
       The model learns by predicting what comes next in a session. Given items [A, B, C], predict D. The training signal is a <strong>listwise loss</strong>: score the correct next item higher than 5 randomly sampled negative items. This is cross-entropy ranking, the same loss used in learning-to-rank systems.
@@ -436,7 +495,7 @@
   <!-- ═══════════════════════════════════════
        CH 9: RESULTS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 9. Results</div>
+  <div class="sec fade">Chapter 11. Results</div>
   <div class="results fade">
     <div class="stat">
       <div class="stat-val">38.28%</div>
@@ -479,7 +538,7 @@
   <!-- ═══════════════════════════════════════
        CH 10: SERVING
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 10. How it serves in production</div>
+  <div class="sec fade">Chapter 12. How it serves in production</div>
   <div class="prose fade">
     <p>
       Once trained, the item embeddings are frozen. The model is exported to ONNX for fast inference. A FastAPI service accepts a list of item IDs (the current session), looks up their embeddings, averages them into a session vector, and finds the nearest items via cosine similarity. Click any component to see details.
