@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credit Risk Engine — Sai Siddharth Yalamanchili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
+    --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
+    --t1:#d4d4d4;--t2:#8a8a8a;--t3:#555558;
+    --accent:#d88c3a;--green:#5a9a5a;--red:#9a5a5a;
+    --r:14px;
+    --mono:'JetBrains Mono',monospace;
+    --serif:'Source Serif 4',serif;
+    --sans:'DM Sans',sans-serif;
+  }
+  body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
+  a{color:var(--accent);text-decoration:none;transition:color .2s}
+  a:hover{color:#eaa050}
+  nav{display:flex;justify-content:space-between;align-items:center;max-width:760px;width:100%;margin:0 auto;padding:2.5rem 1.5rem 1.5rem}
+  nav .logo{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--t1);text-decoration:none}
+  nav .back{font-family:var(--mono);font-size:.8rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  nav .back:hover{color:var(--accent)}
+  main{max-width:760px;width:100%;margin:0 auto;padding:1.5rem 1.5rem 4rem;flex:1}
+  .proj-label{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
+  .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
+  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 28px;margin-bottom:36px}
+  .brief-label{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+  .brief-key{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:right;white-space:nowrap}
+  .brief-val{font-family:var(--mono);font-size:.72rem;color:var(--t1);line-height:1.7}
+  .prose{margin-bottom:1.8rem}
+  .prose p{font-family:var(--serif);font-size:1rem;font-weight:300;color:var(--t2);line-height:2.1;margin-bottom:1.4rem}
+  .prose strong{color:var(--t1);font-weight:500}
+  .sec{font-family:var(--mono);font-size:.63rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
+  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 24px;margin:20px 0}
+  .dia-title{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
+  .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
+  .dia-box-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
+  .dia-box-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2);line-height:1.7}
+  .dia-arrow{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;padding:0 10px;flex-shrink:0}
+  .dia-arrow-down{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;text-align:center;padding:8px 0}
+  .dia-note{font-family:var(--mono);font-size:.62rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
+  .dia-good{border:1px solid rgba(90,154,90,0.2)}
+  .dia-bad{border:1px solid rgba(154,90,90,0.2)}
+  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
+  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:22px 16px;text-align:center;transition:all .3s}
+  .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+  .stat-val{font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--accent);margin-bottom:5px}
+  .stat-label{font-family:var(--mono);font-size:.58rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
+  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
+  .rtable th{font-family:var(--mono);font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.68rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable tr.best td{color:var(--accent);font-weight:500}
+  .pipeline{position:relative;padding-left:32px;margin:20px 0}
+  .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
+  .pipe-step{position:relative;margin-bottom:24px}
+  .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
+  .pipe-num{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;margin-bottom:3px}
+  .pipe-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+  .pipe-desc{font-family:var(--serif);font-size:.86rem;color:var(--t2);line-height:1.95}
+  .pipe-desc strong{color:var(--t1);font-weight:500}
+  .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
+  .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .proj-link{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+  .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+  footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
+  .ft{max-width:760px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+  .ft-c{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
+  .ft-l{display:flex;gap:18px}
+  .ft-l a{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  .ft-l a:hover{color:var(--accent)}
+  @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+  .fade.v{opacity:1;transform:translateY(0)}
+  @media(max-width:768px){
+    main{padding:1rem 1rem 3rem}
+    .results{grid-template-columns:repeat(2,1fr)}
+    .dia-row{flex-direction:column;gap:0}
+    .dia-arrow{transform:rotate(90deg);padding:6px 0}
+    .ft{flex-direction:column;gap:10px;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="logo">sai.</a>
+  <a href="../#projects" class="back">&larr; projects</a>
+</nav>
+
+<main>
+
+  <div class="proj-label fade">Project</div>
+  <h1 class="proj-title fade">Credit Risk Engine: Basel III ECL with Fairness Guarantees</h1>
+  <div class="divider"></div>
+
+  <div class="brief fade">
+    <div class="brief-label">Engineering Brief</div>
+    <div class="brief-grid">
+      <span class="brief-key">Problem</span>
+      <span class="brief-val">Approve or decline a loan application in real time. Get it wrong one way and you lose money. Get it wrong the other way and you violate federal law. You need the probability of default, the expected loss, an explanation for every decline, and proof that the model is not discriminating.</span>
+      <span class="brief-key">Approach</span>
+      <span class="brief-val">4-model ensemble (Logistic + XGBoost + LightGBM + Wide&amp;Deep) with Nelder-Mead optimized weights. Three-stage Basel III ECL: PD &times; LGD &times; EAD. SHAP-based ECOA adverse action codes. Fairness monitoring with disparate impact (4/5 rule). Shadow mode A/B testing.</span>
+      <span class="brief-key">Result</span>
+      <span class="brief-val">0.879 AUC, 0.617 KS statistic, 63 engineered features across 8 groups. 20 adverse action codes. Demographic parity, equalized odds, and disparate impact tracked continuously. Full Docker stack with Prometheus, MLflow, PostgreSQL, Redis.</span>
+      <span class="brief-key">Why it matters</span>
+      <span class="brief-val">A credit model that cannot explain its decisions is illegal under ECOA. A model that discriminates is illegal under the Fair Housing Act. Accuracy alone is not enough. You need accuracy, explainability, and fairness &mdash; simultaneously.</span>
+      <span class="brief-key">Stack</span>
+      <span class="brief-val">XGBoost, LightGBM, TensorFlow, scikit-learn, SHAP, Optuna, FastAPI, PostgreSQL, Redis, MLflow, Prometheus, Docker</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 1: THE PROBLEM
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 1. Three things a credit model must do at once</div>
+  <div class="prose fade">
+    <p>
+      A credit risk model has three jobs, and failing any one of them is catastrophic.
+    </p>
+    <p>
+      <strong>Job 1: Predict accurately.</strong> If the model says a borrower has a 5% chance of default and they actually default 20% of the time, the bank loses money. The model must separate good borrowers from bad ones. This is measured by AUC and KS statistic.
+    </p>
+    <p>
+      <strong>Job 2: Explain every decline.</strong> Under the Equal Credit Opportunity Act (ECOA), if you deny a loan, you must tell the applicant <em>why</em>. Not "the model said no." Specific, actionable reasons: "high credit utilization," "insufficient payment history," "recent delinquency." A black-box model that cannot produce these reasons is not deployable, no matter how accurate.
+    </p>
+    <p>
+      <strong>Job 3: Do not discriminate.</strong> If the model approves 80% of one demographic group and 50% of another, you have a disparate impact problem. The 4/5 rule (EEOC guideline) says the approval rate for any protected group must be at least 80% of the majority group&rsquo;s rate. A model that violates this is a lawsuit.
+    </p>
+    <p>
+      Most ML projects optimize for job 1 and ignore jobs 2 and 3. This project treats all three as hard constraints.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 2: ECL
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 2. Three models, one loss number</div>
+  <div class="prose fade">
+    <p>
+      Basel III requires banks to estimate <strong>Expected Credit Loss</strong>: the probability-weighted loss on a credit exposure. The formula is simple. The modeling is not.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Basel III Expected Credit Loss</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">PD</div><div class="dia-box-sub">Probability of Default<br>Ensemble: Logistic +<br>XGBoost + LightGBM</div></div>
+      <div class="dia-arrow">&times;</div>
+      <div class="dia-box"><div class="dia-box-title">LGD</div><div class="dia-box-sub">Loss Given Default<br>Two-stage: classifier<br>&rarr; severity regressor</div></div>
+      <div class="dia-arrow">&times;</div>
+      <div class="dia-box"><div class="dia-box-title">EAD</div><div class="dia-box-sub">Exposure at Default<br>Hybrid CCF model<br>regulatory fallback 0.75</div></div>
+      <div class="dia-arrow">=</div>
+      <div class="dia-box dia-good"><div class="dia-box-title">ECL</div><div class="dia-box-sub">Expected Credit Loss<br>Dollar amount at risk</div></div>
+    </div>
+    <div class="dia-note">Each component is a separate model with its own training data and evaluation metrics.</div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      <strong>PD</strong> is the headline model &mdash; a weighted ensemble of Logistic Regression, XGBoost, and LightGBM, with weights optimized via Nelder-Mead on validation AUC. XGBoost dominates at 98.59% weight because it has the highest discriminative power. The logistic model contributes stability. A Wide &amp; Deep neural network (TensorFlow) is built and calibrated but disabled in production by config &mdash; available for benchmarking and future promotion.
+    </p>
+    <p>
+      <strong>LGD</strong> is a two-stage model. Stage one: a logistic classifier predicts whether any loss will occur at all (many defaults recover fully). Stage two: an XGBoost regressor predicts the severity of loss conditional on there being one. The final LGD is the product of both, clipped to [0, 1].
+    </p>
+    <p>
+      <strong>EAD</strong> models how much the borrower will owe at the moment of default. A credit card with a $10,000 limit and $3,000 drawn balance might be at $7,000 by the time default occurs. The Credit Conversion Factor (CCF) model predicts this utilization increase. Regulatory fallback: CCF = 0.75 when the model is unavailable.
+    </p>
+  </div>
+
+  <div class="results fade">
+    <div class="stat">
+      <div class="stat-val">0.879</div>
+      <div class="stat-label">Ensemble AUC</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">0.617</div>
+      <div class="stat-label">KS Statistic</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">0.758</div>
+      <div class="stat-label">Gini Coefficient</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">63</div>
+      <div class="stat-label">Engineered features</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 3: FEATURE ENGINEERING
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 3. Sixty-three features from twenty inputs</div>
+  <div class="prose fade">
+    <p>
+      The raw application has 20 fields: age, income, employment length, credit limit, utilization, delinquencies, and so on. These are necessary but not sufficient. The model needs <strong>behavioral signals</strong> &mdash; how the borrower actually uses credit over time, not just what their application says.
+    </p>
+    <p>
+      The feature engineering pipeline derives 63 features across 8 groups: demographic (age, log income, profile completeness), credit (utilization, DTI, delinquencies), velocity (transaction counts over 7/30/90 day windows), aggregation (spending by category, merchant diversity, entropy), behavioral (mobile %, weekend %, nighttime transactions), time series (spend trends over 3 and 6 months, volatility), payment (on-time rate, consecutive on-time streak, payment trend), and risk ratios (loan-to-income, balance-to-income, utilization &times; DTI interaction).
+    </p>
+    <p>
+      Training data is enriched with <strong>6.4 million synthetic transactions</strong> and <strong>720,000 payment records</strong> generated from Gaussian copula borrower profiles. The critical design decision: behavioral patterns (spending velocity, payment timeliness) are driven by observable credit features (DTI, utilization), <strong>not</strong> the default label. This prevents target leakage while creating realistic behavioral variation.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 4: ECOA
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 4. Twenty reasons you might be declined</div>
+  <div class="prose fade">
+    <p>
+      When the model declines an application (credit score below 550), it must produce up to four <strong>adverse action reason codes</strong> explaining why. Not vague descriptions. Specific, regulatory-compliant codes that map to features the applicant can understand and potentially improve.
+    </p>
+    <p>
+      The system computes <strong>SHAP values</strong> for every feature in the declined application. It filters to risk-increasing features only (SHAP value pushes probability of default higher). It excludes protected attributes (age, state) to prevent discrimination from appearing in the explanation. It ranks by absolute SHAP impact and returns the top four.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Sample adverse action codes</div>
+    <table class="rtable">
+      <tr><th>Code</th><th>Feature</th><th>Explanation</th></tr>
+      <tr><td>AA001</td><td>credit_utilization_ratio</td><td>High credit utilization ratio</td></tr>
+      <tr><td>AA002</td><td>debt_to_income_ratio</td><td>High debt-to-income ratio</td></tr>
+      <tr><td>AA003</td><td>number_of_delinquencies</td><td>Delinquent accounts</td></tr>
+      <tr><td>AA005</td><td>on_time_payment_rate</td><td>Insufficient payment history</td></tr>
+      <tr><td>AA011</td><td>avg_days_past_due</td><td>Average days past due</td></tr>
+      <tr><td>AA013</td><td>spend_trend_6m</td><td>Increasing spending trend</td></tr>
+    </table>
+    <div class="dia-note">20 total codes. SHAP selects the top 4 per declined application. Protected attributes (age, state) are excluded.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 5: FAIRNESS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 5. The 4/5 rule &mdash; continuous auditing</div>
+  <div class="prose fade">
+    <p>
+      A model can be accurate and still be illegal. If it approves 80% of one group and 55% of another, the <strong>disparate impact ratio</strong> is 55/80 = 0.69, which is below the 0.80 threshold (the "4/5 rule"). This is actionable regardless of intent.
+    </p>
+    <p>
+      The BiasMonitor tracks three fairness metrics continuously: <strong>demographic parity</strong> (approval rates within 10% across groups), <strong>equalized odds</strong> (true positive and false positive rates within 10%), and <strong>disparate impact ratio</strong> (must stay above 0.80). It stores a timestamped fairness history and alerts on degradation. This is not a one-time audit. It runs on every batch of predictions.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 6: SHADOW MODE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 6. Champion vs challenger &mdash; every request</div>
+  <div class="prose fade">
+    <p>
+      The production model is the ensemble (champion). But you never know if a simpler model would do just as well &mdash; or if a new model would do better &mdash; unless you test it on live traffic. <strong>Shadow mode</strong> scores every incoming request through both the champion and a challenger (standalone XGBoost) in parallel. The champion drives the actual decision. The challenger runs silently.
+    </p>
+    <p>
+      The system tracks three metrics between champion and challenger: <strong>agreement rate</strong> (same decision on the same application &mdash; target &ge;95%), <strong>PD correlation</strong> (are the probabilities calibrated similarly &mdash; target &ge;0.98), and <strong>latency comparison</strong>. When the challenger meets all thresholds over a sufficient sample, the system flags it as "safe to promote." This is data-driven model promotion, not gut feel.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 7: MONITORING
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 7. Drift, degradation, and the retraining trigger</div>
+  <div class="prose fade">
+    <p>
+      A model trained on 2024 data will decay as the economy changes. The <strong>Population Stability Index</strong> (PSI) measures how much each feature&rsquo;s distribution has shifted since training. Three alert levels: stable (PSI &lt; 0.10), warning (0.10&ndash;0.25), and alert (PSI &ge; 0.25, triggers retraining).
+    </p>
+    <p>
+      This aligns with regulatory expectations. Regulators do not just want a model that was validated once. They want evidence of <strong>ongoing monitoring</strong> &mdash; proof that you are watching for degradation and acting before the model starts making bad decisions. PSI per feature, AUC tracking over time, and fairness degradation alerts give you that audit trail.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 8: INFRASTRUCTURE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 8. The production stack</div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">FastAPI scoring server</div>
+      <div class="pipe-desc">Async endpoints, Pydantic request/response validation, API key auth, rate limiting, structured JSON logging via <strong>structlog</strong>. Models loaded on startup via lifespan hooks.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">Docker Compose: 5 services</div>
+      <div class="pipe-desc"><strong>API</strong> (FastAPI on port 8000), <strong>PostgreSQL 16</strong> (audit logs, shadow mode results), <strong>Redis 7</strong> (prediction caching), <strong>MLflow</strong> (experiment tracking, model registry), <strong>Prometheus</strong> (request counts, latency histograms, AUC, drift PSI).</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Optuna hyperparameter tuning</div>
+      <div class="pipe-desc">Bayesian optimization with <strong>StratifiedKFold</strong> (3 splits) maximizing cross-validated AUC. XGBoost tuned across 6 hyperparameters. Ensemble weights learned via <strong>Nelder-Mead</strong> on validation set.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-title">CI/CD via GitHub Actions</div>
+      <div class="pipe-desc">Every push: ruff lint, mypy typecheck, unit + integration + performance tests. Weekly training pipeline (Sunday 06:00 UTC): 50K synthetic borrowers, full Optuna tuning, artifact upload with 30-day retention.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       STACK & LINK
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Stack</div>
+  <div class="stack fade">
+    <span class="stack-tag">XGBoost</span>
+    <span class="stack-tag">LightGBM</span>
+    <span class="stack-tag">TensorFlow</span>
+    <span class="stack-tag">scikit-learn</span>
+    <span class="stack-tag">SHAP</span>
+    <span class="stack-tag">Optuna</span>
+    <span class="stack-tag">FastAPI</span>
+    <span class="stack-tag">PostgreSQL</span>
+    <span class="stack-tag">Redis</span>
+    <span class="stack-tag">MLflow</span>
+    <span class="stack-tag">Prometheus</span>
+    <span class="stack-tag">Docker</span>
+    <span class="stack-tag">structlog</span>
+  </div>
+
+  <a href="https://github.com/Axionis47/credit-risk-engine" target="_blank" class="proj-link fade">View on GitHub &rsaquo;</a>
+
+</main>
+
+<footer>
+  <div class="ft">
+    <div class="ft-c">&copy; 2026 Sai Siddharth Yalamanchili</div>
+    <div class="ft-l">
+      <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
+      <a href="#" target="_blank">LinkedIn</a>
+      <a href="mailto:">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(es => {
+  es.forEach((e, i) => {
+    if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
+  });
+}, { threshold: .12 });
+document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
