@@ -501,62 +501,7 @@
        ═══════════════════════════════════════ -->
   <div class="section-label fade">Experience</div>
 
-  <!-- ROLE 1 — Replace with your most recent role -->
-  <div class="exp-card fade">
-    <div class="exp-header">
-      <div class="exp-logo">
-        <!-- <img src="assets/company-logo.png" alt="Company"> -->
-        <span class="mono-icon">Co</span>
-      </div>
-      <div class="exp-meta">
-        <div class="exp-top">
-          <span class="exp-company">Company Name <span class="exp-current">current</span></span>
-          <span class="exp-date">Mon YYYY &ndash; Present</span>
-        </div>
-        <div class="exp-role">Role Title</div>
-        <div class="exp-loc">City, State</div>
-      </div>
-    </div>
-    <div class="exp-body">
-      <ul class="exp-bullets">
-        <li>What you built, owned, or shipped — scope and outcome.</li>
-        <li>A technical decision you drove and its impact.</li>
-        <li>Cross-functional work — who you worked with, what changed.</li>
-      </ul>
-      <div class="exp-tags">
-        <span class="exp-tag">Tag 1</span>
-        <span class="exp-tag">Tag 2</span>
-        <span class="exp-tag">Tag 3</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ROLE 2 — Replace with previous role -->
-  <div class="exp-card fade">
-    <div class="exp-header">
-      <div class="exp-logo">
-        <span class="mono-icon">Co</span>
-      </div>
-      <div class="exp-meta">
-        <div class="exp-top">
-          <span class="exp-company">Company Name</span>
-          <span class="exp-date">Mon YYYY &ndash; Mon YYYY</span>
-        </div>
-        <div class="exp-role">Role Title</div>
-        <div class="exp-loc">City, State</div>
-      </div>
-    </div>
-    <div class="exp-body">
-      <ul class="exp-bullets">
-        <li>What you built, owned, or shipped.</li>
-        <li>A technical decision you drove and its impact.</li>
-      </ul>
-      <div class="exp-tags">
-        <span class="exp-tag">Tag 1</span>
-        <span class="exp-tag">Tag 2</span>
-      </div>
-    </div>
-  </div>
+  <div id="experience-tiles"></div>
 
   <!-- ═══════════════════════════════════════
        EDUCATION
@@ -604,14 +549,7 @@
        ═══════════════════════════════════════ -->
   <div class="section-label fade">Highlights</div>
 
-  <div class="highlight-card fade">
-    <div class="hl-icon">&#9733;</div>
-    <div class="hl-text">
-      <div class="hl-title">Hackathon Name — Winner</div>
-      <div class="hl-desc">Brief description of what you built and why it won.</div>
-      <div class="hl-sub">YYYY &middot; Location or Organizer</div>
-    </div>
-  </div>
+  <div id="hackathon-tiles"></div>
 
 </main>
 
@@ -633,6 +571,26 @@ const obs = new IntersectionObserver(es => {
   });
 }, { threshold: .12 });
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+async function loadTiles(containerId, paths) {
+  const container = document.getElementById(containerId);
+  const frags = await Promise.all(
+    paths.map(p => fetch(p).then(r => r.ok ? r.text() : ''))
+  );
+  container.innerHTML = frags.join('\n');
+  container.querySelectorAll('.fade').forEach(el => obs.observe(el));
+}
+
+loadTiles('experience-tiles', [
+  'tiles/experience/role-1.html',
+  'tiles/experience/role-2.html',
+  'tiles/experience/role-3.html',
+  'tiles/experience/role-4.html'
+]);
+
+loadTiles('hackathon-tiles', [
+  'tiles/hackathon/hack-1.html'
+]);
 </script>
 </body>
 </html>

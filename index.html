@@ -251,122 +251,7 @@
 <section id="projects" class="projects">
     <div class="proj-wrap">
         <div class="proj-label fade">Projects</div>
-        <div class="proj-grid">
-
-            <a href="https://github.com/Axionis47/ai-transformation-agent" target="_blank" class="proj neu fade">
-                <div class="proj-body">
-                    <span class="proj-lang">Python</span>
-                    <span class="proj-name">AI Transformation Agent</span>
-                    <span class="proj-desc">Multi-agent pipeline that takes a company URL and produces a consulting-grade AI maturity diagnostic in 90 seconds. Scraper, RAG, analysis, and report generation with eval-gated CI.</span>
-                    <div class="proj-tags">
-                        <span class="proj-tag">Multi-Agent</span>
-                        <span class="proj-tag">RAG</span>
-                        <span class="proj-tag">FastAPI</span>
-                    </div>
-                    <span class="proj-arrow">&rsaquo;</span>
-                </div>
-            </a>
-
-            <a href="https://github.com/Axionis47/causal-inference-agent" target="_blank" class="proj neu fade">
-                <div class="proj-body">
-                    <span class="proj-lang">Python</span>
-                    <span class="proj-name">Causal Inference Agent</span>
-                    <span class="proj-desc">LLM-powered agentic platform for end-to-end causal inference. Automates study design, method selection, and interpretation with structured reasoning.</span>
-                    <div class="proj-tags">
-                        <span class="proj-tag">Causal ML</span>
-                        <span class="proj-tag">LLM Agents</span>
-                        <span class="proj-tag">Statistics</span>
-                    </div>
-                    <span class="proj-arrow">&rsaquo;</span>
-                </div>
-            </a>
-
-            <a href="projects/gat-recommendation.html" class="proj neu fade">
-                <div class="proj-body">
-                    <span class="proj-lang">Python &middot; PyTorch</span>
-                    <span class="proj-name">GAT Recommendation Engine</span>
-                    <span class="proj-desc">Multi-modal Graph Attention Network for e-commerce recommendations. Trained on 1.69M interactions across 498K items, deployed on GCP Vertex AI.</span>
-                    <div class="proj-tags">
-                        <span class="proj-tag">GNN</span>
-                        <span class="proj-tag">Vertex AI</span>
-                        <span class="proj-tag">RecSys</span>
-                    </div>
-                    <span class="proj-arrow">&rsaquo;</span>
-                </div>
-            </a>
-
-            <a href="projects/semantic-search-kd.html" class="proj neu fade">
-                <div class="proj-body">
-                    <span class="proj-lang">Python</span>
-                    <span class="proj-name">Semantic Search &middot; Knowledge Distillation</span>
-                    <span class="proj-desc">Production-grade help desk triage via teacher-student distillation. Calibrated ONNX export, Vertex AI training, FastAPI serving with Prometheus monitoring.</span>
-                    <div class="proj-tags">
-                        <span class="proj-tag">KD</span>
-                        <span class="proj-tag">ONNX</span>
-                        <span class="proj-tag">MLOps</span>
-                    </div>
-                    <span class="proj-arrow">&rsaquo;</span>
-                </div>
-            </a>
-
-            <a href="https://github.com/Axionis47/AgentProbe" target="_blank" class="proj neu fade">
-                <div class="proj-body">
-                    <span class="proj-lang">Python</span>
-                    <span class="proj-name">AgentProbe</span>
-                    <span class="proj-desc">Agentic data science platform with AI-driven analysis spanning stats, ML, causal inference, time series, and automated reporting.</span>
-                    <div class="proj-tags">
-                        <span class="proj-tag">Agents</span>
-                        <span class="proj-tag">Data Science</span>
-                        <span class="proj-tag">AutoML</span>
-                    </div>
-                    <span class="proj-arrow">&rsaquo;</span>
-                </div>
-            </a>
-
-            <a href="#" class="proj neu fade">
-                <div class="proj-body">
-                    <span class="proj-lang">Python &middot; PyTorch</span>
-                    <span class="proj-name">LaneGuard &middot; ADAS Conformal</span>
-                    <span class="proj-desc">Binary drivable-area segmentation for ADAS using SegFormer-B0 fine-tuned with LoRA on BDD100K. Includes Bird's Eye View projection via Inverse Perspective Mapping.</span>
-                    <div class="proj-tags">
-                        <span class="proj-tag">SegFormer</span>
-                        <span class="proj-tag">LoRA</span>
-                        <span class="proj-tag">ADAS</span>
-                        <span class="proj-tag">BEV</span>
-                    </div>
-                    <span class="proj-arrow">&rsaquo;</span>
-                </div>
-            </a>
-
-            <a href="https://github.com/Axionis47/video-pii-redaction" target="_blank" class="proj neu fade">
-                <div class="proj-body">
-                    <span class="proj-lang">Python</span>
-                    <span class="proj-name">Video PII Redaction</span>
-                    <span class="proj-desc">Video face anonymization pipeline using diffusion models. Preserves temporal coherence while redacting identifiable faces across frames.</span>
-                    <div class="proj-tags">
-                        <span class="proj-tag">Diffusion</span>
-                        <span class="proj-tag">Privacy</span>
-                        <span class="proj-tag">CV</span>
-                    </div>
-                    <span class="proj-arrow">&rsaquo;</span>
-                </div>
-            </a>
-
-            <a href="https://github.com/Axionis47/ml-algorithms-intuition" target="_blank" class="proj neu fade">
-                <div class="proj-body">
-                    <span class="proj-lang">Python &middot; NumPy</span>
-                    <span class="proj-name">ML Algorithms from Scratch</span>
-                    <span class="proj-desc">45+ machine learning algorithms implemented from scratch with NumPy. Intuition-first approach with visual walkthroughs and ablation experiments.</span>
-                    <div class="proj-tags">
-                        <span class="proj-tag">From Scratch</span>
-                        <span class="proj-tag">Education</span>
-                        <span class="proj-tag">ML</span>
-                    </div>
-                    <span class="proj-arrow">&rsaquo;</span>
-                </div>
-            </a>
-
-        </div>
+        <div class="proj-grid" id="project-tiles"></div>
     </div>
 </section>
 
@@ -729,6 +614,26 @@ const obs = new IntersectionObserver(es => {
     });
 }, {threshold: .12});
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+async function loadTiles(containerId, paths) {
+    const container = document.getElementById(containerId);
+    const frags = await Promise.all(
+        paths.map(p => fetch(p).then(r => r.ok ? r.text() : ''))
+    );
+    container.innerHTML = frags.join('\n');
+    container.querySelectorAll('.fade').forEach(el => obs.observe(el));
+}
+
+loadTiles('project-tiles', [
+    'tiles/projects/proj-1-ai-transformation.html',
+    'tiles/projects/proj-2-causal-inference.html',
+    'tiles/projects/proj-3-gat-recommendation.html',
+    'tiles/projects/proj-4-semantic-search-kd.html',
+    'tiles/projects/proj-5-agentprobe.html',
+    'tiles/projects/proj-6-laneguard.html',
+    'tiles/projects/proj-7-video-pii.html',
+    'tiles/projects/proj-8-ml-from-scratch.html'
+]);
 
 document.querySelectorAll('.nn a[href^="#"]').forEach(a => {
     a.addEventListener('click', function(){
