@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Transformation Agent — Sai Siddharth Yalamanchili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
+    --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
+    --t1:#d4d4d4;--t2:#8a8a8a;--t3:#555558;
+    --accent:#d88c3a;--green:#5a9a5a;--red:#9a5a5a;
+    --r:14px;
+    --mono:'JetBrains Mono',monospace;
+    --serif:'Source Serif 4',serif;
+    --sans:'DM Sans',sans-serif;
+  }
+  body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
+  a{color:var(--accent);text-decoration:none;transition:color .2s}
+  a:hover{color:#eaa050}
+
+  nav{display:flex;justify-content:space-between;align-items:center;max-width:760px;width:100%;margin:0 auto;padding:2.5rem 1.5rem 1.5rem}
+  nav .logo{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--t1);text-decoration:none}
+  nav .back{font-family:var(--mono);font-size:.8rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  nav .back:hover{color:var(--accent)}
+
+  main{max-width:760px;width:100%;margin:0 auto;padding:1.5rem 1.5rem 4rem;flex:1}
+
+  .proj-label{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
+  .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
+
+  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 28px;margin-bottom:36px}
+  .brief-label{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+  .brief-key{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:right;white-space:nowrap}
+  .brief-val{font-family:var(--mono);font-size:.72rem;color:var(--t1);line-height:1.7}
+
+  .prose{margin-bottom:1.8rem}
+  .prose p{font-family:var(--serif);font-size:1rem;font-weight:300;color:var(--t2);line-height:2.1;margin-bottom:1.4rem}
+  .prose strong{color:var(--t1);font-weight:500}
+
+  .sec{font-family:var(--mono);font-size:.63rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
+
+  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 24px;margin:20px 0}
+  .dia-title{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
+  .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
+  .dia-box-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
+  .dia-box-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2);line-height:1.7}
+  .dia-arrow{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;padding:0 10px;flex-shrink:0}
+  .dia-arrow-down{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;text-align:center;padding:8px 0}
+  .dia-note{font-family:var(--mono);font-size:.62rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
+  .dia-good{border:1px solid rgba(90,154,90,0.2)}
+  .dia-bad{border:1px solid rgba(154,90,90,0.2)}
+
+  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
+  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:22px 16px;text-align:center;transition:all .3s}
+  .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+  .stat-val{font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--accent);margin-bottom:5px}
+  .stat-label{font-family:var(--mono);font-size:.58rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
+
+  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
+  .rtable th{font-family:var(--mono);font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.68rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable tr.best td{color:var(--accent);font-weight:500}
+
+  .pipeline{position:relative;padding-left:32px;margin:20px 0}
+  .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
+  .pipe-step{position:relative;margin-bottom:24px}
+  .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
+  .pipe-num{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;margin-bottom:3px}
+  .pipe-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+  .pipe-desc{font-family:var(--serif);font-size:.86rem;color:var(--t2);line-height:1.95}
+  .pipe-desc strong{color:var(--t1);font-weight:500}
+
+  .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
+  .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .proj-link{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+  .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+  footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
+  .ft{max-width:760px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+  .ft-c{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
+  .ft-l{display:flex;gap:18px}
+  .ft-l a{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  .ft-l a:hover{color:var(--accent)}
+
+  @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+  .fade.v{opacity:1;transform:translateY(0)}
+
+  @media(max-width:768px){
+    main{padding:1rem 1rem 3rem}
+    .results{grid-template-columns:repeat(2,1fr)}
+    .dia-row{flex-direction:column;gap:0}
+    .dia-arrow{transform:rotate(90deg);padding:6px 0}
+    .ft{flex-direction:column;gap:10px;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="logo">sai.</a>
+  <a href="../#projects" class="back">&larr; projects</a>
+</nav>
+
+<main>
+
+  <div class="proj-label fade">Project</div>
+  <h1 class="proj-title fade">AI Transformation Agent: Hypothesis-Driven Company Research</h1>
+  <div class="divider"></div>
+
+  <!-- Engineering Brief -->
+  <div class="brief fade">
+    <div class="brief-label">Engineering Brief</div>
+    <div class="brief-grid">
+      <span class="brief-key">Problem</span>
+      <span class="brief-val">AI consulting starts with research: what does the company do, where are the pain points, where can AI create value? This takes a senior analyst days. Most of that time is spent on steps that can be systematized.</span>
+      <span class="brief-key">Approach</span>
+      <span class="brief-val">6 specialist agents orchestrated by pure Python control flow (not an LLM). Hypothesis-driven: form hypotheses from evidence, stress-test via disconfirmation search, report only what survives. Budget-capped at 25 search queries.</span>
+      <span class="brief-key">Result</span>
+      <span class="brief-val">89.7% field coverage, 4.8 opportunities per run, 100% budget adherence across 25 eval bundles spanning 8 industries. Every claim traces to a specific evidence source.</span>
+      <span class="brief-key">Why it matters</span>
+      <span class="brief-val">Most AI research tools summarize what they find. This one forms hypotheses and tries to disprove them. What survives the disconfirmation search is what gets recommended.</span>
+      <span class="brief-key">Stack</span>
+      <span class="brief-val">FastAPI, Next.js/TS, Gemini 2.5 (Flash + Pro), ChromaDB, Cloud Run, Firestore, structlog</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 1: THE PROBLEM
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 1. The consulting bottleneck</div>
+  <div class="prose fade">
+    <p>
+      A company hires you to figure out where AI can help them. Before you can recommend anything, you need to understand what they do, how their industry works, where the pain points are, and which of those pain points are actually solvable with current AI. This is <strong>research</strong>, not engineering. And it takes days.
+    </p>
+    <p>
+      The senior analyst reads the company website, scans industry reports, pulls up competitor information, talks to stakeholders, and gradually builds a mental model. Then they brainstorm opportunities, sanity-check them against what they know about similar engagements, and write up a report. Most of this work follows a pattern. The same kinds of questions get asked. The same kinds of signals get looked for. The same kinds of mistakes get made &mdash; anchoring on the first thing that looks promising, skipping the disconfirmation step, recommending what the client wants to hear instead of what the evidence supports.
+    </p>
+    <p>
+      The question is not "can an LLM do research." The question is: can you build a system that follows the <strong>disciplined research methodology</strong> that a good analyst uses, including the parts that are cognitively expensive and easy to skip?
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 2: THE PIPELINE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 2. Seven stages, one orchestrator</div>
+  <div class="prose fade">
+    <p>
+      The system takes a company name and an industry. It returns an adaptive report with ranked AI opportunities, evidence citations, confidence scores, and an explicit "what we don't know" section. Between input and output, seven stages execute in sequence, with parallelism where the data allows.
+    </p>
+    <p>
+      The orchestrator is <strong>pure Python</strong>. Not an LLM agent. This is a deliberate architectural decision. The orchestrator controls flow, manages parallel dispatch, promotes results to shared state, and enforces budgets. It does not reason. It does not hallucinate. It does not skip steps because a prompt was ambiguous. Every state transition is explicit and auditable.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">The seven-stage pipeline</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Intake</div><div class="dia-box-sub">Company name<br>industry, context</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Grounding</div><div class="dia-box-sub">Profiler + Analyst<br>run in parallel</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Deep Research</div><div class="dia-box-sub">Pain discovery<br>grounding + RAG</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Hypothesize</div><div class="dia-box-sub">Form 2&ndash;10<br>from evidence</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Test</div><div class="dia-box-sub">Parallel testers<br>disconfirmation</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Synthesize</div><div class="dia-box-sub">Adaptive report<br>evidence-traced</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row">
+      <div class="dia-box dia-good"><div class="dia-box-title">Review</div><div class="dia-box-sub">Edit, deepen, or<br>reinvestigate</div></div>
+    </div>
+    <div class="dia-note">Grounding agents run in parallel. Hypothesis testers run in parallel (one per hypothesis). Budget enforced at every tool call.</div>
+  </div>
+
+  <div class="results fade">
+    <div class="stat">
+      <div class="stat-val">6</div>
+      <div class="stat-label">Specialist agents</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">89.7%</div>
+      <div class="stat-label">Field coverage</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">4.8</div>
+      <div class="stat-label">Opps per run</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">25</div>
+      <div class="stat-label">Search budget</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 3: THE AGENTS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 3. Six agents, each with one job</div>
+  <div class="prose fade">
+    <p>
+      Every agent follows the <strong>ReAct pattern</strong>: observe the scoped context, think about what to investigate next, call a tool, observe the result, repeat. Each agent has a configurable MAX_STEPS that scales with a user-controlled depth slider (1&ndash;10). Agents never mutate shared state directly &mdash; they return typed outputs, and the orchestrator decides what gets promoted.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">The six specialists</div>
+    <table class="rtable">
+      <tr><th>Agent</th><th>Phase</th><th>Job</th><th>Tools</th></tr>
+      <tr><td>Company Profiler</td><td>Grounding</td><td>What they do, revenue, scale, tech stack, org structure</td><td>Google Search</td></tr>
+      <tr><td>Industry Analyst</td><td>Grounding</td><td>Trends, competition, regulation, AI adoption level</td><td>Google Search</td></tr>
+      <tr><td>Pain Investigator</td><td>Deep Research</td><td>Operational pain points with severity and workarounds</td><td>Search + RAG</td></tr>
+      <tr><td>Hypothesis Former</td><td>Formation</td><td>Reasons over all evidence, forms 2&ndash;10 hypotheses with causal chains</td><td>None (reasoning only)</td></tr>
+      <tr class="best"><td>Hypothesis Tester</td><td>Testing</td><td>Stress-tests one hypothesis via disconfirmation search</td><td>Search + RAG</td></tr>
+      <tr><td>Report Synthesizer</td><td>Synthesis</td><td>Converts validated hypotheses into adaptive report</td><td>None (single-shot)</td></tr>
+    </table>
+    <div class="dia-note">Profiler and Analyst run in parallel. One Tester instance per hypothesis, all in parallel.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 4: HYPOTHESIS TESTING
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 4. Try to disprove it first</div>
+  <div class="prose fade">
+    <p>
+      This is the core intellectual move. Most AI research tools work by <strong>confirmation</strong>: find evidence that supports the recommendation, present it, done. This is exactly how a bad analyst works. A good analyst does the opposite: they try to <strong>disprove</strong> their own hypothesis before recommending it.
+    </p>
+    <p>
+      The Hypothesis Former reads all accumulated evidence &mdash; company profile, industry context, pain points, past engagement wins &mdash; and forms hypotheses. Each hypothesis has a causal reasoning chain: "Because [pain point X exists] and [the company has Y infrastructure], applying [AI technique Z] should produce [outcome W]."
+    </p>
+    <p>
+      Then the testers go to work. One tester per hypothesis, running in parallel. Each tester searches for <strong>disconfirming evidence</strong>. Has this approach failed in similar companies? Are there regulatory barriers? Is the data infrastructure too immature? Each test produces a finding with an impact on confidence. If the hypothesis survives stress-testing &mdash; if the tester cannot find strong evidence against it &mdash; it gets validated. If confidence drops below the rejection threshold, it gets killed.
+    </p>
+    <p>
+      Low-confidence hypotheses that are not outright rejected get a <strong>second testing pass</strong> if budget allows. The system does not report the first thing that looks promising. It reports what it could not disprove.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 5: EVIDENCE SYSTEM
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 5. Every claim has an address</div>
+  <div class="prose fade">
+    <p>
+      Evidence is not a pile of text. Every evidence item is a structured object with a source type (Google Search, Wins KB, or user-provided), a relevance score, a confidence score, a dimension tag (technology, operations, pain point, etc.), and the agent that produced it.
+    </p>
+    <p>
+      Raw agent outputs are temporary. Before evidence reaches shared memory, it passes through a <strong>promotion gate</strong>: schema validation, relevance threshold (which tightens at each phase &mdash; 0.3 during grounding, 0.5 during hypothesis testing), and contradiction detection against existing evidence. Only promoted items are visible to downstream agents.
+    </p>
+    <p>
+      The final report cites evidence by ID. The reader can scroll to the evidence annex and see exactly which Google search result or which past engagement case supports each claim. There are no unsourced assertions.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 6: RAG - THE WINS KB
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 6. Learning from past engagements</div>
+  <div class="prose fade">
+    <p>
+      Google Search tells you about the company and the industry. But it does not tell you what has worked for <strong>similar</strong> companies in the past. That signal comes from the <strong>Wins Knowledge Base</strong> &mdash; a ChromaDB vector store seeded with past consulting engagements.
+    </p>
+    <p>
+      Each engagement is chunked into five semantic units: the problem pattern, the solution approach, preconditions for success, measured outcomes, and ROI drivers. When the Pain Investigator or a Hypothesis Tester queries the KB, it retrieves the most relevant chunks across engagements &mdash; deduplicating by engagement ID to avoid overweighting one case.
+    </p>
+    <p>
+      This is how the system can recommend "AI-powered compliance review" for a financial services company even if no one told it about compliance. The Wins KB contains a past engagement where an AI copilot reduced compliance review time by 80%. The semantic match surfaces it. The hypothesis tester validates it against the specific company&rsquo;s context.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 7: BUDGET + CONTROLS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 7. Hard caps, not soft limits</div>
+  <div class="prose fade">
+    <p>
+      The system runs on external API calls. Google Search costs money. LLM tokens cost money. Without hard limits, a curious agent can burn through budget in seconds. So the system enforces <strong>hard caps at every tool call</strong>: 25 total search queries, 15 RAG retrievals. If the budget is exhausted, the engine emits a <code>BUDGET_VIOLATION_BLOCKED</code> event and returns gracefully. No failures. No retries. Just: "I&rsquo;m out of budget for this resource."
+    </p>
+    <p>
+      Two user-facing sliders control behavior at runtime. The <strong>depth slider</strong> (1&ndash;10) scales agent MAX_STEPS &mdash; how many reasoning iterations each agent gets &mdash; and max hypotheses. At depth 1, the profiler gets 2 steps and the former produces 2 hypotheses. At depth 10: 12 steps and 10 hypotheses. The <strong>confidence slider</strong> (0.3&ndash;1.0) sets the validation threshold. Higher confidence means stricter testing &mdash; fewer opportunities make the cut, but each one is more robustly supported.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 8: THE OUTPUT
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 8. What comes out the other end</div>
+  <div class="prose fade">
+    <p>
+      The report is not a template with blanks filled in. It is an <strong>adaptive structure</strong> that follows the evidence. The executive summary leads with the strongest finding, not boilerplate. Each opportunity includes a narrative explanation, a tier classification (Easy / Medium / Hard), a confidence score, cited evidence IDs, risks, preconditions, and a sequenced implementation roadmap.
+    </p>
+    <p>
+      There is also a "what we don&rsquo;t know" section. If the system could not determine the company&rsquo;s data infrastructure maturity, it says so. If AI readiness could not be verified, it flags the gap. This section is not optional &mdash; it is always generated. The system is designed to be <strong>honest about its blind spots</strong>, not to project confidence it does not have.
+    </p>
+    <p>
+      After generation, the user can refine. Three feedback types: <strong>edit</strong> (re-synthesize one section), <strong>deepen</strong> (re-test specific hypotheses), or <strong>reinvestigate</strong> (backtrack to deep research and re-run the pipeline). The system does not start from scratch on feedback. It builds on what it already knows.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 9: ENGINEERING
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 9. The engineering underneath</div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">Pure Python orchestrator</div>
+      <div class="pipe-desc">No LLM in the control loop. Flow control is explicit, deterministic, and auditable. The orchestrator is the only component that writes to shared state. Agents return typed outputs.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">Protocol-based abstractions</div>
+      <div class="pipe-desc"><strong>StorageProtocol</strong> swaps between in-memory dict and Firestore with zero code changes. <strong>LLM client</strong> swaps between Gemini Flash and Pro by config. No inheritance chains. Structural typing only.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Scoped context, not prose dumps</div>
+      <div class="pipe-desc"><strong>AgentContextProvider</strong> builds constant-size briefings per agent. Agents pull what they need, grouped by dimension. No agent sees the full state. Token-efficient and noise-free.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-title">Structured trace logging</div>
+      <div class="pipe-desc">~25 event types emitted via <strong>structlog</strong> JSON output. Every model call, tool call, and state transition is logged with run_id correlation. Supports full pipeline replay.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">05</div>
+      <div class="pipe-title">Eval-driven development</div>
+      <div class="pipe-desc">25 eval bundles across 8 industries. Success criteria: coverage &gt;70%, budget adherence &gt;95%, latency &lt;2min, 3&ndash;5 opportunities. Every sprint validates against these metrics before shipping.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       EVAL RESULTS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Eval results &mdash; 25 companies, 8 industries</div>
+
+  <div class="results fade">
+    <div class="stat">
+      <div class="stat-val">100%</div>
+      <div class="stat-label">Success rate</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">100%</div>
+      <div class="stat-label">Budget adherence</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">89.7%</div>
+      <div class="stat-label">Field coverage</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">0.749</div>
+      <div class="stat-label">Avg confidence</div>
+    </div>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Opportunity tier distribution (120 total)</div>
+    <div class="dia-row" style="gap:14px">
+      <div class="dia-box" style="flex:1;min-width:140px">
+        <div class="dia-box-title">Easy</div>
+        <div class="dia-box-sub">16 opportunities<br>Quick wins, low risk</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:140px">
+        <div class="dia-box-title">Medium</div>
+        <div class="dia-box-sub">72 opportunities<br>Moderate complexity</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:140px">
+        <div class="dia-box-title">Hard</div>
+        <div class="dia-box-sub">32 opportunities<br>Strategic transformation</div>
+      </div>
+    </div>
+    <div class="dia-note">Unseen industries (education, real estate) still produce 3&ndash;4 opportunities via cross-industry template matching, but confidence drops.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       STACK & LINK
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Stack</div>
+  <div class="stack fade">
+    <span class="stack-tag">FastAPI</span>
+    <span class="stack-tag">Next.js</span>
+    <span class="stack-tag">TypeScript</span>
+    <span class="stack-tag">Gemini 2.5</span>
+    <span class="stack-tag">Google Search</span>
+    <span class="stack-tag">ChromaDB</span>
+    <span class="stack-tag">Cloud Run</span>
+    <span class="stack-tag">Firestore</span>
+    <span class="stack-tag">Docker</span>
+    <span class="stack-tag">structlog</span>
+    <span class="stack-tag">Pydantic</span>
+    <span class="stack-tag">Tailwind</span>
+  </div>
+
+  <a href="https://github.com/Axionis47/ai-transformation-agent" target="_blank" class="proj-link fade">View on GitHub &rsaquo;</a>
+
+</main>
+
+<footer>
+  <div class="ft">
+    <div class="ft-c">&copy; 2026 Sai Siddharth Yalamanchili</div>
+    <div class="ft-l">
+      <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
+      <a href="#" target="_blank">LinkedIn</a>
+      <a href="mailto:">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(es => {
+  es.forEach((e, i) => {
+    if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
+  });
+}, { threshold: .12 });
+document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
