@@ -290,28 +290,38 @@
   <div class="sec fade">Chapter 5. Building the graph</div>
   <div class="prose fade">
     <p>
-      The raw event log is grouped into sessions. If a user is inactive for more than 30 minutes, a new session starts. Sessions shorter than 3 items are dropped (too little signal). This leaves 172,066 sessions across 82,173 unique items.
+      The raw event log is grouped into sessions. If a user is inactive for more than 30 minutes, a new session starts. Sessions shorter than 3 items are dropped (too little signal). This leaves 172,066 sessions containing 99,439 unique items.
     </p>
     <p>
-      Then, for every session, each pair of items that appear within a sliding window of 5 positions gets an edge. If item A and item B co-appear in 200 sessions, their edge weight is 200. The result: a graph with 82,173 nodes and 737,716 edges. On average, each item is connected to 18 other items.
+      Then, for every session, each pair of items that appear within a sliding window of 5 positions gets an edge. If item A and item B co-appear in 200 sessions, their edge weight is 200. The result: a graph with 82,173 nodes and 737,716 edges.
     </p>
     <p>
-      Now every product has neighbors. A keyboard is connected to mice, monitors, desk mats, and USB hubs. A winter coat is connected to scarves, gloves, and boots. The graph captures what people actually browse together, not what a product catalog says is related.
+      Wait. 99,439 unique items in sessions, but only 82,173 nodes in the graph. Where did 17,266 items go? They are <strong>isolated items</strong>. Items that appeared in sessions but never co-occurred with another item within the 5-item window. A user viewed the item alone, or it only appeared at the edge of very short sessions. No co-occurrence means no edges. No edges means no signal. These items cannot be recommended through graph relationships, so they are not in the graph. This is not a bug. It is the graph telling you: "I have no behavioral evidence about these items."
+    </p>
+    <p>
+      The data is split temporally: 70% training (120,436 sessions), 15% validation (23,861), 15% test (23,408), with a <strong>2-day blackout period</strong> between each split. The blackout prevents information leakage. Without it, a session that spans the split boundary could leak future browsing behavior into training data.
+    </p>
+    <p>
+      Now every product in the graph has neighbors. A keyboard is connected to mice, monitors, desk mats, and USB hubs. A winter coat is connected to scarves, gloves, and boots. The graph captures what people actually browse together, not what a product catalog says is related.
     </p>
   </div>
 
   <div class="dia fade">
     <div class="dia-title">Building the product graph</div>
     <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Raw events</div><div class="dia-box-sub">2.76M clicks, views,<br>add-to-carts, purchases</div></div>
+      <div class="dia-box"><div class="dia-box-title">Raw events</div><div class="dia-box-sub">2.76M events<br>235K raw items</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Sessionize</div><div class="dia-box-sub">30-min inactivity gap<br>drop sessions &lt; 3 items</div></div>
+      <div class="dia-box"><div class="dia-box-title">Sessionize</div><div class="dia-box-sub">30-min gap, drop &lt;3<br>99K unique items</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Co-occurrence</div><div class="dia-box-sub">items viewed together<br>within 5-item window</div></div>
+      <div class="dia-box"><div class="dia-box-title">Co-occurrence</div><div class="dia-box-sub">5-item window<br>17K isolated items dropped</div></div>
       <div class="dia-arrow">&rarr;</div>
       <div class="dia-box dia-good"><div class="dia-box-title">Product graph</div><div class="dia-box-sub">82K nodes<br>738K edges</div></div>
     </div>
-    <div class="dia-note">172,066 sessions. Average session: 5-6 items. Average node degree: 18 connections.</div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Temporal split</div><div class="dia-box-sub">70% train | 15% val | 15% test<br>2-day blackout between splits</div></div>
+    </div>
+    <div class="dia-note">172,066 sessions. 17,266 items had no co-occurrence signal and are excluded from the graph.</div>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -532,48 +542,9 @@
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 7: THE DATA
+       CH 11: HOW TRAINING WORKS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 11. The data</div>
-  <div class="prose fade">
-    <p>
-      The model is trained on <strong>RetailRocket</strong>, a public e-commerce dataset with 2.76 million events (views, add-to-carts, purchases) over 4.5 months. Events are sessionized with a 30-minute inactivity gap. Sessions shorter than 3 items are dropped. This leaves 172,066 sessions across 82,173 unique items.
-    </p>
-    <p>
-      The data is split temporally: 70% training, 15% validation, 15% test, with a <strong>2-day blackout period</strong> between each split. The blackout prevents information leakage. Without it, a session that spans the split boundary could leak future information into training.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Data pipeline</div>
-    <div class="pipeline">
-      <div class="pipe-step">
-        <div class="pipe-num">Step 1</div>
-        <div class="pipe-title">Download RetailRocket from Kaggle</div>
-        <div class="pipe-desc">2.76M events. 92% views, 6% add-to-cart, 2% transactions.</div>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">Step 2</div>
-        <div class="pipe-title">Sessionize</div>
-        <div class="pipe-desc">Group events by user with 30-minute inactivity gap. Drop sessions with fewer than 3 items. Result: 172,066 sessions, average length 5-6 items.</div>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">Step 3</div>
-        <div class="pipe-title">Temporal split with blackout</div>
-        <div class="pipe-desc">70/15/15 train/val/test by timestamp. <strong>2-day blackout</strong> between splits prevents leakage from sessions spanning the boundary.</div>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">Step 4</div>
-        <div class="pipe-title">Build co-occurrence graph</div>
-        <div class="pipe-desc">For each session, items within a sliding window of 5 get edges. Edge weight = co-occurrence count. Result: 82,173 nodes, 737,716 edges, average degree 18.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 8: HOW TRAINING WORKS
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 12. How training works</div>
+  <div class="sec fade">Chapter 11. How training works</div>
   <div class="prose fade">
     <p>
       The model learns by predicting what comes next in a session. Given items [A, B, C], predict D. The training signal is a <strong>listwise loss</strong>: score the correct next item higher than 5 randomly sampled negative items. This is cross-entropy ranking, the same loss used in learning-to-rank systems.
@@ -604,7 +575,7 @@
   <!-- ═══════════════════════════════════════
        CH 9: RESULTS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 13. Results</div>
+  <div class="sec fade">Chapter 12. Results</div>
   <div class="results fade">
     <div class="stat">
       <div class="stat-val">38.28%</div>
@@ -647,7 +618,7 @@
   <!-- ═══════════════════════════════════════
        CH 10: SERVING
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 14. How it serves in production</div>
+  <div class="sec fade">Chapter 13. How it serves in production</div>
   <div class="prose fade">
     <p>
       Once trained, the item embeddings are frozen. The model is exported to ONNX for fast inference. A FastAPI service accepts a list of item IDs (the current session), looks up their embeddings, averages them into a session vector, and finds the nearest items via cosine similarity. Click any component to see details.
