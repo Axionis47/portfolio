@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enterprise RAG with ABAC — Sai Siddharth Yalamanchili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
+    --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
+    --t1:#d4d4d4;--t2:#8a8a8a;--t3:#555558;
+    --accent:#d88c3a;--green:#5a9a5a;--red:#9a5a5a;
+    --r:14px;
+    --mono:'JetBrains Mono',monospace;
+    --serif:'Source Serif 4',serif;
+    --sans:'DM Sans',sans-serif;
+  }
+  body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
+  a{color:var(--accent);text-decoration:none;transition:color .2s}
+  a:hover{color:#eaa050}
+
+  nav{display:flex;justify-content:space-between;align-items:center;max-width:760px;width:100%;margin:0 auto;padding:2.5rem 1.5rem 1.5rem}
+  nav .logo{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--t1);text-decoration:none}
+  nav .back{font-family:var(--mono);font-size:.8rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  nav .back:hover{color:var(--accent)}
+
+  main{max-width:760px;width:100%;margin:0 auto;padding:1.5rem 1.5rem 4rem;flex:1}
+
+  .proj-label{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
+  .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
+
+  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 28px;margin-bottom:36px}
+  .brief-label{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+  .brief-key{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:right;white-space:nowrap}
+  .brief-val{font-family:var(--mono);font-size:.72rem;color:var(--t1);line-height:1.7}
+
+  .prose{margin-bottom:1.8rem}
+  .prose p{font-family:var(--serif);font-size:1rem;font-weight:300;color:var(--t2);line-height:2.1;margin-bottom:1.4rem}
+  .prose strong{color:var(--t1);font-weight:500}
+
+  .sec{font-family:var(--mono);font-size:.63rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
+
+  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 24px;margin:20px 0}
+  .dia-title{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
+  .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
+  .dia-box-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
+  .dia-box-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2);line-height:1.7}
+  .dia-arrow{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;padding:0 10px;flex-shrink:0}
+  .dia-arrow-down{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;text-align:center;padding:8px 0}
+  .dia-note{font-family:var(--mono);font-size:.62rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
+  .dia-good{border:1px solid rgba(90,154,90,0.2)}
+  .dia-bad{border:1px solid rgba(154,90,90,0.2)}
+
+  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
+  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:22px 16px;text-align:center;transition:all .3s}
+  .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+  .stat-val{font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--accent);margin-bottom:5px}
+  .stat-label{font-family:var(--mono);font-size:.58rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
+
+  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
+  .rtable th{font-family:var(--mono);font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.68rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable tr.best td{color:var(--accent);font-weight:500}
+
+  .pipeline{position:relative;padding-left:32px;margin:20px 0}
+  .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
+  .pipe-step{position:relative;margin-bottom:24px}
+  .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
+  .pipe-num{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;margin-bottom:3px}
+  .pipe-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+  .pipe-desc{font-family:var(--serif);font-size:.86rem;color:var(--t2);line-height:1.95}
+  .pipe-desc strong{color:var(--t1);font-weight:500}
+
+  .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
+  .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .proj-link{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+  .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+  footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
+  .ft{max-width:760px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+  .ft-c{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
+  .ft-l{display:flex;gap:18px}
+  .ft-l a{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  .ft-l a:hover{color:var(--accent)}
+
+  @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+  .fade.v{opacity:1;transform:translateY(0)}
+
+  @media(max-width:768px){
+    main{padding:1rem 1rem 3rem}
+    .results{grid-template-columns:repeat(2,1fr)}
+    .dia-row{flex-direction:column;gap:0}
+    .dia-arrow{transform:rotate(90deg);padding:6px 0}
+    .ft{flex-direction:column;gap:10px;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="logo">sai.</a>
+  <a href="../#projects" class="back">&larr; projects</a>
+</nav>
+
+<main>
+
+  <div class="proj-label fade">Project</div>
+  <h1 class="proj-title fade">Enterprise RAG with ABAC: Zero-Leakage Retrieval</h1>
+  <div class="divider"></div>
+
+  <!-- Engineering Brief -->
+  <div class="brief fade">
+    <div class="brief-label">Engineering Brief</div>
+    <div class="brief-grid">
+      <span class="brief-key">Problem</span>
+      <span class="brief-val">Employees need one chat interface to query a company knowledge base. But HR salary data must never reach a marketing user &mdash; not through search results, not through cached LLM answers, not through embedding similarity.</span>
+      <span class="brief-key">Approach</span>
+      <span class="brief-val">Three-layer defense-in-depth: index-time role booleans, retrieval-time server-side filtering + ABAC PDP evaluation, and post-retrieval policy enforcement. Hybrid dense/sparse search with RRF fusion. Policy-fingerprinted caching with epoch-based invalidation.</span>
+      <span class="brief-key">Result</span>
+      <span class="brief-val">100% access control accuracy, zero cross-role leakage across 437 tests, 391&times; policy decision speedup and 1,400&times; LLM cache speedup via PolicyFingerprint. 5 LLM backends, 4 embedding backends, all swappable by env var.</span>
+      <span class="brief-key">Why it matters</span>
+      <span class="brief-val">Most RAG systems bolt access control onto the UI layer. The data still leaks through cached answers, reranked results, and embedding similarity. This system enforces policy at three independent layers &mdash; if any one fails, the other two still block the leak.</span>
+      <span class="brief-key">Stack</span>
+      <span class="brief-val">FastAPI, ChromaDB, OpenAI/Claude/Gemini/vLLM/Ollama, BM25, RRF, Kubernetes, Redis, Prometheus, YAML policy-as-code</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 1: THE PROBLEM
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 1. The leakage paths nobody checks</div>
+  <div class="prose fade">
+    <p>
+      You build a RAG chatbot for your company. Employees can ask questions about company documents &mdash; engineering specs, marketing plans, HR policies, financial reports. You add a role check: marketing users only see marketing docs. Finance users only see finance docs. Done, right?
+    </p>
+    <p>
+      Wrong. There are <strong>four leakage paths</strong> that a UI-layer filter does not catch.
+    </p>
+    <p>
+      <strong>Path 1: Embedding similarity.</strong> You embed all documents into the same vector space. A marketing user asks about "Q2 revenue." The embedding is nearly identical to a finance document about Q2 revenue. The vector search returns the finance doc as a top match. The UI filter might catch this &mdash; but now the embedding itself has leaked the existence and relevance of a restricted document.
+    </p>
+    <p>
+      <strong>Path 2: Cached LLM answers.</strong> An HR user asks "what is the average salary?" The LLM generates an answer using HR salary data. That answer gets cached. A marketing user asks the same question. The cache returns the same answer. The marketing user just read HR salary data, and no filter was ever evaluated.
+    </p>
+    <p>
+      <strong>Path 3: Reranked results.</strong> The reranker sees all retrieved candidates and scores them by relevance. If an unauthorized document makes it past the initial retrieval (because the filter was applied too late), the reranker has already read it. Even if you filter after reranking, the reranker&rsquo;s scoring was influenced by content the user should not have seen.
+    </p>
+    <p>
+      <strong>Path 4: LLM answer synthesis.</strong> The LLM generates an answer from multiple context chunks. If one unauthorized chunk slipped through, the LLM might reference it in the answer &mdash; even if the chunk itself is stripped from the citations. The information has already been absorbed into the generated text.
+    </p>
+    <p>
+      The only solution: enforce access control at <strong>every layer independently</strong>. Before embedding, before retrieval, before reranking, before generation. If any one layer fails, the others catch it.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 2: THREE LAYERS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 2. Defense in depth &mdash; three layers</div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">Layer 1 &mdash; Index Time</div>
+      <div class="pipe-title">Pre-computed role booleans</div>
+      <div class="pipe-desc">When a document is ingested, the system computes which roles can access it and stores boolean flags (<strong>role_finance=true, role_marketing=false</strong>) as chunk metadata in ChromaDB. These flags are denormalized &mdash; fast, but rigid. They handle the common case: "does this role have any access at all?"</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">Layer 2 &mdash; Retrieval Time</div>
+      <div class="pipe-title">Server-side filtering + ABAC PDP</div>
+      <div class="pipe-desc">ChromaDB&rsquo;s <strong>where-clause</strong> filters on role booleans before results leave the database. Then each surviving chunk is evaluated by a full <strong>Policy Decision Point</strong> &mdash; 12 YAML-defined ABAC rules considering role, department, sensitivity, document type, and runtime feature flags. First match wins. Default: <strong>DENY</strong>.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">Layer 3 &mdash; Post-Retrieval</div>
+      <div class="pipe-title">Access tier enforcement</div>
+      <div class="pipe-desc">After the PDP permits a chunk, the system determines the <strong>access tier</strong>: full text (HR/C-level), PII-masked text (authorized departments), or aggregate statistics only (broader access). The reranker and LLM only see tier-appropriate content. Unauthorized text never reaches any downstream component.</div>
+    </div>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">The retrieval pipeline end-to-end</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Embed Query</div><div class="dia-box-sub">1536-dim<br>text-embedding-3-small</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Dense + Sparse</div><div class="dia-box-sub">ChromaDB cosine<br>+ BM25 tokens</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">RRF Fusion</div><div class="dia-box-sub">k = 60<br>rank-weighted merge</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row">
+      <div class="dia-box dia-good"><div class="dia-box-title">ABAC Filter</div><div class="dia-box-sub">12 rules, PDP eval<br>per chunk</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Rerank</div><div class="dia-box-sub">BM25 / cosine<br>/ LLM reranker</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">LLM Generate</div><div class="dia-box-sub">gpt-4o-mini<br>temp 0.2</div></div>
+    </div>
+    <div class="dia-note">The reranker never sees unauthorized content. The LLM never sees unauthorized content. Every path is policy-gated.</div>
+  </div>
+
+  <div class="results fade">
+    <div class="stat">
+      <div class="stat-val">100%</div>
+      <div class="stat-label">Access accuracy</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">0</div>
+      <div class="stat-label">Cross-role leaks</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">437</div>
+      <div class="stat-label">Automated tests</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">12</div>
+      <div class="stat-label">ABAC rules</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 3: CONTEXT-AWARE EMBEDDINGS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 3. Embeddings that know who owns them</div>
+  <div class="prose fade">
+    <p>
+      Standard RAG systems embed raw text. This creates a problem. "Q2 revenue grew 15%" from a finance document and "Q2 revenue discussions" from a marketing document produce <strong>nearly identical vectors</strong>. A marketing user searching for "Q2 revenue" gets the finance document as a top match. The filter might catch it downstream, but the vector search has already revealed that a relevant finance document exists.
+    </p>
+    <p>
+      The fix: <strong>contextual embedding prefixes</strong>. Before computing the embedding, each chunk gets a structured metadata tag prepended:
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Contextual prefix before embedding</div>
+    <div class="dia-row" style="gap:14px">
+      <div class="dia-box" style="flex:1;min-width:280px">
+        <div class="dia-box-sub" style="text-align:left;font-family:var(--mono);font-size:.62rem;line-height:2">
+          [DEPARTMENT: finance] [SENSITIVITY: internal]<br>
+          [TYPE: md] [QUARTER: Q4] [YEAR: 2024]<br>
+          [DOCUMENT: quarterly_report.md]<br><br>
+          Q2 revenue grew 15% driven by enterprise...
+        </div>
+      </div>
+    </div>
+    <div class="dia-note">Two chunks with identical text but different security labels now produce different embedding vectors. The vector space naturally separates content by ownership.</div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      Now the finance "Q2 revenue" chunk and the marketing "Q2 revenue" chunk live in different regions of the vector space. A search from a marketing user will naturally prefer marketing-department vectors over finance-department ones, even before any filter is applied. This is <strong>security-aware retrieval</strong>, not security-as-afterthought.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 4: THE POLICY ENGINE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 4. Policy as code</div>
+  <div class="prose fade">
+    <p>
+      The ABAC engine is a YAML-defined <strong>Policy Decision Point</strong>. Twelve rules, evaluated top-to-bottom, first match wins, default deny. Each rule considers four attribute categories: <strong>subject</strong> (the user&rsquo;s role), <strong>resource</strong> (the document&rsquo;s department, type, sensitivity), <strong>action</strong> (retrieve, view source, view row, aggregate), and <strong>environment</strong> (runtime feature flags).
+    </p>
+    <p>
+      Six roles: employee, engineering, marketing, finance, HR, C-level. C-level gets unrestricted access (rule 0). Employees see only general documents. Department users see their own department&rsquo;s internal docs. Cross-department access is denied by default. Confidential and restricted documents are denied to everyone except C-level.
+    </p>
+    <p>
+      HR data gets special treatment: <strong>three-tier progressive disclosure</strong>. Full employee records (with PII) are visible only to HR and C-level. PII-masked records (with [REDACTED] fields) can be enabled for other roles via a runtime feature flag. Pre-computed aggregates (headcount, salary averages, location distribution) can be independently enabled. This means you can give a department head salary statistics without giving them individual records.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">HR data progressive disclosure</div>
+    <div class="dia-row" style="gap:14px">
+      <div class="dia-box dia-good" style="flex:1;min-width:160px">
+        <div class="dia-box-title">Full Records</div>
+        <div class="dia-box-sub">HR + C-level only<br>All PII visible</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:160px">
+        <div class="dia-box-title">Masked Records</div>
+        <div class="dia-box-sub">Feature-flag gated<br>SSN, salary, DOB<br>all [REDACTED]</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:160px">
+        <div class="dia-box-title">Aggregates Only</div>
+        <div class="dia-box-sub">Feature-flag gated<br>Headcount, averages<br>no individual data</div>
+      </div>
+    </div>
+    <div class="dia-note">Each tier is independently toggleable via runtime flags. Default: both disabled (principle of least privilege).</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 5: POLICY-FINGERPRINTED CACHING
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 5. Caching without leaking</div>
+  <div class="prose fade">
+    <p>
+      Caching is the silent leakage vector. An HR user asks a question, the LLM generates an answer using HR data, the answer gets cached. A marketing user asks the same question. A naive cache returns the same answer. Zero access control was evaluated. The marketing user just read HR data.
+    </p>
+    <p>
+      The solution: <strong>PolicyFingerprint</strong>. Every cache key for sensitive data (LLM answers, allowed-set computations, policy decisions) includes a SHA-256 hash of the user&rsquo;s complete access profile: role, tenant ID, policy epoch, entitlement epoch, and feature flags. An HR user and a marketing user asking the exact same question produce <strong>different cache keys</strong>. The HR answer is fundamentally unreachable from a marketing session.
+    </p>
+    <p>
+      When policies change, you bump the epoch integer. This changes every fingerprint hash. Every old cache entry becomes unreachable without scanning or deleting a single key. The stale data is still in the cache physically, but no lookup will ever produce a matching key. It expires via TTL on its own schedule.
+    </p>
+    <p>
+      A <strong>singleflight mechanism</strong> deduplicates concurrent identical requests. If 20 users with the same role submit the same query at the same time, only one LLM call fires. The other 19 wait on the result. This prevents cache stampede and reduces LLM costs by 95% under concurrent load.
+    </p>
+  </div>
+
+  <div class="results fade">
+    <div class="stat">
+      <div class="stat-val">391&times;</div>
+      <div class="stat-label">Policy cache speedup</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">1,400&times;</div>
+      <div class="stat-label">LLM cache speedup</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">95%</div>
+      <div class="stat-label">Singleflight dedup</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">SHA-256</div>
+      <div class="stat-label">Fingerprint hash</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 6: HYBRID RETRIEVAL
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 6. Dense + sparse &mdash; neither alone is enough</div>
+  <div class="prose fade">
+    <p>
+      Dense retrieval (embedding similarity) captures semantic meaning. "Compensation package" matches "salary structure." But it misses exact terms &mdash; an employee name, a specific policy number, a financial figure. Sparse retrieval (BM25) catches exact keyword matches but misses semantic relationships.
+    </p>
+    <p>
+      The system runs both in parallel and fuses results via <strong>Reciprocal Rank Fusion</strong> (k=60). Each item&rsquo;s score is 1/(k + rank) in each list. Items appearing in both lists get a natural boost &mdash; the system rewards documents that are both semantically relevant and keyword-matched.
+    </p>
+    <p>
+      Both retrieval paths apply role-based pre-filtering <strong>before</strong> scoring. The BM25 index pre-filters by allowed roles. ChromaDB uses server-side where-clause filtering on role boolean metadata. Unauthorized documents are excluded at the database layer, not post-hoc.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 7: PLUGGABLE BACKENDS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 7. Five LLMs, four embedding models, zero code changes</div>
+  <div class="prose fade">
+    <p>
+      The system supports five LLM backends (OpenAI GPT-4o-mini, Anthropic Claude, Google Vertex AI Gemini, vLLM with Llama 3.1 8B AWQ, and Ollama) and four embedding backends (OpenAI, Sentence Transformers, HuggingFace TEI, Vertex AI). Switching between any of them requires changing one environment variable.
+    </p>
+    <p>
+      This is not a nice-to-have. In production, you move between local development (Ollama, free), staging (vLLM on GPU, fixed cost), and production (OpenAI or Vertex AI, per-token cost). The same codebase runs everywhere. The provider pattern with singleton LRU-cached instances handles initialization, and the ABAC layer is provider-agnostic &mdash; it does not care which LLM generated the answer. It cares whether the user was authorized to see the context that produced it.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 8: PRODUCTION
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 8. Production infrastructure</div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">437 tests across 45+ test files</div>
+      <div class="pipe-desc">Unit tests (PDP logic, chunker, BM25), integration tests (cache + fingerprints, HR tiers), <strong>security tests</strong> (cross-role access, response sanitization), edge cases (unicode, missing metadata, type mismatches), and end-to-end RAG pipeline tests. All run offline with mocked LLM/embedding services.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">Kubernetes-ready</div>
+      <div class="pipe-desc">9 K8s manifests: 3 replicas, <strong>HPA scaling 2&ndash;10 pods</strong> at 70% CPU / 80% memory. NGINX ingress with TLS termination, rate limiting, and security headers (X-Frame-Options, CSP, XSS-Protection). Cloud Run config: 0&ndash;10 instances, 2 vCPU / 2GB each.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Observability</div>
+      <div class="pipe-desc"><strong>Prometheus</strong> metrics (cache hit rates, latencies, index sizes). JSONL audit logs with correlation IDs tracing requests from auth through retrieval, policy evaluation, and generation. Every API response includes timing breakdowns.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-title">Security hardening</div>
+      <div class="pipe-desc">Input sanitization (HTML stripping, path traversal prevention, 10K char limit). Response sanitization strips internal fields (allowed_roles, full_row, access tier metadata). Circuit breakers for external API calls. Retry with exponential backoff. Graceful shutdown with 30-second drain.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       EVAL RESULTS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Evaluation results</div>
+
+  <div class="dia fade">
+    <div class="dia-title">Access control by role</div>
+    <table class="rtable">
+      <tr><th>Role</th><th>Tests</th><th>Access Accuracy</th><th>Entitlement Accuracy</th></tr>
+      <tr class="best"><td>Engineering</td><td>3</td><td>100%</td><td>66.7%</td></tr>
+      <tr class="best"><td>Marketing</td><td>3</td><td>100%</td><td>66.7%</td></tr>
+      <tr class="best"><td>Finance</td><td>3</td><td>100%</td><td>100%</td></tr>
+      <tr class="best"><td>HR</td><td>3</td><td>100%</td><td>66.7%</td></tr>
+    </table>
+    <div class="dia-note">100% access accuracy across all roles. Zero cross-role data leakage. Entitlement failures are over-permissive retrieval of general docs &mdash; not security violations.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       STACK & LINK
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Stack</div>
+  <div class="stack fade">
+    <span class="stack-tag">FastAPI</span>
+    <span class="stack-tag">ChromaDB</span>
+    <span class="stack-tag">OpenAI</span>
+    <span class="stack-tag">Claude</span>
+    <span class="stack-tag">Gemini</span>
+    <span class="stack-tag">vLLM</span>
+    <span class="stack-tag">Ollama</span>
+    <span class="stack-tag">BM25</span>
+    <span class="stack-tag">RRF</span>
+    <span class="stack-tag">ABAC</span>
+    <span class="stack-tag">Kubernetes</span>
+    <span class="stack-tag">Redis</span>
+    <span class="stack-tag">Prometheus</span>
+    <span class="stack-tag">Docker</span>
+    <span class="stack-tag">Cloud Run</span>
+  </div>
+
+  <a href="https://github.com/Axionis47/finsolve-abac-rag" target="_blank" class="proj-link fade">View on GitHub &rsaquo;</a>
+
+</main>
+
+<footer>
+  <div class="ft">
+    <div class="ft-c">&copy; 2026 Sai Siddharth Yalamanchili</div>
+    <div class="ft-l">
+      <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
+      <a href="#" target="_blank">LinkedIn</a>
+      <a href="mailto:">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(es => {
+  es.forEach((e, i) => {
+    if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
+  });
+}, { threshold: .12 });
+document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
