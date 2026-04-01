@@ -248,18 +248,52 @@
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 5: EVIDENCE SYSTEM
+       CH 5: MEMORY ARCHITECTURE
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 5. Every claim has an address</div>
+  <div class="sec fade">Chapter 5. Memory as a policy layer</div>
   <div class="prose fade">
     <p>
-      Evidence is not a pile of text. Every evidence item is a structured object with a source type (Google Search, Wins KB, or user-provided), a relevance score, a confidence score, a dimension tag (technology, operations, pain point, etc.), and the agent that produced it.
+      In most multi-agent systems, memory is a shared dictionary. Agents write to it. Other agents read from it. Conflicts, stale data, and noise accumulate with every step. This system treats memory differently. <strong>Memory is not storage. Memory is governance.</strong>
     </p>
     <p>
-      Raw agent outputs are temporary. Before evidence reaches shared memory, it passes through a <strong>promotion gate</strong>: schema validation, relevance threshold (which tightens at each phase &mdash; 0.3 during grounding, 0.5 during hypothesis testing), and contradiction detection against existing evidence. Only promoted items are visible to downstream agents.
+      There are four memory subsystems, each with a distinct role:
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">The four memory layers</div>
+    <div class="dia-row" style="gap:14px;flex-wrap:wrap">
+      <div class="dia-box" style="flex:1;min-width:140px">
+        <div class="dia-box-title">Evidence Store</div>
+        <div class="dia-box-sub">Structured items with<br>source, dimension,<br>relevance, confidence</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:140px">
+        <div class="dia-box-title">Hypothesis Tracker</div>
+        <div class="dia-box-sub">Full lifecycle: form<br>&rarr; test &rarr; validate<br>or reject</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:140px">
+        <div class="dia-box-title">Synthesis Store</div>
+        <div class="dia-box-sub">Inter-phase briefings<br>LLM-compressed<br>not raw evidence</div>
+      </div>
+      <div class="dia-box" style="flex:1;min-width:140px">
+        <div class="dia-box-title">Opportunity Store</div>
+        <div class="dia-box-sub">Tiered, scored<br>opportunities with<br>evidence citations</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      The critical mechanism is the <strong>promotion gate</strong>. Raw agent outputs are temporary &mdash; they exist in the agent&rsquo;s local scope but are not visible to anyone else. Before evidence enters shared memory, it must pass three checks: schema validation (is it a well-formed evidence item?), relevance threshold (which <strong>tightens at each phase</strong> &mdash; 0.3 during grounding when you cast a wide net, 0.5 during hypothesis testing when precision matters), and contradiction detection against existing evidence. If a new item contradicts something already promoted, the system flags the conflict rather than silently overwriting.
     </p>
     <p>
-      The final report cites evidence by ID. The reader can scroll to the evidence annex and see exactly which Google search result or which past engagement case supports each claim. There are no unsourced assertions.
+      Between phases, the <strong>phase synthesizer</strong> compresses what was learned into a constant-size briefing. It does not pass raw evidence forward &mdash; it produces an LLM-generated summary of the key findings, open questions, and implications. This is what downstream agents see in their context. Not a growing pile of search results. A distilled, phase-aware briefing that stays the same size regardless of how much evidence was collected.
+    </p>
+    <p>
+      Old evidence gets <strong>pruned</strong>. If a phase produced 40 evidence items but only 8 were promoted and only 3 survived into the synthesis, the other 37 are garbage-collected. Memory does not grow unboundedly. It is curated, compressed, and quality-gated at every transition.
+    </p>
+    <p>
+      The final report cites evidence by ID. The reader can scroll to the evidence annex and see exactly which Google search result or which past engagement case supports each claim. There are no unsourced assertions. Every claim has an address.
     </p>
   </div>
 
