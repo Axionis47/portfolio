@@ -107,17 +107,31 @@
     text-transform: uppercase;
     margin-bottom: 28px;
     margin-top: 56px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.03);
   }
 
-  .section-label:first-of-type { margin-top: 0; }
+  .section-label:first-of-type { margin-top: 0; border-top: none; padding-top: 0; }
+
+  /* ─── About Intro ─── */
+  .about-intro { margin-bottom: 2rem; }
+  .about-intro p {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--t2);
+    line-height: 2;
+    max-width: 600px;
+  }
 
   /* ─── Experience Cards ─── */
   .exp-card {
     background: var(--raised);
     border-radius: var(--r);
     border: 1px solid rgba(255,255,255,0.02);
+    border-left: 2px solid rgba(216,140,58,0.15);
     box-shadow: 6px 6px 16px var(--shd), -3px -3px 9px var(--shl);
-    margin-bottom: 22px;
+    margin-bottom: 16px;
     transition: all .3s;
     overflow: hidden;
   }
@@ -474,12 +488,11 @@
 
   @media (max-width: 768px) {
     main { padding: 1.5rem 1rem 3rem; }
-    .exp-header { flex-direction: column; align-items: center; text-align: center; gap: 14px; }
-    .exp-top { justify-content: center; }
+    .exp-header { gap: 14px; }
+    .exp-logo { width: 40px; height: 40px; }
     .exp-body { padding: 14px 20px 22px; }
-    .edu-inner { flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+    .edu-inner { gap: 14px; }
     .timeline { padding-left: 24px; }
-    .highlight-card { flex-direction: column; align-items: center; text-align: center; }
     .ft { flex-direction: column; gap: 10px; text-align: center; }
   }
 </style>
@@ -495,6 +508,10 @@
   <div class="page-title fade">About</div>
   <div class="page-sub fade">Where I shipped, what I studied, what I won.</div>
   <div class="divider"></div>
+
+  <div class="about-intro fade">
+    <p>Brief intro text here — fill in later.</p>
+  </div>
 
   <!-- ═══════════════════════════════════════
        EXPERIENCE
@@ -544,13 +561,6 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       HIGHLIGHTS
-       ═══════════════════════════════════════ -->
-  <div class="section-label fade">Highlights</div>
-
-  <div id="hackathon-tiles"></div>
-
 </main>
 
 <footer>
@@ -586,10 +596,6 @@ loadTiles('experience-tiles', [
   'tiles/experience/role-2.html',
   'tiles/experience/role-3.html',
   'tiles/experience/role-4.html'
-]);
-
-loadTiles('hackathon-tiles', [
-  'tiles/hackathon/hack-1.html'
 ]);
 </script>
 </body>
