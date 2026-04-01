@@ -85,6 +85,11 @@
         .proj-arrow{font-family:var(--mono);font-size:.7rem;color:var(--t3);transition:transform .3s,color .3s;position:absolute;bottom:24px;right:22px}
         .proj:hover .proj-arrow{transform:translateX(3px);color:var(--accent)}
 
+        /* ─── Hackathon Winner ─── */
+        .proj.winner{border:1px solid rgba(216,140,58,0.12)}
+        .proj.winner::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.5}
+        .winner-badge{position:absolute;top:16px;right:18px;display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.52rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;opacity:.7}
+        .winner-badge::before{content:'\u2660';font-size:.7rem}
 
         .quote{text-align:center;padding:64px 36px;max-width:680px;margin:0 auto;position:relative}
         .quote::before,.quote::after{content:'';display:block;width:40px;height:1px;background:var(--t3);opacity:.15;margin:0 auto 0}
@@ -631,7 +636,8 @@ loadTiles('project-tiles', [
     'tiles/projects/proj-4-semantic-search-kd.html',
     'tiles/projects/proj-5-abac-rag.html',
     'tiles/projects/proj-6-laneguard.html',
-    'tiles/projects/proj-7-credit-risk.html'
+    'tiles/projects/proj-7-credit-risk.html',
+    'tiles/projects/proj-8-hackathon.html'
 ]);
 
 document.querySelectorAll('.nn a[href^="#"]').forEach(a => {
