@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LaneGuard — Sai Siddharth Yalamanchili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
+    --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
+    --t1:#d4d4d4;--t2:#8a8a8a;--t3:#555558;
+    --accent:#d88c3a;--green:#5a9a5a;--red:#9a5a5a;
+    --r:14px;
+    --mono:'JetBrains Mono',monospace;
+    --serif:'Source Serif 4',serif;
+    --sans:'DM Sans',sans-serif;
+  }
+  body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
+  a{color:var(--accent);text-decoration:none;transition:color .2s}
+  a:hover{color:#eaa050}
+
+  nav{display:flex;justify-content:space-between;align-items:center;max-width:760px;width:100%;margin:0 auto;padding:2.5rem 1.5rem 1.5rem}
+  nav .logo{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--t1);text-decoration:none}
+  nav .back{font-family:var(--mono);font-size:.8rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  nav .back:hover{color:var(--accent)}
+
+  main{max-width:760px;width:100%;margin:0 auto;padding:1.5rem 1.5rem 4rem;flex:1}
+
+  .proj-label{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
+  .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
+
+  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 28px;margin-bottom:36px}
+  .brief-label{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+  .brief-key{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:right;white-space:nowrap}
+  .brief-val{font-family:var(--mono);font-size:.72rem;color:var(--t1);line-height:1.7}
+
+  .prose{margin-bottom:1.8rem}
+  .prose p{font-family:var(--serif);font-size:1rem;font-weight:300;color:var(--t2);line-height:2.1;margin-bottom:1.4rem}
+  .prose strong{color:var(--t1);font-weight:500}
+
+  .sec{font-family:var(--mono);font-size:.63rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
+
+  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 24px;margin:20px 0}
+  .dia-title{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
+  .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
+  .dia-box-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
+  .dia-box-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2);line-height:1.7}
+  .dia-arrow{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;padding:0 10px;flex-shrink:0}
+  .dia-arrow-down{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;text-align:center;padding:8px 0}
+  .dia-note{font-family:var(--mono);font-size:.62rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
+  .dia-good{border:1px solid rgba(90,154,90,0.2)}
+  .dia-bad{border:1px solid rgba(154,90,90,0.2)}
+
+  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
+  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:22px 16px;text-align:center;transition:all .3s}
+  .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+  .stat-val{font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--accent);margin-bottom:5px}
+  .stat-label{font-family:var(--mono);font-size:.58rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
+
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .compare-card{background:var(--inset);border-radius:10px;padding:22px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
+  .compare-label{font-family:var(--mono);font-size:.52rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .compare-name{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--t1);margin-bottom:8px}
+  .compare-desc{font-family:var(--serif);font-size:.82rem;color:var(--t2);line-height:1.9}
+
+  .pipeline{position:relative;padding-left:32px;margin:20px 0}
+  .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
+  .pipe-step{position:relative;margin-bottom:24px}
+  .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
+  .pipe-num{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;margin-bottom:3px}
+  .pipe-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+  .pipe-desc{font-family:var(--serif);font-size:.86rem;color:var(--t2);line-height:1.95}
+  .pipe-desc strong{color:var(--t1);font-weight:500}
+
+  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
+  .rtable th{font-family:var(--mono);font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.68rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable tr.best td{color:var(--accent);font-weight:500}
+
+  .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
+  .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .proj-link{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+  .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+  footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
+  .ft{max-width:760px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+  .ft-c{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
+  .ft-l{display:flex;gap:18px}
+  .ft-l a{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  .ft-l a:hover{color:var(--accent)}
+
+  @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+  .fade.v{opacity:1;transform:translateY(0)}
+
+  @media(max-width:768px){
+    main{padding:1rem 1rem 3rem}
+    .results{grid-template-columns:repeat(2,1fr)}
+    .compare{grid-template-columns:1fr}
+    .dia-row{flex-direction:column;gap:0}
+    .dia-arrow{transform:rotate(90deg);padding:6px 0}
+    .ft{flex-direction:column;gap:10px;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="logo">sai.</a>
+  <a href="../#projects" class="back">&larr; projects</a>
+</nav>
+
+<main>
+
+  <div class="proj-label fade">Capstone &middot; Rutgers MS Data Science</div>
+  <h1 class="proj-title fade">LaneGuard: Drivable Area Segmentation with Calibrated Uncertainty</h1>
+  <div class="divider"></div>
+
+  <!-- Engineering Brief -->
+  <div class="brief fade">
+    <div class="brief-label">Engineering Brief</div>
+    <div class="brief-grid">
+      <span class="brief-key">Problem</span>
+      <span class="brief-val">A self-driving car needs to know where it can drive. Neural networks give confident answers even when they are wrong. In safety-critical systems, that kills people.</span>
+      <span class="brief-key">Approach</span>
+      <span class="brief-val">Fine-tune SegFormer-B0 on BDD100K using manual LoRA injection (13.7% trainable params). Wrap predictions in conformal prediction sets with mathematical coverage guarantees. Project to Bird&rsquo;s Eye View via IPM.</span>
+      <span class="brief-key">Result</span>
+      <span class="brief-val">0.806 Mean IoU from training only 3.4% of parameters. 2.1&times; improvement over frozen baseline. 145 tests, full CI/CD, Vertex AI deployment.</span>
+      <span class="brief-key">Why it matters</span>
+      <span class="brief-val">You cannot deploy perception models that are confidently wrong. Conformal prediction gives you a guarantee: the true class is in the prediction set with probability &ge; 1&minus;&alpha;. No neural network alone can promise that.</span>
+      <span class="brief-key">Stack</span>
+      <span class="brief-val">PyTorch, HuggingFace Transformers, OpenCV, GCP Vertex AI, Docker, GitHub Actions, W&amp;B</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 1: THE PROBLEM
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 1. The problem no one talks about</div>
+  <div class="prose fade">
+    <p>
+      Here is what a self-driving car actually needs to know, every single frame, 30 times per second: <strong>where can I drive?</strong> Not "what objects are around me." Not "is that a pedestrian or a mailbox." The most fundamental question is simpler: which pixels in this camera image represent road I can safely put my tires on?
+    </p>
+    <p>
+      This is called <strong>drivable area segmentation</strong>. You take a 1280&times;720 image from a dashboard camera, and you produce a binary mask: every pixel is either "drivable" or "not drivable." Road surface = 1. Sidewalk, grass, buildings, sky, other cars = 0.
+    </p>
+    <p>
+      Modern neural networks are good at this. SegFormer, DeepLab, U-Net &mdash; they all produce sharp masks with high accuracy. But there is a problem that the accuracy number hides. When the model says a pixel is drivable with 97% confidence, <strong>is it actually 97% likely to be correct?</strong>
+    </p>
+    <p>
+      No. Softmax outputs are not probabilities. They are normalized scores. A model can output 0.99 confidence on a pixel that is dead wrong &mdash; a shadow on the road, a puddle reflecting sky, a construction zone it has never seen before. In a spreadsheet, this is a rounding error. In a car moving at 60 mph, this is a steering decision into a ditch.
+    </p>
+    <p>
+      The question is not "how accurate is the model." The question is: <strong>when the model does not know, does it say so?</strong>
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 2: WHY LORA
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 2. Training 3.4% of the parameters</div>
+  <div class="prose fade">
+    <p>
+      SegFormer-B0 has 3.8 million parameters, pretrained on Cityscapes &mdash; a dataset of urban street scenes with 19 semantic classes. It already understands roads, sidewalks, buildings, cars. You do not need to re-teach it what a road looks like. You need to <strong>adapt</strong> it: from 19-class Cityscapes segmentation to binary drivable-area segmentation on BDD100K.
+    </p>
+    <p>
+      Full fine-tuning would update all 3.8M parameters. But most of those parameters encode general visual knowledge that transfers directly. The encoder already extracts road-relevant features. What needs to change is the <strong>task-specific behavior</strong> &mdash; the attention patterns that route those features toward a binary decision.
+    </p>
+    <p>
+      <strong>LoRA</strong> (Low-Rank Adaptation) freezes the entire pretrained model and injects small trainable matrices into the attention layers. Instead of updating a weight matrix W directly, you learn two small matrices A and B such that the effective weight becomes W + BA. The rank of BA is much lower than W &mdash; rank 16 instead of the full dimension. This means you are learning a <strong>low-dimensional correction</strong> to the pretrained behavior.
+    </p>
+    <p>
+      The catch: HuggingFace PEFT does not natively support SegFormer&rsquo;s architecture. So I wrote the LoRA injection from scratch. Every Query, Key, Value, and Dense projection in every attention block gets a parallel low-rank path. The math:
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">LoRA injection per attention layer</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Input x</div><div class="dia-box-sub">Feature vector</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">W(x)</div><div class="dia-box-sub">Frozen pretrained<br>weight (3.8M params)</div></div>
+      <div class="dia-arrow">+</div>
+      <div class="dia-box dia-good"><div class="dia-box-title">B &middot; A(x)</div><div class="dia-box-sub">Trainable low-rank<br>correction (131K params)</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Output</div><div class="dia-box-sub">Adapted behavior</div></div>
+    </div>
+    <div class="dia-note">A projects down (d &rarr; 16), B projects back up (16 &rarr; d). Scaling = &alpha;/r = 32/16 = 2.0</div>
+  </div>
+
+  <div class="results fade">
+    <div class="stat">
+      <div class="stat-val">3.8M</div>
+      <div class="stat-label">Total params</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">526K</div>
+      <div class="stat-label">Trainable (13.7%)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">131K</div>
+      <div class="stat-label">LoRA adapters (3.4%)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">20 MB</div>
+      <div class="stat-label">Adapter checkpoint</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 3: THE DATA
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 3. BDD100K &mdash; what the camera sees</div>
+  <div class="prose fade">
+    <p>
+      BDD100K is Berkeley&rsquo;s large-scale driving dataset: 100,000 images from dashboard cameras across diverse conditions &mdash; day, night, rain, fog, highways, city streets. For drivable area segmentation, each image comes with a pixel-level semantic mask with 18 classes plus an ignore label.
+    </p>
+    <p>
+      I collapse this to binary: <strong>train_id 0 (road) = drivable</strong>, everything else = not drivable. The class balance is roughly 23% drivable to 77% non-drivable. This makes sense &mdash; most of any driving image is sky, buildings, trees, and other cars. The road is a relatively small strip at the bottom.
+    </p>
+    <p>
+      Training uses 7,000 images, validation uses 1,000. Images are resized from 1280&times;720 to 512&times;512 with ImageNet normalization. The only augmentation is horizontal flip at 50% probability. No color jitter, no random crop. The pretrained encoder expects clean, well-framed images &mdash; heavy augmentation would fight the pretraining.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 4: BASELINE VS LORA
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 4. Does LoRA actually help?</div>
+  <div class="prose fade">
+    <p>
+      Before training anything, I ran a controlled experiment. Take the pretrained SegFormer-B0 with a randomly initialized binary decode head. Run it on 100 validation images. Measure Mean IoU. This is the <strong>baseline</strong>: what you get from transfer learning with zero task-specific training.
+    </p>
+    <p>
+      Then inject LoRA adapters and train for just 3 epochs on 200 images at 256&times;256 resolution. On a CPU. In under 5 minutes. Measure again.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Baseline vs LoRA &mdash; head-to-head</div>
+    <table class="rtable">
+      <tr><th>Metric</th><th>Baseline (frozen)</th><th>LoRA (3 epochs)</th><th>Gain</th></tr>
+      <tr class="best"><td>Mean IoU</td><td>0.380</td><td>0.806</td><td>+112%</td></tr>
+      <tr><td>Drivable IoU</td><td>0.295</td><td>0.702</td><td>+138%</td></tr>
+      <tr><td>Val Loss</td><td>0.685</td><td>0.180</td><td>&minus;74%</td></tr>
+      <tr><td>Training time (CPU)</td><td>&mdash;</td><td>286 sec</td><td></td></tr>
+    </table>
+    <div class="dia-note">200 training images. 3 epochs. CPU only. 3.4% of parameters. 2.1&times; improvement.</div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      The baseline Mean IoU of 0.380 is not surprising. The pretrained decode head expects 19-class output. We replaced it with a randomly initialized 2-class head. The encoder features are excellent, but the head has no idea what to do with them. LoRA does not touch the head &mdash; it adapts the <strong>encoder&rsquo;s attention patterns</strong> to route road-relevant features more effectively toward the new head. Three epochs is enough for the adapters to learn the mapping.
+    </p>
+    <p>
+      The verdict: <strong>unambiguously worth it.</strong> Not a marginal improvement. A 2.1&times; jump from training 3.4% of parameters for under 5 minutes on a CPU.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 5: CONFORMAL PREDICTION
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 5. The uncertainty problem</div>
+  <div class="prose fade">
+    <p>
+      Now the model produces sharp binary masks with 0.806 Mean IoU. Good. But here is the question that IoU does not answer: <strong>on which pixels is the model guessing?</strong>
+    </p>
+    <p>
+      A softmax score of 0.95 does not mean "95% chance this is correct." It means "the model&rsquo;s internal logit for this class was much larger than the other." A model trained on sunny California highways will output 0.99 confidence on a snow-covered road in New Jersey &mdash; because it has never seen snow, so it has no basis for doubt. The score is high precisely because the model lacks the experience to be uncertain.
+    </p>
+    <p>
+      <strong>Conformal prediction</strong> solves this with a mathematical guarantee. Instead of outputting a single class per pixel, you output a <strong>prediction set</strong> &mdash; a set of classes that is guaranteed to contain the true class with probability &ge; 1&minus;&alpha;. If you set &alpha; = 0.1, the true class will be in the set at least 90% of the time. Not approximately. Not on average. <strong>Provably.</strong>
+    </p>
+    <p>
+      The mechanism is simple. You take a calibration set (held-out data the model has not seen). For each pixel, compute a <strong>non-conformity score</strong>: 1 minus the model&rsquo;s softmax probability for the true class. High score means the model was uncertain about the correct answer. Then take the (1&minus;&alpha;) quantile of all these scores, with a finite-sample correction. This gives you a threshold q&#770;.
+    </p>
+    <p>
+      At inference time, for each pixel, include every class whose softmax probability is &ge; 1&minus;q&#770;. If both classes make the cut, the prediction set has size 2 &mdash; which means <strong>the model does not know.</strong> If only one class makes the cut, the model is confident. The set size <em>is</em> the uncertainty map.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Conformal prediction per pixel</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Calibration</div><div class="dia-box-sub">Compute 1 &minus; P(true class)<br>for every pixel on<br>held-out images</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Threshold</div><div class="dia-box-sub">q&#770; = (1&minus;&alpha;)(n+1)/n<br>quantile of scores</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Predict</div><div class="dia-box-sub">Include class if<br>P(class) &ge; 1 &minus; q&#770;</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Set size = 1</div><div class="dia-box-sub">Confident</div></div>
+    </div>
+    <div class="dia-row" style="margin-top:0">
+      <div class="dia-box" style="visibility:hidden;min-width:100px"></div>
+      <div class="dia-arrow" style="visibility:hidden"></div>
+      <div class="dia-box" style="visibility:hidden;min-width:100px"></div>
+      <div class="dia-arrow" style="visibility:hidden"></div>
+      <div class="dia-box" style="visibility:hidden;min-width:100px"></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box dia-bad"><div class="dia-box-title">Set size = 2</div><div class="dia-box-sub">Uncertain &mdash; flag it</div></div>
+    </div>
+    <div class="dia-note">For binary segmentation: set size 1 = the model knows. Set size 2 = the model is guessing. No in-between.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 6: BIRD'S EYE VIEW
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 6. From camera view to bird&rsquo;s eye view</div>
+  <div class="prose fade">
+    <p>
+      A segmentation mask in camera view is useful for visualization. But a path planner does not think in pixels. It thinks in meters. "Is there drivable road 10 meters ahead and 2 meters to the left?" To answer that, you need to transform the mask from the camera&rsquo;s perspective projection into a <strong>top-down Bird&rsquo;s Eye View (BEV)</strong>.
+    </p>
+    <p>
+      I use <strong>Inverse Perspective Mapping</strong> (IPM) &mdash; a classical homography-based approach. Under the flat-ground assumption (z = 0), you can compute a 3&times;3 matrix that maps pixels in the camera image to positions in a metric ground plane. No neural network needed. Pure geometry.
+    </p>
+    <p>
+      The BEV output is a 200&times;200 grid covering &minus;10m to +10m laterally and 3m to 50m forward. Each cell tells you: drivable or not. An orange marker at the bottom represents the ego vehicle. This is directly consumable by a path planner &mdash; it is a top-down occupancy map in real-world coordinates.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">End-to-end pipeline</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Camera</div><div class="dia-box-sub">1280&times;720 RGB</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">SegFormer + LoRA</div><div class="dia-box-sub">512&times;512 binary mask</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Conformal</div><div class="dia-box-sub">Uncertainty map</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box dia-good"><div class="dia-box-title">IPM &rarr; BEV</div><div class="dia-box-sub">200&times;200 metric grid<br>&plusmn;10m &times; 3&ndash;50m</div></div>
+    </div>
+    <div class="dia-note">Image in, metric occupancy grid out. 30 FPS capable on T4 GPU.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 7: PRODUCTION
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 7. Production-grade engineering</div>
+  <div class="prose fade">
+    <p>
+      This is not a notebook. It is a deployable system with 145 tests across 11 test modules, a CI/CD pipeline that gates every merge, Docker containerization, and cloud training on GCP Vertex AI.
+    </p>
+  </div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">145 tests, 11 modules</div>
+      <div class="pipe-desc">Every component tested independently: model architecture, LoRA injection, data loading, transforms, BEV projection, IoU metrics, training loop, inference pipeline, visualization, and cloud setup.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">CI/CD: lint &rarr; typecheck &rarr; test &rarr; build</div>
+      <div class="pipe-desc"><strong>Ruff</strong> for linting, <strong>mypy</strong> (strict mode) for type checking, <strong>pytest</strong> for tests, then Docker build that runs pytest inside the image. Broken code cannot produce a container.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Training resilience</div>
+      <div class="pipe-desc">Mixed precision (AMP) on CUDA, gradient clipping at max_norm=1.0, NaN/Inf detection with bad batch skipping, early stopping with patience=5, full checkpoint resume (model + optimizer + scaler + scheduler + epoch + metrics).</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-title">Vertex AI deployment</div>
+      <div class="pipe-desc">Dockerized training on <strong>n1-standard-8 + NVIDIA T4</strong> (16GB VRAM). GCS-backed artifact storage. W&amp;B experiment tracking. One command to submit a training job.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       STACK & LINK
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Stack</div>
+  <div class="stack fade">
+    <span class="stack-tag">PyTorch</span>
+    <span class="stack-tag">HuggingFace Transformers</span>
+    <span class="stack-tag">LoRA (custom)</span>
+    <span class="stack-tag">Conformal Prediction</span>
+    <span class="stack-tag">OpenCV</span>
+    <span class="stack-tag">BDD100K</span>
+    <span class="stack-tag">Vertex AI</span>
+    <span class="stack-tag">Docker</span>
+    <span class="stack-tag">GitHub Actions</span>
+    <span class="stack-tag">W&amp;B</span>
+    <span class="stack-tag">pytest</span>
+    <span class="stack-tag">mypy</span>
+    <span class="stack-tag">ruff</span>
+  </div>
+
+  <a href="https://github.com/Axionis47/ADAS_Conformal" target="_blank" class="proj-link fade">View on GitHub &rsaquo;</a>
+
+</main>
+
+<footer>
+  <div class="ft">
+    <div class="ft-c">&copy; 2026 Sai Siddharth Yalamanchili</div>
+    <div class="ft-l">
+      <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
+      <a href="#" target="_blank">LinkedIn</a>
+      <a href="mailto:">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(es => {
+  es.forEach((e, i) => {
+    if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
+  });
+}, { threshold: .12 });
+document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
