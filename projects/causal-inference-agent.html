@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Causal Inference Agent — Sai Siddharth Yalamanchili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
+    --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
+    --t1:#d4d4d4;--t2:#8a8a8a;--t3:#555558;
+    --accent:#d88c3a;--green:#5a9a5a;--red:#9a5a5a;
+    --r:14px;
+    --mono:'JetBrains Mono',monospace;
+    --serif:'Source Serif 4',serif;
+    --sans:'DM Sans',sans-serif;
+  }
+  body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
+  a{color:var(--accent);text-decoration:none;transition:color .2s}
+  a:hover{color:#eaa050}
+
+  nav{display:flex;justify-content:space-between;align-items:center;max-width:760px;width:100%;margin:0 auto;padding:2.5rem 1.5rem 1.5rem}
+  nav .logo{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--t1);text-decoration:none}
+  nav .back{font-family:var(--mono);font-size:.8rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  nav .back:hover{color:var(--accent)}
+
+  main{max-width:760px;width:100%;margin:0 auto;padding:1.5rem 1.5rem 4rem;flex:1}
+
+  .proj-label{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
+  .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
+
+  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 28px;margin-bottom:36px}
+  .brief-label{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+  .brief-key{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:right;white-space:nowrap}
+  .brief-val{font-family:var(--mono);font-size:.72rem;color:var(--t1);line-height:1.7}
+
+  .prose{margin-bottom:1.8rem}
+  .prose p{font-family:var(--serif);font-size:1rem;font-weight:300;color:var(--t2);line-height:2.1;margin-bottom:1.4rem}
+  .prose strong{color:var(--t1);font-weight:500}
+
+  .sec{font-family:var(--mono);font-size:.63rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
+
+  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 24px;margin:20px 0}
+  .dia-title{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
+  .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
+  .dia-box-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
+  .dia-box-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2);line-height:1.7}
+  .dia-arrow{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;padding:0 10px;flex-shrink:0}
+  .dia-arrow-down{font-family:var(--mono);font-size:.9rem;color:var(--t3);opacity:.3;text-align:center;padding:8px 0}
+  .dia-note{font-family:var(--mono);font-size:.62rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
+  .dia-good{border:1px solid rgba(90,154,90,0.2)}
+  .dia-bad{border:1px solid rgba(154,90,90,0.2)}
+
+  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
+  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:22px 16px;text-align:center;transition:all .3s}
+  .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+  .stat-val{font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--accent);margin-bottom:5px}
+  .stat-label{font-family:var(--mono);font-size:.58rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
+
+  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
+  .rtable th{font-family:var(--mono);font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.68rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable tr.best td{color:var(--accent);font-weight:500}
+
+  .pipeline{position:relative;padding-left:32px;margin:20px 0}
+  .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
+  .pipe-step{position:relative;margin-bottom:24px}
+  .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
+  .pipe-num{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;margin-bottom:3px}
+  .pipe-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+  .pipe-desc{font-family:var(--serif);font-size:.86rem;color:var(--t2);line-height:1.95}
+  .pipe-desc strong{color:var(--t1);font-weight:500}
+
+  .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
+  .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .proj-link{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+  .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+  footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
+  .ft{max-width:760px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+  .ft-c{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
+  .ft-l{display:flex;gap:18px}
+  .ft-l a{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  .ft-l a:hover{color:var(--accent)}
+
+  @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+  .fade.v{opacity:1;transform:translateY(0)}
+
+  @media(max-width:768px){
+    main{padding:1rem 1rem 3rem}
+    .results{grid-template-columns:repeat(2,1fr)}
+    .dia-row{flex-direction:column;gap:0}
+    .dia-arrow{transform:rotate(90deg);padding:6px 0}
+    .ft{flex-direction:column;gap:10px;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="logo">sai.</a>
+  <a href="../#projects" class="back">&larr; projects</a>
+</nav>
+
+<main>
+
+  <div class="proj-label fade">Project</div>
+  <h1 class="proj-title fade">Causal Inference Agent: 13 Specialists, One Notebook</h1>
+  <div class="divider"></div>
+
+  <!-- Engineering Brief -->
+  <div class="brief fade">
+    <div class="brief-label">Engineering Brief</div>
+    <div class="brief-grid">
+      <span class="brief-key">Problem</span>
+      <span class="brief-val">Causal inference is hard. Method selection alone requires years of training. Most data scientists pick OLS and hope for the best. The wrong method gives the wrong answer &mdash; and you cannot tell from the output.</span>
+      <span class="brief-key">Approach</span>
+      <span class="brief-val">13 specialist LLM agents orchestrated by an LLM-driven dispatcher (no hardcoded routing). ReAct pattern throughout. Pull-based context engineering saves 70% of prompt tokens. Critique loop iterates up to 3 times.</span>
+      <span class="brief-key">Result</span>
+      <span class="brief-val">Drop in a Kaggle URL, get a publication-ready Jupyter notebook: DAG discovery, 12 estimation methods, sensitivity analysis, and executable verification cells. 5&ndash;10 minutes end to end.</span>
+      <span class="brief-key">Why it matters</span>
+      <span class="brief-val">Correlation is not causation, but most tools stop at correlation. This system reasons about confounders, instruments, and assumptions &mdash; then checks its own work.</span>
+      <span class="brief-key">Stack</span>
+      <span class="brief-val">FastAPI, React/TS, Claude/Vertex/Gemini (swappable), econml, pgmpy, Docker, Firestore, structlog</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 1: THE PROBLEM
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 1. Why most causal analysis is wrong</div>
+  <div class="prose fade">
+    <p>
+      You have a dataset. You want to know: <strong>does X cause Y?</strong> Not "are X and Y correlated." Not "does X predict Y." You want the causal effect. If you intervene on X, what happens to Y?
+    </p>
+    <p>
+      This sounds like a simple question. It is not. The answer depends entirely on which <strong>confounders</strong> you control for, which <strong>method</strong> you use, and which <strong>assumptions</strong> you make. Use OLS when you should use instrumental variables, and you get a biased estimate. Control for a mediator instead of a confounder, and you introduce bias that was not there before. Ignore a collider, and you create a spurious association from nothing.
+    </p>
+    <p>
+      The terrifying part: <strong>the output looks fine either way.</strong> You get a coefficient, a p-value, a confidence interval. Nothing in the output tells you the method was wrong. The numbers are precise. They are just precisely wrong.
+    </p>
+    <p>
+      A trained causal inference researcher knows how to navigate this. They draw a DAG, identify the adjustment set, check positivity, run sensitivity analysis. But this takes years of training. Most data scientists do not have it. They run a regression, report the coefficient, and move on. The question is: can you encode that expertise into a system that does not skip steps?
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 2: THE ARCHITECTURE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 2. Thirteen agents, one orchestrator</div>
+  <div class="prose fade">
+    <p>
+      The system decomposes causal analysis into the steps a careful researcher would take &mdash; and assigns each to a specialist agent. Not a monolithic prompt. Not a chain of prompts. Thirteen independent agents, each with its own tools, its own state contract, and its own ReAct loop.
+    </p>
+    <p>
+      The orchestrator is the critical design decision. It is <strong>not</strong> a hardcoded pipeline. There is no <code>if data_has_time: run_did()</code>. The orchestrator is an LLM that sees the registered agents, their capabilities, and the current state of the analysis. It decides which agent to dispatch next based on what has been learned so far. If the data has no instruments, it skips the IV estimator. If the DAG discovery fails, it proceeds with confounder heuristics. The routing is <strong>reasoning</strong>, not branching.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Pipeline execution flow</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Domain</div><div class="dia-box-sub">Kaggle metadata<br>semantic hints</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Profiler</div><div class="dia-box-sub">Types, distributions<br>variable roles</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Repair</div><div class="dia-box-sub">Missing values<br>outliers, coercion</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">EDA</div><div class="dia-box-sub">Correlations, VIF<br>covariate balance</div></div>
+      <div class="dia-arrow">&#8651;</div>
+      <div class="dia-box"><div class="dia-box-title">Discovery</div><div class="dia-box-sub">PC, FCI, GES<br>NOTEARS, LiNGAM</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">DAG Expert</div><div class="dia-box-sub">LLM refinement<br>forbidden edges</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Confounders</div><div class="dia-box-sub">Backdoor criterion<br>adjustment sets</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">PS Diagnostics</div><div class="dia-box-sub">Overlap, balance<br>calibration</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Estimator</div><div class="dia-box-sub">12 methods<br>adaptive selection</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Sensitivity</div><div class="dia-box-sub">E-values, bounds<br>placebo tests</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Critique</div><div class="dia-box-sub">5-dimension review<br>iterate up to 3&times;</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Notebook</div><div class="dia-box-sub">14-section Jupyter<br>executable output</div></div>
+    </div>
+    <div class="dia-note">EDA and Discovery run in parallel via asyncio.gather. Critique can loop back to Estimator up to 3 times.</div>
+  </div>
+
+  <div class="results fade">
+    <div class="stat">
+      <div class="stat-val">13</div>
+      <div class="stat-label">Specialist agents</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">12</div>
+      <div class="stat-label">Causal methods</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">5</div>
+      <div class="stat-label">DAG algorithms</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">70%</div>
+      <div class="stat-label">Token savings</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 3: CONTEXT ENGINEERING
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 3. Pull, don&rsquo;t push</div>
+  <div class="prose fade">
+    <p>
+      The naive approach to multi-agent systems: dump the entire state into every agent&rsquo;s system prompt. The profiler produced a 200-row summary? Every downstream agent gets it. The DAG has 40 edges? Paste the adjacency list into every prompt. This is how most agentic systems work. It is also how you burn tokens.
+    </p>
+    <p>
+      The problem is not just cost. It is <strong>noise</strong>. An effect estimator does not need the full data profile. It needs the treatment variable, the outcome variable, the confounders, and the sample size. Giving it everything else is not helpful &mdash; it is distracting. LLMs perform worse when the relevant information is buried in irrelevant context.
+    </p>
+    <p>
+      The solution: <strong>pull-based context.</strong> Every ReAct agent has access to four context query tools. Instead of receiving a bloated initial prompt, agents request exactly what they need, when they need it. The profiler agent calls <code>get_profile_for_variables(["age", "income"])</code> and gets stats for those two columns. Not all 50.
+    </p>
+    <p>
+      The result: initial observation tokens dropped from 500&ndash;800 per agent to 150&ndash;200. Across a full job with 13 agents and up to 3 critique iterations, that is roughly <strong>6,800 fewer tokens per job</strong> &mdash; a 70% reduction in input costs.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 4: METHOD SELECTION
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 4. Twelve methods, and the LLM picks</div>
+  <div class="prose fade">
+    <p>
+      This is the core intellectual challenge. You have a dataset, a treatment, an outcome, and a set of confounders. Which estimation method should you use? The answer depends on the data structure, the sample size, the treatment type, and which assumptions you are willing to make.
+    </p>
+    <p>
+      The effect estimator agent does not hardcode this decision. It <strong>inspects the data</strong> and reasons about applicability. Binary treatment with less than 100 observations? OLS and IPW only &mdash; propensity score matching needs more data to find good matches. More than 500 observations with potential nonlinear effects? Add causal forests and double ML. Time dimension in the data? Try difference-in-differences. A variable that looks like an instrument? Try IV.
+    </p>
+    <p>
+      The agent runs every applicable method, produces a comparison table with point estimates and confidence intervals, and the LLM selects the most credible subset based on diagnostics. This is not "pick the method with the smallest p-value." It is "pick the method whose assumptions are best supported by the data."
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">The 12 estimation methods</div>
+    <table class="rtable">
+      <tr><th>Method</th><th>Estimand</th><th>When to use</th></tr>
+      <tr><td>OLS</td><td>ATE</td><td>Linear baseline, always applicable</td></tr>
+      <tr><td>IPW</td><td>ATE</td><td>Propensity weighting, good overlap</td></tr>
+      <tr><td>AIPW</td><td>ATE</td><td>Doubly robust &mdash; consistent if either model is correct</td></tr>
+      <tr><td>PSM</td><td>ATT</td><td>Matching designs, n &gt; 100</td></tr>
+      <tr><td>DiD</td><td>ATT</td><td>Panel data with parallel trends</td></tr>
+      <tr><td>IV (2SLS)</td><td>LATE</td><td>Endogeneity with valid instruments</td></tr>
+      <tr><td>RDD</td><td>ATE</td><td>Sharp cutoff designs</td></tr>
+      <tr><td>S-Learner</td><td>CATE</td><td>Heterogeneous effects, simple baseline</td></tr>
+      <tr><td>T-Learner</td><td>CATE</td><td>Treatment group splitting</td></tr>
+      <tr><td>X-Learner</td><td>CATE</td><td>Flexible heterogeneous effects</td></tr>
+      <tr class="best"><td>Causal Forest</td><td>CATE</td><td>Nonlinear heterogeneity, n &gt; 500</td></tr>
+      <tr class="best"><td>Double ML</td><td>ATE/CATE</td><td>High-dimensional covariates, Neyman orthogonality</td></tr>
+    </table>
+    <div class="dia-note">Method selection is data-driven, not hardcoded. The LLM inspects sample size, treatment type, and available structure.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 5: DAG DISCOVERY
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 5. Learning the causal graph</div>
+  <div class="prose fade">
+    <p>
+      Before you can estimate a causal effect, you need to know the causal structure. Which variables cause which? What are the confounders? Are there mediators? Colliders? Instruments? The answer is a <strong>Directed Acyclic Graph</strong> (DAG) &mdash; and getting it wrong means every downstream estimate is biased.
+    </p>
+    <p>
+      The discovery agent runs five algorithms, each with different assumptions and strengths. <strong>PC</strong> uses conditional independence tests &mdash; it is fast but assumes no latent confounders. <strong>FCI</strong> relaxes that assumption and can detect hidden common causes via bidirected edges. <strong>GES</strong> takes a score-based approach, greedily searching for the graph that best fits the data under BIC. <strong>NOTEARS</strong> formulates structure learning as continuous optimization with an acyclicity constraint. <strong>LiNGAM</strong> exploits non-Gaussianity to identify the full causal ordering.
+    </p>
+    <p>
+      The DAG expert agent then takes the algorithmic output and <strong>refines it with domain knowledge</strong>. If the Kaggle metadata says this is a medical dataset and the algorithm puts "age" as caused by "blood pressure," the LLM catches that and flips the edge. It also enforces forbidden edges &mdash; relationships that are structurally impossible regardless of what the statistics say.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 6: THE CRITIQUE LOOP
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 6. The system that checks its own work</div>
+  <div class="prose fade">
+    <p>
+      Here is the part that separates this from a prompt chain: the <strong>critique agent</strong>. After all estimation and sensitivity analysis is complete, a dedicated agent reviews the entire analysis across five dimensions: methodology rigor, statistical validity, robustness, reproducibility, and completeness. Each dimension gets a 1&ndash;5 score with specific issues and suggested improvements.
+    </p>
+    <p>
+      If the critique finds problems &mdash; say, the estimator did not check positivity, or the sensitivity analysis skipped placebo tests &mdash; the orchestrator sends the analysis back to the estimation stage. The estimator re-runs with the critique feedback injected into its context. This can happen up to three times. The system <strong>iterates toward correctness</strong> rather than hoping it gets it right the first time.
+    </p>
+    <p>
+      The output is a 14-section Jupyter notebook with executable code. Not a summary. Not a report. A notebook you can run, modify, and verify every claim. Each section maps 1:1 to a pipeline agent: data loading, profiling, repairs, EDA, causal structure, confounder analysis, propensity diagnostics, treatment effects, sensitivity analysis, and the critique feedback itself.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 7: ARCHITECTURE DECISIONS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 7. The engineering under the hood</div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">Protocol-based LLM abstraction</div>
+      <div class="pipe-desc">Claude, Vertex AI, and Gemini behind a single Python Protocol. Swap providers by changing one environment variable. No inheritance chains. Structural typing only.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">State contracts for parallel execution</div>
+      <div class="pipe-desc">Every agent declares <strong>REQUIRED_STATE_FIELDS</strong> (what it reads) and <strong>WRITES_STATE_FIELDS</strong> (what it produces). Parallel agents get deep copies via Pydantic v2. Merge back by declared fields only &mdash; no accidental overwrites.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Decorator-based agent registration</div>
+      <div class="pipe-desc"><strong>@register_agent("my_agent")</strong> &mdash; no config files. Import triggers registration. The orchestrator sees all registered agents and their capabilities without manual wiring.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-title">Structured logging, not f-strings</div>
+      <div class="pipe-desc"><strong>structlog</strong> with JSON output. Every event includes job_id, agent name, duration, and structured metadata. Machine-readable audit trails for every decision in the pipeline.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">05</div>
+      <div class="pipe-title">Full-stack with real-time progress</div>
+      <div class="pipe-desc">FastAPI backend, React/TypeScript frontend, SSE streaming for live agent progress. Zustand for state, React Query for async. Docker Compose for one-command deployment.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       STACK & LINK
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Stack</div>
+  <div class="stack fade">
+    <span class="stack-tag">FastAPI</span>
+    <span class="stack-tag">React</span>
+    <span class="stack-tag">TypeScript</span>
+    <span class="stack-tag">Claude API</span>
+    <span class="stack-tag">Vertex AI</span>
+    <span class="stack-tag">Gemini</span>
+    <span class="stack-tag">econml</span>
+    <span class="stack-tag">pgmpy</span>
+    <span class="stack-tag">statsmodels</span>
+    <span class="stack-tag">Docker</span>
+    <span class="stack-tag">Firestore</span>
+    <span class="stack-tag">structlog</span>
+    <span class="stack-tag">Zustand</span>
+    <span class="stack-tag">SSE</span>
+    <span class="stack-tag">nbformat</span>
+  </div>
+
+  <a href="https://github.com/Axionis47/causal-inference-agent" target="_blank" class="proj-link fade">View on GitHub &rsaquo;</a>
+
+</main>
+
+<footer>
+  <div class="ft">
+    <div class="ft-c">&copy; 2026 Sai Siddharth Yalamanchili</div>
+    <div class="ft-l">
+      <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
+      <a href="#" target="_blank">LinkedIn</a>
+      <a href="mailto:">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(es => {
+  es.forEach((e, i) => {
+    if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
+  });
+}, { threshold: .12 });
+document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
