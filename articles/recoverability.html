@@ -182,21 +182,15 @@
   <div class="divider"></div>
 
   <div class="article-body">
-    <p><strong>LLMs are stochastic. No agent will be 100% reliable.</strong> If your architecture assumes it will be, your architecture is wrong.</p>
+    <p>The systems I built that worked best were not the ones where the model was most accurate. They were the ones where I assumed every component would fail and built a safety net under each one.</p>
 
-    <p>The question for every component output isn't "is this correct?" — it's <strong>"how do I automatically check it, and what's the rollback?"</strong> If an extractor pulls a date, validate it against the source. If a tool call fails, catch it and retry with modified arguments. If there's ambiguity, resolve it with a clarification prompt, not a blind guess.</p>
+    <p>For every component output, I started asking two questions: how can I automatically check this, and what is the rollback? If an extractor pulls a date, validate it against the source text. If a tool call fails, catch it and retry with modified arguments. If there is ambiguity, resolve it with a clarification prompt instead of letting the agent guess.</p>
 
-    <p>Reliable systems use continuous validation loops: the model proposes, then something — code, schema check, a second model — verifies before anything is trusted. The paradigm is simple: assume every component is fallible and put a safety net under each one.</p>
+    <p>The pattern that emerged was continuous validation loops. The model proposes something. Then code, a schema check, or a second model verifies it before anything gets trusted. I found that this propose-then-verify cycle caught most of the issues that would have been invisible otherwise.</p>
 
-    <p>For any component output, ask: "how could I automatically check this, and what is the rollback?" For example, if an extractor pulls a date or answer, validate it against the source text. If a tool call might fail, add catch blocks or allow the agent to retry with modified arguments. Ambiguities should be resolved by clarification prompts, not blind guesses.</p>
+    <p>I ended up with a hierarchy: deterministic checks first (schema, type, format), then semantic checks (does the output make sense given the input?), then human review for high-stakes decisions. Each layer catches what the previous one missed.</p>
 
-    <p>In practice, <strong>agents should track "ground truth" after each tool call</strong> — the actual results — to confirm their reasoning path. When an LLM proposes an action or answer, immediately validate it via code checks, schema validation, or a verifier model before trusting it.</p>
-
-    <p>The hierarchy of validation: <strong>deterministic checks first</strong> (schema, type, format), then semantic checks (does the output make sense given the input?), then human review for high-stakes decisions. Each layer catches what the previous one missed.</p>
-
-    <p>Build for recoverability: ensure failures can be detected and corrected. The goal isn't preventing all errors. It's making sure no error goes undetected and no detected error goes uncorrected.</p>
-
-    <p class="closing"><em>You don't need a perfect model. You need a system that catches its own mistakes.</em></p>
+    <p>The goal was never preventing all errors. That is not realistic with stochastic models. The goal was making sure no error goes undetected and no detected error goes uncorrected. That turned out to be a much more achievable target and it made the whole system significantly more reliable.</p>
   </div>
 </main>
 

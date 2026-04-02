@@ -182,19 +182,15 @@
   <div class="divider"></div>
 
   <div class="article-body">
-    <p><strong>If you can't state what a component decides in one sentence, it's doing too much.</strong> That's not a style preference. It's a diagnostic.</p>
+    <p>I kept running into bugs I could not trace. The logs would show something went wrong, but I could not figure out which part of the system caused it. The problem was always the same: I had components doing more than one thing.</p>
 
-    <p>A router classifies intent. A summarizer compresses text. An extractor pulls structured fields. The moment you say a component "figures out what to do," you've lost control of it. <strong>Vague scope is where hallucinations hide.</strong></p>
+    <p>A router that also reformats queries. An extractor that also decides what to extract. Once I started asking "can I describe what this component does in one sentence?" the messy ones became obvious. If the answer was "it figures out what to do," that component needed to be split.</p>
 
-    <p>This mirrors bounded contexts in domain-driven design. Each component gets one task, one input contract, one output schema. You can test it in isolation. You can reason about its failure modes. You can replace it without rebuilding the system.</p>
+    <p>This is basically bounded contexts from domain-driven design applied to agents. One task, one input contract, one output schema per component. When I followed this, I could test each piece in isolation. When something broke, I knew exactly where to look.</p>
 
-    <p>Don't lump intent interpretation, planning, answering, and tool use together. Split them. An agent with a clear, narrow role is far easier to reason about and debug than one with a vague mandate. If a component feels vague — "figure out what to do" — it usually needs breaking into two smaller pieces.</p>
+    <p>The practical test I use now: can I write a unit test for this component with a handful of examples? If I cannot define what "correct" looks like for a given input, the scope is too wide. It probably needs to be two things, not one.</p>
 
-    <p>Bounded responsibility also implies <strong>clear interfaces between parts.</strong> Each component has a defined schema: what comes in, what goes out. No side channels, no implicit dependencies. When something breaks, you know exactly where to look.</p>
-
-    <p>The practical test: can you write a unit test for this component with a handful of examples? If you can't define what "correct" looks like for a given input, your scope isn't tight enough.</p>
-
-    <p class="closing"><em>The unit of reliability is the decision boundary, not the model.</em></p>
+    <p>Clear interfaces matter too. Each component has a defined schema for what comes in and what goes out. No side channels, no implicit dependencies. Most of the reliability I got came not from better models but from tighter boundaries around what each piece was allowed to do.</p>
   </div>
 </main>
 

@@ -54,23 +54,15 @@ footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);fo
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>Feynman said "What I cannot create, I do not understand." For agentic systems: <strong>what you cannot test, you do not control.</strong></p>
+    <p>I shipped things I thought worked until I built an eval and found out they did not. That happened more than once. Now I do not consider a component done until I can measure whether it actually works.</p>
 
-    <p>Design is incomplete until you can evaluate it. Not "we'll add tests later." <strong>From Day 1:</strong> define success criteria, build evaluation suites, and use a mix of deterministic checks and model-based grading appropriate to each component.</p>
+    <p>I use two kinds of graders. Deterministic ones (exact match, regex, type checks, schema validation) are fast and objective. They catch the obvious failures. Model-based ones (rubric scoring, pairwise comparison, semantic similarity) handle the fuzzier questions like whether a summary is faithful or a plan is coherent. I calibrate the model-based graders against human judgments so I know what the automated scores actually mean.</p>
 
-    <p><strong>Deterministic graders</strong> — exact match, regex, type checks, unit tests, API response validation — are fast and objective. If an agent writes code, run it through its test suite. If a tool call returns data, validate the schema. These catch the obvious failures.</p>
+    <p>The thing I missed for the longest time was measuring the trajectory, not just the outcome. Did the agent pick the right tool? Did it retrieve the right evidence? Did it skip steps? I had cases where the final answer was correct but the reasoning chain was broken. That is a time bomb. It works until it does not, and when it breaks, there is no trail to follow.</p>
 
-    <p><strong>Model-based graders</strong> — rubric scoring, pairwise comparison, semantic similarity — handle the fuzzy stuff. Is this summary faithful? Is this plan coherent? Calibrate these against human judgments so you know what your automated scores actually mean.</p>
+    <p>I keep two test suites. Capability tests push the limits with new scenarios and hard cases. They start with low pass rates and measure improvement over time. Regression tests guard what already works. They should have near-100% pass rates and catch breakage immediately. I convert passing capability tests into regression tests as soon as I can.</p>
 
-    <p>But here's what most teams miss: <strong>measure the trajectory, not just the outcome.</strong> Did the agent pick the right tool? Did it retrieve the right evidence? Did it skip steps? A correct final answer produced by a broken reasoning chain is a time bomb. It works until it doesn't, and when it breaks, you have no idea why.</p>
-
-    <p><strong>Trajectory metrics</strong> — precision of tool usage, action sequence matching, intermediate state validation — tell you how the answer was reached. This is crucial for regression testing. When you change a prompt or swap a model, you need to know not just "did the final answer change?" but "did the reasoning path change?"</p>
-
-    <p>Keep two test suites. <strong>Capability tests</strong> push the agent's limits — new scenarios, hard cases. They start with low pass rates and measure improvement. <strong>Regression tests</strong> guard what already works — they should have near-100% pass rates and catch breakage immediately. Convert passing capability tests into regression tests as soon as possible.</p>
-
-    <p>In production: <strong>continuously monitor.</strong> Success rate drops, spikes in retries, unusual tool error rates, climbing latency — these are signals, not noise. Don't release and pray. Run your offline eval suite against production samples regularly. Catch drift before users do.</p>
-
-    <p>No single score suffices. Combine deterministic checks, rubric scores, and human review. <strong>Build executable specifications for your tasks:</strong> if Task X succeeds when conditions A, B, C are met, write those conditions in code.</p>
+    <p>In production, I monitor continuously. Success rate drops, spikes in retries, unusual tool error rates, climbing latency. These turned out to be reliable signals, not noise. Running my offline eval suite against production samples regularly helped me catch drift before it became a real problem.</p>
 
     <p><em>Transform evaluation from guesswork into engineering.</em></p>
   </div>

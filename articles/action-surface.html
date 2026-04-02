@@ -182,19 +182,15 @@
   <div class="divider"></div>
 
   <div class="article-body">
-    <p><strong>Every tool you give an agent expands its action surface.</strong> Every action surface expansion is a new class of failure you now have to detect, handle, and recover from.</p>
+    <p>I gave one of my agents thirty tools thinking it would be more capable. It got worse. It started confusing tools with overlapping functions, calling the wrong ones, passing malformed arguments. I spent a week debugging issues that were not model problems at all. They were tool selection problems.</p>
 
-    <p>Give an LLM thirty tools with overlapping functions and watch it confuse them. The fix isn't better prompting. The fix is narrowing the action space before the model ever sees it. Classify the problem type first, then expose only the relevant tools. If the user asks about code, don't show email tools. If the task is retrieval, don't offer write access.</p>
+    <p>The fix was not better prompting. It was showing the agent fewer tools. I added a routing step that classified the problem type first, then exposed only the tools relevant to that class. If the query was about retrieval, the agent never saw write tools. If it was about code, it never saw email tools.</p>
 
-    <p>This is action-surface minimization. Each added tool or modality or degree of autonomy increases the set of things the agent could misdo. For example, giving an LLM dozens of tools with overlapping functions is likely to confuse it. <strong>Use routing or stage-gating to classify the problem type first, then expose only relevant tools.</strong></p>
+    <p>I started thinking of tools not as capabilities but as constraints. A well-designed tool interface is a contract: this is the only way the agent can touch the world. Precise I/O, typed parameters, schema validation. A mis-formatted query causes the tool to fail fast instead of the agent hallucinating a response.</p>
 
-    <p>Tools aren't just capabilities. They're constraints. A well-designed tool interface is a contract that says "this is the only way you can touch the world." Each tool should have a precisely specified I/O — API spec, schema, typed parameters. A mis-formatted query causes the tool to fail fast, not the LLM to hallucinate.</p>
+    <p>MCP (Model Context Protocol) helped me make those contracts explicit and enforceable across agents. It turned informal tool descriptions into real interfaces with real boundaries.</p>
 
-    <p><strong>MCP (Model Context Protocol) makes those contracts explicit and enforceable across agents.</strong> It's the protocol layer that turns informal tool descriptions into real interfaces with real boundaries. Tool design IS agent design.</p>
-
-    <p>The pattern: route first, expose second. First detect the problem class, then provide only the tools relevant to that class. This narrowing step is often more important than the tools themselves.</p>
-
-    <p class="closing"><em>Simpler action sets mean more predictable behavior. Always.</em></p>
+    <p>The pattern that worked: route first, expose second. Detect the problem class, then provide only the relevant tools. That narrowing step ended up being more important than the tools themselves. Simpler action sets meant more predictable behavior every time.</p>
   </div>
 </main>
 

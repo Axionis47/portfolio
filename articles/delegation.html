@@ -62,21 +62,15 @@ footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);fo
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>There are four layers of autonomy in agentic systems. <strong>Tools execute deterministically</strong> — pure functions with zero discretion. <strong>Operators make one narrow LLM judgment</strong> — a classification, an extraction, a rewrite. <strong>Planners chain multiple steps</strong> with bounded loops and explicit stop conditions. <strong>Full agents run open-ended</strong> until a goal is met.</p>
+    <p>I think of agent autonomy as four layers. Tools are pure functions with zero discretion. Operators make one narrow LLM judgment, like a classification or extraction. Planners chain multiple steps with bounded loops. Full agents run open-ended until a goal is met.</p>
 
-    <p>Most teams default to more autonomy than they need because it feels powerful. But <strong>every degree of freedom you hand the LLM is a degree of unpredictability</strong> you must now monitor, evaluate, and recover from.</p>
+    <p>My instinct was always to reach for the highest layer. Let the agent figure it out. It felt powerful. But I kept finding that every degree of freedom I gave the model was a degree of unpredictability I then had to monitor, evaluate, and recover from.</p>
 
-    <p>A Level 0 tool fails in one predictable way. A Level 2 planner chains five decisions — each with its own failure mode — and <strong>the error surface multiplies</strong>. Fully autonomous agents bring higher cost and compounding error. They require extensive sandbox testing and strong guardrails.</p>
+    <p>A tool fails in one predictable way. A planner chains five decisions, each with its own failure mode, and the error surface multiplies. I learned to ask: what is the minimum autonomy that solves this step? And underneath that: can I afford the verification cost of the autonomy I am granting?</p>
 
-    <p>The real question is never "should this be an agent?" It's: <strong>"what is the minimum autonomy that solves this step?"</strong> And underneath that: "can I afford the verification cost of the autonomy I'm granting?"</p>
+    <p>A tightly contracted operator can be verified cheaply with a schema check or a unit test. A loose agent requires human review, trajectory analysis, outcome monitoring. The cost of verification scales with the freedom granted. That tradeoff is something I did not appreciate early on.</p>
 
-    <p>A tightly contracted operator can verify its output cheaply — a schema check, an exact match, a unit test. A loose agent requires expensive human review, trajectory analysis, outcome monitoring. <strong>The cost of verification scales with the freedom granted.</strong></p>
-
-    <p>Autonomy calibration means ascending layers only as needed. Most tasks fit in the operator or planner layers. Simple tasks need zero autonomy — just code. Fuzzy-but-checkable tasks use Level 1-2. <strong>Fully open-ended autonomy is reserved for tasks that truly demand unpredictable multi-step reasoning</strong> — and even then, success depends on clear stop conditions, modest budgets, and rigorous monitoring.</p>
-
-    <p>The loose vs. tight tension is really about trust boundaries. How much can you afford to trust this component? The answer is always: <strong>only as much as you can afford to verify.</strong></p>
-
-    <p><em>Don't hand out freedom you can't account for.</em></p>
+    <p>Most of the tasks I worked on fit in the operator or planner layers. Simple tasks needed zero autonomy, just code. Fuzzy but checkable tasks used operators. I only reached for fully open-ended agents when the task genuinely demanded unpredictable multi-step reasoning, and even then I needed clear stop conditions, modest budgets, and constant monitoring.</p>
   </div>
 
   <div class="article-nav">

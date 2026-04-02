@@ -182,21 +182,15 @@
   <div class="divider"></div>
 
   <div class="article-body">
-    <p><strong>Every token in the context window either helps the decision or hurts it.</strong> There is no neutral information. Extra context doesn't make the model "more informed" — it makes it more confused.</p>
+    <p>I used to think giving an agent more context was always better. More retrieved documents, more chat history, more metadata. The model would be "more informed." It took me a while to realize the opposite was true. My agents got worse as I gave them more.</p>
 
-    <p>Anthropic calls it the "smallest set of high-signal tokens that maximize the desired outcome." I call it a budget. You have a finite number of slots, and every slot you waste on irrelevant information is a slot that could have held something useful.</p>
+    <p>I started thinking of the context window as a budget. Finite slots. Every slot I wasted on irrelevant information was a slot that could have held something useful. A router needs the query and maybe a metadata snippet. Not the full chat history. Not every retrieved document.</p>
 
-    <p>A router needs the query and maybe a metadata snippet. Not the chat history. Not all retrieved documents. A summarizer needs one text chunk and its instructions. Not the user's profile. Not unrelated state.</p>
+    <p>The test I use now: for each piece of context, would removing it change the output? If the answer is no, it should not be there. When I found myself adding context "just in case," it usually meant I had not thought clearly enough about what the component actually needed.</p>
 
-    <p>The test is simple: <strong>for each piece of context, ask "would removing this change the output?"</strong> If the answer is no, it shouldn't be there. If you're adding context "just in case," you've masked an unclear task or a missing step.</p>
+    <p>Context rot is something I ran into on longer pipelines. As windows got larger, the agents lost focus, confused facts, or latched onto irrelevant details. Bigger windows did not fix it. Being disciplined about what entered the window did.</p>
 
-    <p>Context rot is real. As windows get larger, LLMs lose focus, confuse facts, or latch onto irrelevant details. The solution isn't bigger windows. It's discipline about what enters them.</p>
-
-    <p>Frame each component's role as a single decision boundary. Ask: "what information would actually change the output of this step?" Everything else is noise. If you find yourself adding context just in case, pause. That usually masks an unclear task or a missing step.</p>
-
-    <p><strong>Selective retrieval beats bulk loading.</strong> Instead of dumping all data upfront, maintain an index and fetch relevant pieces on demand — just-in-time context. Keep file paths in context, load file contents via tools. This mimics how humans search their environment: on demand, not preloaded.</p>
-
-    <p class="closing"><em>Larger windows don't solve context rot. Discipline does.</em></p>
+    <p>The approach that worked best for me was selective retrieval. Instead of dumping all data upfront, I kept an index and fetched relevant pieces on demand. Just-in-time context. Keep file paths in the window, load file contents via tools only when needed. It cut my token costs significantly and the agents performed better.</p>
   </div>
 </main>
 

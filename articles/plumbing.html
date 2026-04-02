@@ -54,23 +54,17 @@ footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);fo
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>Nobody writes blog posts about checkpointing. Nobody gives conference talks about graceful degradation. <strong>But this is where production systems actually die.</strong></p>
+    <p>Most of my debugging time was never about the model. It was about what happens when a tool call returns a 500 mid-pipeline, or an external API sends back malformed JSON, or the model times out at step 3 of 7. The unglamorous infrastructure stuff that nobody writes blog posts about.</p>
 
-    <p>What happens mid-pipeline when a tool call returns a 500? When an external API sends back malformed JSON? When the model times out at step 3 of 7? If your answer is "it crashes," <strong>your system isn't production-ready.</strong></p>
+    <p>I added schema validation at every tool boundary. Retry logic with modified arguments. Checkpointing so I could resume from the last known good state instead of restarting from scratch. These were not features I planned. They were things I added after watching my system crash in the same way for the third time.</p>
 
-    <p><strong>Schema validation at every tool boundary.</strong> Retry logic with modified arguments. Checkpointing so you can resume from the last known good state, not restart from scratch. These aren't features. They're the minimum bar.</p>
+    <p>The economics mattered more than I expected. When to cascade from a large model to a small one. What to cache. How to keep latency honest. I initially treated these as optimization problems to solve later, but they turned out to be architecture decisions that determined which designs were even viable.</p>
 
-    <p>And underneath all of it: the economics. When to cascade from a large model to a small one. What to cache. How to keep latency honest. <strong>These aren't optimization problems you solve later.</strong> They're architecture decisions you make now, because cost and latency constraints shape which designs are even viable.</p>
+    <p>Loop budgets ("max 5 retrieval attempts, then abort") saved me from runaway cost and infinite loops. Without them, a confused agent would burn tokens in circles. Context compaction, periodically summarizing and resetting the window, prevented context pollution in longer-running processes.</p>
 
-    <p>Loop budgets — "max 5 retrieval attempts, then abort" — <strong>prevent runaway cost and infinite loops</strong>. Without them, a confused agent burns tokens in circles. Context compaction — periodically summarizing and resetting the window — prevents context pollution in long-running processes.</p>
+    <p>Graceful degradation was another lesson. If the primary model times out, fall back to a smaller one. If a tool is unavailable, skip it and note the gap rather than failing the entire pipeline. If results come back partial, work with what you have rather than blocking.</p>
 
-    <p><strong>Graceful degradation means having fallback paths.</strong> If the primary model times out, fall back to a smaller one. If a tool is unavailable, skip it and note the gap rather than failing the entire pipeline. If results come back partial, work with what you have rather than blocking.</p>
-
-    <p>The monitoring layer matters here too. Track tool call stats, error rates, retry counts, iteration counts per session. <strong>An unusual spike in retries or a climbing iteration count</strong> before termination are early signals that something has changed in the environment or the model's behavior.</p>
-
-    <p>This is the layer that separates demos from production. Anyone can build a system that works when everything goes right. <strong>The engineering is in what happens when things go wrong.</strong></p>
-
-    <p><em>The unglamorous layer is the load-bearing layer.</em></p>
+    <p>I also track tool call stats, error rates, retry counts, and iteration counts per session. An unusual spike in retries or a climbing iteration count turned out to be reliable early signals that something had changed in the environment or the model's behavior.</p>
   </div>
 
   <div class="article-nav">

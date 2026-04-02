@@ -54,21 +54,15 @@ footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);fo
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>Most people think of agent memory as a retrieval problem. Embed, store, fetch. That's the easy part. <strong>The hard part is governance.</strong></p>
+    <p>I used to think of agent memory as a retrieval problem. Embed, store, fetch. That turned out to be the easy part. The hard part was governance. What gets remembered, what gets expired, and what gets withheld.</p>
 
-    <p>What gets remembered? What gets expired? What gets withheld? When multiple agents share a retrieval layer, who has access to what? <strong>A planner that sees raw customer data it wasn't designed for is a liability, not a feature.</strong> Memory without access boundaries is a context pollution vector.</p>
+    <p>I had a system where multiple agents shared a retrieval layer. One agent's working memory leaked into another agent's context. A planner started seeing raw data it was never designed for. The outputs got worse in ways that were hard to diagnose because the contamination was subtle.</p>
 
-    <p><strong>Freshness is the one everyone ignores.</strong> A fact retrieved from memory is a claim that something was true at write time. It may have been renamed, removed, or never merged. If your system treats stale memory the same as current observation, you've built a hallucination machine with extra steps.</p>
+    <p>Freshness was the one I ignored the longest. A fact retrieved from memory is a claim that something was true at write time. It may have been renamed, removed, or never merged. When I treated stale memory the same as current observation, I was building a hallucination machine with extra steps.</p>
 
-    <p>Expiry rules, staleness scoring, source-of-truth hierarchies — these are <strong>policy decisions, not implementation details</strong>. Memory should have the same rigor as access control in a traditional system: who can read what, under what conditions, with what confidence level.</p>
+    <p>I started treating memory the same way I would treat access control in a traditional system. Expiry rules, staleness scoring, source-of-truth hierarchies. Who can read what, under what conditions, with what confidence level. These turned out to be policy decisions, not implementation details.</p>
 
-    <p>Memory across agents sharing a retrieval layer needs <strong>explicit access boundaries</strong>. Agent A's working memory shouldn't leak into Agent B's context unless there's a deliberate, validated handoff. Every shared memory is a potential vector for cross-contamination.</p>
-
-    <p>The temporal dimension matters too. For video, multi-turn, or long-running processes, <strong>forgetting context</strong> — which frame had key info, which conversation turn established a constraint — is a real failure mode. Use sliding windows or explicit memory management, not unbounded accumulation.</p>
-
-    <p>The practical framework: treat every memory write as <strong>a claim with a timestamp and a trust level</strong>. Treat every memory read as a hypothesis that needs verification against current state. Before acting on remembered information, check that it still holds.</p>
-
-    <p><em>Bad memory is worse than no memory.</em></p>
+    <p>The framework I settled on: treat every memory write as a claim with a timestamp and a trust level. Treat every memory read as a hypothesis that needs verification against current state. Before acting on remembered information, check that it still holds. Bad memory turned out to be significantly worse than no memory at all.</p>
   </div>
 
   <div class="article-nav">
