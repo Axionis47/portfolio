@@ -16,9 +16,9 @@
     --inset: #0a0a0c;
     --shd: rgba(2,2,4,0.75);
     --shl: rgba(42,42,46,0.16);
-    --t1: #c8c8c8;
-    --t2: #707070;
-    --t3: #404044;
+    --t1: #e0e0e0;
+    --t2: #ababab;
+    --t3: #787880;
     --accent: #d88c3a;
     --mono: 'JetBrains Mono', monospace;
     --serif: 'Source Serif 4', serif;
@@ -27,8 +27,8 @@
 
   body {
     background: var(--bg);
-    color: var(--t2);
-    font-family: var(--serif);
+    color: var(--t1);
+    font-family: var(--sans);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -106,15 +106,15 @@
   }
 
   .article-body p {
-    font-family: var(--serif);
+    font-family: var(--sans);
     font-size: 1rem;
-    color: var(--t2);
+    color: var(--t1);
     line-height: 1.9;
     margin-bottom: 1.5rem;
   }
 
   .article-body strong {
-    color: var(--t1);
+    color: var(--accent);
     font-weight: 500;
   }
 
@@ -182,15 +182,17 @@
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>I kept running into bugs I could not trace. The logs would show something went wrong, but I could not figure out which part of the system caused it. The problem was always the same: I had components doing more than one thing.</p>
+    <p>I kept running into bugs I could not trace. The logs would show something went wrong, but I could not figure out which part of the system caused it. The problem was always the same: <strong>I had components doing more than one thing.</strong></p>
 
     <p>A router that also reformats queries. An extractor that also decides what to extract. Once I started asking "can I describe what this component does in one sentence?" the messy ones became obvious. If the answer was "it figures out what to do," that component needed to be split.</p>
 
-    <p>This is basically bounded contexts from domain-driven design applied to agents. One task, one input contract, one output schema per component. When I followed this, I could test each piece in isolation. When something broke, I knew exactly where to look.</p>
+    <p>This is basically bounded contexts from domain-driven design applied to agents. <strong>One task, one input contract, one output schema per component.</strong> When I followed this, I could test each piece in isolation. When something broke, I knew exactly where to look.</p>
 
     <p>The practical test I use now: can I write a unit test for this component with a handful of examples? If I cannot define what "correct" looks like for a given input, the scope is too wide. It probably needs to be two things, not one.</p>
 
-    <p>Clear interfaces matter too. Each component has a defined schema for what comes in and what goes out. No side channels, no implicit dependencies. Most of the reliability I got came not from better models but from tighter boundaries around what each piece was allowed to do.</p>
+    <p>Clear interfaces matter too. Each component has a defined schema for what comes in and what goes out. No side channels, no implicit dependencies. Most of the reliability I got came not from better models but from <strong>tighter boundaries around what each piece was allowed to do.</strong></p>
+
+    <p class="closing"><em>The unit of reliability turned out to be the decision boundary, not the model.</em></p>
   </div>
 </main>
 

@@ -54,15 +54,17 @@ footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);fo
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>I used to think of agent memory as a retrieval problem. Embed, store, fetch. That turned out to be the easy part. The hard part was governance. What gets remembered, what gets expired, and what gets withheld.</p>
+    <p>I used to think of agent memory as a retrieval problem. Embed, store, fetch. That turned out to be the easy part. <strong>The hard part was governance.</strong> What gets remembered, what gets expired, and what gets withheld.</p>
 
-    <p>I had a system where multiple agents shared a retrieval layer. One agent's working memory leaked into another agent's context. A planner started seeing raw data it was never designed for. The outputs got worse in ways that were hard to diagnose because the contamination was subtle.</p>
+    <p>I had a system where multiple agents shared a retrieval layer. <strong>One agent's working memory leaked into another agent's context.</strong> A planner started seeing raw data it was never designed for. The outputs got worse in ways that were hard to diagnose because the contamination was subtle.</p>
 
-    <p>Freshness was the one I ignored the longest. A fact retrieved from memory is a claim that something was true at write time. It may have been renamed, removed, or never merged. When I treated stale memory the same as current observation, I was building a hallucination machine with extra steps.</p>
+    <p>Freshness was the one I ignored the longest. A fact retrieved from memory is a claim that something was true at write time. It may have been renamed, removed, or never merged. When I treated stale memory the same as current observation, <strong>I was building a hallucination machine with extra steps.</strong></p>
 
-    <p>I started treating memory the same way I would treat access control in a traditional system. Expiry rules, staleness scoring, source-of-truth hierarchies. Who can read what, under what conditions, with what confidence level. These turned out to be policy decisions, not implementation details.</p>
+    <p>I started treating memory the same way I would treat access control in a traditional system. Expiry rules, staleness scoring, source-of-truth hierarchies. Who can read what, under what conditions, with what confidence level. These turned out to be <strong>policy decisions, not implementation details.</strong></p>
 
-    <p>The framework I settled on: treat every memory write as a claim with a timestamp and a trust level. Treat every memory read as a hypothesis that needs verification against current state. Before acting on remembered information, check that it still holds. Bad memory turned out to be significantly worse than no memory at all.</p>
+    <p>The framework I settled on: treat every memory write as a claim with a timestamp and a trust level. Treat every memory read as a hypothesis that needs verification against current state. Before acting on remembered information, check that it still holds.</p>
+
+    <p class="closing"><em>Bad memory turned out to be significantly worse than no memory at all.</em></p>
   </div>
 
   <div class="article-nav">

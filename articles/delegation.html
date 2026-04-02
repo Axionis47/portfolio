@@ -62,15 +62,17 @@ footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);fo
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>I think of agent autonomy as four layers. Tools are pure functions with zero discretion. Operators make one narrow LLM judgment, like a classification or extraction. Planners chain multiple steps with bounded loops. Full agents run open-ended until a goal is met.</p>
+    <p>I think of agent autonomy as four layers. <strong>Tools</strong> are pure functions with zero discretion. <strong>Operators</strong> make one narrow LLM judgment, like a classification or extraction. <strong>Planners</strong> chain multiple steps with bounded loops. <strong>Full agents</strong> run open-ended until a goal is met.</p>
 
-    <p>My instinct was always to reach for the highest layer. Let the agent figure it out. It felt powerful. But I kept finding that every degree of freedom I gave the model was a degree of unpredictability I then had to monitor, evaluate, and recover from.</p>
+    <p>My instinct was always to reach for the highest layer. Let the agent figure it out. It felt powerful. But I kept finding that <strong>every degree of freedom I gave the model was a degree of unpredictability</strong> I then had to monitor, evaluate, and recover from.</p>
 
-    <p>A tool fails in one predictable way. A planner chains five decisions, each with its own failure mode, and the error surface multiplies. I learned to ask: what is the minimum autonomy that solves this step? And underneath that: can I afford the verification cost of the autonomy I am granting?</p>
+    <p>A tool fails in one predictable way. A planner chains five decisions, each with its own failure mode, and the error surface multiplies. I learned to ask: <strong>what is the minimum autonomy that solves this step?</strong> And underneath that: can I afford the verification cost of the autonomy I am granting?</p>
 
-    <p>A tightly contracted operator can be verified cheaply with a schema check or a unit test. A loose agent requires human review, trajectory analysis, outcome monitoring. The cost of verification scales with the freedom granted. That tradeoff is something I did not appreciate early on.</p>
+    <p>A tightly contracted operator can be verified cheaply with a schema check or a unit test. A loose agent requires human review, trajectory analysis, outcome monitoring. <strong>The cost of verification scales with the freedom granted.</strong> That tradeoff is something I did not appreciate early on.</p>
 
-    <p>Most of the tasks I worked on fit in the operator or planner layers. Simple tasks needed zero autonomy, just code. Fuzzy but checkable tasks used operators. I only reached for fully open-ended agents when the task genuinely demanded unpredictable multi-step reasoning, and even then I needed clear stop conditions, modest budgets, and constant monitoring.</p>
+    <p>Most of the tasks I worked on fit in the operator or planner layers. Simple tasks needed zero autonomy, just code. Fuzzy but checkable tasks used operators. I only reached for fully open-ended agents when the task genuinely demanded unpredictable multi-step reasoning.</p>
+
+    <p class="closing"><em>I stopped handing out freedom I could not verify.</em></p>
   </div>
 
   <div class="article-nav">

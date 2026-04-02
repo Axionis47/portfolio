@@ -16,9 +16,9 @@
     --inset: #0a0a0c;
     --shd: rgba(2,2,4,0.75);
     --shl: rgba(42,42,46,0.16);
-    --t1: #c8c8c8;
-    --t2: #707070;
-    --t3: #404044;
+    --t1: #e0e0e0;
+    --t2: #ababab;
+    --t3: #787880;
     --accent: #d88c3a;
     --mono: 'JetBrains Mono', monospace;
     --serif: 'Source Serif 4', serif;
@@ -27,8 +27,8 @@
 
   body {
     background: var(--bg);
-    color: var(--t2);
-    font-family: var(--serif);
+    color: var(--t1);
+    font-family: var(--sans);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -106,15 +106,15 @@
   }
 
   .article-body p {
-    font-family: var(--serif);
+    font-family: var(--sans);
     font-size: 1rem;
-    color: var(--t2);
+    color: var(--t1);
     line-height: 1.9;
     margin-bottom: 1.5rem;
   }
 
   .article-body strong {
-    color: var(--t1);
+    color: var(--accent);
     font-weight: 500;
   }
 
@@ -182,15 +182,17 @@
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>The systems I built that worked best were not the ones where the model was most accurate. They were the ones where I assumed every component would fail and built a safety net under each one.</p>
+    <p>The systems I built that worked best were not the ones where the model was most accurate. They were the ones where <strong>I assumed every component would fail</strong> and built a safety net under each one.</p>
 
-    <p>For every component output, I started asking two questions: how can I automatically check this, and what is the rollback? If an extractor pulls a date, validate it against the source text. If a tool call fails, catch it and retry with modified arguments. If there is ambiguity, resolve it with a clarification prompt instead of letting the agent guess.</p>
+    <p>For every component output, I started asking two questions: <strong>how can I automatically check this, and what is the rollback?</strong> If an extractor pulls a date, validate it against the source text. If a tool call fails, catch it and retry with modified arguments. If there is ambiguity, resolve it with a clarification prompt instead of letting the agent guess.</p>
 
-    <p>The pattern that emerged was continuous validation loops. The model proposes something. Then code, a schema check, or a second model verifies it before anything gets trusted. I found that this propose-then-verify cycle caught most of the issues that would have been invisible otherwise.</p>
+    <p>The pattern that emerged was <strong>continuous validation loops.</strong> The model proposes something. Then code, a schema check, or a second model verifies it before anything gets trusted. I found that this propose-then-verify cycle caught most of the issues that would have been invisible otherwise.</p>
 
-    <p>I ended up with a hierarchy: deterministic checks first (schema, type, format), then semantic checks (does the output make sense given the input?), then human review for high-stakes decisions. Each layer catches what the previous one missed.</p>
+    <p>I ended up with a hierarchy: <strong>deterministic checks first</strong> (schema, type, format), then semantic checks (does the output make sense given the input?), then human review for high-stakes decisions. Each layer catches what the previous one missed.</p>
 
-    <p>The goal was never preventing all errors. That is not realistic with stochastic models. The goal was making sure no error goes undetected and no detected error goes uncorrected. That turned out to be a much more achievable target and it made the whole system significantly more reliable.</p>
+    <p>The goal was never preventing all errors. That is not realistic with stochastic models. The goal was making sure <strong>no error goes undetected and no detected error goes uncorrected.</strong> That turned out to be a much more achievable target.</p>
+
+    <p class="closing"><em>I did not need a perfect model. I needed a system that catches its own mistakes.</em></p>
   </div>
 </main>
 

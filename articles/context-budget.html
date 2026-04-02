@@ -16,9 +16,9 @@
     --inset: #0a0a0c;
     --shd: rgba(2,2,4,0.75);
     --shl: rgba(42,42,46,0.16);
-    --t1: #c8c8c8;
-    --t2: #707070;
-    --t3: #404044;
+    --t1: #e0e0e0;
+    --t2: #ababab;
+    --t3: #787880;
     --accent: #d88c3a;
     --mono: 'JetBrains Mono', monospace;
     --serif: 'Source Serif 4', serif;
@@ -27,8 +27,8 @@
 
   body {
     background: var(--bg);
-    color: var(--t2);
-    font-family: var(--serif);
+    color: var(--t1);
+    font-family: var(--sans);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -106,15 +106,15 @@
   }
 
   .article-body p {
-    font-family: var(--serif);
+    font-family: var(--sans);
     font-size: 1rem;
-    color: var(--t2);
+    color: var(--t1);
     line-height: 1.9;
     margin-bottom: 1.5rem;
   }
 
   .article-body strong {
-    color: var(--t1);
+    color: var(--accent);
     font-weight: 500;
   }
 
@@ -182,15 +182,17 @@
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>I used to think giving an agent more context was always better. More retrieved documents, more chat history, more metadata. The model would be "more informed." It took me a while to realize the opposite was true. My agents got worse as I gave them more.</p>
+    <p>I used to think giving an agent more context was always better. More retrieved documents, more chat history, more metadata. It took me a while to realize <strong>the opposite was true.</strong> My agents got worse as I gave them more.</p>
 
-    <p>I started thinking of the context window as a budget. Finite slots. Every slot I wasted on irrelevant information was a slot that could have held something useful. A router needs the query and maybe a metadata snippet. Not the full chat history. Not every retrieved document.</p>
+    <p>I started thinking of the context window as a budget. <strong>Finite slots.</strong> Every slot I wasted on irrelevant information was a slot that could have held something useful. A router needs the query and maybe a metadata snippet. Not the full chat history. Not every retrieved document.</p>
 
-    <p>The test I use now: for each piece of context, would removing it change the output? If the answer is no, it should not be there. When I found myself adding context "just in case," it usually meant I had not thought clearly enough about what the component actually needed.</p>
+    <p>The test I use now: for each piece of context, would removing it change the output? If the answer is no, it should not be there. When I found myself adding context "just in case," it usually meant <strong>I had not thought clearly enough about what the component actually needed.</strong></p>
 
     <p>Context rot is something I ran into on longer pipelines. As windows got larger, the agents lost focus, confused facts, or latched onto irrelevant details. Bigger windows did not fix it. Being disciplined about what entered the window did.</p>
 
-    <p>The approach that worked best for me was selective retrieval. Instead of dumping all data upfront, I kept an index and fetched relevant pieces on demand. Just-in-time context. Keep file paths in the window, load file contents via tools only when needed. It cut my token costs significantly and the agents performed better.</p>
+    <p>The approach that worked best was <strong>selective retrieval.</strong> Instead of dumping all data upfront, I kept an index and fetched relevant pieces on demand. Just-in-time context. It cut my token costs significantly and the agents performed better.</p>
+
+    <p class="closing"><em>Less context, better decisions. That was the pattern every time.</em></p>
   </div>
 </main>
 
