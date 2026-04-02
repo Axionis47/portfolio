@@ -28,14 +28,14 @@
         .neu{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl)}
 
         /* ─── Sidebar Nav ─── */
-        .sidenav{position:fixed;left:28px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:28px;align-items:flex-start;background:rgba(16,16,18,0.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:20px 18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
-        .sidenav a{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--t3);transition:all .3s}
+        .sidenav{position:fixed;left:28px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:24px;align-items:flex-start;background:rgba(16,16,18,0.8);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:24px 22px;border-radius:14px;border:1px solid rgba(255,255,255,0.06)}
+        .sidenav a{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--t2);transition:all .3s}
         .sidenav a:hover{color:var(--t1)}
         .sidenav a.active{color:var(--accent)}
-        .sidenav-dot{width:8px;height:8px;border-radius:50%;background:var(--t3);transition:all .3s;flex-shrink:0}
+        .sidenav-dot{width:10px;height:10px;border-radius:50%;background:var(--t3);transition:all .3s;flex-shrink:0}
         .sidenav a:hover .sidenav-dot{background:var(--t1)}
-        .sidenav a.active .sidenav-dot{background:var(--accent);box-shadow:0 0 10px var(--accent)}
-        .sidenav-label{font-family:var(--mono);font-size:.65rem;font-weight:500;letter-spacing:.03em;white-space:nowrap}
+        .sidenav a.active .sidenav-dot{background:var(--accent);box-shadow:0 0 12px var(--accent)}
+        .sidenav-label{font-family:var(--mono);font-size:.78rem;font-weight:600;letter-spacing:.02em;white-space:nowrap}
 
         /* ─── Top bar (minimal) ─── */
         .topbar{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 36px;display:flex;justify-content:space-between;align-items:center;background:rgba(16,16,18,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.03)}
@@ -67,7 +67,7 @@
 
         /* ─── Section shared ─── */
         .section{padding:60px 36px 80px;max-width:1100px;margin:0 auto}
-        .section-label{font-family:var(--mono);font-size:.65rem;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:36px}
+        .section-label{font-family:var(--mono);font-size:1.1rem;font-weight:600;color:var(--t1);letter-spacing:-.01em;margin-bottom:40px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06)}
 
         /* ─── Experience ─── */
         .exp-intro{display:flex;align-items:flex-start;gap:36px;margin-bottom:56px;padding:40px 0}
@@ -114,7 +114,7 @@
         /* ─── Notes (formerly Commandments) ─── */
         .commandments{padding:40px 36px 108px}
         .cmd-wrap{max-width:1100px;margin:0 auto}
-        .cmd-label{font-family:var(--mono);font-size:.63rem;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:36px}
+        .cmd-label{font-family:var(--mono);font-size:1.1rem;font-weight:600;color:var(--t1);letter-spacing:-.01em;margin-bottom:40px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06)}
         .cmd-list{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
 
         .cmd{position:relative;transition:all .3s;text-decoration:none;display:block;color:inherit}
@@ -129,7 +129,7 @@
         /* ─── Projects ─── */
         .projects{padding:40px 36px 80px}
         .proj-wrap{max-width:1100px;margin:0 auto}
-        .proj-label{font-family:var(--mono);font-size:.63rem;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:36px}
+        .proj-label{font-family:var(--mono);font-size:1.1rem;font-weight:600;color:var(--t1);letter-spacing:-.01em;margin-bottom:40px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06)}
         .proj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
         .proj{position:relative;transition:all .3s;text-decoration:none;display:block;color:inherit;overflow:hidden}
         .proj:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
