@@ -41,6 +41,7 @@
   .sec{font-family:var(--mono);font-size:.7rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
   .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 24px;margin:20px 0}
   .dia-title{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia-group{font-family:var(--mono);font-size:.56rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;margin:16px 0 6px;padding-left:4px}
   .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
   .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
   .dia-box-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
@@ -71,6 +72,10 @@
   .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
   .proj-link{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
   .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+  .example-output{background:var(--inset);border-radius:10px;padding:20px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);font-family:var(--mono);font-size:.72rem;color:var(--t2);line-height:2;text-align:left;margin:16px 0}
+  .example-output .eo-header{color:var(--t3);font-size:.62rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
+  .example-output .eo-decision{color:var(--red);font-weight:500}
+  .example-output .eo-reason{color:var(--t1)}
   footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
   .ft{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
   .ft-c{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
@@ -106,15 +111,15 @@
     <div class="brief-label">Engineering Brief</div>
     <div class="brief-grid">
       <span class="brief-key">Problem</span>
-      <span class="brief-val">Approve or decline a loan application in real time. Get it wrong one way and you lose money. Get it wrong the other way and you violate federal law. You need the probability of default, the expected loss, an explanation for every decline, and proof that the model is not discriminating.</span>
+      <span class="brief-val">Approve or decline a loan application in real time. Get it wrong one way and the bank loses money. Get it wrong the other way and you violate federal law. The model needs to predict default probability, estimate dollar losses, explain every decline with specific reasons, and prove it is not discriminating.</span>
       <span class="brief-key">Approach</span>
-      <span class="brief-val">4-model ensemble (Logistic + XGBoost + LightGBM + Wide&amp;Deep) with Nelder-Mead optimized weights. Three-stage Basel III ECL: PD &times; LGD &times; EAD. SHAP-based ECOA adverse action codes. Fairness monitoring with disparate impact (4/5 rule). Shadow mode A/B testing.</span>
+      <span class="brief-val">6-model system: PD ensemble (Logistic + XGBoost + LightGBM, Nelder-Mead weights), two-stage LGD, EAD with regulatory fallback, fraud scorer. 44 registered features across 7 groups (63+ after encoding). SHAP-based ECOA adverse action codes. Three fairness metrics tracked continuously. Shadow mode A/B testing.</span>
       <span class="brief-key">Result</span>
-      <span class="brief-val">0.879 AUC, 0.617 KS statistic, 63 engineered features across 8 groups. 20 adverse action codes. Demographic parity, equalized odds, and disparate impact tracked continuously. Full Docker stack with Prometheus, MLflow, PostgreSQL, Redis.</span>
+      <span class="brief-val">LightGBM 0.9418 AUC (standalone best), XGBoost 0.8729, Ensemble 0.8723, Logistic 0.8474. 20 adverse action codes. Demographic parity, equalized odds, and disparate impact ratio monitored per batch. Full Docker stack with PostgreSQL 16, Redis 7, MLflow, Prometheus.</span>
       <span class="brief-key">Why it matters</span>
-      <span class="brief-val">A credit model that cannot explain its decisions is illegal under ECOA. A model that discriminates is illegal under the Fair Housing Act. Accuracy alone is not enough. You need accuracy, explainability, and fairness &mdash; simultaneously.</span>
+      <span class="brief-val">A credit model that cannot explain its decisions is illegal under ECOA. A model that discriminates is illegal under the Fair Housing Act. Accuracy alone is not enough. This project treats accuracy, explainability, and fairness as simultaneous hard constraints.</span>
       <span class="brief-key">Stack</span>
-      <span class="brief-val">XGBoost, LightGBM, TensorFlow, scikit-learn, SHAP, Optuna, FastAPI, PostgreSQL, Redis, MLflow, Prometheus, Docker</span>
+      <span class="brief-val">XGBoost, LightGBM, scikit-learn, SHAP, Optuna, FastAPI, PostgreSQL, Redis, MLflow, Prometheus, Docker, GitHub Actions</span>
     </div>
   </div>
 
@@ -127,27 +132,152 @@
       A credit risk model has three jobs, and failing any one of them is catastrophic.
     </p>
     <p>
-      <strong>Job 1: Predict accurately.</strong> If the model says a borrower has a 5% chance of default and they actually default 20% of the time, the bank loses money. The model must separate good borrowers from bad ones. This is measured by AUC and KS statistic.
+      <strong>Job 1: Predict accurately.</strong> If the model says a borrower has a 5% chance of default and they actually default 20% of the time, the bank loses money. The model needs to separate good borrowers from bad ones. This is measured by AUC and KS statistic.
     </p>
     <p>
       <strong>Job 2: Explain every decline.</strong> Under the Equal Credit Opportunity Act (ECOA), if you deny a loan, you must tell the applicant <em>why</em>. Not "the model said no." Specific, actionable reasons: "high credit utilization," "insufficient payment history," "recent delinquency." A black-box model that cannot produce these reasons is not deployable, no matter how accurate.
     </p>
     <p>
-      <strong>Job 3: Do not discriminate.</strong> If the model approves 80% of one demographic group and 50% of another, you have a disparate impact problem. The 4/5 rule (EEOC guideline) says the approval rate for any protected group must be at least 80% of the majority group&rsquo;s rate. A model that violates this is a lawsuit.
+      <strong>Job 3: Do not discriminate.</strong> If the model approves 80% of one demographic group and 50% of another, you have a disparate impact problem. The 4/5 rule (EEOC guideline) says the approval rate for any protected group must be at least 80% of the majority group's rate. A model that fails this test has a regulatory problem.
     </p>
     <p>
-      Most ML projects optimize for job 1 and ignore jobs 2 and 3. This project treats all three as hard constraints.
+      Most ML projects optimize for job 1 and ignore jobs 2 and 3. I built this project to treat all three as hard constraints.
     </p>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 2: ECL
+       CH 2: ARCHITECTURE
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 2. Three models, one loss number</div>
+  <div class="sec fade">Chapter 2. How the pieces connect</div>
+
+  <div class="dia fade">
+    <div class="dia-title">System Architecture</div>
+    <div class="dia-group">Request Flow</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">API Client</div><div class="dia-box-sub">Application data<br>JSON payload</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">FastAPI</div><div class="dia-box-sub">Auth, rate limiting<br>Pydantic validation</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Feature Engine</div><div class="dia-box-sub">44 features, 7 groups<br>Redis-cached lookups</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Model Ensemble</div><div class="dia-box-sub">PD + LGD + EAD<br>+ Fraud scorer</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-group">Decision Flow</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">SHAP Explainer</div><div class="dia-box-sub">Local feature<br>contributions</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Adverse Action</div><div class="dia-box-sub">Top 4 reason codes<br>Protected features excluded</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Decision</div><div class="dia-box-sub">Credit score 300-850<br>Approve / Review / Decline</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-group">Infrastructure</div>
+    <div class="dia-row" style="gap:10px">
+      <div class="dia-box"><div class="dia-box-title">PostgreSQL 16</div><div class="dia-box-sub">Audit logs<br>Scoring results</div></div>
+      <div class="dia-box"><div class="dia-box-title">Redis 7</div><div class="dia-box-sub">Feature cache<br>TTL 3600s</div></div>
+      <div class="dia-box"><div class="dia-box-title">MLflow</div><div class="dia-box-sub">Experiment tracking<br>Model registry</div></div>
+      <div class="dia-box"><div class="dia-box-title">Prometheus</div><div class="dia-box-sub">Latency, AUC<br>Drift PSI, Fairness</div></div>
+    </div>
+    <div class="dia-group">Cross-Cutting Concerns</div>
+    <div class="dia-row" style="gap:10px">
+      <div class="dia-box"><div class="dia-box-title">Shadow Mode</div><div class="dia-box-sub">Champion vs challenger<br>on every request</div></div>
+      <div class="dia-box"><div class="dia-box-title">Fairness Monitor</div><div class="dia-box-sub">3 metrics per batch<br>Degradation alerts</div></div>
+      <div class="dia-box"><div class="dia-box-title">Drift Detector</div><div class="dia-box-sub">PSI per feature<br>3-tier alerting</div></div>
+    </div>
+  </div>
+
   <div class="prose fade">
     <p>
-      Basel III requires banks to estimate <strong>Expected Credit Loss</strong>: the probability-weighted loss on a credit exposure. The formula is simple. The modeling is not.
+      An application comes in as a JSON payload. FastAPI validates the schema, the feature engine computes 44 features from borrower, transaction, and payment data (with Redis caching for repeated lookups), and the model ensemble runs PD, LGD, EAD, and fraud scoring in sequence. On a decline, SHAP generates local feature contributions, the adverse action module maps them to ECOA-compliant reason codes, and the response goes back with a credit score, a decision, and up to four specific reasons.
     </p>
+    <p>
+      The monitoring layer is not bolted on after the fact. Shadow mode scores a challenger model on every request in parallel with the champion. The fairness monitor checks three metrics on every batch. The drift detector computes PSI per feature against training distributions. All of this feeds into Prometheus, and all scoring results are logged to PostgreSQL for audit.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 3: FEATURES
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 3. Forty-four features, and why each group exists</div>
+
+  <div class="dia fade">
+    <div class="dia-title">Feature Pipeline</div>
+    <div class="dia-group">Source Data</div>
+    <div class="dia-row" style="gap:10px">
+      <div class="dia-box"><div class="dia-box-title">borrowers.parquet</div><div class="dia-box-sub">30K profiles<br>Demographics, credit history</div></div>
+      <div class="dia-box"><div class="dia-box-title">transactions.parquet</div><div class="dia-box-sub">6.4M records<br>Merchants, amounts, channels</div></div>
+      <div class="dia-box"><div class="dia-box-title">payments.parquet</div><div class="dia-box-sub">720K records<br>On-time flags, days past due</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-group">7 Feature Groups &rarr; 44 Registered Features</div>
+    <div class="dia-row" style="gap:10px">
+      <div class="dia-box"><div class="dia-box-title">Demographic</div><div class="dia-box-sub">5 features</div></div>
+      <div class="dia-box"><div class="dia-box-title">Credit</div><div class="dia-box-sub">5 features</div></div>
+      <div class="dia-box"><div class="dia-box-title">Velocity</div><div class="dia-box-sub">10 features</div></div>
+      <div class="dia-box"><div class="dia-box-title">Aggregation</div><div class="dia-box-sub">7 features</div></div>
+    </div>
+    <div class="dia-row" style="gap:10px">
+      <div class="dia-box"><div class="dia-box-title">Behavioral</div><div class="dia-box-sub">3 features</div></div>
+      <div class="dia-box"><div class="dia-box-title">Time Series</div><div class="dia-box-sub">4 features</div></div>
+      <div class="dia-box"><div class="dia-box-title">Payment + Risk</div><div class="dia-box-sub">11 features</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-group">Encoding</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">One-Hot</div><div class="dia-box-sub">4 categorical fields<br>employment, home, loan, device</div></div>
+      <div class="dia-arrow">+</div>
+      <div class="dia-box"><div class="dia-box-title">Target Encode</div><div class="dia-box-sub">State (high cardinality)</div></div>
+      <div class="dia-arrow">+</div>
+      <div class="dia-box"><div class="dia-box-title">Median Impute</div><div class="dia-box-sub">Null handling<br>delinquency gets -1 + flag</div></div>
+      <div class="dia-arrow">=</div>
+      <div class="dia-box dia-good"><div class="dia-box-title">63+</div><div class="dia-box-sub">Final features</div></div>
+    </div>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Why each group exists</div>
+    <table class="rtable">
+      <tr><th>Group</th><th>Count</th><th>Reasoning</th></tr>
+      <tr><td>Demographic</td><td>5</td><td>Baseline profile. Log income because the relationship between income and default is not linear.</td></tr>
+      <tr><td>Credit History</td><td>5</td><td>Direct credit behavior. Utilization and DTI are the two strongest traditional signals.</td></tr>
+      <tr><td>Velocity</td><td>10</td><td>Someone maxing out cards across 7 days looks different from steady spending over 90 days. Windowed counts capture urgency.</td></tr>
+      <tr><td>Aggregation</td><td>7</td><td>Merchant diversity and spend entropy measure financial complexity. A borrower spending 100% at one merchant is a different risk than someone spread across 8 categories.</td></tr>
+      <tr><td>Behavioral</td><td>3</td><td>Nighttime and weekend transaction patterns are behavioral signals that traditional credit features miss entirely.</td></tr>
+      <tr><td>Time Series</td><td>4</td><td>A flat spend pattern is stable. An accelerating spend trend (positive OLS slope) may signal financial stress building over months.</td></tr>
+      <tr><td>Payment + Risk</td><td>11</td><td>On-time streak, days past due, loan-to-income, utilization &times; DTI interaction. The interaction term catches borrowers stretched on both dimensions at once.</td></tr>
+    </table>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      The raw application has about 20 fields. That is necessary but not sufficient. The feature engineering pipeline derives 44 registered features across 7 groups, expanding to 63+ after one-hot encoding of 4 categorical fields and target encoding of state.
+    </p>
+    <p>
+      Training data is enriched with <strong>6.4 million synthetic transactions</strong> and <strong>720,000 payment records</strong> generated from Gaussian copula borrower profiles. The critical design decision: behavioral patterns (spending velocity, payment timeliness) are driven by observable credit features like DTI and utilization, not the default label. This prevents target leakage while creating realistic behavioral variation.
+    </p>
+    <p>
+      For missing values, most nulls get median imputation. The exception is <strong>months_since_last_delinquency</strong>, which gets set to -1 when there is no delinquency history, with a separate binary <strong>has_delinquency</strong> flag. The absence of a delinquency is itself a signal, not missing data.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 4: MODELS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 4. Six models, each chosen for a reason</div>
+
+  <div class="dia fade">
+    <div class="dia-title">Model decisions</div>
+    <table class="rtable">
+      <tr><th>Model</th><th>Role</th><th>Why this model</th><th>AUC</th></tr>
+      <tr><td>Logistic Regression</td><td>PD baseline</td><td>Regulatory interpretability. Linear coefficients can be directly inspected. Serves as a sanity check against tree models.</td><td>0.8474</td></tr>
+      <tr><td>XGBoost (Optuna-tuned)</td><td>PD primary</td><td>Highest discriminative power on structured tabular data. Tuned across 6 hyperparameters with 3-fold stratified CV.</td><td>0.8729</td></tr>
+      <tr class="best"><td>LightGBM</td><td>PD candidate</td><td>Faster training, lower memory. Standalone AUC of 0.9418 is the highest of any single model in the system.</td><td>0.9418</td></tr>
+      <tr><td>PD Ensemble</td><td>PD production</td><td>Nelder-Mead optimized weights on validation AUC. XGBoost 98.6%, Logistic 1.4%, LightGBM ~0%.</td><td>0.8723</td></tr>
+      <tr><td>Two-Stage LGD</td><td>Loss severity</td><td>Stage 1 classifier: any loss at all? Stage 2 regressor: how much? Many defaults recover fully, so this separation matters.</td><td>-</td></tr>
+      <tr><td>EAD (CCF model)</td><td>Exposure</td><td>XGBoost regressor predicts Credit Conversion Factor. Regulatory fallback CCF = 0.75 when model unavailable.</td><td>-</td></tr>
+      <tr><td>Fraud (LightGBM)</td><td>Fraud detection</td><td>Separate concern from default risk. Fraud score above 0.5 routes to manual review before the credit pipeline runs.</td><td>-</td></tr>
+    </table>
   </div>
 
   <div class="dia fade">
@@ -164,144 +294,180 @@
     <div class="dia-note">Each component is a separate model with its own training data and evaluation metrics.</div>
   </div>
 
-  <div class="prose fade">
-    <p>
-      <strong>PD</strong> is the headline model &mdash; a weighted ensemble of Logistic Regression, XGBoost, and LightGBM, with weights optimized via Nelder-Mead on validation AUC. XGBoost dominates at 98.59% weight because it has the highest discriminative power. The logistic model contributes stability. A Wide &amp; Deep neural network (TensorFlow) is built and calibrated but disabled in production by config &mdash; available for benchmarking and future promotion.
-    </p>
-    <p>
-      <strong>LGD</strong> is a two-stage model. Stage one: a logistic classifier predicts whether any loss will occur at all (many defaults recover fully). Stage two: an XGBoost regressor predicts the severity of loss conditional on there being one. The final LGD is the product of both, clipped to [0, 1].
-    </p>
-    <p>
-      <strong>EAD</strong> models how much the borrower will owe at the moment of default. A credit card with a $10,000 limit and $3,000 drawn balance might be at $7,000 by the time default occurs. The Credit Conversion Factor (CCF) model predicts this utilization increase. Regulatory fallback: CCF = 0.75 when the model is unavailable.
-    </p>
-  </div>
-
   <div class="results fade">
     <div class="stat">
-      <div class="stat-val">0.879</div>
+      <div class="stat-val">0.9418</div>
+      <div class="stat-label">Best Single AUC</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">0.8723</div>
       <div class="stat-label">Ensemble AUC</div>
     </div>
     <div class="stat">
-      <div class="stat-val">0.617</div>
-      <div class="stat-label">KS Statistic</div>
+      <div class="stat-val">6</div>
+      <div class="stat-label">Models Total</div>
     </div>
     <div class="stat">
-      <div class="stat-val">0.758</div>
-      <div class="stat-label">Gini Coefficient</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">63</div>
-      <div class="stat-label">Engineered features</div>
+      <div class="stat-val">63+</div>
+      <div class="stat-label">Input Features</div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       CH 3: FEATURE ENGINEERING
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 3. Sixty-three features from twenty inputs</div>
   <div class="prose fade">
     <p>
-      The raw application has 20 fields: age, income, employment length, credit limit, utilization, delinquencies, and so on. These are necessary but not sufficient. The model needs <strong>behavioral signals</strong> &mdash; how the borrower actually uses credit over time, not just what their application says.
+      The PD ensemble is the headline model. Nelder-Mead optimizes the blend of Logistic Regression, XGBoost, and LightGBM on validation AUC. In practice, XGBoost dominates at 98.6% weight, with Logistic contributing 1.4% and LightGBM getting essentially zero. The ensemble is functionally a single XGBoost model with a thin logistic adjustment. This is a known limitation that I address in Chapter 7.
     </p>
     <p>
-      The feature engineering pipeline derives 63 features across 8 groups: demographic (age, log income, profile completeness), credit (utilization, DTI, delinquencies), velocity (transaction counts over 7/30/90 day windows), aggregation (spending by category, merchant diversity, entropy), behavioral (mobile %, weekend %, nighttime transactions), time series (spend trends over 3 and 6 months, volatility), payment (on-time rate, consecutive on-time streak, payment trend), and risk ratios (loan-to-income, balance-to-income, utilization &times; DTI interaction).
+      The <strong>LGD model</strong> is two-stage because many defaults recover fully. Stage one (logistic classifier) predicts whether any loss occurs at all. Stage two (XGBoost regressor) predicts the severity conditional on there being a loss. The final LGD is the product of both, clipped to [0, 1].
     </p>
     <p>
-      Training data is enriched with <strong>6.4 million synthetic transactions</strong> and <strong>720,000 payment records</strong> generated from Gaussian copula borrower profiles. The critical design decision: behavioral patterns (spending velocity, payment timeliness) are driven by observable credit features (DTI, utilization), <strong>not</strong> the default label. This prevents target leakage while creating realistic behavioral variation.
+      The <strong>EAD model</strong> predicts how much the borrower will owe at the moment of default. A credit card with a $10,000 limit and $3,000 drawn might be at $7,000 by default. The Credit Conversion Factor model predicts this utilization increase, with a regulatory fallback of CCF = 0.75 when the model is unavailable.
     </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 4: ECOA
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 4. Twenty reasons you might be declined</div>
-  <div class="prose fade">
-    <p>
-      When the model declines an application (credit score below 550), it must produce up to four <strong>adverse action reason codes</strong> explaining why. Not vague descriptions. Specific, regulatory-compliant codes that map to features the applicant can understand and potentially improve.
-    </p>
-    <p>
-      The system computes <strong>SHAP values</strong> for every feature in the declined application. It filters to risk-increasing features only (SHAP value pushes probability of default higher). It excludes protected attributes (age, state) to prevent discrimination from appearing in the explanation. It ranks by absolute SHAP impact and returns the top four.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Sample adverse action codes</div>
-    <table class="rtable">
-      <tr><th>Code</th><th>Feature</th><th>Explanation</th></tr>
-      <tr><td>AA001</td><td>credit_utilization_ratio</td><td>High credit utilization ratio</td></tr>
-      <tr><td>AA002</td><td>debt_to_income_ratio</td><td>High debt-to-income ratio</td></tr>
-      <tr><td>AA003</td><td>number_of_delinquencies</td><td>Delinquent accounts</td></tr>
-      <tr><td>AA005</td><td>on_time_payment_rate</td><td>Insufficient payment history</td></tr>
-      <tr><td>AA011</td><td>avg_days_past_due</td><td>Average days past due</td></tr>
-      <tr><td>AA013</td><td>spend_trend_6m</td><td>Increasing spending trend</td></tr>
-    </table>
-    <div class="dia-note">20 total codes. SHAP selects the top 4 per declined application. Protected attributes (age, state) are excluded.</div>
   </div>
 
   <!-- ═══════════════════════════════════════
        CH 5: FAIRNESS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 5. The 4/5 rule &mdash; continuous auditing</div>
+  <div class="sec fade">Chapter 5. The model is not allowed to discriminate</div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">Protected feature exclusion</div>
+      <div class="pipe-desc">Age and state_encoded are in the <strong>PROTECTED_FEATURES</strong> set. They are never surfaced in adverse action reasons, even if SHAP shows them as risk-increasing. The model may use them internally, but the explanation layer filters them out.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">Three fairness metrics</div>
+      <div class="pipe-desc"><strong>Demographic parity</strong>: approval rates within 10% across groups. <strong>Equalized odds</strong>: true positive and false positive rates within 10%. <strong>Disparate impact ratio</strong>: must stay above 0.80 (the 4/5 rule). All three run on every batch of predictions via BiasMonitor.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Continuous monitoring</div>
+      <div class="pipe-desc">BiasMonitor stores a timestamped fairness history. <strong>check_degradation()</strong> alerts when any metric fails its threshold. This is not a one-time audit. It runs on every batch and feeds into Prometheus for alerting.</div>
+    </div>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">All 20 ECOA adverse action codes</div>
+    <table class="rtable">
+      <tr><th>Code</th><th>Feature</th><th>Explanation</th></tr>
+      <tr><td>AA001</td><td>credit_utilization_ratio</td><td>High credit utilization ratio</td></tr>
+      <tr><td>AA002</td><td>debt_to_income_ratio</td><td>High debt-to-income ratio</td></tr>
+      <tr><td>AA003</td><td>number_of_delinquencies</td><td>Number of delinquent accounts</td></tr>
+      <tr><td>AA004</td><td>months_since_last_delinquency</td><td>Recent delinquency on record</td></tr>
+      <tr><td>AA005</td><td>on_time_payment_rate</td><td>Insufficient payment history</td></tr>
+      <tr><td>AA006</td><td>missed_payment_count</td><td>Number of missed payments</td></tr>
+      <tr><td>AA007</td><td>existing_credit_lines</td><td>Limited number of credit accounts</td></tr>
+      <tr><td>AA008</td><td>account_age_months</td><td>Insufficient account history</td></tr>
+      <tr><td>AA009</td><td>employment_length_years</td><td>Length of employment</td></tr>
+      <tr><td>AA010</td><td>loan_to_income_ratio</td><td>Requested amount relative to income</td></tr>
+      <tr><td>AA011</td><td>avg_days_past_due</td><td>Average days past due on accounts</td></tr>
+      <tr><td>AA012</td><td>max_days_past_due</td><td>Severe delinquency on record</td></tr>
+      <tr><td>AA013</td><td>spend_trend_6m</td><td>Increasing spending trend</td></tr>
+      <tr><td>AA014</td><td>txn_amount_max_30d</td><td>Unusually large recent transactions</td></tr>
+      <tr><td>AA015</td><td>decline_rate_30d</td><td>High rate of declined transactions</td></tr>
+      <tr><td>AA016</td><td>international_txn_rate_30d</td><td>High rate of international transactions</td></tr>
+      <tr><td>AA017</td><td>balance_to_income_ratio</td><td>High balance relative to income</td></tr>
+      <tr><td>AA018</td><td>profile_completeness_score</td><td>Incomplete application profile</td></tr>
+      <tr><td>AA019</td><td>payment_amount_ratio</td><td>Insufficient payment amounts</td></tr>
+      <tr><td>AA020</td><td>consecutive_on_time</td><td>Short streak of on-time payments</td></tr>
+    </table>
+    <div class="dia-note">SHAP selects the top 4 per declined application. Protected attributes (age, state) are excluded from the candidate set.</div>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Example: declined application</div>
+    <div class="example-output">
+      <div class="eo-header">Application #A-7829 &nbsp;|&nbsp; Credit Score: 512 &nbsp;|&nbsp; Decision: <span class="eo-decision">DECLINED</span></div>
+      <br>
+      <div class="eo-reason">1. AA001 &mdash; High credit utilization ratio (SHAP impact: +0.147)</div>
+      <div class="eo-reason">2. AA003 &mdash; Number of delinquent accounts (SHAP impact: +0.089)</div>
+      <div class="eo-reason">3. AA006 &mdash; Number of missed payments (SHAP impact: +0.071)</div>
+      <div class="eo-reason">4. AA011 &mdash; Average days past due (SHAP impact: +0.058)</div>
+    </div>
+    <div class="dia-note">Each reason maps to a specific feature the applicant can understand and potentially improve.</div>
+  </div>
+
   <div class="prose fade">
     <p>
-      A model can be accurate and still be illegal. If it approves 80% of one group and 55% of another, the <strong>disparate impact ratio</strong> is 55/80 = 0.69, which is below the 0.80 threshold (the "4/5 rule"). This is actionable regardless of intent.
-    </p>
-    <p>
-      The BiasMonitor tracks three fairness metrics continuously: <strong>demographic parity</strong> (approval rates within 10% across groups), <strong>equalized odds</strong> (true positive and false positive rates within 10%), and <strong>disparate impact ratio</strong> (must stay above 0.80). It stores a timestamped fairness history and alerts on degradation. This is not a one-time audit. It runs on every batch of predictions.
+      When the model declines an application (credit score below 550), the system computes SHAP values for every feature, filters to risk-increasing contributions only, excludes age and state from the candidate set, ranks by absolute SHAP impact, and returns the top four as ECOA-compliant adverse action codes. The applicant gets specific, actionable reasons, not "the model said no."
     </p>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 6: SHADOW MODE
+       CH 6: PRODUCTION
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 6. Champion vs challenger &mdash; every request</div>
-  <div class="prose fade">
-    <p>
-      The production model is the ensemble (champion). But you never know if a simpler model would do just as well &mdash; or if a new model would do better &mdash; unless you test it on live traffic. <strong>Shadow mode</strong> scores every incoming request through both the champion and a challenger (standalone XGBoost) in parallel. The champion drives the actual decision. The challenger runs silently.
-    </p>
-    <p>
-      The system tracks three metrics between champion and challenger: <strong>agreement rate</strong> (same decision on the same application &mdash; target &ge;95%), <strong>PD correlation</strong> (are the probabilities calibrated similarly &mdash; target &ge;0.98), and <strong>latency comparison</strong>. When the challenger meets all thresholds over a sufficient sample, the system flags it as "safe to promote." This is data-driven model promotion, not gut feel.
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 7: MONITORING
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 7. Drift, degradation, and the retraining trigger</div>
-  <div class="prose fade">
-    <p>
-      A model trained on 2024 data will decay as the economy changes. The <strong>Population Stability Index</strong> (PSI) measures how much each feature&rsquo;s distribution has shifted since training. Three alert levels: stable (PSI &lt; 0.10), warning (0.10&ndash;0.25), and alert (PSI &ge; 0.25, triggers retraining).
-    </p>
-    <p>
-      This aligns with regulatory expectations. Regulators do not just want a model that was validated once. They want evidence of <strong>ongoing monitoring</strong> &mdash; proof that you are watching for degradation and acting before the model starts making bad decisions. PSI per feature, AUC tracking over time, and fairness degradation alerts give you that audit trail.
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 8: INFRASTRUCTURE
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 8. The production stack</div>
+  <div class="sec fade">Chapter 6. Shipping it</div>
 
   <div class="pipeline fade">
     <div class="pipe-step">
       <div class="pipe-num">01</div>
       <div class="pipe-title">FastAPI scoring server</div>
-      <div class="pipe-desc">Async endpoints, Pydantic request/response validation, API key auth, rate limiting, structured JSON logging via <strong>structlog</strong>. Models loaded on startup via lifespan hooks.</div>
+      <div class="pipe-desc">Async endpoints, Pydantic request/response validation, <strong>API key auth</strong>, rate limiting at 100 requests per minute, structured JSON logging via structlog. Models loaded on startup via lifespan hooks.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">02</div>
       <div class="pipe-title">Docker Compose: 5 services</div>
-      <div class="pipe-desc"><strong>API</strong> (FastAPI on port 8000), <strong>PostgreSQL 16</strong> (audit logs, shadow mode results), <strong>Redis 7</strong> (prediction caching), <strong>MLflow</strong> (experiment tracking, model registry), <strong>Prometheus</strong> (request counts, latency histograms, AUC, drift PSI).</div>
+      <div class="pipe-desc"><strong>API</strong> (FastAPI on port 8000), <strong>PostgreSQL 16</strong> (scoring results, drift metrics, fairness metrics), <strong>Redis 7</strong> (feature caching, TTL 3600s), <strong>MLflow</strong> (experiment tracking, model registry), <strong>Prometheus</strong> (request counts, latency histograms, AUC, drift PSI, fairness disparity).</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">03</div>
-      <div class="pipe-title">Optuna hyperparameter tuning</div>
-      <div class="pipe-desc">Bayesian optimization with <strong>StratifiedKFold</strong> (3 splits) maximizing cross-validated AUC. XGBoost tuned across 6 hyperparameters. Ensemble weights learned via <strong>Nelder-Mead</strong> on validation set.</div>
+      <div class="pipe-title">Shadow mode A/B testing</div>
+      <div class="pipe-desc">Champion and challenger scored in parallel on every request. Comparison report tracks <strong>agreement rate</strong> (target &ge;95%), <strong>PD correlation</strong> (target &ge;0.98), latency delta, and disagreement breakdown. When the challenger meets all thresholds, the system flags it as safe to promote.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">04</div>
+      <div class="pipe-title">PSI drift detection</div>
+      <div class="pipe-desc">Population Stability Index computed per feature against training distributions using 10-bin histograms. Three alert tiers: <strong>stable</strong> (PSI &lt; 0.10), <strong>warning</strong> (0.10 to 0.25), <strong>alert</strong> (PSI &ge; 0.25, triggers retraining investigation).</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">05</div>
       <div class="pipe-title">CI/CD via GitHub Actions</div>
-      <div class="pipe-desc">Every push: ruff lint, mypy typecheck, unit + integration + performance tests. Weekly training pipeline (Sunday 06:00 UTC): 50K synthetic borrowers, full Optuna tuning, artifact upload with 30-day retention.</div>
+      <div class="pipe-desc">Every push: ruff lint, mypy typecheck, <strong>13 test files</strong> (unit + integration + performance). Weekly training pipeline (Sunday 06:00 UTC): synthetic borrower generation, full Optuna tuning, artifact upload with 30-day retention.</div>
+    </div>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Drift Alert Tiers</div>
+    <div class="dia-row" style="gap:10px">
+      <div class="dia-box dia-good"><div class="dia-box-title">Stable</div><div class="dia-box-sub">PSI &lt; 0.10<br>No action needed</div></div>
+      <div class="dia-box"><div class="dia-box-title">Warning</div><div class="dia-box-sub">PSI 0.10 to 0.25<br>Investigate feature</div></div>
+      <div class="dia-box dia-bad"><div class="dia-box-title">Alert</div><div class="dia-box-sub">PSI &ge; 0.25<br>Retraining triggered</div></div>
+    </div>
+    <div class="dia-note">PSI is computed per feature, not globally. A single drifting feature triggers investigation before the whole model degrades.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 7: WHAT I'D IMPROVE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 7. What I would change</div>
+  <div class="prose fade">
+    <p>
+      Every project has gaps. Listing them is not self-deprecation. It is proof that I understand the system well enough to know where it breaks.
+    </p>
+  </div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">The ensemble is not really an ensemble</div>
+      <div class="pipe-desc">XGBoost takes 98.6% of the weight after Nelder-Mead optimization. Logistic gets 1.4%. LightGBM gets essentially zero. Meanwhile, standalone LightGBM has an AUC of 0.9418, substantially higher than the ensemble's 0.8723. The optimizer found a local minimum. I would investigate why LightGBM dominates individually but gets zero ensemble weight, and whether the validation set used for weight optimization is representative. The fix is likely <strong>feature subsetting</strong> to force model diversity, or replacing Nelder-Mead with a constrained optimizer that enforces minimum weights.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">Some velocity features may be near-zero variance</div>
+      <div class="pipe-desc">The velocity group has 10 features computed from synthetic transaction data. With a fixed reference date (2024-12-31), features like txn_count_7d and decline_rate_30d may have very low variance for many borrowers, especially on sparse real-world data. I would add a <strong>variance threshold gate</strong> in the feature pipeline to drop features that contribute noise rather than signal.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">No fairness gate in the training pipeline</div>
+      <div class="pipe-desc">The system monitors fairness continuously in production via BiasMonitor, but the training pipeline does not include a fairness gate. Step 12 of the 14-step pipeline gates on AUC &ge; 0.70, but there is no check for disparate impact or demographic parity before the model is saved. A model could pass the performance gate and fail the fairness gate, and the pipeline would still save it. I would add a <strong>fairness gate at step 12.5</strong>.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-title">Synthetic data is a double-edged sword</div>
+      <div class="pipe-desc">The behavioral features are computed from synthetic transactions generated via Gaussian copula. The copula preserves correlations from the seed profiles, but the distributions are smoother than real transaction data. Real-world data has <strong>heavy tails, seasonal patterns, and messy missing values</strong> that the synthetic generator does not fully capture. The model may be overfit to the synthetic distribution.</div>
     </div>
   </div>
 
@@ -312,7 +478,6 @@
   <div class="stack fade">
     <span class="stack-tag">XGBoost</span>
     <span class="stack-tag">LightGBM</span>
-    <span class="stack-tag">TensorFlow</span>
     <span class="stack-tag">scikit-learn</span>
     <span class="stack-tag">SHAP</span>
     <span class="stack-tag">Optuna</span>
@@ -323,6 +488,7 @@
     <span class="stack-tag">Prometheus</span>
     <span class="stack-tag">Docker</span>
     <span class="stack-tag">structlog</span>
+    <span class="stack-tag">GitHub Actions</span>
   </div>
 
   <a href="https://github.com/Axionis47/credit-risk-engine" target="_blank" class="proj-link fade">View on GitHub &rsaquo;</a>
