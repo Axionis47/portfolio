@@ -182,17 +182,17 @@
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>I used to think giving an agent more context was always better. More retrieved documents, more chat history, more metadata. It took me a while to realize <strong>the opposite was true.</strong> My agents got worse as I gave them more.</p>
+    <p>More context does not make an agent more informed. <strong>It makes it more confused.</strong> More retrieved documents, more chat history, more metadata. The outputs get worse, not better.</p>
 
-    <p>I started thinking of the context window as a budget. <strong>Finite slots.</strong> Every slot I wasted on irrelevant information was a slot that could have held something useful. A router needs the query and maybe a metadata snippet. Not the full chat history. Not every retrieved document.</p>
+    <p>The context window is a budget. <strong>Finite slots.</strong> Every slot wasted on irrelevant information is a slot that could have held something useful. A router needs the query and maybe a metadata snippet. Not the full chat history. Not every retrieved document.</p>
 
-    <p>The test I use now: for each piece of context, would removing it change the output? If the answer is no, it should not be there. When I found myself adding context "just in case," it usually meant <strong>I had not thought clearly enough about what the component actually needed.</strong></p>
+    <p>The test: for each piece of context, would removing it change the output? If the answer is no, it should not be there. Adding context "just in case" usually means <strong>the task itself is not well enough defined.</strong></p>
 
-    <p>Context rot is something I ran into on longer pipelines. As windows got larger, the agents lost focus, confused facts, or latched onto irrelevant details. Bigger windows did not fix it. Being disciplined about what entered the window did.</p>
+    <p>Context rot shows up on longer pipelines. As windows get larger, agents lose focus, confuse facts, or latch onto irrelevant details. Bigger windows do not fix it. Discipline about what enters the window does.</p>
 
-    <p>The approach that worked best was <strong>selective retrieval.</strong> Instead of dumping all data upfront, I kept an index and fetched relevant pieces on demand. Just-in-time context. It cut my token costs significantly and the agents performed better.</p>
+    <p><strong>Selective retrieval</strong> works better than bulk loading. Keep an index and fetch relevant pieces on demand. Just-in-time context. Lower token costs, better outputs.</p>
 
-    <p class="closing"><em>Less context, better decisions. That was the pattern every time.</em></p>
+    <p class="closing"><em>Less context, better decisions. That is the pattern every time.</em></p>
   </div>
 </main>
 

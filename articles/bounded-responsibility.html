@@ -182,17 +182,15 @@
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>I kept running into bugs I could not trace. The logs would show something went wrong, but I could not figure out which part of the system caused it. The problem was always the same: <strong>I had components doing more than one thing.</strong></p>
+    <p>Bugs that are hard to trace usually come from <strong>components doing more than one thing.</strong> A router that also reformats queries. An extractor that also decides what to extract. The diagnostic is simple: if you cannot describe what a component does in one sentence, it needs to be split.</p>
 
-    <p>A router that also reformats queries. An extractor that also decides what to extract. Once I started asking "can I describe what this component does in one sentence?" the messy ones became obvious. If the answer was "it figures out what to do," that component needed to be split.</p>
+    <p>This is bounded contexts from domain-driven design applied to agents. <strong>One task, one input contract, one output schema per component.</strong> Each piece can be tested in isolation. When something breaks, there is exactly one place to look.</p>
 
-    <p>This is basically bounded contexts from domain-driven design applied to agents. <strong>One task, one input contract, one output schema per component.</strong> When I followed this, I could test each piece in isolation. When something broke, I knew exactly where to look.</p>
+    <p>The practical test: can you write a unit test for this component with a handful of examples? If "correct" cannot be defined for a given input, the scope is too wide. It probably needs to be two things, not one.</p>
 
-    <p>The practical test I use now: can I write a unit test for this component with a handful of examples? If I cannot define what "correct" looks like for a given input, the scope is too wide. It probably needs to be two things, not one.</p>
+    <p>Clear interfaces matter too. Each component has a defined schema for what comes in and what goes out. No side channels, no implicit dependencies. Most reliability gains come not from better models but from <strong>tighter boundaries around what each piece is allowed to do.</strong></p>
 
-    <p>Clear interfaces matter too. Each component has a defined schema for what comes in and what goes out. No side channels, no implicit dependencies. Most of the reliability I got came not from better models but from <strong>tighter boundaries around what each piece was allowed to do.</strong></p>
-
-    <p class="closing"><em>The unit of reliability turned out to be the decision boundary, not the model.</em></p>
+    <p class="closing"><em>The unit of reliability is the decision boundary, not the model.</em></p>
   </div>
 </main>
 

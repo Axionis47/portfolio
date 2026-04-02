@@ -54,17 +54,17 @@ footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);fo
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>I shipped things I thought worked until I built an eval and found out they did not. That happened more than once. Now <strong>I do not consider a component done until I can measure whether it actually works.</strong></p>
+    <p>A component is not done until it can be measured. <strong>Without an eval, there is no way to know if something actually works</strong> or just looks like it does.</p>
 
-    <p>I use two kinds of graders. <strong>Deterministic ones</strong> (exact match, regex, type checks, schema validation) are fast and objective. They catch the obvious failures. <strong>Model-based ones</strong> (rubric scoring, pairwise comparison, semantic similarity) handle the fuzzier questions like whether a summary is faithful or a plan is coherent. I calibrate the model-based graders against human judgments so I know what the automated scores actually mean.</p>
+    <p>Two kinds of graders cover most cases. <strong>Deterministic ones</strong> (exact match, regex, type checks, schema validation) are fast and objective. They catch the obvious failures. <strong>Model-based ones</strong> (rubric scoring, pairwise comparison, semantic similarity) handle the fuzzier questions like whether a summary is faithful or a plan is coherent. Calibrating model-based graders against human judgments is what makes the automated scores meaningful.</p>
 
-    <p>The thing I missed for the longest time was <strong>measuring the trajectory, not just the outcome.</strong> Did the agent pick the right tool? Did it retrieve the right evidence? Did it skip steps? I had cases where the final answer was correct but the reasoning chain was broken. That is a time bomb. It works until it does not, and when it breaks, there is no trail to follow.</p>
+    <p>The thing that gets missed most often is <strong>measuring the trajectory, not just the outcome.</strong> Did the agent pick the right tool? Did it retrieve the right evidence? Did it skip steps? A correct final answer produced by a broken reasoning chain is a time bomb. It works until it does not, and when it breaks, there is no trail to follow.</p>
 
-    <p>I keep two test suites. <strong>Capability tests</strong> push the limits with new scenarios and hard cases. They start with low pass rates and measure improvement over time. <strong>Regression tests</strong> guard what already works. They should have near-100% pass rates and catch breakage immediately. I convert passing capability tests into regression tests as soon as I can.</p>
+    <p>Two test suites help. <strong>Capability tests</strong> push the limits with new scenarios and hard cases. They start with low pass rates and measure improvement over time. <strong>Regression tests</strong> guard what already works. They should have near-100% pass rates and catch breakage immediately. Passing capability tests get converted into regression tests as soon as possible.</p>
 
-    <p>In production, I monitor continuously. Success rate drops, spikes in retries, unusual tool error rates, climbing latency. These turned out to be reliable signals, not noise. Running my offline eval suite against production samples regularly helped me catch drift before it became a real problem.</p>
+    <p>In production, continuous monitoring matters. Success rate drops, spikes in retries, unusual tool error rates, climbing latency. These are reliable signals, not noise. Running offline eval suites against production samples regularly catches drift before it becomes a real problem.</p>
 
-    <p class="closing"><em>If I cannot eval it, I do not understand it. That is where I start now.</em></p>
+    <p class="closing"><em>If it cannot be evaluated, it is not understood.</em></p>
   </div>
 
   <div class="article-nav">

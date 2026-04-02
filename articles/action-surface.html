@@ -182,17 +182,17 @@
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>I gave one of my agents thirty tools thinking it would be more capable. <strong>It got worse.</strong> It started confusing tools with overlapping functions, calling the wrong ones, passing malformed arguments. I spent a week debugging issues that were not model problems at all. They were tool selection problems.</p>
+    <p>An agent with thirty tools is not more capable. <strong>It is more confused.</strong> Overlapping functions lead to wrong tool calls, malformed arguments, and failures that look like model problems but are actually tool selection problems.</p>
 
-    <p>The fix was not better prompting. It was <strong>showing the agent fewer tools.</strong> I added a routing step that classified the problem type first, then exposed only the tools relevant to that class. If the query was about retrieval, the agent never saw write tools. If it was about code, it never saw email tools.</p>
+    <p>The fix is not better prompting. It is <strong>showing the agent fewer tools.</strong> A routing step classifies the problem type first, then exposes only the tools relevant to that class. Retrieval queries never see write tools. Code queries never see email tools.</p>
 
-    <p>I started thinking of tools not as capabilities but as <strong>constraints.</strong> A well-designed tool interface is a contract: this is the only way the agent can touch the world. Precise I/O, typed parameters, schema validation. A mis-formatted query causes the tool to fail fast instead of the agent hallucinating a response.</p>
+    <p>Tools are not capabilities. They are <strong>constraints.</strong> A well-designed tool interface is a contract: this is the only way the agent can touch the world. Precise I/O, typed parameters, schema validation. A mis-formatted query causes the tool to fail fast instead of the agent hallucinating a response.</p>
 
-    <p>MCP (Model Context Protocol) helped me make those contracts explicit and enforceable across agents. It turned informal tool descriptions into real interfaces with real boundaries.</p>
+    <p>MCP (Model Context Protocol) makes those contracts explicit and enforceable across agents. It turns informal tool descriptions into real interfaces with real boundaries.</p>
 
-    <p>The pattern that worked: <strong>route first, expose second.</strong> Detect the problem class, then provide only the relevant tools. That narrowing step ended up being more important than the tools themselves.</p>
+    <p>The pattern: <strong>route first, expose second.</strong> Detect the problem class, then provide only the relevant tools. The narrowing step is often more important than the tools themselves.</p>
 
-    <p class="closing"><em>Simpler action sets meant more predictable behavior. Every time.</em></p>
+    <p class="closing"><em>Simpler action sets mean more predictable behavior. Every time.</em></p>
   </div>
 </main>
 
