@@ -48,7 +48,9 @@
         .hero canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
         .hero-f{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(transparent,var(--bg));z-index:1}
 
-        .hc{position:relative;z-index:2;max-width:600px;width:100%;display:flex;flex-direction:column;align-items:center;text-align:center;background:radial-gradient(ellipse 100% 100% at 50% 50%, rgba(16,16,18,0.85) 0%, rgba(16,16,18,0.5) 65%, transparent 100%);padding:50px 40px;border-radius:20px}
+        .hc{position:relative;z-index:2;max-width:700px;width:100%;display:flex;align-items:center;gap:36px;background:radial-gradient(ellipse 100% 100% at 50% 50%, rgba(16,16,18,0.85) 0%, rgba(16,16,18,0.5) 65%, transparent 100%);padding:50px 44px;border-radius:20px}
+        .hero-photo{width:120px;height:120px;flex-shrink:0;border-radius:50%;overflow:hidden;box-shadow:inset 3px 3px 9px var(--shd),inset -2px -2px 6px var(--shl);opacity:0;animation:up .5s ease .1s forwards}
+        .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center 20%;border-radius:50%}
 
         .photo{flex-shrink:0;width:170px;height:170px;border-radius:50%;background:var(--inset);box-shadow:inset 3px 3px 9px var(--shd),inset -2px -2px 6px var(--shl);display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:0;animation:up .5s ease .1s forwards}
         .photo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
@@ -57,8 +59,8 @@
         .intro{flex:1;padding-top:6px}
         .intro h1{font-family:var(--mono);font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;line-height:1.25;letter-spacing:-.03em;margin-bottom:8px;color:#fff;opacity:0;animation:up .5s ease .18s forwards}
         .role{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--t2);letter-spacing:.015em;margin-bottom:22px;opacity:0;animation:up .5s ease .26s forwards}
-        .bio{font-family:var(--sans);font-size:1rem;font-weight:400;color:var(--t2);line-height:1.9;max-width:520px;margin:0 auto 28px;opacity:0;animation:up .5s ease .34s forwards}
-        .lk{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;opacity:0;animation:up .5s ease .42s forwards}
+        .bio{font-family:var(--sans);font-size:1rem;font-weight:400;color:var(--t2);line-height:1.9;max-width:520px;margin-bottom:28px;opacity:0;animation:up .5s ease .34s forwards}
+        .lk{display:flex;gap:16px;flex-wrap:wrap;opacity:0;animation:up .5s ease .42s forwards}
         .lk a{font-family:var(--mono);font-size:.75rem;font-weight:500;color:var(--t2);transition:color .2s}
         .lk a:hover{color:var(--accent)}
         .lk .s{color:var(--t3);opacity:.25;user-select:none}
@@ -213,6 +215,9 @@
     <canvas id="cosmos"></canvas>
     <div class="hero-f"></div>
     <div class="hc">
+        <div class="hero-photo">
+            <img src="assets/headshot.png" alt="Siddharth Yalamanchili">
+        </div>
         <div class="intro">
             <h1>Siddharth Yalamanchili</h1>
             <div class="role">Full-Stack AI Engineer</div>
@@ -238,21 +243,6 @@
      EXPERIENCE
      ═══════════════════════════════════════ -->
 <section id="experience" class="section">
-    <div class="exp-intro fade">
-        <div class="exp-photo">
-            <img src="assets/headshot.png" alt="Siddharth Yalamanchili">
-        </div>
-        <div class="exp-bio">
-            <div class="exp-bio-line">M.S. in Statistics &amp; Data Science, Rutgers University. Exchange student at Princeton. I build AI systems and care about the details that make them actually work.</div>
-            <div class="exp-bio-meta">
-                <span>Rutgers &rsquo;25</span>
-                <span>&middot;</span>
-                <span>BITS Pilani &rsquo;23</span>
-                <span>&middot;</span>
-                <span>AI Engineering</span>
-            </div>
-        </div>
-    </div>
     <div class="section-label fade">Experience</div>
     <div id="experience-tiles"></div>
 </section>
