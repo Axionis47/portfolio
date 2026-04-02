@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sai Siddharth Yalamanchili</title>
+    <title>Siddharth Yalamanchili</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
     <style>
         :root{
             --bg:#101012;--bg2:#151517;--raised:#1a1a1d;--inset:#0a0a0c;
@@ -27,13 +27,23 @@
 
         .neu{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl)}
 
-        nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 36px;display:flex;justify-content:space-between;align-items:center;background:rgba(16,16,18,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.03)}
+        /* ─── Sidebar Nav ─── */
+        .sidenav{position:fixed;left:24px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:24px;align-items:center}
+        .sidenav a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--t3);transition:all .3s}
+        .sidenav a:hover{color:var(--t1)}
+        .sidenav a.active{color:var(--accent)}
+        .sidenav-dot{width:8px;height:8px;border-radius:50%;background:var(--t3);transition:all .3s;flex-shrink:0}
+        .sidenav a:hover .sidenav-dot{background:var(--t1)}
+        .sidenav a.active .sidenav-dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+        .sidenav-label{font-family:var(--mono);font-size:.58rem;letter-spacing:.04em;opacity:0;transition:opacity .2s;white-space:nowrap}
+        .sidenav:hover .sidenav-label{opacity:1}
+
+        /* ─── Top bar (minimal) ─── */
+        .topbar{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 36px;display:flex;justify-content:space-between;align-items:center;background:rgba(16,16,18,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.03)}
         .nl{font-family:var(--mono);font-size:.88rem;font-weight:600;color:var(--t1)}
-        .nn{display:flex;gap:4px;list-style:none}
-        .nn a{display:block;padding:8px 15px;font-family:var(--mono);font-size:.75rem;color:var(--t2);border-radius:50px;transition:all .2s;font-weight:400}
-        .nn a:hover{color:var(--t1);background:rgba(255,255,255,0.04)}
-        .nn a.on{color:var(--accent);background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl)}
-        .nh{display:none;background:none;border:none;color:var(--t2);font-size:1.2rem;cursor:pointer;padding:8px}
+        .top-links{display:flex;gap:18px}
+        .top-links a{font-family:var(--mono);font-size:.7rem;font-weight:500;color:var(--t2);transition:color .2s}
+        .top-links a:hover{color:var(--accent)}
 
         .hero{position:relative;min-height:auto;display:flex;align-items:center;justify-content:center;padding:120px 36px 50px}
         .hero canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
@@ -54,7 +64,53 @@
         .lk a:hover{color:var(--accent)}
         .lk .s{color:var(--t3);opacity:.25;user-select:none}
 
-        /* ─── Commandments ─── */
+        /* ─── Section shared ─── */
+        .section{padding:60px 36px 80px;max-width:1100px;margin:0 auto}
+        .section-label{font-family:var(--mono);font-size:.65rem;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:36px}
+
+        /* ─── Experience ─── */
+        .exp-intro{display:flex;align-items:flex-start;gap:28px;margin-bottom:40px}
+        .exp-photo{width:90px;height:90px;flex-shrink:0;border-radius:50%;background:var(--inset);box-shadow:inset 3px 3px 9px var(--shd),inset -2px -2px 6px var(--shl);overflow:hidden}
+        .exp-photo img{width:100%;height:100%;object-fit:cover;object-position:center 20%;border-radius:50%}
+        .exp-bio{flex:1;padding-top:6px}
+        .exp-bio-line{font-family:var(--sans);font-size:.88rem;font-weight:400;color:var(--t1);line-height:1.8;max-width:520px}
+        .exp-bio-meta{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap}
+        .exp-bio-meta span{font-family:var(--mono);font-size:.62rem;color:var(--t2)}
+
+        .exp-card{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);border-left:2px solid rgba(216,140,58,0.15);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);margin-bottom:16px;transition:all .3s;overflow:hidden}
+        .exp-card:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+        .exp-header{display:flex;align-items:flex-start;gap:22px;padding:28px 28px 0}
+        .exp-logo{width:48px;height:48px;flex-shrink:0;border-radius:10px;background:var(--inset);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl)}
+        .exp-logo .mono-icon{font-family:var(--mono);font-size:1rem;font-weight:600;color:var(--accent);opacity:.6}
+        .exp-meta{flex:1}
+        .exp-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+        .exp-company{font-family:var(--mono);font-size:.9rem;font-weight:500;color:var(--accent)}
+        .exp-date{font-family:var(--mono);font-size:.64rem;color:var(--t2);letter-spacing:.04em}
+        .exp-role{font-family:var(--mono);font-size:.8rem;font-weight:400;color:var(--t1);margin-bottom:2px}
+        .exp-loc{font-family:var(--mono);font-size:.62rem;color:var(--t2)}
+        .exp-body{padding:18px 28px 26px}
+        .exp-bullets{list-style:none;padding:0;margin:0}
+        .exp-bullets li{font-family:var(--sans);font-size:.84rem;font-weight:400;color:var(--t1);line-height:1.8;padding-left:16px;position:relative;margin-bottom:6px}
+        .exp-bullets li::before{content:'';position:absolute;left:0;top:10px;width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:.4}
+        .exp-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+        .exp-tag{font-family:var(--mono);font-size:.6rem;color:var(--t2);padding:3px 8px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+
+        /* ─── Education ─── */
+        .timeline{display:flex;flex-direction:column;position:relative;padding-left:32px}
+        .timeline::before{content:'';position:absolute;left:7px;top:12px;bottom:12px;width:1px;background:var(--t3);opacity:.12}
+        .edu-card{position:relative;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 28px;margin-bottom:20px;transition:all .3s}
+        .edu-card:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+        .edu-card::before{content:'';position:absolute;left:-25px;top:36px;width:10px;height:10px;border-radius:50%;background:var(--accent);opacity:.5;box-shadow:0 0 8px var(--accent)}
+        .edu-inner{display:flex;align-items:flex-start;gap:20px}
+        .edu-logo{width:50px;height:50px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl)}
+        .edu-logo img{width:34px;height:34px;object-fit:contain}
+        .edu-text{flex:1}
+        .edu-year{font-family:var(--mono);font-size:.62rem;color:var(--t2);letter-spacing:.04em;margin-bottom:6px}
+        .edu-school{font-family:var(--mono);font-size:.9rem;font-weight:500;color:var(--accent);margin-bottom:3px}
+        .edu-degree{font-family:var(--mono);font-size:.8rem;font-weight:400;color:var(--t1);line-height:1.5}
+        .edu-desc{font-family:var(--sans);font-size:.82rem;font-weight:400;color:var(--t2);line-height:1.8;margin-top:6px}
+
+        /* ─── Notes (formerly Commandments) ─── */
         .commandments{padding:40px 36px 108px}
         .cmd-wrap{max-width:1100px;margin:0 auto}
         .cmd-label{font-family:var(--mono);font-size:.63rem;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:36px}
@@ -110,20 +166,26 @@
         .fade.v{opacity:1;transform:translateY(0)}
 
         @media(max-width:768px){
-            nav{padding:14px 20px}
-            .nn{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;padding:14px 20px;background:rgba(16,16,18,0.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.02)}
-            .nn.open{display:flex}.nh{display:block}
+            .sidenav{display:none}
+            .topbar{padding:14px 20px}
             .hero{padding:80px 20px 30px}
             .hc{flex-direction:column;align-items:center;gap:24px;text-align:center}
-            .photo{width:130px;height:130px}
             .intro{padding-top:0}
             .bio{margin-left:auto;margin-right:auto}
             .lk{justify-content:center}
+            .section{padding:40px 20px 60px}
+            .exp-intro{gap:16px}
+            .exp-photo{width:70px;height:70px}
+            .exp-header{gap:14px}
+            .exp-logo{width:40px;height:40px}
+            .exp-body{padding:14px 20px 22px}
             .commandments{padding:0 20px 72px}
             .cmd-list{grid-template-columns:repeat(2,1fr)}
             .cmd-hint{display:none}
             .proj-grid{grid-template-columns:1fr}
             .projects{padding:0 20px 60px}
+            .edu-inner{gap:14px}
+            .timeline{padding-left:24px}
             .ft{flex-direction:column;gap:10px;text-align:center}
             footer{padding:28px 20px}
         }
@@ -131,17 +193,21 @@
 </head>
 <body>
 
-<nav>
+<div class="topbar">
     <div class="nl">sai.</div>
-    <button class="nh" onclick="document.querySelector('.nn').classList.toggle('open')" aria-label="Menu">&#9776;</button>
-    <ul class="nn">
-        <li><a href="#manifesto" class="on">Manifesto</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="https://github.com/Axionis47" target="_blank">GitHub</a></li>
-        <li><a href="https://www.linkedin.com/in/siddharth-yalamanchili/" target="_blank">LinkedIn</a></li>
-        <li><a href="mailto:">Contact</a></li>
-    </ul>
+    <div class="top-links">
+        <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
+        <a href="https://www.linkedin.com/in/siddharth-yalamanchili/" target="_blank">LinkedIn</a>
+        <a href="assets/resume.pdf" target="_blank">Resume</a>
+        <a href="mailto:sidsy04@gmail.com">Contact</a>
+    </div>
+</div>
+
+<nav class="sidenav" id="sidenav">
+    <a href="#experience" data-section="experience"><span class="sidenav-dot"></span><span class="sidenav-label">Experience</span></a>
+    <a href="#projects" data-section="projects"><span class="sidenav-dot"></span><span class="sidenav-label">Projects</span></a>
+    <a href="#notes" data-section="notes"><span class="sidenav-dot"></span><span class="sidenav-label">Notes</span></a>
+    <a href="#education" data-section="education"><span class="sidenav-dot"></span><span class="sidenav-label">Education</span></a>
 </nav>
 
 <section class="hero">
@@ -169,9 +235,45 @@
     </div>
 </section>
 
-<section id="manifesto" class="commandments">
+<!-- ═══════════════════════════════════════
+     EXPERIENCE
+     ═══════════════════════════════════════ -->
+<section id="experience" class="section">
+    <div class="exp-intro fade">
+        <div class="exp-photo">
+            <img src="assets/headshot.png" alt="Siddharth Yalamanchili">
+        </div>
+        <div class="exp-bio">
+            <div class="exp-bio-line">M.S. in Statistics &amp; Data Science, Rutgers University. Exchange student at Princeton. I build AI systems and care about the details that make them actually work.</div>
+            <div class="exp-bio-meta">
+                <span>Rutgers &rsquo;25</span>
+                <span>&middot;</span>
+                <span>BITS Pilani &rsquo;23</span>
+                <span>&middot;</span>
+                <span>AI Engineering</span>
+            </div>
+        </div>
+    </div>
+    <div class="section-label fade">Experience</div>
+    <div id="experience-tiles"></div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     PROJECTS
+     ═══════════════════════════════════════ -->
+<section id="projects" class="projects">
+    <div class="proj-wrap">
+        <div class="proj-label fade">Projects</div>
+        <div class="proj-grid" id="project-tiles"></div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     NOTES
+     ═══════════════════════════════════════ -->
+<section id="notes" class="commandments">
     <div class="cmd-wrap">
-        <div class="cmd-label fade">Notes on building AI systems</div>
+        <div class="cmd-label fade">Notes</div>
         <div class="cmd-list">
 
             <a href="articles/bounded-responsibility.html" class="cmd neu fade">
@@ -250,16 +352,43 @@
     </div>
 </section>
 
-<section id="projects" class="projects">
-    <div class="proj-wrap">
-        <div class="proj-label fade">Projects</div>
-        <div class="proj-grid" id="project-tiles"></div>
+<!-- ═══════════════════════════════════════
+     EDUCATION
+     ═══════════════════════════════════════ -->
+<section id="education" class="section">
+    <div class="section-label fade">Education</div>
+    <div class="timeline">
+        <div class="edu-card fade">
+            <div class="edu-inner">
+                <div class="edu-logo"><img src="assets/princeton-logo.png" alt="Princeton University"></div>
+                <div class="edu-text">
+                    <div class="edu-year">2024 &ndash; 2025</div>
+                    <div class="edu-school">Princeton University</div>
+                    <div class="edu-degree">Exchange Student</div>
+                </div>
+            </div>
+        </div>
+        <div class="edu-card fade">
+            <div class="edu-inner">
+                <div class="edu-logo"><img src="assets/rutgers-logo.png" alt="Rutgers University"></div>
+                <div class="edu-text">
+                    <div class="edu-year">Jan 2024 &ndash; Dec 2025</div>
+                    <div class="edu-school">Rutgers University</div>
+                    <div class="edu-degree">M.S. Statistics &amp; Data Science</div>
+                </div>
+            </div>
+        </div>
+        <div class="edu-card fade">
+            <div class="edu-inner">
+                <div class="edu-logo"><img src="assets/bits-pilani-logo.png" alt="BITS Pilani"></div>
+                <div class="edu-text">
+                    <div class="edu-year">2019 &ndash; 2023</div>
+                    <div class="edu-school">BITS Pilani</div>
+                    <div class="edu-degree">B.E. Electrical &amp; Electronics Engineering</div>
+                </div>
+            </div>
+        </div>
     </div>
-</section>
-
-<section class="quote fade">
-    <p>&ldquo;The first principle is that you must not fool yourself &mdash; and you are the easiest person to fool.&rdquo;</p>
-    <span>Richard Feynman</span>
 </section>
 
 <footer>
@@ -626,6 +755,13 @@ async function loadTiles(containerId, paths) {
     container.querySelectorAll('.fade').forEach(el => obs.observe(el));
 }
 
+loadTiles('experience-tiles', [
+    'tiles/experience/role-2.html',
+    'tiles/experience/role-1.html',
+    'tiles/experience/role-4.html',
+    'tiles/experience/role-3.html'
+]);
+
 loadTiles('project-tiles', [
     'tiles/projects/proj-1-ai-transformation.html',
     'tiles/projects/proj-2-causal-inference.html',
@@ -637,10 +773,17 @@ loadTiles('project-tiles', [
     'tiles/projects/proj-8-hackathon.html'
 ]);
 
-document.querySelectorAll('.nn a[href^="#"]').forEach(a => {
-    a.addEventListener('click', function(){
-        document.querySelectorAll('.nn a').forEach(l => l.classList.remove('on'));
-        this.classList.add('on');
+// Sidebar scroll tracking
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.sidenav a');
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+        const top = s.offsetTop - 200;
+        if(scrollY >= top) current = s.id;
+    });
+    navLinks.forEach(a => {
+        a.classList.toggle('active', a.dataset.section === current);
     });
 });
 </script>
