@@ -279,7 +279,7 @@
                 <div class="cmd-head">
                     <span class="cmd-num">01</span>
                     <span class="cmd-title">Bounded Responsibility</span>
-                    <span class="cmd-hint">Why each component should own exactly one decision</span>
+                    <span class="cmd-hint">I kept getting bugs I could not trace until I stopped letting components do two things</span>
                     <span class="cmd-arrow">&rsaquo;</span>
                 </div>
             </a>
@@ -288,7 +288,7 @@
                 <div class="cmd-head">
                     <span class="cmd-num">02</span>
                     <span class="cmd-title">Context as a Budget</span>
-                    <span class="cmd-hint">Giving an agent less context usually makes it better</span>
+                    <span class="cmd-hint">Agents got worse when I gave them more context, which took me a while to figure out</span>
                     <span class="cmd-arrow">&rsaquo;</span>
                 </div>
             </a>
@@ -297,7 +297,7 @@
                 <div class="cmd-head">
                     <span class="cmd-num">03</span>
                     <span class="cmd-title">Action Surface</span>
-                    <span class="cmd-hint">Every tool you give an agent is a new way for it to fail</span>
+                    <span class="cmd-hint">I added tools thinking they would help, then spent a week debugging what they broke</span>
                     <span class="cmd-arrow">&rsaquo;</span>
                 </div>
             </a>
@@ -306,7 +306,7 @@
                 <div class="cmd-head">
                     <span class="cmd-num">04</span>
                     <span class="cmd-title">Recoverability</span>
-                    <span class="cmd-hint">Systems that recover from failure beat systems that try not to fail</span>
+                    <span class="cmd-hint">The systems that worked best were the ones I designed assuming they would fail</span>
                     <span class="cmd-arrow">&rsaquo;</span>
                 </div>
             </a>
@@ -315,7 +315,7 @@
                 <div class="cmd-head">
                     <span class="cmd-num">05</span>
                     <span class="cmd-title">Delegation Cost</span>
-                    <span class="cmd-hint">How much autonomy to give an agent is an engineering decision, not a default</span>
+                    <span class="cmd-hint">I learned the hard way that "let the agent figure it out" is not a real design choice</span>
                     <span class="cmd-arrow">&rsaquo;</span>
                 </div>
             </a>
@@ -324,7 +324,7 @@
                 <div class="cmd-head">
                     <span class="cmd-num">06</span>
                     <span class="cmd-title">Memory as Policy</span>
-                    <span class="cmd-hint">What an agent remembers should be governed, not accumulated</span>
+                    <span class="cmd-hint">My agents kept getting worse over time until I started pruning what they remembered</span>
                     <span class="cmd-arrow">&rsaquo;</span>
                 </div>
             </a>
@@ -333,7 +333,7 @@
                 <div class="cmd-head">
                     <span class="cmd-num">07</span>
                     <span class="cmd-title">Runtime Resilience</span>
-                    <span class="cmd-hint">Most agent failures are not model failures, they are infrastructure failures</span>
+                    <span class="cmd-hint">Most of my debugging time was never about the model, it was about everything around it</span>
                     <span class="cmd-arrow">&rsaquo;</span>
                 </div>
             </a>
@@ -342,7 +342,7 @@
                 <div class="cmd-head">
                     <span class="cmd-num">08</span>
                     <span class="cmd-title">Eval-Driven Design</span>
-                    <span class="cmd-hint">If you cannot measure whether it works, you do not know whether it works</span>
+                    <span class="cmd-hint">I shipped things I thought worked until I built an eval and found out they did not</span>
                     <span class="cmd-arrow">&rsaquo;</span>
                 </div>
             </a>
