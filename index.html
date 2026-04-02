@@ -139,8 +139,10 @@
         .proj-desc{font-family:var(--sans);font-size:.88rem;font-weight:400;color:var(--t2);line-height:1.8;flex:1}
         .proj-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:auto;padding-top:12px}
         .proj-tag{font-family:var(--mono);font-size:.65rem;color:var(--t2);padding:4px 10px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
-        .proj-arrow{font-family:var(--mono);font-size:.7rem;color:var(--t3);transition:transform .3s,color .3s;position:absolute;bottom:24px;right:22px}
+        .proj-arrow{font-family:var(--mono);font-size:.72rem;color:var(--t3);transition:transform .3s,color .3s;position:absolute;bottom:24px;right:22px;display:flex;align-items:center;gap:6px}
+        .proj-arrow::before{content:'explore';font-size:.6rem;letter-spacing:.03em;opacity:.6}
         .proj:hover .proj-arrow{transform:translateX(3px);color:var(--accent)}
+        .proj:hover .proj-arrow::before{opacity:1}
 
         /* ─── Hackathon Winner ─── */
         .proj.winner{border:1px solid rgba(216,140,58,0.12)}
