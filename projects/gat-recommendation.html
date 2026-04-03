@@ -248,9 +248,9 @@
       <div class="dual-graph-caption">82K nodes, 738K edges. The GNN runs message passing across the entire graph, learning embeddings that encode each item's neighborhood.</div>
     </div>
     <div class="dual-graph-panel">
-      <div class="dual-graph-label">Prediction: Session Subgraph</div>
+      <div class="dual-graph-label">Prediction: Live Sessions</div>
       <canvas id="predictGraphCanvas"></canvas>
-      <div class="dual-graph-caption">3-5 nodes from the session. Embeddings are already trained. Mean pool into a session vector, rank all 82K items by cosine similarity.</div>
+      <div class="dual-graph-caption" id="predictCaption">Sessions cycle through the trained model. Watch items arrive, pool into a session vector, and produce ranked recommendations.</div>
     </div>
   </div>
 
@@ -799,74 +799,189 @@ function initDualGraphs(){
     requestAnimationFrame(drawTraining);
   }
 
-  // --- Prediction graph: 4 highlighted nodes, small subgraph ---
-  const sessionNodes = [
-    {x: cv2.w * 0.3, y: cv2.h * 0.35, label: 'Keyboard'},
-    {x: cv2.w * 0.6, y: cv2.h * 0.25, label: 'Mouse'},
-    {x: cv2.w * 0.5, y: cv2.h * 0.55, label: 'Monitor'},
+  // --- Prediction: cycling live sessions ---
+  const predSessions = [
+    { items: ['Keyboard','Mouse','Monitor'], target: 'USB Hub', recs: ['USB Hub','Desk Mat','Webcam'], hit: true },
+    { items: ['Running Shoes','Socks'], target: 'Water Bottle', recs: ['Shorts','Water Bottle','Headband'], hit: true },
+    { items: ['Laptop','Charger','Sleeve'], target: 'Mouse', recs: ['Mouse','Stand','USB-C Hub'], hit: true },
+    { items: ['Shampoo','Conditioner'], target: 'Towel', recs: ['Body Wash','Hair Dryer','Comb'], hit: false },
+    { items: ['Camera','Lens','Tripod'], target: 'SD Card', recs: ['SD Card','Bag','Filter'], hit: true },
+    { items: ['Guitar','Strings','Pick'], target: 'Tuner', recs: ['Capo','Tuner','Strap'], hit: true },
   ];
-  // Ghost nodes (the 82K background)
-  const ghostNodes = [];
-  for(let i=0;i<30;i++){
-    ghostNodes.push({
-      x: cv2.w * (0.1 + Math.random() * 0.8),
-      y: cv2.h * (0.1 + Math.random() * 0.8)
-    });
-  }
-  // Result node
-  const resultNode = {x: cv2.w * 0.75, y: cv2.h * 0.65, label: 'USB Hub'};
+
+  // Phases per session (in frames)
+  const P_ARRIVE = 40;    // items appear one by one
+  const P_EDGES = 30;     // edges connect them
+  const P_POOL = 35;      // converge to center
+  const P_RANK = 45;      // recommendations fan out
+  const P_HOLD = 50;      // show result
+  const P_FADE = 20;      // fade out
+  const CYCLE = P_ARRIVE + P_EDGES + P_POOL + P_RANK + P_HOLD + P_FADE;
 
   let pFrame = 0;
+  const caption = document.getElementById('predictCaption');
+
   function drawPredict(){
     const {ctx, w, h} = cv2;
     ctx.clearRect(0, 0, w, h);
     pFrame++;
 
-    // Ghost nodes (faint)
-    ghostNodes.forEach(n => {
-      drawNode(ctx, n.x, n.y, 3, t3, 0.1, null);
+    const sessIdx = Math.floor(pFrame / CYCLE) % predSessions.length;
+    const sess = predSessions[sessIdx];
+    const localFrame = pFrame % CYCLE;
+
+    // Phase boundaries
+    const arriveEnd = P_ARRIVE;
+    const edgesEnd = arriveEnd + P_EDGES;
+    const poolEnd = edgesEnd + P_POOL;
+    const rankEnd = poolEnd + P_RANK;
+    const holdEnd = rankEnd + P_HOLD;
+
+    // Global fade for transitions
+    let globalFade = 1;
+    if(localFrame > holdEnd) globalFade = 1 - (localFrame - holdEnd) / P_FADE;
+    if(localFrame < 10) globalFade = localFrame / 10;
+
+    // Item positions (left cluster)
+    const itemPositions = sess.items.map((_, i) => ({
+      x: w * 0.15 + (i / (sess.items.length - 1 || 1)) * w * 0.25,
+      y: h * 0.35 + Math.sin(i * 1.8) * 25
+    }));
+
+    // Pool center
+    const poolX = w * 0.52, poolY = h * 0.38;
+
+    // Rec positions (right side)
+    const recPositions = sess.recs.map((_, i) => ({
+      x: w * 0.82,
+      y: h * 0.2 + i * (h * 0.25)
+    }));
+
+    // --- PHASE: Items arrive ---
+    const arriveProgress = Math.min(localFrame / arriveEnd, 1);
+    sess.items.forEach((item, i) => {
+      const itemProg = Math.max(0, Math.min((arriveProgress * sess.items.length - i), 1));
+      if(itemProg <= 0) return;
+      const alpha = itemProg * globalFade;
+      drawNode(ctx, itemPositions[i].x, itemPositions[i].y, 6, accent, alpha, item);
     });
 
-    // Session edges
-    for(let i=0;i<sessionNodes.length;i++){
-      for(let j=i+1;j<sessionNodes.length;j++){
-        drawEdge(ctx, sessionNodes[i].x, sessionNodes[i].y, sessionNodes[j].x, sessionNodes[j].y, 0.6, 2);
+    // --- PHASE: Edges connect ---
+    if(localFrame > arriveEnd){
+      const edgeProg = Math.min((localFrame - arriveEnd) / P_EDGES, 1);
+      for(let i=0;i<sess.items.length;i++){
+        for(let j=i+1;j<sess.items.length;j++){
+          const ep = Math.max(0, Math.min(edgeProg * 2 - (i+j) * 0.15, 1));
+          drawEdge(ctx, itemPositions[i].x, itemPositions[i].y, itemPositions[j].x, itemPositions[j].y, ep * globalFade, 1.5);
+        }
       }
     }
 
-    // Session nodes
-    sessionNodes.forEach(n => {
-      drawNode(ctx, n.x, n.y, 7, accent, 0.9, n.label);
-    });
+    // --- PHASE: Mean pool ---
+    if(localFrame > edgesEnd){
+      const poolProg = Math.min((localFrame - edgesEnd) / P_POOL, 1);
 
-    // Mean pool arrow
-    const poolX = cv2.w * 0.5, poolY = cv2.h * 0.42;
-    ctx.globalAlpha = 0.4;
+      // Draw converging lines from items to pool center
+      sess.items.forEach((_, i) => {
+        const lp = Math.min(poolProg * 1.5, 1);
+        ctx.globalAlpha = lp * 0.4 * globalFade;
+        ctx.beginPath();
+        ctx.setLineDash([3, 3]);
+        ctx.moveTo(itemPositions[i].x, itemPositions[i].y);
+        const tx = itemPositions[i].x + (poolX - itemPositions[i].x) * lp;
+        const ty = itemPositions[i].y + (poolY - itemPositions[i].y) * lp;
+        ctx.lineTo(tx, ty);
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.setLineDash([]);
+      });
+
+      // Pool node appears
+      if(poolProg > 0.3){
+        const nodeAlpha = Math.min((poolProg - 0.3) / 0.4, 1) * globalFade;
+        ctx.globalAlpha = nodeAlpha * 0.15;
+        ctx.beginPath();
+        ctx.arc(poolX, poolY, 18, 0, Math.PI*2);
+        ctx.fillStyle = accent;
+        ctx.fill();
+        drawNode(ctx, poolX, poolY, 8, accent, nodeAlpha, 'session vector');
+
+        // Label
+        ctx.globalAlpha = nodeAlpha * 0.5;
+        ctx.font = '9px JetBrains Mono';
+        ctx.fillStyle = t3;
+        ctx.textAlign = 'center';
+        ctx.fillText('mean pool', poolX, poolY - 22);
+      }
+    }
+
+    // --- PHASE: Rank & show recs ---
+    if(localFrame > poolEnd){
+      const rankProg = Math.min((localFrame - poolEnd) / P_RANK, 1);
+
+      // Arrow from pool to rec area
+      ctx.globalAlpha = rankProg * 0.3 * globalFade;
+      ctx.beginPath();
+      ctx.setLineDash([4, 4]);
+      ctx.moveTo(poolX + 12, poolY);
+      ctx.lineTo(w * 0.72, poolY);
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Cosine similarity label
+      ctx.globalAlpha = rankProg * 0.5 * globalFade;
+      ctx.font = '8px JetBrains Mono';
+      ctx.fillStyle = t3;
+      ctx.textAlign = 'center';
+      ctx.fillText('cosine sim', w * 0.67, poolY - 6);
+
+      // Recommendation nodes appear one by one
+      sess.recs.forEach((rec, i) => {
+        const rp = Math.max(0, Math.min(rankProg * 3 - i * 0.6, 1));
+        if(rp <= 0) return;
+        const isHit = rec === sess.recs[sess.recs.indexOf(sess.target)] && sess.hit;
+        const isTarget = rec === sess.target;
+        const color = isTarget && sess.hit ? '#5a9a5a' : t3;
+        const alpha = rp * globalFade;
+
+        // Rank number
+        ctx.globalAlpha = alpha * 0.5;
+        ctx.font = '9px JetBrains Mono';
+        ctx.fillStyle = t3;
+        ctx.textAlign = 'right';
+        ctx.fillText('#' + (i+1), recPositions[i].x - 14, recPositions[i].y + 3);
+
+        drawNode(ctx, recPositions[i].x, recPositions[i].y, 6, color, alpha, rec);
+
+        // Hit indicator
+        if(isTarget && sess.hit && rp > 0.8){
+          ctx.globalAlpha = alpha;
+          ctx.font = '10px JetBrains Mono';
+          ctx.fillStyle = '#5a9a5a';
+          ctx.textAlign = 'left';
+          ctx.fillText('✓ hit', recPositions[i].x + 10, recPositions[i].y + 18);
+        }
+      });
+
+      // Miss indicator
+      if(rankProg > 0.9 && !sess.hit){
+        ctx.globalAlpha = globalFade * 0.7;
+        ctx.font = '9px JetBrains Mono';
+        ctx.fillStyle = '#9a5a5a';
+        ctx.textAlign = 'center';
+        ctx.fillText('target: ' + sess.target + ' (not in top 3)', w * 0.82, h * 0.88);
+      }
+    }
+
+    // Session label at top right
+    ctx.globalAlpha = globalFade * 0.6;
     ctx.font = '9px JetBrains Mono';
-    ctx.fillStyle = t3;
-    ctx.textAlign = 'center';
-    ctx.fillText('mean pool', poolX, poolY - 2);
-
-    // Animated arrow to result
-    const pulse = 0.4 + 0.3 * Math.sin(pFrame * 0.04);
-    ctx.globalAlpha = pulse;
-    ctx.beginPath();
-    ctx.moveTo(poolX + 30, poolY);
-    ctx.lineTo(resultNode.x - 14, resultNode.y - 8);
-    ctx.strokeStyle = accent;
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([4, 4]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Result node (pulsing)
-    const rPulse = 0.5 + 0.4 * Math.sin(pFrame * 0.05);
-    ctx.globalAlpha = rPulse;
-    ctx.beginPath();
-    ctx.arc(resultNode.x, resultNode.y, 10, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(90,154,90,0.15)';
-    ctx.fill();
-    drawNode(ctx, resultNode.x, resultNode.y, 7, '#5a9a5a', rPulse, resultNode.label + ' ✓');
+    ctx.fillStyle = t2;
+    ctx.textAlign = 'right';
+    ctx.fillText('session ' + (sessIdx+1) + '/' + predSessions.length, w - 16, 30);
 
     ctx.globalAlpha = 1;
     requestAnimationFrame(drawPredict);
