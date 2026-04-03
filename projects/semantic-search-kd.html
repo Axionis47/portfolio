@@ -76,8 +76,8 @@
   .compare-spec{font-family:var(--mono);font-size:.62rem;color:var(--t2);line-height:2;margin-top:10px}
   .anim-wrap{position:relative;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);margin:20px 0;overflow:hidden}
   .anim-wrap canvas{display:block;width:100%;height:320px}
-  .anim-label{position:absolute;top:16px;left:20px;font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase}
-  .anim-status{position:absolute;bottom:16px;left:20px;font-family:var(--mono);font-size:.6rem;color:var(--t2)}
+  .anim-label{position:absolute;top:12px;left:20px;font-family:var(--mono);font-size:.55rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase}
+  .anim-status{position:absolute;bottom:10px;left:20px;font-family:var(--mono);font-size:.55rem;color:var(--t3)}
   .anim-wrap code{font-family:var(--mono)}
   .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
   .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
@@ -522,15 +522,14 @@ function initLossAnim(){
 
   function drawPanelBg(x,label){
     ctx.globalAlpha=0.06;
-    ctx.fillStyle='#ffffff';
     ctx.beginPath();
-    ctx.moveTo(x+0.5,40);ctx.lineTo(x+0.5,h-20);
+    ctx.moveTo(x+0.5,30);ctx.lineTo(x+0.5,h-30);
     ctx.strokeStyle='#ffffff';ctx.lineWidth=0.5;ctx.stroke();
     ctx.globalAlpha=1;
     ctx.font='600 9px JetBrains Mono';
-    ctx.fillStyle=t3;
+    ctx.fillStyle=accent;
     ctx.textAlign='center';
-    ctx.fillText(label,x+panelW/2,24);
+    ctx.fillText(label,x+panelW/2,42);
   }
 
   function animate(){
@@ -546,7 +545,19 @@ function initLossAnim(){
     // ─── PANEL 1: MarginMSE ───
     drawPanelBg(0,'MarginMSE (60%)');
     const p1x=10,p1w=panelW-20;
-    const barH=14,barGap=8,chartTop=50;
+    const barH=14,barGap=8,chartTop=68;
+
+    // Legend
+    ctx.globalAlpha=0.5;
+    ctx.font='7px JetBrains Mono';
+    ctx.fillStyle=t3;ctx.textAlign='left';
+    ctx.fillRect(p1x+p1w*0.3,54,8,4);
+    ctx.fillText('teacher',p1x+p1w*0.3+12,57);
+    ctx.globalAlpha=0.8;
+    ctx.fillStyle=accent;
+    ctx.fillRect(p1x+p1w*0.55,54,8,4);
+    ctx.globalAlpha=0.5;
+    ctx.fillText('student',p1x+p1w*0.55+12,57);
 
     // Draw score bars and gaps for teacher and student
     const tMax=Math.max(...teacherScores);
@@ -604,35 +615,44 @@ function initLossAnim(){
     ctx.font='8px JetBrains Mono';
     ctx.fillStyle=t2;
     ctx.textAlign='center';
-    ctx.fillText('MSE: '+mse.toFixed(3),panelW/2,h-30);
+    ctx.fillText('MSE: '+mse.toFixed(3),panelW/2,h-46);
     ctx.font='7px JetBrains Mono';
     ctx.fillStyle=t3;
-    ctx.fillText('Learns pairwise gaps',panelW/2,h-18);
+    ctx.fillText('Learns pairwise gaps',panelW/2,h-34);
 
     // ─── PANEL 2: ListwiseKD (KL divergence) ───
     drawPanelBg(panelW,'ListwiseKD / KL (20%)');
     const p2x=panelW+8,p2w=panelW-16;
-    const bw=16,bgap=6,bchartH=140,bchartY=h-55;
+    const bw=16,bgap=6,bchartH=120,bchartY=h-65;
     const totalBW=docs.length*(bw+bgap)-bgap;
     const bStartX=p2x+(p2w-totalBW)/2;
 
     const teacherDist=softmax(teacherScores,temp);
     const studentDist=softmax(studentScores,temp);
 
-    // Temperature label
+    // Legend + Temperature
     ctx.globalAlpha=0.5;
-    ctx.font='8px JetBrains Mono';
+    ctx.font='7px JetBrains Mono';
+    ctx.textAlign='left';
+    ctx.fillStyle=t2;
+    ctx.fillRect(p2x+8,54,8,4);
+    ctx.fillText('teacher',p2x+20,57);
+    ctx.fillStyle=accent;
+    ctx.globalAlpha=0.8;
+    ctx.fillRect(p2x+p2w*0.4,54,8,4);
+    ctx.globalAlpha=0.5;
+    ctx.fillText('student',p2x+p2w*0.4+12,57);
+    ctx.textAlign='right';
     ctx.fillStyle=t3;
-    ctx.textAlign='center';
-    ctx.fillText('T='+temp.toFixed(1),panelW+panelW/2,40);
+    ctx.fillText('T='+temp.toFixed(1),p2x+p2w-4,57);
 
     docs.forEach((doc,i)=>{
       const x=bStartX+i*(bw+bgap);
 
       // Teacher bar
       const tH=teacherDist[i]*bchartH*2.5;
-      ctx.globalAlpha=0.3;
-      ctx.fillStyle=t3;
+      ctx.globalAlpha=0.5;
+      ctx.fillStyle=t2;
       ctx.beginPath();
       ctx.roundRect(x,bchartY-tH,bw/2-1,tH,2);
       ctx.fill();
@@ -668,10 +688,10 @@ function initLossAnim(){
     ctx.font='8px JetBrains Mono';
     ctx.fillStyle=t2;
     ctx.textAlign='center';
-    ctx.fillText('KL: '+kl.toFixed(4),panelW+panelW/2,h-30);
+    ctx.fillText('KL: '+kl.toFixed(4),panelW+panelW/2,h-46);
     ctx.font='7px JetBrains Mono';
     ctx.fillStyle=t3;
-    ctx.fillText('Matches full distribution',panelW+panelW/2,h-18);
+    ctx.fillText('Matches full distribution',panelW+panelW/2,h-34);
 
     // ─── PANEL 3: Contrastive ───
     drawPanelBg(panelW*2,'Contrastive (20%)');
@@ -745,10 +765,10 @@ function initLossAnim(){
     ctx.globalAlpha=0.7;
     ctx.font='8px JetBrains Mono';
     ctx.fillStyle=t2;
-    ctx.fillText('T=0.05 (fixed)',p3cx,h-30);
+    ctx.fillText('T=0.05 (fixed)',p3cx,h-46);
     ctx.font='7px JetBrains Mono';
     ctx.fillStyle=t3;
-    ctx.fillText('No teacher needed',p3cx,h-18);
+    ctx.fillText('No teacher needed',p3cx,h-34);
 
     // Status
     const epoch=Math.min(Math.floor(progress*3)+1,3);
