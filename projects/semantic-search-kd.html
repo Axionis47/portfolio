@@ -78,6 +78,7 @@
   .anim-wrap canvas{display:block;width:100%;height:320px}
   .anim-label{position:absolute;top:16px;left:20px;font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase}
   .anim-status{position:absolute;bottom:16px;left:20px;font-family:var(--mono);font-size:.6rem;color:var(--t2)}
+  .anim-wrap code{font-family:var(--mono)}
   .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
   .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
   .stack-group{margin-bottom:16px}
@@ -184,45 +185,45 @@
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 3: KL DIVERGENCE ANIMATION
+       CH 3: THREE LOSS FUNCTIONS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 3. How the student learns the teacher's distribution</div>
+  <div class="sec fade">Chapter 3. Three losses, each teaching something different</div>
 
   <div class="prose fade">
     <p>
-      The core of knowledge distillation is not matching the teacher's top-1 prediction. It is matching the teacher's <strong>entire probability distribution</strong> over documents. When the teacher says "70% Doc A, 20% Doc B, 10% Doc C," that 20% on Doc B contains information. The student needs to learn that B is a plausible answer, just not the best one. A hard label ("A is correct, everything else is wrong") destroys that signal.
+      The core of knowledge distillation is not matching the teacher's top-1 prediction. It is matching the teacher's <strong>entire probability distribution</strong> over documents. When the teacher says "70% Doc A, 20% Doc B, 10% Doc C," that 20% on Doc B contains information. The student needs to learn that B is a plausible answer, just not the best one. Three loss functions capture three different aspects of this signal.
     </p>
   </div>
 
-  <!-- KL Divergence Animation -->
-  <div class="anim-wrap fade">
-    <div class="anim-label">KL Divergence: Student matching Teacher's Distribution</div>
-    <canvas id="klCanvas"></canvas>
-    <div class="anim-status" id="klStatus"></div>
+  <!-- Combined loss formula diagram -->
+  <div class="dia fade">
+    <div class="dia-title">Combined Loss</div>
+    <div class="dia-row" style="gap:10px">
+      <div class="dia-box" style="flex:1;border:1px solid rgba(216,140,58,0.2)"><div class="dia-box-title" style="color:var(--accent)">0.6 &times; MarginMSE</div><div class="dia-box-sub">Pairwise score gaps<br><code style="font-size:.55rem;color:var(--t3)">MSE(s_margins, t_margins/T)</code></div></div>
+      <div class="dia-arrow">+</div>
+      <div class="dia-box" style="flex:1;border:1px solid rgba(216,140,58,0.2)"><div class="dia-box-title" style="color:var(--accent)">0.2 &times; ListwiseKD</div><div class="dia-box-sub">Full distribution shape<br><code style="font-size:.55rem;color:var(--t3)">T&sup2; &times; KL(softmax(t/T) || softmax(s/T))</code></div></div>
+      <div class="dia-arrow">+</div>
+      <div class="dia-box" style="flex:1;border:1px solid rgba(90,154,90,0.2)"><div class="dia-box-title" style="color:var(--green)">0.2 &times; Contrastive</div><div class="dia-box-sub">Embedding space layout<br><code style="font-size:.55rem;color:var(--t3)">-log_softmax(s/0.05)[:,0].mean()</code></div></div>
+    </div>
+    <div class="dia-note">MarginMSE and ListwiseKD use the teacher. Contrastive does not. Temperature anneals from T=4.0 to T=2.0.</div>
   </div>
 
-  <div class="prose fade">
-    <p>
-      The training uses three loss components that each teach something different. Combined as <strong>L = 0.6 * MarginMSE + 0.2 * ListwiseKD + 0.2 * Contrastive</strong>.
-    </p>
+  <!-- Loss table -->
+  <div class="dia fade">
+    <div class="dia-title">What each loss teaches</div>
+    <table class="rtable">
+      <tr><th>Loss</th><th>Weight</th><th>Input</th><th>What it teaches</th></tr>
+      <tr><td>MarginMSE</td><td>60%</td><td>Student margins vs teacher margins</td><td>Relative score gaps between document pairs. A is 2.1 better than B. Scale-invariant.</td></tr>
+      <tr><td>ListwiseKD</td><td>20%</td><td>Softmax distributions (KL divergence)</td><td>Full ranking shape. Not just which doc wins, but how confident the teacher is about each.</td></tr>
+      <tr><td>Contrastive</td><td>20%</td><td>Student scores only (no teacher)</td><td>Pull positive closer, push negatives away. Regularizer that keeps embedding space organized.</td></tr>
+    </table>
   </div>
 
-  <div class="pipeline fade">
-    <div class="pipe-step">
-      <div class="pipe-num">60% weight</div>
-      <div class="pipe-title">MarginMSE: learn the gaps between documents</div>
-      <div class="pipe-desc">The teacher says Doc A scores 9.2 and Doc B scores 7.1. The student does not need to match those exact numbers (different architectures use different scales). But it must learn that <strong>A is about 2.1 better than B</strong>. This loss computes MSE between student score margins and teacher score margins (normalized by temperature). It is the most stable component with smooth gradients.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">20% weight</div>
-      <div class="pipe-title">ListwiseKD: match the full ranking distribution via KL divergence</div>
-      <div class="pipe-desc">The teacher's scores are softmaxed into a probability distribution over all candidate documents. The student's scores are softmaxed the same way. <strong>KL divergence</strong> measures how different these two distributions are. The loss is <strong>T&sup2; &times; KL(softmax(t/T) || softmax(s/T))</strong>. The T&sup2; factor compensates for gradient scaling (standard KD practice from Hinton et al. 2015). This captures the teacher's uncertainty, not just which document wins.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">20% weight</div>
-      <div class="pipe-title">Contrastive: organize the embedding space</div>
-      <div class="pipe-desc">Pull the relevant document's embedding closer to the query's embedding. Push all negatives further away. Temperature fixed at 0.05 (always sharp, independent of KD annealing). This does not use the teacher at all. It acts as a <strong>regularizer</strong> that prevents the student from overfitting to teacher-specific scoring patterns while keeping the embedding space well-organized for retrieval.</div>
-    </div>
+  <!-- 3-panel animation -->
+  <div class="anim-wrap fade" style="height:auto">
+    <div class="anim-label">Three losses operating on the same query</div>
+    <canvas id="lossCanvas" style="height:360px"></canvas>
+    <div class="anim-status" id="lossStatus"></div>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -492,41 +493,44 @@ function initCanvas(id){
 }
 
 /* ═══════════════════════════════════════
-   ANIMATION 1: KL Divergence
-   Shows teacher distribution (bars) and student
-   distribution converging toward it over time,
-   with temperature annealing sharpening both.
+   ANIMATION 1: Three Loss Functions
+   3-panel: MarginMSE | ListwiseKD | Contrastive
    ═══════════════════════════════════════ */
-let klInited=false;
-function initKLAnim(){
-  if(klInited)return;klInited=true;
-  const cv=initCanvas('klCanvas');if(!cv)return;
+let lossInited=false;
+function initLossAnim(){
+  if(lossInited)return;lossInited=true;
+  const cv=initCanvas('lossCanvas');if(!cv)return;
   const{ctx,w,h}=cv;
-  const status=document.getElementById('klStatus');
+  const status=document.getElementById('lossStatus');
 
-  const docs=['Doc A','Doc B','Doc C','Doc D','Doc E','Doc F','Doc G'];
-  // Teacher's "true" scores (fixed)
-  const teacherScores=[9.2,7.1,5.8,3.2,2.1,1.0,0.3];
+  const teacherScores=[9.2,7.1,5.8,3.2,0.3];
+  const studentStart=[4.0,6.0,2.5,5.5,3.0];
+  const docs=['A','B','C','D','E'];
+  const panelW=w/3;
 
-  // Student starts random, converges to teacher
-  const studentStart=[3.0,5.0,2.0,6.0,1.0,4.0,2.5];
-
-  const barW=50,barGap=14,chartH=180,chartY=h-80;
-  const totalBarW=docs.length*(barW+barGap)-barGap;
-  const startX=(w-totalBarW)/2;
-
-  // Phases
-  const learnFrames=300; // student converges
-  const holdFrames=80;
+  const learnFrames=280,holdFrames=80;
   const cycleLength=learnFrames+holdFrames;
   let frame=0;
 
   function softmax(scores,T){
-    const scaled=scores.map(s=>s/T);
-    const maxS=Math.max(...scaled);
-    const exps=scaled.map(s=>Math.exp(s-maxS));
-    const sum=exps.reduce((a,b)=>a+b,0);
-    return exps.map(e=>e/sum);
+    const sc=scores.map(s=>s/T);
+    const mx=Math.max(...sc);
+    const ex=sc.map(s=>Math.exp(s-mx));
+    const sm=ex.reduce((a,b)=>a+b,0);
+    return ex.map(e=>e/sm);
+  }
+
+  function drawPanelBg(x,label){
+    ctx.globalAlpha=0.06;
+    ctx.fillStyle='#ffffff';
+    ctx.beginPath();
+    ctx.moveTo(x+0.5,40);ctx.lineTo(x+0.5,h-20);
+    ctx.strokeStyle='#ffffff';ctx.lineWidth=0.5;ctx.stroke();
+    ctx.globalAlpha=1;
+    ctx.font='600 9px JetBrains Mono';
+    ctx.fillStyle=t3;
+    ctx.textAlign='center';
+    ctx.fillText(label,x+panelW/2,24);
   }
 
   function animate(){
@@ -534,89 +538,222 @@ function initKLAnim(){
     frame++;
     const lf=frame%cycleLength;
     const progress=Math.min(lf/learnFrames,1);
-    const eased=1-Math.pow(1-progress,3); // ease-out
-
-    // Temperature annealing: 4.0 -> 2.0
+    const eased=1-Math.pow(1-progress,3);
     const temp=4.0-2.0*eased;
 
-    // Teacher distribution at current temperature
-    const teacherDist=softmax(teacherScores,temp);
-
-    // Student scores lerp toward teacher
     const studentScores=studentStart.map((s,i)=>s+(teacherScores[i]-s)*eased);
-    const studentDist=softmax(studentScores,temp);
 
-    // Labels
-    ctx.font='600 11px JetBrains Mono';
-    ctx.textAlign='left';
-    ctx.globalAlpha=1;
+    // ─── PANEL 1: MarginMSE ───
+    drawPanelBg(0,'MarginMSE (60%)');
+    const p1x=10,p1w=panelW-20;
+    const barH=14,barGap=8,chartTop=50;
 
-    // Teacher label
-    ctx.fillStyle=t3;
-    ctx.fillText('Teacher',startX,28);
-    // Student label
-    ctx.fillStyle=accent;
-    ctx.fillText('Student',startX+100,28);
-    // Temperature
-    ctx.fillStyle=t3;
-    ctx.font='10px JetBrains Mono';
-    ctx.textAlign='right';
-    ctx.fillText('T = '+temp.toFixed(1),w-startX,28);
+    // Draw score bars and gaps for teacher and student
+    const tMax=Math.max(...teacherScores);
+    const sMax=Math.max(...studentScores);
 
-    // Draw bars
+    // Teacher margins
+    const tMargins=teacherScores.map(s=>(s-tMax)/temp);
+    const sMargins=studentScores.map(s=>s-sMax);
+
     docs.forEach((doc,i)=>{
-      const x=startX+i*(barW+barGap);
+      const y=chartTop+i*(barH+barGap+16);
 
-      // Teacher bar (background)
-      const tH=teacherDist[i]*chartH*3;
-      ctx.globalAlpha=0.25;
+      // Teacher margin bar
+      const tBarW=Math.abs(tMargins[i])/5*p1w*0.4;
+      ctx.globalAlpha=0.3;
       ctx.fillStyle=t3;
       ctx.beginPath();
-      ctx.roundRect(x,chartY-tH,barW/2-2,tH,3);
+      ctx.roundRect(p1x+p1w*0.5-tBarW,y,tBarW,barH/2,2);
       ctx.fill();
 
-      // Student bar (foreground)
-      const sH=studentDist[i]*chartH*3;
+      // Student margin bar
+      const sBarW=Math.abs(sMargins[i])/8*p1w*0.4;
       ctx.globalAlpha=0.8;
       ctx.fillStyle=accent;
       ctx.beginPath();
-      ctx.roundRect(x+barW/2+2,chartY-sH,barW/2-2,sH,3);
+      ctx.roundRect(p1x+p1w*0.5-sBarW,y+barH/2+2,sBarW,barH/2,2);
       ctx.fill();
-
-      // Percentage labels
-      ctx.globalAlpha=0.5;
-      ctx.font='8px JetBrains Mono';
-      ctx.textAlign='center';
-      ctx.fillStyle=t3;
-      ctx.fillText((teacherDist[i]*100).toFixed(0)+'%',x+barW/4-1,chartY-tH-6);
-      ctx.fillStyle=accent;
-      ctx.fillText((studentDist[i]*100).toFixed(0)+'%',x+3*barW/4+1,chartY-sH-6);
 
       // Doc label
       ctx.globalAlpha=0.6;
-      ctx.font='9px JetBrains Mono';
+      ctx.font='8px JetBrains Mono';
       ctx.fillStyle=t2;
-      ctx.textAlign='center';
-      ctx.fillText(doc,x+barW/2,chartY+16);
+      ctx.textAlign='left';
+      ctx.fillText(doc,p1x,y+barH/2+1);
+
+      // Gap values between consecutive pairs
+      if(i<docs.length-1){
+        const tGap=(teacherScores[i]-teacherScores[i+1]).toFixed(1);
+        const sGap=(studentScores[i]-studentScores[i+1]).toFixed(1);
+        ctx.globalAlpha=0.4;
+        ctx.font='7px JetBrains Mono';
+        ctx.fillStyle=t3;
+        ctx.textAlign='right';
+        ctx.fillText('gap: '+tGap,p1x+p1w-2,y+barH+10);
+        ctx.fillStyle=accent;
+        ctx.fillText('gap: '+sGap,p1x+p1w*0.6,y+barH+10);
+      }
     });
 
-    // KL divergence value
-    let kl=0;
-    for(let i=0;i<docs.length;i++){
-      if(teacherDist[i]>1e-10 && studentDist[i]>1e-10){
-        kl+=teacherDist[i]*Math.log(teacherDist[i]/studentDist[i]);
-      }
-    }
-    ctx.globalAlpha=1;
-    ctx.font='10px JetBrains Mono';
+    // MSE value
+    let mse=0;
+    for(let i=0;i<docs.length;i++) mse+=Math.pow(sMargins[i]-tMargins[i],2);
+    mse/=docs.length;
+    ctx.globalAlpha=0.7;
+    ctx.font='8px JetBrains Mono';
     ctx.fillStyle=t2;
     ctx.textAlign='center';
-    ctx.fillText('KL divergence: '+kl.toFixed(4),w/2,chartY+38);
+    ctx.fillText('MSE: '+mse.toFixed(3),panelW/2,h-30);
+    ctx.font='7px JetBrains Mono';
+    ctx.fillStyle=t3;
+    ctx.fillText('Learns pairwise gaps',panelW/2,h-18);
 
-    // Epoch indicator
+    // ─── PANEL 2: ListwiseKD (KL divergence) ───
+    drawPanelBg(panelW,'ListwiseKD / KL (20%)');
+    const p2x=panelW+8,p2w=panelW-16;
+    const bw=16,bgap=6,bchartH=140,bchartY=h-55;
+    const totalBW=docs.length*(bw+bgap)-bgap;
+    const bStartX=p2x+(p2w-totalBW)/2;
+
+    const teacherDist=softmax(teacherScores,temp);
+    const studentDist=softmax(studentScores,temp);
+
+    // Temperature label
+    ctx.globalAlpha=0.5;
+    ctx.font='8px JetBrains Mono';
+    ctx.fillStyle=t3;
+    ctx.textAlign='center';
+    ctx.fillText('T='+temp.toFixed(1),panelW+panelW/2,40);
+
+    docs.forEach((doc,i)=>{
+      const x=bStartX+i*(bw+bgap);
+
+      // Teacher bar
+      const tH=teacherDist[i]*bchartH*2.5;
+      ctx.globalAlpha=0.3;
+      ctx.fillStyle=t3;
+      ctx.beginPath();
+      ctx.roundRect(x,bchartY-tH,bw/2-1,tH,2);
+      ctx.fill();
+
+      // Student bar
+      const sH=studentDist[i]*bchartH*2.5;
+      ctx.globalAlpha=0.8;
+      ctx.fillStyle=accent;
+      ctx.beginPath();
+      ctx.roundRect(x+bw/2+1,bchartY-sH,bw/2-1,sH,2);
+      ctx.fill();
+
+      // Percentages
+      ctx.globalAlpha=0.5;
+      ctx.font='7px JetBrains Mono';
+      ctx.textAlign='center';
+      ctx.fillStyle=accent;
+      ctx.fillText((studentDist[i]*100).toFixed(0)+'%',x+bw/2,bchartY-Math.max(tH,sH)-5);
+
+      // Doc label
+      ctx.globalAlpha=0.5;
+      ctx.fillStyle=t2;
+      ctx.fillText(doc,x+bw/2,bchartY+10);
+    });
+
+    // KL value
+    let kl=0;
+    for(let i=0;i<docs.length;i++){
+      if(teacherDist[i]>1e-10&&studentDist[i]>1e-10)
+        kl+=teacherDist[i]*Math.log(teacherDist[i]/studentDist[i]);
+    }
+    ctx.globalAlpha=0.7;
+    ctx.font='8px JetBrains Mono';
+    ctx.fillStyle=t2;
+    ctx.textAlign='center';
+    ctx.fillText('KL: '+kl.toFixed(4),panelW+panelW/2,h-30);
+    ctx.font='7px JetBrains Mono';
+    ctx.fillStyle=t3;
+    ctx.fillText('Matches full distribution',panelW+panelW/2,h-18);
+
+    // ─── PANEL 3: Contrastive ───
+    drawPanelBg(panelW*2,'Contrastive (20%)');
+    const p3cx=panelW*2+panelW/2,p3cy=h/2+5;
+    const spread=Math.min(panelW,h)*0.28;
+
+    // Query dot (center, fixed)
+    const qx=p3cx,qy=p3cy-20;
+    ctx.globalAlpha=0.9;
+    ctx.beginPath();
+    ctx.arc(qx,qy,7,0,Math.PI*2);
+    ctx.fillStyle='#6a9fd8';
+    ctx.fill();
+    ctx.globalAlpha=0.3;
+    ctx.beginPath();
+    ctx.arc(qx,qy,11,0,Math.PI*2);
+    ctx.strokeStyle='#6a9fd8';
+    ctx.lineWidth=1;
+    ctx.stroke();
+    ctx.globalAlpha=0.7;
+    ctx.font='8px JetBrains Mono';
+    ctx.fillStyle='#6a9fd8';
+    ctx.textAlign='center';
+    ctx.fillText('query',qx,qy-14);
+
+    // Positive doc (pulls toward query)
+    const posAngle=Math.PI*1.3;
+    const posDist=spread*(1-eased*0.7);
+    const posX=qx+Math.cos(posAngle)*posDist;
+    const posY=qy+Math.sin(posAngle)*posDist;
+
+    // Pull line
+    ctx.globalAlpha=0.3;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(qx,qy);ctx.lineTo(posX,posY);
+    ctx.strokeStyle=green;ctx.lineWidth=1;ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.globalAlpha=0.9;
+    ctx.beginPath();ctx.arc(posX,posY,6,0,Math.PI*2);
+    ctx.fillStyle=green;ctx.fill();
+    ctx.globalAlpha=0.7;
+    ctx.font='7px JetBrains Mono';
+    ctx.fillStyle=green;
+    ctx.fillText('positive',posX,posY+16);
+
+    // Negative docs (push away)
+    const negAngles=[0.3,0.8,1.8,2.5];
+    negAngles.forEach((a,i)=>{
+      const nd=spread*(0.5+eased*0.5);
+      const nx=qx+Math.cos(a)*nd;
+      const ny=qy+Math.sin(a)*nd;
+
+      ctx.globalAlpha=0.15;
+      ctx.setLineDash([2,3]);
+      ctx.beginPath();ctx.moveTo(qx,qy);ctx.lineTo(nx,ny);
+      ctx.strokeStyle=red;ctx.lineWidth=0.5;ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.globalAlpha=0.4;
+      ctx.beginPath();ctx.arc(nx,ny,4,0,Math.PI*2);
+      ctx.fillStyle=t3;ctx.fill();
+    });
+
+    ctx.globalAlpha=0.4;
+    ctx.font='7px JetBrains Mono';
+    ctx.fillStyle=t3;
+    ctx.textAlign='center';
+    ctx.fillText('negatives pushed away',p3cx,p3cy+spread+20);
+
+    ctx.globalAlpha=0.7;
+    ctx.font='8px JetBrains Mono';
+    ctx.fillStyle=t2;
+    ctx.fillText('T=0.05 (fixed)',p3cx,h-30);
+    ctx.font='7px JetBrains Mono';
+    ctx.fillStyle=t3;
+    ctx.fillText('No teacher needed',p3cx,h-18);
+
+    // Status
     const epoch=Math.min(Math.floor(progress*3)+1,3);
-    status.textContent='Epoch '+epoch+'/3  ·  Temperature: '+temp.toFixed(1)+'  ·  Student converging to teacher distribution';
-    if(progress>=1) status.textContent='Converged  ·  KL divergence: '+kl.toFixed(4)+'  ·  Student matches teacher ranking';
+    status.textContent='Epoch '+epoch+'/3  ·  T='+temp.toFixed(1)+'  ·  Three losses shaping the student simultaneously';
+    if(progress>=1) status.textContent='Converged  ·  Margins aligned, distribution matched, embeddings organized';
 
     ctx.globalAlpha=1;
     requestAnimationFrame(animate);
@@ -765,7 +902,7 @@ function observeAnim(selector,initFn){
   },{threshold:.2});
   o.observe(el);
 }
-observeAnim('#klCanvas',initKLAnim);
+observeAnim('#lossCanvas',initLossAnim);
 observeAnim('#miningCanvas',initMiningAnim);
 </script>
 </body>
