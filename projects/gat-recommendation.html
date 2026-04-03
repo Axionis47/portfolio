@@ -195,8 +195,7 @@
   <div class="graph-canvas-wrap fade">
     <div class="graph-canvas-label">Sessions &rarr; Graph</div>
     <canvas id="graphBuildCanvas"></canvas>
-    <div class="graph-canvas-status" id="graphBuildStatus">Click replay to watch sessions become a graph</div>
-    <button class="graph-canvas-btn" id="graphBuildBtn" onclick="startGraphBuild()">&#9654; Play</button>
+    <div class="graph-canvas-status" id="graphBuildStatus"></div>
   </div>
 
   <div class="prose fade">
@@ -576,11 +575,14 @@ function drawEdge(ctx, x1, y1, x2, y2, alpha, weight){
   ctx.globalAlpha = 1;
 }
 
-/* ─── Animation 1: Session to Graph ─── */
+/* ─── Animation 1: Session to Graph (auto-loop) ─── */
 let graphBuildAnim = null;
+let graphBuildInited = false;
 
 function startGraphBuild(){
-  if(graphBuildAnim) cancelAnimationFrame(graphBuildAnim);
+  if(graphBuildInited) return;
+  graphBuildInited = true;
+
   const cv = initCanvas('graphBuildCanvas');
   if(!cv) return;
   const {ctx, w, h} = cv;
@@ -592,12 +594,11 @@ function startGraphBuild(){
     {id:'Stand', x:0, y:0}, {id:'Cable', x:0, y:0}, {id:'Mousepad', x:0, y:0}
   ];
 
-  // Position in a circle on the right side
-  const cx = w * 0.6, cy = h * 0.5, radius = Math.min(w, h) * 0.32;
+  const cxPos = w * 0.6, cyPos = h * 0.5, radius = Math.min(w, h) * 0.32;
   items.forEach((item, i) => {
     const a = (i / items.length) * Math.PI * 2 - Math.PI / 2;
-    item.x = cx + Math.cos(a) * radius;
-    item.y = cy + Math.sin(a) * radius;
+    item.x = cxPos + Math.cos(a) * radius;
+    item.y = cyPos + Math.sin(a) * radius;
   });
 
   const sessions = [
@@ -611,45 +612,27 @@ function startGraphBuild(){
     {items: [8, 7, 2], label: 'Session 8: Chair, Lamp, Monitor'}
   ];
 
-  const edges = {};
-  const edgeList = [];
-  sessions.forEach(s => {
-    for(let i=0;i<s.items.length;i++){
-      for(let j=i+1;j<s.items.length;j++){
-        const a = Math.min(s.items[i], s.items[j]);
-        const b = Math.max(s.items[i], s.items[j]);
-        const key = a+'-'+b;
-        if(!edges[key]){ edges[key]={a,b,w:0}; edgeList.push(edges[key]); }
-        edges[key].w++;
-      }
-    }
-  });
-
-  let currentSession = 0;
-  let sessionProgress = 0;
-  const sessionDuration = 80;
-  const pauseDuration = 30;
+  const sessionDuration = 70;
+  const pauseDuration = 25;
+  const holdFrames = 90; // pause on completed graph before restarting
+  const cycleLength = sessions.length * (sessionDuration + pauseDuration) + holdFrames;
   let frame = 0;
-  const totalFrames = sessions.length * (sessionDuration + pauseDuration) + 60;
-
-  const activeEdgesUpTo = [];
-  let nodeAlpha = items.map(() => 0.15);
 
   const status = document.getElementById('graphBuildStatus');
-  const btn = document.getElementById('graphBuildBtn');
-  btn.textContent = '⟳ Replay';
 
   function animate(){
     ctx.clearRect(0, 0, w, h);
     frame++;
+    const loopFrame = frame % cycleLength;
 
-    // Determine current session
-    let f = frame;
+    // Determine current session from loopFrame
+    let f = loopFrame;
     let sessIdx = 0;
     while(sessIdx < sessions.length && f > sessionDuration + pauseDuration){
       f -= sessionDuration + pauseDuration;
       sessIdx++;
     }
+    let currentSession, sessionProgress;
     if(sessIdx < sessions.length){
       currentSession = sessIdx;
       sessionProgress = Math.min(f / sessionDuration, 1);
@@ -676,16 +659,15 @@ function startGraphBuild(){
     }
 
     // Light up session nodes
-    nodeAlpha = items.map(() => 0.2);
+    const nodeAlpha = items.map(() => 0.2);
     if(currentSession < sessions.length){
       sessions[currentSession].items.forEach(i => nodeAlpha[i] = 0.5 + sessionProgress * 0.5);
     }
-    // Keep previously seen nodes brighter
     for(let s=0;s<currentSession;s++){
       sessions[s].items.forEach(i => { if(nodeAlpha[i] < 0.6) nodeAlpha[i] = 0.6; });
     }
 
-    // Draw session text on the left
+    // Draw session list on the left
     ctx.fillStyle = raised;
     ctx.fillRect(0, 0, w * 0.28, h);
     ctx.font = '10px JetBrains Mono';
@@ -715,17 +697,15 @@ function startGraphBuild(){
       drawNode(ctx, item.x, item.y, 6, nodeAlpha[i] > 0.5 ? accent : t3, nodeAlpha[i], item.id);
     });
 
-    // Status
+    // Status text
     if(currentSession < sessions.length){
       status.textContent = 'Processing ' + sessions[currentSession].label + '...';
     } else {
       const edgeCount = Object.keys(visibleEdges).length;
-      status.textContent = items.length + ' nodes, ' + edgeCount + ' edges built from ' + sessions.length + ' sessions';
+      status.textContent = items.length + ' nodes, ' + edgeCount + ' edges from ' + sessions.length + ' sessions';
     }
 
-    if(frame < totalFrames){
-      graphBuildAnim = requestAnimationFrame(animate);
-    }
+    graphBuildAnim = requestAnimationFrame(animate);
   }
   animate();
 }
@@ -896,7 +876,15 @@ function initDualGraphs(){
   drawPredict();
 }
 
-// Auto-init dual graphs when they scroll into view
+// Auto-init animations when they scroll into view
+const graphBuildObs = new IntersectionObserver(es => {
+  es.forEach(e => {
+    if(e.isIntersecting){ startGraphBuild(); graphBuildObs.disconnect(); }
+  });
+}, { threshold: .2 });
+const gbEl = document.querySelector('.graph-canvas-wrap');
+if(gbEl) graphBuildObs.observe(gbEl);
+
 const dualObs = new IntersectionObserver(es => {
   es.forEach(e => {
     if(e.isIntersecting){ initDualGraphs(); dualObs.disconnect(); }
