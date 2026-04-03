@@ -74,8 +74,18 @@
   .compare-label{font-family:var(--mono);font-size:.52rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
   .compare-name{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--t1);margin-bottom:8px}
   .compare-spec{font-family:var(--mono);font-size:.62rem;color:var(--t2);line-height:2;margin-top:10px}
-  .real-img{width:100%;border-radius:10px;margin:20px 0;box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl)}
-  .real-img-caption{font-family:var(--mono);font-size:.6rem;color:var(--t3);text-align:center;margin-top:-12px;margin-bottom:20px}
+  .real-img-trigger{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.68rem;color:var(--accent);padding:10px 20px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl);cursor:pointer;transition:all .2s;margin:16px 0;border:none}
+  .real-img-trigger:hover{color:#eaa050;box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl),0 0 12px var(--glow)}
+  .lightbox{display:none;position:fixed;inset:0;z-index:1000;background:rgba(2,2,4,0.92);backdrop-filter:blur(12px);justify-content:center;align-items:center;cursor:pointer}
+  .lightbox.open{display:flex}
+  .lightbox img{max-width:90vw;max-height:88vh;border-radius:10px;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
+  .lightbox-caption{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.6rem;color:var(--t3);text-align:center}
+
+  /* LoRA animation */
+  .lora-canvas-wrap{position:relative;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);margin:20px 0;overflow:hidden}
+  .lora-canvas-wrap canvas{display:block;width:100%;height:320px}
+  .lora-canvas-label{position:absolute;top:16px;left:20px;font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase}
+  .lora-canvas-status{position:absolute;bottom:16px;left:20px;font-family:var(--mono);font-size:.6rem;color:var(--t2)}
   .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
   .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
   .stack-group{margin-bottom:16px}
@@ -235,9 +245,16 @@
     </div>
   </div>
 
+  <!-- LoRA injection animation -->
+  <div class="lora-canvas-wrap fade">
+    <div class="lora-canvas-label">LoRA Injection: 32 adapters across 4 stages</div>
+    <canvas id="loraCanvas"></canvas>
+    <div class="lora-canvas-status" id="loraStatus"></div>
+  </div>
+
   <div class="prose fade">
     <p>
-      The 526K trainable parameters include both the 131K LoRA adapters and the ~395K decode head weights (which were randomly reinitialized for 2-class output). The entire encoder is frozen. The adapters learn a low-dimensional correction to the attention patterns, steering road-relevant features toward the new binary classification head.
+      The 526K trainable parameters include both the 131K LoRA adapters and the ~395K decode head weights (which were randomly reinitialized for 2-class output). The entire encoder is frozen. The <code>inject_lora_into_attention()</code> function walks the model tree, finds every <strong>nn.Linear</strong> named query, key, value, or dense, and wraps it with a <strong>LoRALinear</strong> module. One function, 32 injection points, scales automatically across all stages.
     </p>
   </div>
 
@@ -264,9 +281,12 @@
     <div class="dia-note">200 training images. 3 epochs. CPU only. 3.4% of parameters. 2.1x improvement.</div>
   </div>
 
-  <!-- Real model outputs -->
-  <img src="../assets/laneguard/summary_grid.png" alt="Baseline vs LoRA comparison across 6 BDD100K scenes" class="real-img fade">
-  <div class="real-img-caption fade">Real model outputs on BDD100K validation images. Left to right: Original, Ground Truth, Baseline (frozen), LoRA (3 epochs). Green = drivable area.</div>
+  <!-- Real model outputs (click to view) -->
+  <button class="real-img-trigger fade" onclick="openLightbox('lb-grid')">&#9654; View real model outputs on BDD100K (6 scenes)</button>
+  <div class="lightbox" id="lb-grid" onclick="closeLightbox('lb-grid')">
+    <img src="../assets/laneguard/summary_grid.png" alt="Baseline vs LoRA comparison across 6 BDD100K scenes">
+    <div class="lightbox-caption">Original | Ground Truth | Baseline (frozen) | LoRA (3 epochs). Green = drivable area. Click anywhere to close.</div>
+  </div>
 
   <div class="prose fade">
     <p>
@@ -458,12 +478,203 @@
 </footer>
 
 <script>
+/* ─── Fade-in ─── */
 const obs = new IntersectionObserver(es => {
   es.forEach((e, i) => {
     if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
   });
 }, { threshold: .12 });
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+/* ─── Lightbox ─── */
+function openLightbox(id){ document.getElementById(id).classList.add('open'); }
+function closeLightbox(id){ document.getElementById(id).classList.remove('open'); }
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') document.querySelectorAll('.lightbox.open').forEach(l => l.classList.remove('open'));
+});
+
+/* ─── LoRA Injection Animation ─── */
+const accent = '#d88c3a';
+const t1 = '#e0e0e0';
+const t2 = '#ababab';
+const t3 = '#787880';
+const bg = '#101012';
+const raised = '#1a1a1d';
+const inset = '#0a0a0c';
+const green = '#5a9a5a';
+
+let loraInited = false;
+function initLoraAnim(){
+  if(loraInited) return;
+  loraInited = true;
+
+  const c = document.getElementById('loraCanvas');
+  if(!c) return;
+  const dpr = window.devicePixelRatio || 1;
+  const rect = c.getBoundingClientRect();
+  c.width = rect.width * dpr;
+  c.height = rect.height * dpr;
+  const ctx = c.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const w = rect.width, h = rect.height;
+
+  // 4 stages, 2 blocks each, 4 targets per block = 32 total
+  const stages = [
+    { name: 'Stage 1', dims: '32', blocks: 2 },
+    { name: 'Stage 2', dims: '64', blocks: 2 },
+    { name: 'Stage 3', dims: '160', blocks: 2 },
+    { name: 'Stage 4', dims: '256', blocks: 2 },
+  ];
+  const targets = ['Q', 'K', 'V', 'Dense'];
+
+  // Layout
+  const stageW = (w - 80) / 4;
+  const stageStartX = 40;
+  const headerY = 45;
+  const blockStartY = 75;
+  const blockH = 100;
+  const blockGap = 12;
+  const targetW = (stageW - 30) / 4;
+  const targetH = 28;
+
+  // Animation: inject one adapter at a time
+  const totalAdapters = 32;
+  const framesPerAdapter = 12;
+  const holdFrames = 80;
+  const cycleLength = totalAdapters * framesPerAdapter + holdFrames;
+  let frame = 0;
+
+  const status = document.getElementById('loraStatus');
+
+  function animate(){
+    ctx.clearRect(0, 0, w, h);
+    frame++;
+    const loopFrame = frame % cycleLength;
+    const adapterIdx = Math.min(Math.floor(loopFrame / framesPerAdapter), totalAdapters);
+    const subFrame = loopFrame % framesPerAdapter;
+
+    let injectedCount = 0;
+
+    stages.forEach((stage, si) => {
+      const sx = stageStartX + si * stageW;
+
+      // Stage header
+      ctx.font = '600 11px JetBrains Mono';
+      ctx.fillStyle = t1;
+      ctx.textAlign = 'center';
+      ctx.globalAlpha = 1;
+      ctx.fillText(stage.name, sx + stageW / 2, headerY);
+      ctx.font = '9px JetBrains Mono';
+      ctx.fillStyle = t3;
+      ctx.fillText(stage.dims + ' dims', sx + stageW / 2, headerY + 14);
+
+      // Blocks
+      for(let bi = 0; bi < stage.blocks; bi++){
+        const by = blockStartY + bi * (blockH + blockGap);
+
+        // Block background
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = inset;
+        ctx.beginPath();
+        ctx.roundRect(sx + 4, by, stageW - 8, blockH, 8);
+        ctx.fill();
+
+        // Block label
+        ctx.globalAlpha = 0.4;
+        ctx.font = '8px JetBrains Mono';
+        ctx.fillStyle = t3;
+        ctx.textAlign = 'left';
+        ctx.fillText('Attention Block ' + (bi + 1), sx + 10, by + 14);
+
+        // Targets
+        targets.forEach((tgt, ti) => {
+          const tx = sx + 10 + ti * targetW;
+          const ty = by + 24;
+          const globalIdx = si * 8 + bi * 4 + ti;
+          const isInjected = globalIdx < adapterIdx;
+          const isInjecting = globalIdx === adapterIdx && adapterIdx < totalAdapters;
+          const injectProgress = isInjecting ? subFrame / framesPerAdapter : 0;
+
+          // Frozen weight box
+          ctx.globalAlpha = 0.6;
+          ctx.fillStyle = raised;
+          ctx.beginPath();
+          ctx.roundRect(tx, ty, targetW - 4, targetH, 5);
+          ctx.fill();
+
+          // Label
+          ctx.globalAlpha = 0.7;
+          ctx.font = '9px JetBrains Mono';
+          ctx.fillStyle = t2;
+          ctx.textAlign = 'center';
+          ctx.fillText(tgt, tx + (targetW - 4) / 2, ty + 12);
+
+          // Frozen indicator
+          ctx.font = '7px JetBrains Mono';
+          ctx.fillStyle = t3;
+          ctx.fillText('frozen', tx + (targetW - 4) / 2, ty + 22);
+
+          // LoRA adapter overlay
+          if(isInjected || isInjecting){
+            const alpha = isInjecting ? injectProgress : 1;
+            const loraY = ty + targetH + 4;
+
+            // LoRA box
+            ctx.globalAlpha = alpha * 0.9;
+            ctx.fillStyle = 'rgba(216,140,58,0.12)';
+            ctx.beginPath();
+            ctx.roundRect(tx, loraY, targetW - 4, targetH, 5);
+            ctx.fill();
+
+            // LoRA border
+            ctx.strokeStyle = accent;
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = alpha * 0.5;
+            ctx.beginPath();
+            ctx.roundRect(tx, loraY, targetW - 4, targetH, 5);
+            ctx.stroke();
+
+            // LoRA label
+            ctx.globalAlpha = alpha;
+            ctx.font = '8px JetBrains Mono';
+            ctx.fillStyle = accent;
+            ctx.textAlign = 'center';
+            ctx.fillText('LoRA', tx + (targetW - 4) / 2, loraY + 11);
+            ctx.font = '7px JetBrains Mono';
+            ctx.fillStyle = t2;
+            ctx.globalAlpha = alpha * 0.7;
+            ctx.fillText('r=16', tx + (targetW - 4) / 2, loraY + 22);
+
+            // + sign between frozen and LoRA
+            ctx.globalAlpha = alpha * 0.6;
+            ctx.font = '500 11px JetBrains Mono';
+            ctx.fillStyle = accent;
+            ctx.fillText('+', tx + (targetW - 4) / 2, ty + targetH + 3);
+
+            if(isInjected) injectedCount++;
+            if(isInjecting) injectedCount++;
+          }
+        });
+      }
+    });
+
+    // Counter
+    ctx.globalAlpha = 1;
+    const displayCount = Math.min(adapterIdx, totalAdapters);
+    status.textContent = displayCount + ' / 32 adapters injected' +
+      (displayCount === 32 ? '  ·  131K trainable parameters added' : '');
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+// Auto-start on scroll
+const loraObs = new IntersectionObserver(es => {
+  es.forEach(e => { if(e.isIntersecting){ initLoraAnim(); loraObs.disconnect(); } });
+}, { threshold: .2 });
+const loraEl = document.querySelector('.lora-canvas-wrap');
+if(loraEl) loraObs.observe(loraEl);
 </script>
 </body>
 </html>
