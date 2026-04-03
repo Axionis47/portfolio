@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Semantic Search · Knowledge Distillation — Sai Siddharth Yalamanchili</title>
+<title>Semantic Search KD — Sai Siddharth Yalamanchili</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
@@ -22,78 +22,45 @@
   body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
   a{color:var(--accent);text-decoration:none;transition:color .2s}
   a:hover{color:#eaa050}
-
   nav{display:flex;justify-content:space-between;align-items:center;max-width:1200px;width:100%;margin:0 auto;padding:2.5rem 3rem 1.5rem}
   nav .logo{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--t1);text-decoration:none}
   nav .back{font-family:var(--mono);font-size:.8rem;color:var(--t3);text-decoration:none;transition:color .2s}
   nav .back:hover{color:var(--accent)}
-
   main{max-width:1200px;width:100%;margin:0 auto;padding:2rem 3rem 4rem;flex:1}
-
   .proj-label{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
-  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
+  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:.4rem}
+  .proj-subtitle{font-family:var(--mono);font-size:.78rem;color:var(--t3);margin-bottom:2.5rem}
   .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
-
-  /* Engineering brief */
   .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 28px;margin-bottom:36px}
   .brief-label{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
   .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
   .brief-key{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:right;white-space:nowrap}
   .brief-val{font-family:var(--mono);font-size:.78rem;color:var(--t1);line-height:1.7}
-
-  /* Prose */
   .prose{margin-bottom:1.8rem}
   .prose p{font-family:var(--sans);font-size:1.05rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
   .prose strong{color:var(--t1);font-weight:500}
-
-  /* Section labels */
   .sec{font-family:var(--mono);font-size:.7rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
-
-  /* ─── Diagram system ─── */
   .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 24px;margin:20px 0}
-  .dia-title{font-family:var(--mono);font-size:.6rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia-title{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia-group{font-family:var(--mono);font-size:.56rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;margin:16px 0 6px;padding-left:4px}
   .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
   .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
   .dia-box-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
   .dia-box-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2);line-height:1.7}
-  .dia-arrow{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;padding:0 10px;flex-shrink:0}
+  .dia-arrow{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;padding:0 12px;flex-shrink:0}
   .dia-arrow-down{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;text-align:center;padding:8px 0}
   .dia-note{font-family:var(--mono);font-size:.62rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
-  .dia-note-left{font-family:var(--mono);font-size:.62rem;color:var(--t2);margin-top:12px;line-height:1.7}
-  .dia-bad{border:1px solid rgba(154,90,90,0.2)}
   .dia-good{border:1px solid rgba(90,154,90,0.2)}
-  .dia-result{font-family:var(--mono);font-size:.7rem;text-align:center;padding:10px 0;margin-top:8px}
-  .dia-result.bad{color:var(--red)}
-  .dia-result.good{color:var(--green)}
-
-  /* Example blocks */
-  .example{background:var(--inset);border-radius:10px;padding:18px 20px;margin:12px 0;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
-  .example-q{font-family:var(--mono);font-size:.7rem;color:var(--accent);margin-bottom:10px}
-  .example-row{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
-  .example-doc{font-family:var(--serif);font-size:.88rem;color:var(--t1);flex:1;line-height:1.7}
-  .example-score{font-family:var(--mono);font-size:.62rem;flex-shrink:0;padding:2px 8px;border-radius:6px}
-  .example-score.correct{color:var(--green);background:rgba(90,154,90,0.08)}
-  .example-score.wrong{color:var(--red);background:rgba(154,90,90,0.08)}
-  .example-why{font-family:var(--mono);font-size:.62rem;color:var(--t2);margin-top:4px;margin-bottom:12px;padding-left:10px;border-left:1px solid rgba(255,255,255,0.06)}
-
-  /* Results */
+  .dia-bad{border:1px solid rgba(154,90,90,0.2)}
   .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
   .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:22px 16px;text-align:center;transition:all .3s}
   .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
   .stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:5px}
   .stat-label{font-family:var(--mono);font-size:.58rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
-
-  /* Compare cards */
-  .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
-  .compare-card{background:var(--inset);border-radius:10px;padding:22px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
-  .compare-label{font-family:var(--mono);font-size:.52rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
-  .compare-name{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--t1);margin-bottom:8px}
-  .compare-desc{font-family:var(--serif);font-size:.82rem;color:var(--t2);line-height:1.9}
-  .compare-spec{font-family:var(--mono);font-size:.62rem;color:var(--t2);line-height:2;margin-top:10px}
-  .compare-when{font-family:var(--mono);font-size:.62rem;color:var(--green);margin-top:10px;line-height:1.9}
-  .compare-fail{font-family:var(--mono);font-size:.62rem;color:var(--red);margin-top:6px;line-height:1.9}
-
-  /* Pipeline */
+  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
+  .rtable th{font-family:var(--mono);font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.68rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable tr.best td{color:var(--accent);font-weight:500}
   .pipeline{position:relative;padding-left:32px;margin:20px 0}
   .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
   .pipe-step{position:relative;margin-bottom:24px}
@@ -102,23 +69,19 @@
   .pipe-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:6px}
   .pipe-desc{font-family:var(--sans);font-size:.92rem;color:var(--t2);line-height:1.95}
   .pipe-desc strong{color:var(--t1);font-weight:500}
-
-  /* Interactive flow */
-  .flow{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:16px 0}
-  .flow-node{background:var(--inset);border-radius:10px;padding:14px 18px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:110px;cursor:pointer;transition:all .3s}
-  .flow-node:hover{box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl),0 0 12px var(--glow)}
-  .flow-node.active{box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl),0 0 16px rgba(216,140,58,0.1);border:1px solid rgba(216,140,58,0.15)}
-  .flow-node-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
-  .flow-node-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2)}
-  .flow-detail{display:none;background:var(--inset);border-radius:10px;padding:20px 22px;margin-top:14px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
-  .flow-detail.open{display:block}
-  .flow-detail-title{font-family:var(--mono);font-size:.66rem;font-weight:500;color:var(--accent);margin-bottom:8px}
-  .flow-detail p{font-family:var(--serif);font-size:.84rem;color:var(--t2);line-height:1.9;margin-bottom:6px}
-  .flow-detail .spec{font-family:var(--mono);font-size:.62rem;color:var(--t2);line-height:2}
-
-  /* Stack / link / footer */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .compare-card{background:var(--inset);border-radius:10px;padding:22px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
+  .compare-label{font-family:var(--mono);font-size:.52rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .compare-name{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--t1);margin-bottom:8px}
+  .compare-spec{font-family:var(--mono);font-size:.62rem;color:var(--t2);line-height:2;margin-top:10px}
+  .anim-wrap{position:relative;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);margin:20px 0;overflow:hidden}
+  .anim-wrap canvas{display:block;width:100%;height:320px}
+  .anim-label{position:absolute;top:16px;left:20px;font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase}
+  .anim-status{position:absolute;bottom:16px;left:20px;font-family:var(--mono);font-size:.6rem;color:var(--t2)}
   .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
   .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .stack-group{margin-bottom:16px}
+  .stack-group-label{font-family:var(--mono);font-size:.56rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
   .proj-link{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
   .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
   footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
@@ -127,19 +90,15 @@
   .ft-l{display:flex;gap:18px}
   .ft-l a{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-decoration:none;transition:color .2s}
   .ft-l a:hover{color:var(--accent)}
-
   @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
   .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
   .fade.v{opacity:1;transform:translateY(0)}
-
   @media(max-width:768px){
     main{padding:1rem 1rem 3rem}
     .results{grid-template-columns:repeat(2,1fr)}
     .compare{grid-template-columns:1fr}
     .dia-row{flex-direction:column;gap:0}
     .dia-arrow{transform:rotate(90deg);padding:6px 0}
-    .flow{flex-direction:column;gap:0}
-    .flow .dia-arrow{transform:rotate(90deg);padding:6px 0}
     .ft{flex-direction:column;gap:10px;text-align:center}
   }
 </style>
@@ -154,584 +113,351 @@
 <main>
 
   <div class="proj-label fade">Project</div>
-  <h1 class="proj-title fade">Semantic Search &middot; Knowledge Distillation</h1>
+  <h1 class="proj-title fade">Semantic Search via Knowledge Distillation</h1>
+  <div class="proj-subtitle fade">Transferring cross-encoder judgment into a bi-encoder that runs 100x faster</div>
   <div class="divider"></div>
 
-  <!-- Engineering Brief -->
   <div class="brief fade">
     <div class="brief-label">Engineering Brief</div>
     <div class="brief-grid">
       <span class="brief-key">Problem</span>
-      <span class="brief-val">Cross-encoders are accurate but too slow for real-time search (100ms/pair &times; 1M docs = 28h). Bi-encoders are fast but less accurate.</span>
+      <span class="brief-val">Cross-encoders understand relevance deeply but can only rerank small candidate sets. Bi-encoders search the full corpus instantly but miss nuance. The gap between them is 0.719 vs 0.910 nDCG@10.</span>
       <span class="brief-key">Approach</span>
-      <span class="brief-val">Knowledge distillation. Train a 33M-param bi-encoder to reproduce the ranking judgments of a 560M-param cross-encoder using 3-stage hard negative mining and multi-loss optimization.</span>
+      <span class="brief-val">Knowledge distillation with 3-component loss (MarginMSE + KL divergence + contrastive), 3-stage hard negative mining curriculum (BM25 + teacher-graded + ANCE self-mining), and temperature annealing from T=4.0 to T=2.0.</span>
       <span class="brief-key">Result</span>
-      <span class="brief-val">97% of teacher accuracy (0.882 vs 0.91 nDCG@10). 100x faster. 17x smaller. $4 to train.</span>
-      <span class="brief-key">Why it matters</span>
-      <span class="brief-val">Cuts GPU cost to CPU cost. Enables real-time UX (1ms). Scales flat to millions of docs. Vectors reusable for clustering, RAG, dedup. Runs on edge devices offline.</span>
+      <span class="brief-val">Student reaches 0.882 nDCG@10, 97% of teacher quality. 100x faster (1ms vs 100ms/pair). 17x smaller (33M vs 560M params). $4 to train. $40/month to serve.</span>
       <span class="brief-key">Stack</span>
-      <span class="brief-val">PyTorch, Sentence-Transformers, FAISS, FastAPI, Docker, GCP Cloud Run, Prometheus</span>
+      <span class="brief-val">PyTorch, Sentence-Transformers, FAISS HNSW, FastAPI, Docker, GCP Cloud Run, Prometheus, MS MARCO</span>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 1: WHAT IS SEARCH
+       CH 1: THE PROBLEM
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 1.What is search, really?</div>
+  <div class="sec fade">Chapter 1. The accuracy gap</div>
   <div class="prose fade">
     <p>
-      You have a million documents. Someone types a question. You need to find the 10 documents that best answer it. How?
+      Semantic search has two kinds of models. <strong>Bi-encoders</strong> encode queries and documents independently into vectors, then find the closest vectors. They search millions of documents in milliseconds because all document vectors are pre-computed. But they never see the query and document together, so they miss nuance. A query about "Python exceptions" might rank a page about the Python snake too high because the embeddings are computed in isolation.
     </p>
     <p>
-      The obvious way: read every document, check if it answers the question, rank the best ones. This is what a human librarian does. It works perfectly. But a computer reading one document takes about 100 milliseconds. For a million documents, that&rsquo;s <strong>28 hours per question</strong>. Nobody is waiting 28 hours for search results.
+      <strong>Cross-encoders</strong> read the query and document together, word by word. They catch that "Python" in the context of "exceptions" means the programming language. They see that "exception management" is the same concept as "handle exceptions" even though the words differ. But they cannot pre-compute anything. Every new query means re-reading every candidate document. They work as rerankers for small candidate sets, not as first-stage retrievers.
     </p>
     <p>
-      So we need a shortcut. Instead of reading documents, we turn them into <strong>fingerprints</strong>. Lists of numbers that capture what the text <em>means</em>. The word &ldquo;king&rdquo; might become [0.8, 0.2, 0.9, ...]. The word &ldquo;queen&rdquo; would have similar numbers. The word &ldquo;banana&rdquo; would have very different numbers. These fingerprints are called <strong>embeddings</strong> or <strong>vectors</strong>. But they&rsquo;re just numbers that represent meaning.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">The fingerprint approach</div>
-    <div class="dia-note-left" style="margin-bottom:14px">Done once, ahead of time:</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Document</div><div class="dia-box-sub">&ldquo;Machine learning<br>is a branch of AI...&rdquo;</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Model</div><div class="dia-box-sub">reads text, outputs<br>384 numbers</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Fingerprint</div><div class="dia-box-sub">[0.2, 0.8, 0.1, 0.5, ...]<br>stored in an index</div></div>
-    </div>
-    <div class="dia-note-left" style="margin-top:20px;margin-bottom:14px">Every time someone searches:</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Question</div><div class="dia-box-sub">&ldquo;what is machine<br>learning?&rdquo;</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Fingerprint</div><div class="dia-box-sub">same model, ~1ms</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Find closest</div><div class="dia-box-sub">compare numbers<br>~10ms</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box dia-good"><div class="dia-box-title">Results</div><div class="dia-box-sub">top 10 documents</div></div>
-    </div>
-    <div class="dia-result good">Total: ~11 milliseconds &check;</div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      The key insight: documents are fingerprinted <strong>once</strong> and stored. When a question comes in, you only fingerprint the question (1ms) and compare it against the stored fingerprints (10ms). That&rsquo;s the entire search. But there&rsquo;s a problem.
+      The accuracy gap is real: 0.719 vs 0.910 nDCG@10. The question I wanted to answer: <strong>can I transfer the cross-encoder's ranking judgment into the bi-encoder, so it gets the quality without needing the architecture?</strong>
     </p>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 2: THE ACCURACY PROBLEM
+       CH 2: TEACHER & STUDENT
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 2.Why fingerprints aren&rsquo;t enough</div>
-  <div class="prose fade">
-    <p>
-      The question and each document are fingerprinted <strong>separately</strong>. The model never sees them together. It doesn&rsquo;t know what the question is asking when it fingerprints a document. This means it can be fooled.
-    </p>
-  </div>
+  <div class="sec fade">Chapter 2. Teacher and student</div>
 
-  <div class="dia fade">
-    <div class="dia-title">What the fingerprint model gets wrong</div>
-    <div class="example">
-      <div class="example-q">Question: &ldquo;How to handle Python exceptions?&rdquo;</div>
-      <div class="example-row">
-        <span class="example-doc">&ldquo;Python error handling with try/catch blocks...&rdquo;</span>
-        <span class="example-score correct">0.82 &check;</span>
+  <div class="compare fade">
+    <div class="compare-card">
+      <div class="compare-label">Teacher (cross-encoder)</div>
+      <div class="compare-name">BAAI/bge-reranker-large</div>
+      <div class="compare-spec">
+        XLM-RoBERTa-large, 560M params<br>
+        Reads query + document together<br>
+        Scores: [-10, +10], well-calibrated<br>
+        ~100ms per (query, doc) pair<br>
+        nDCG@10: 0.910
       </div>
-      <div class="example-why">Correctly ranked high. This answers the question.</div>
-      <div class="example-row">
-        <span class="example-doc">&ldquo;The Python snake can grow up to 30 feet...&rdquo;</span>
-        <span class="example-score wrong">0.71 &cross;</span>
+    </div>
+    <div class="compare-card dia-good">
+      <div class="compare-label">Student (bi-encoder, distilled)</div>
+      <div class="compare-name">intfloat/e5-small-v2</div>
+      <div class="compare-spec">
+        MiniLM, 33M params, 384-dim output<br>
+        Encodes query and docs independently<br>
+        Native "query:" and "passage:" prefixes<br>
+        ~1ms per query on CPU<br>
+        nDCG@10: 0.719 &rarr; <strong>0.882 after KD</strong>
       </div>
-      <div class="example-why">Ranked too high. The word &ldquo;Python&rdquo; fooled the model. It never saw the question, so it doesn&rsquo;t know we mean the programming language.</div>
-      <div class="example-row">
-        <span class="example-doc">&ldquo;Exception management in software engineering...&rdquo;</span>
-        <span class="example-score wrong">0.64 &cross;</span>
-      </div>
-      <div class="example-why">Ranked too low. This is exactly what we want, but it uses different words. The model missed the conceptual match.</div>
     </div>
   </div>
 
   <div class="prose fade">
     <p>
-      The fingerprint model gets tricked by shared words and misses conceptual matches. It would be great if there was a model that could read the question and document <em>together</em>, word by word, understanding how they relate. There is. It&rsquo;s called a <strong>cross-encoder</strong>.
+      I chose bge-reranker-large as teacher because its scores are well-calibrated (the difference between 9.2 and 7.1 is meaningful, not just ordinal). I chose e5-small-v2 as student because it has native asymmetric prefix support ("query:" vs "passage:"), which matters for retrieval quality, and it has a proven track record with knowledge distillation.
     </p>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 3: THE CROSS-ENCODER
+       CH 3: KL DIVERGENCE ANIMATION
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 3.The accurate model (and why you can&rsquo;t deploy it)</div>
+  <div class="sec fade">Chapter 3. How the student learns the teacher's distribution</div>
+
   <div class="prose fade">
     <p>
-      A cross-encoder takes the question and a document, concatenates them into one input, and reads them together. Every word in the question pays attention to every word in the document, and vice versa. It sees that &ldquo;Python&rdquo; in the context of &ldquo;exceptions&rdquo; means the programming language, not the snake. It sees that &ldquo;exception management&rdquo; is the same concept as &ldquo;handle exceptions&rdquo; even though the words are different.
+      The core of knowledge distillation is not matching the teacher's top-1 prediction. It is matching the teacher's <strong>entire probability distribution</strong> over documents. When the teacher says "70% Doc A, 20% Doc B, 10% Doc C," that 20% on Doc B contains information. The student needs to learn that B is a plausible answer, just not the best one. A hard label ("A is correct, everything else is wrong") destroys that signal.
+    </p>
+  </div>
+
+  <!-- KL Divergence Animation -->
+  <div class="anim-wrap fade">
+    <div class="anim-label">KL Divergence: Student matching Teacher's Distribution</div>
+    <canvas id="klCanvas"></canvas>
+    <div class="anim-status" id="klStatus"></div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      The training uses three loss components that each teach something different. Combined as <strong>L = 0.6 * MarginMSE + 0.2 * ListwiseKD + 0.2 * Contrastive</strong>.
+    </p>
+  </div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">60% weight</div>
+      <div class="pipe-title">MarginMSE: learn the gaps between documents</div>
+      <div class="pipe-desc">The teacher says Doc A scores 9.2 and Doc B scores 7.1. The student does not need to match those exact numbers (different architectures use different scales). But it must learn that <strong>A is about 2.1 better than B</strong>. This loss computes MSE between student score margins and teacher score margins (normalized by temperature). It is the most stable component with smooth gradients.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">20% weight</div>
+      <div class="pipe-title">ListwiseKD: match the full ranking distribution via KL divergence</div>
+      <div class="pipe-desc">The teacher's scores are softmaxed into a probability distribution over all candidate documents. The student's scores are softmaxed the same way. <strong>KL divergence</strong> measures how different these two distributions are. The loss is <strong>T&sup2; &times; KL(softmax(t/T) || softmax(s/T))</strong>. The T&sup2; factor compensates for gradient scaling (standard KD practice from Hinton et al. 2015). This captures the teacher's uncertainty, not just which document wins.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">20% weight</div>
+      <div class="pipe-title">Contrastive: organize the embedding space</div>
+      <div class="pipe-desc">Pull the relevant document's embedding closer to the query's embedding. Push all negatives further away. Temperature fixed at 0.05 (always sharp, independent of KD annealing). This does not use the teacher at all. It acts as a <strong>regularizer</strong> that prevents the student from overfitting to teacher-specific scoring patterns while keeping the embedding space well-organized for retrieval.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 4: TEMPERATURE ANNEALING
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 4. Temperature annealing</div>
+  <div class="prose fade">
+    <p>
+      Temperature controls the sharpness of the probability distribution. At T=4.0, the softmax output is smooth: the teacher says "A is slightly better than B, and B is slightly better than C." The student learns the big picture, the overall ranking structure. At T=2.0, the distribution sharpens: "A is clearly the best, and everything else is distant." The student learns fine-grained top-rank precision.
+    </p>
+    <p>
+      I anneal linearly from T=4.0 to T=2.0 over the course of training. High temperature early prevents over-specialization on hard examples. Low temperature late focuses on the top results that nDCG@10 weights most heavily. This added 1-2% nDCG@10 over a fixed temperature of 2.0.
     </p>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">How a cross-encoder reads</div>
-    <div class="dia-row">
-      <div class="dia-box" style="min-width:90%">
-        <div class="dia-box-title">Input: question + document fed together</div>
-        <div class="dia-box-sub" style="margin-top:10px;line-height:2.2">
-          &ldquo;How to handle Python exceptions?&rdquo; + &ldquo;Python error handling with try/catch...&rdquo;<br>
-          ↕ every word attends to every other word ↕<br>
-          &ldquo;Python&rdquo; in the question connects to &ldquo;Python&rdquo; in the document<br>
-          &ldquo;exceptions&rdquo; connects to &ldquo;error handling&rdquo; and &ldquo;try/catch&rdquo;<br>
-          The model sees the full relationship
+    <div class="dia-title">Temperature effect on distribution</div>
+    <div class="compare" style="margin:0">
+      <div class="compare-card">
+        <div class="compare-label">T = 4.0 (early training)</div>
+        <div class="compare-name">Soft distribution</div>
+        <div class="compare-spec">
+          Doc A: 35% &middot; Doc B: 28% &middot; Doc C: 22% &middot; Doc D: 15%<br>
+          Broad signal, student learns overall structure<br>
+          Forgiving gradients, avoids over-specialization
         </div>
       </div>
-    </div>
-    <div class="dia-arrow-down">&darr;</div>
-    <div class="dia-row">
-      <div class="dia-box dia-good"><div class="dia-box-title">Score: 0.94</div><div class="dia-box-sub">single relevance number</div></div>
-    </div>
-    <div class="dia-result bad">Time: ~100ms per question-document pair<br>For 1M documents: 28 hours per question &cross;</div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      The cross-encoder is the gold standard of <em>understanding</em>. It catches the Python snake trick. It sees conceptual matches across different words. But it has a fatal flaw: it needs to read the question and document <strong>together</strong>. There are no pre-computed fingerprints. Every new question means re-reading every document. For a million documents, that&rsquo;s 28 hours. You cannot deploy this for search.
-    </p>
-    <p>
-      <strong>So when is a cross-encoder actually used?</strong> In a two-stage setup called <strong>reranking</strong>: first, the fast fingerprint model retrieves the top 100 candidates (~11ms). Then, the cross-encoder re-reads only those 100 documents with the question (~100ms total). You get near-perfect accuracy with acceptable latency. This is used in high-stakes domains like medical or legal search where getting the wrong document is dangerous.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">The reranking pattern</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Question</div><div class="dia-box-sub">user query</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Fingerprint search</div><div class="dia-box-sub">fast, ~11ms<br>top 100 candidates</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Cross-encoder</div><div class="dia-box-sub">re-reads 100 docs<br>~100ms</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box dia-good"><div class="dia-box-title">Top 10</div><div class="dia-box-sub">reranked, accurate</div></div>
-    </div>
-    <div class="dia-result good">Total: ~111ms instead of 28 hours &check;</div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 4: HOW IS THIS DIFFERENT FROM RAG
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 4.How is this different from RAG?</div>
-  <div class="prose fade">
-    <p>
-      If you&rsquo;ve heard of RAG (Retrieval-Augmented Generation), you might wonder how this project relates. RAG is a two-step process: first, <strong>search</strong> for relevant documents, then <strong>feed them to an LLM</strong> (like GPT or Claude) to generate an answer.
-    </p>
-    <p>
-      This project improves the <strong>search step</strong>. It does not generate answers. It finds the right documents. If you&rsquo;re building a RAG system, the quality of your final answer depends on finding the right documents first. Garbage in, garbage out. This project makes that retrieval better.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">RAG vs this project</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Question</div><div class="dia-box-sub">user asks something</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box dia-good" style="border-color:rgba(216,140,58,0.3)"><div class="dia-box-title">Search</div><div class="dia-box-sub" style="color:var(--accent)">THIS PROJECT<br>improves this step</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Retrieved docs</div><div class="dia-box-sub">top relevant<br>documents</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">LLM</div><div class="dia-box-sub">GPT / Claude<br>generates answer</div></div>
-    </div>
-    <div class="dia-note">This project makes the retrieval step better. Better retrieval &rarr; better RAG answers.</div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 5: THE DATA
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 5.The training data</div>
-  <div class="prose fade">
-    <p>
-      The models are trained on <strong>MS MARCO</strong> (Microsoft Machine Reading Comprehension). A dataset of real questions that real people typed into Bing, paired with passages from real web pages that answer them. 603 queries and 643 passages. This matters because the model learns from <strong>actual search behavior</strong>, not synthetic benchmarks.
-    </p>
-    <p>
-      Each passage is split into chunks of 512 tokens (roughly 400 words) with an 80-token overlap between chunks, so no information is lost at the boundaries.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Data pipeline</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Real Bing queries</div><div class="dia-box-sub">603 questions people<br>actually searched</div></div>
-      <div class="dia-arrow">+</div>
-      <div class="dia-box"><div class="dia-box-title">Real web pages</div><div class="dia-box-sub">643 passages that<br>answer those questions</div></div>
-    </div>
-    <div class="dia-arrow-down">&darr;</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Chunking</div><div class="dia-box-sub">512 tokens per chunk<br>80-token overlap at edges</div></div>
-    </div>
-    <div class="dia-arrow-down">&darr;</div>
-    <div class="dia-row">
-      <div class="dia-box dia-good"><div class="dia-box-title">Query-passage pairs</div><div class="dia-box-sub">used to train<br>teacher &rarr; student</div></div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 6: THE IDEA
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 6.The idea: teach the small model using the big one</div>
-  <div class="prose fade">
-    <p>
-      The cross-encoder can&rsquo;t serve search. But it can <strong>grade documents</strong>. What if we used it as a teacher?
-    </p>
-    <p>
-      Show the cross-encoder thousands of question-document pairs. It scores each one: &ldquo;9.2: excellent match,&rdquo; &ldquo;7.1: decent,&rdquo; &ldquo;2.3: poor,&rdquo; &ldquo;0.8: irrelevant.&rdquo; Now train the fingerprint model to reproduce those scores. It adjusts its fingerprints until its rankings match the teacher&rsquo;s rankings.
-    </p>
-    <p>
-      This is <strong>knowledge distillation</strong>. The big model is the teacher. The small model is the student. The student can&rsquo;t replicate the teacher&rsquo;s architecture. It still makes fingerprints independently. But it learns the teacher&rsquo;s <em>judgment</em> about what makes a good answer.
-    </p>
-    <p>
-      Think of it like a master sommelier training a junior. The master can&rsquo;t give the junior 30 years of experience. But by rating hundreds of wines together: &ldquo;this one&rsquo;s excellent, this one&rsquo;s close but the finish is off, this one&rsquo;s wrong entirely&rdquo;. The junior develops <em>taste</em>. Not identical to the master. But surprisingly close.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Knowledge distillation</div>
-    <div class="dia-row">
-      <div class="dia-box" style="min-width:70%">
-        <div class="dia-box-title">Teacher (cross-encoder, 560M params)</div>
-        <div class="dia-box-sub" style="margin-top:8px;text-align:left;line-height:2">
-          &ldquo;I read question + document together&rdquo;<br>
-          Doc A: 9.2 (excellent) &middot; Doc B: 7.1 (decent)<br>
-          Doc C: 2.3 (poor) &middot; Doc D: 0.8 (irrelevant)
-        </div>
-      </div>
-    </div>
-    <div class="dia-arrow-down">&darr; &ldquo;learn my judgments&rdquo;</div>
-    <div class="dia-row">
-      <div class="dia-box dia-good" style="min-width:70%">
-        <div class="dia-box-title">Student (fingerprint model, 33M params)</div>
-        <div class="dia-box-sub" style="margin-top:8px;text-align:left;line-height:2">
-          &ldquo;I make fingerprints independently, but I adjust them<br>
-          until my rankings match the teacher&rsquo;s rankings&rdquo;
+      <div class="compare-card">
+        <div class="compare-label">T = 2.0 (late training)</div>
+        <div class="compare-name">Sharp distribution</div>
+        <div class="compare-spec">
+          Doc A: 62% &middot; Doc B: 23% &middot; Doc C: 11% &middot; Doc D: 4%<br>
+          Focused on top-rank precision<br>
+          Matches what nDCG@10 cares about most
         </div>
       </div>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 7: HARD NEGATIVES
+       CH 5: HARD NEGATIVE MINING
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 7.The hard part: what you train on matters more than how you train</div>
+  <div class="sec fade">Chapter 5. Three-stage hard negative mining</div>
   <div class="prose fade">
     <p>
-      Naive distillation. Just showing the student random question-document pairs with teacher scores. That gets you to about <strong>85% of the teacher&rsquo;s accuracy</strong>. That last 12% is where the real engineering happens. And the secret isn&rsquo;t in the training algorithm. It&rsquo;s in <strong>which examples you choose</strong>.
+      The quality of training examples matters more than the training algorithm. Naive distillation with random negatives gets you to about 85% of teacher quality. The last 12% comes from showing the student progressively harder examples. I used a 3-stage curriculum that increases difficulty.
     </p>
-    <p>
-      If you only show the student obvious cases. A clearly relevant document and a clearly irrelevant one. It learns the easy stuff and stops improving. It&rsquo;s like only quizzing a student with questions they already know the answer to.
-    </p>
-    <p>
-      The breakthrough is showing it <strong>hard negatives</strong>: documents that <em>look</em> relevant but aren&rsquo;t. These force the student to learn fine-grained distinctions instead of surface-level pattern matching.
-    </p>
+  </div>
+
+  <!-- Mining curriculum animation -->
+  <div class="anim-wrap fade">
+    <div class="anim-label">3-Stage Mining Curriculum</div>
+    <canvas id="miningCanvas"></canvas>
+    <div class="anim-status" id="miningStatus"></div>
+  </div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">Stage A (1 epoch, 7 negatives/query)</div>
+      <div class="pipe-title">BM25 lexical mining</div>
+      <div class="pipe-desc">Retrieve top-100 BM25 results per query. These share keywords but are semantically irrelevant. "Python snake" for "Python exceptions." The student learns: <strong>keyword overlap is not relevance</strong>. Gets to ~85% of teacher quality.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">Stage B (1 epoch, 4 negatives/query)</div>
+      <div class="pipe-title">Teacher-graded semantic mining</div>
+      <div class="pipe-desc">Score BM25 candidates with the teacher cross-encoder. Keep only those where BM25 says relevant but teacher says irrelevant (score &lt;0.7). Drop documents with &gt;0.8 text overlap (near-duplicates). These are <strong>semantically deceptive</strong> negatives. Gets to ~93%.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">Stage C (1 epoch, 4 negatives/query)</div>
+      <div class="pipe-title">ANCE self-mining</div>
+      <div class="pipe-desc">Every 500 steps, encode the corpus with the current student. Retrieve the student's top-50 results per query. The teacher checks them. Documents the <strong>student is most confident about but the teacher rejects</strong> become the next training batch. The student mines its own blind spots. Gets to <strong>97%</strong>.</div>
+    </div>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">Easy negatives vs hard negatives</div>
-    <div class="example">
-      <div class="example-q">Easy negative (student already gets this right):</div>
-      <div class="example-row">
-        <span class="example-doc">Question: &ldquo;Python exception handling&rdquo;<br>Negative: &ldquo;Best pasta recipes for beginners&rdquo;</span>
-        <span class="example-score correct">obvious</span>
-      </div>
-      <div class="example-why">Obviously wrong. The student learns nothing new from this.</div>
-    </div>
-    <div class="example" style="margin-top:14px">
-      <div class="example-q">Hard negatives (these teach fine distinctions):</div>
-      <div class="example-row">
-        <span class="example-doc">Question: &ldquo;Python exception handling&rdquo;<br>Negative: &ldquo;The Python snake can grow up to 30 feet&rdquo;</span>
-        <span class="example-score wrong">tricky</span>
-      </div>
-      <div class="example-why">Shares the word &ldquo;Python.&rdquo; The student must learn that context matters, not just keywords.</div>
-      <div class="example-row" style="margin-top:10px">
-        <span class="example-doc">Question: &ldquo;Apple stock price forecast 2026&rdquo;<br>Negative: &ldquo;Nutritional benefits of eating apples daily&rdquo;</span>
-        <span class="example-score wrong">tricky</span>
-      </div>
-      <div class="example-why">Same word, completely different domain. Company vs fruit.</div>
-      <div class="example-row" style="margin-top:10px">
-        <span class="example-doc">Question: &ldquo;Java memory management&rdquo;<br>Negative: &ldquo;Java island: history, culture, and travel guide&rdquo;</span>
-        <span class="example-score wrong">tricky</span>
-      </div>
-      <div class="example-why">Same word, completely different meaning. Programming language vs geography.</div>
-    </div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      Finding good hard negatives is its own engineering challenge. I used a <strong>three-stage curriculum</strong> that progressively increases difficulty:
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">3-stage hard negative curriculum</div>
-    <div class="pipeline">
-      <div class="pipe-step">
-        <div class="pipe-num">Stage A.Learn to crawl</div>
-        <div class="pipe-title">Keyword mining (BM25)</div>
-        <div class="pipe-desc">BM25 is a simple keyword-matching algorithm. It finds documents that share words with the question. &ldquo;Python snake&rdquo; shows up for &ldquo;Python exceptions&rdquo; because they share the word &ldquo;Python.&rdquo; These are the easiest hard negatives. The student learns: <strong>matching words isn&rsquo;t enough.</strong></div>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">Stage B.Learn to walk</div>
-        <div class="pipe-title">Teacher-graded mining</div>
-        <div class="pipe-desc">Take the BM25 candidates and let the cross-encoder teacher score them. Keep only the ones where: keywords say it&rsquo;s relevant, but the teacher says it&rsquo;s not (confidence &gt;0.7). These are documents that are <strong>semantically deceptive</strong>. They pass the keyword test but fail the understanding test. Much harder to distinguish.</div>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">Stage C.Learn to run</div>
-        <div class="pipe-title">Adversarial self-mining (ANCE)</div>
-        <div class="pipe-desc">Every 500 training steps, the <strong>student itself</strong> retrieves what it thinks are the best documents for each question. The teacher checks them. The ones the student is most confident about but the teacher rejects. Those become the next round of training data. The student is <strong>mining its own blind spots</strong>. Its confident mistakes become its hardest lessons. This is what pushed accuracy from 85% to <strong>97%</strong> of the teacher.</div>
-      </div>
-    </div>
+    <div class="dia-title">Quality progression by stage</div>
+    <table class="rtable">
+      <tr><th>Stage</th><th>Strategy</th><th>Teacher Quality Recovery</th><th>What it teaches</th></tr>
+      <tr><td>Random negatives</td><td>Random sampling</td><td>~75%</td><td>Basic relevance</td></tr>
+      <tr><td>A: BM25</td><td>Keyword overlap</td><td>~85%</td><td>Keywords are not relevance</td></tr>
+      <tr><td>B: Teacher-graded</td><td>Semantic deception</td><td>~93%</td><td>Plausible but wrong</td></tr>
+      <tr class="best"><td>C: ANCE</td><td>Student's blind spots</td><td>~97%</td><td>Model-specific errors</td></tr>
+    </table>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 8: HOW THE STUDENT LEARNS
+       CH 6: RESULTS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 8.The three signals the student learns from</div>
-  <div class="prose fade">
-    <p>
-      Each training step, the teacher and student both score the same set: 1 relevant document and 10 hard negatives. Then three different &ldquo;signals&rdquo; pull the student&rsquo;s scores toward the teacher&rsquo;s. Each signal teaches something different:
-    </p>
-  </div>
+  <div class="sec fade">Chapter 6. Results</div>
 
-  <div class="dia fade">
-    <div class="dia-title">Three loss functions</div>
-    <div class="pipeline">
-      <div class="pipe-step">
-        <div class="pipe-num">60% of the training signal</div>
-        <div class="pipe-title">&ldquo;Learn the gaps&rdquo; (Margin-MSE)</div>
-        <div class="pipe-desc">The teacher says Doc A scores 9.2 and Doc B scores 7.1. The student doesn&rsquo;t need to output those exact numbers. Cross-encoders and fingerprint models use different score scales. But it must learn that <strong>A is about 2.1 better than B</strong>. This loss teaches relative differences between documents, not absolute scores.</div>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">20% of the training signal</div>
-        <div class="pipe-title">&ldquo;Learn the full ranking&rdquo; (Listwise KD)</div>
-        <div class="pipe-desc">The teacher produces a probability distribution: &ldquo;70% chance Doc A is the best answer, 20% Doc B, 10% Doc C.&rdquo; The student learns to match this entire distribution. This captures the teacher&rsquo;s <strong>uncertainty</strong>. Not just which document wins, but how confident the teacher is about the ranking.</div>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">20% of the training signal</div>
-        <div class="pipe-title">&ldquo;Learn what relevant means&rdquo; (Contrastive)</div>
-        <div class="pipe-desc">Pull the relevant document&rsquo;s fingerprint <strong>closer</strong> to the question&rsquo;s fingerprint. Push all irrelevant documents&rsquo; fingerprints <strong>further away</strong>. This doesn&rsquo;t use the teacher at all. It organizes the fingerprint space itself so that similar meanings cluster together.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      One more trick: <strong>temperature annealing</strong>. Early in training, the teacher&rsquo;s scores are &ldquo;softened.&rdquo; A temperature of 4.0 makes the probability distribution gentle and forgiving, so the student learns the big picture: which documents are roughly good and which are roughly bad. As training progresses, the temperature drops to 2.0. The distribution sharpens, and the student has to learn finer distinctions. It&rsquo;s like learning to draw: rough shapes first, details later.
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 9: RESULTS
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 9.The result</div>
   <div class="results fade">
     <div class="stat">
       <div class="stat-val">0.882</div>
       <div class="stat-label">nDCG@10</div>
     </div>
     <div class="stat">
-      <div class="stat-val">100x</div>
-      <div class="stat-label">Faster</div>
+      <div class="stat-val">97%</div>
+      <div class="stat-label">Teacher Quality</div>
     </div>
     <div class="stat">
-      <div class="stat-val">17x</div>
-      <div class="stat-label">Smaller</div>
+      <div class="stat-val">100x</div>
+      <div class="stat-label">Faster</div>
     </div>
     <div class="stat">
       <div class="stat-val">$4</div>
       <div class="stat-label">Training Cost</div>
     </div>
   </div>
-  <div class="prose fade">
-    <p>
-      nDCG@10 means: &ldquo;how often do the best documents appear near the top of the 10 results?&rdquo; A score of 1.0 is perfect ranking. The student scores 0.882 vs the teacher&rsquo;s 0.91 -<strong>97% of the teacher&rsquo;s ranking quality</strong>. Before distillation, the student scored 0.719. That&rsquo;s a <strong>22.7% improvement</strong> from learning from the teacher. The student is 17x smaller (33M vs 560M parameters), 100x faster (1ms vs 100ms), and the entire training costs $4 on a GCP CPU.
-    </p>
-  </div>
 
-  <!-- ═══════════════════════════════════════
-       CH 10: WHY THIS MATTERS
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 10. Why this matters</div>
-  <div class="prose fade">
-    <p>
-      Knowledge distillation is not just an academic exercise. It solves five real problems.
-    </p>
-    <p>
-      <strong>Cost.</strong> A cross-encoder at scale costs thousands per month in GPU compute. The student runs on a $5/month CPU. For a company doing a million queries a day, this is the difference between a viable product and a bankrupt one.
-    </p>
-    <p>
-      <strong>Latency.</strong> 100ms versus 1ms is not just "faster." At 100ms per pair, you cannot do search-as-you-type. You cannot do real-time autocomplete. You cannot power a chatbot that retrieves context mid-conversation. At 1ms, all of these become possible.
-    </p>
-    <p>
-      <strong>Scale.</strong> The cross-encoder does not scale. 10x more documents means 10x more compute at query time. The bi-encoder scales flat. Documents are encoded once and indexed. Going from 10,000 to 10 million documents costs nothing extra per query.
-    </p>
-    <p>
-      <strong>Composability.</strong> The student produces vectors. Vectors are reusable. The same embeddings that power search can also be used for clustering documents, finding duplicates, building recommendation systems, detecting anomalies, and feeding a RAG pipeline. A cross-encoder only produces a score for a single pair. You cannot reuse it for anything else.
-    </p>
-    <p>
-      <strong>Edge deployment.</strong> At 33M parameters and 1ms CPU latency, the student runs on phones, tablets, Raspberry Pis, and IoT gateways. A field technician can search a 10,000-page equipment manual offline, on a tablet, with no cell service. A hospital can run semantic search over patient records on-premises with no data leaving the building. The entire system (model + index + search logic) fits in under 200MB of RAM.
-    </p>
+  <div class="dia fade">
+    <div class="dia-title">Full comparison</div>
+    <table class="rtable">
+      <tr><th>Model</th><th>nDCG@10</th><th>MRR@10</th><th>Params</th><th>Latency</th></tr>
+      <tr><td>Vanilla bi-encoder (pre-KD)</td><td>0.719</td><td>0.685</td><td>33M</td><td>~1ms</td></tr>
+      <tr class="best"><td>KD student (ours)</td><td>0.882</td><td>0.854</td><td>33M</td><td>~1ms</td></tr>
+      <tr><td>Teacher cross-encoder</td><td>0.910</td><td>0.891</td><td>560M</td><td>~100ms/pair</td></tr>
+    </table>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">What distillation unlocks</div>
-    <div class="dia-row" style="gap:12px;flex-wrap:wrap">
-      <div class="dia-box dia-good" style="flex:1;min-width:130px">
-        <div class="dia-box-title">Cost</div>
-        <div class="dia-box-sub">GPU thousands/mo<br>to CPU $5/mo</div>
-      </div>
-      <div class="dia-box dia-good" style="flex:1;min-width:130px">
-        <div class="dia-box-title">Latency</div>
-        <div class="dia-box-sub">100ms to 1ms<br>enables real-time UX</div>
-      </div>
-      <div class="dia-box dia-good" style="flex:1;min-width:130px">
-        <div class="dia-box-title">Scale</div>
-        <div class="dia-box-sub">10K to 10M docs<br>zero extra query cost</div>
-      </div>
-      <div class="dia-box dia-good" style="flex:1;min-width:130px">
-        <div class="dia-box-title">Composability</div>
-        <div class="dia-box-sub">vectors reused for<br>clustering, RAG, dedup</div>
-      </div>
-      <div class="dia-box dia-good" style="flex:1;min-width:130px">
-        <div class="dia-box-title">Edge</div>
-        <div class="dia-box-sub">runs on phones, IoT<br>no cloud dependency</div>
-      </div>
-    </div>
+    <div class="dia-title">Training loss progression (3 epochs)</div>
+    <table class="rtable">
+      <tr><th>Epoch</th><th>Total Loss</th><th>MarginMSE</th><th>ListwiseKD</th><th>Contrastive</th><th>Temperature</th></tr>
+      <tr><td>1</td><td>0.3035</td><td>0.2412</td><td>0.1856</td><td>0.5294</td><td>4.0</td></tr>
+      <tr><td>2</td><td>0.2340</td><td>0.1788</td><td>0.1423</td><td>0.4650</td><td>3.0</td></tr>
+      <tr class="best"><td>3</td><td>0.1942</td><td>0.1401</td><td>0.1105</td><td>0.4118</td><td>2.0</td></tr>
+    </table>
+    <div class="dia-note">36% total loss reduction. MarginMSE improved 42%. Monotonic improvement, no early stopping triggered.</div>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 11: MODEL CARDS
+       CH 7: PRODUCTION
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 11.Model cards</div>
-  <div class="compare fade">
-    <div class="compare-card">
-      <div class="compare-label">Teacher</div>
-      <div class="compare-name">BAAI/bge-reranker-large</div>
-      <div class="compare-desc">
-        A cross-encoder that reads question and document together. 24 transformer layers, 560M parameters. Produces a single relevance score. The gold standard for understanding, but too slow for real-time search.
-      </div>
-      <div class="compare-spec">
-        Architecture: XLM-RoBERTa &middot; 24 layers &middot; 560M params<br>
-        Input: question + document concatenated<br>
-        Output: single relevance score<br>
-        Latency: ~100ms per pair
-      </div>
-      <div class="compare-when">
-        &check; Use for: reranking top 50-100 candidates, evaluation, labeling training data, high-stakes search (medical, legal)
-      </div>
-      <div class="compare-fail">
-        &cross; Don&rsquo;t use for: first-stage retrieval over large collections, real-time search with latency &lt;50ms
-      </div>
-    </div>
-    <div class="compare-card">
-      <div class="compare-label">Student (distilled)</div>
-      <div class="compare-name">intfloat/e5-small-v2</div>
-      <div class="compare-desc">
-        A bi-encoder that fingerprints text independently. 6 transformer layers, 33M parameters. Produces a 384-dimensional vector. Documents are encoded once and stored. Trained via distillation to match the teacher&rsquo;s judgments.
-      </div>
-      <div class="compare-spec">
-        Architecture: BERT &middot; 6 layers &middot; 33M params &middot; 384-dim output<br>
-        Input: text with &ldquo;query:&rdquo; or &ldquo;passage:&rdquo; prefix<br>
-        Output: 384-dimensional embedding vector<br>
-        Latency: ~1ms per query
-      </div>
-      <div class="compare-when">
-        &check; Use for: real-time search, high query volume (&gt;1000/day), RAG retrieval, semantic similarity
-      </div>
-      <div class="compare-fail">
-        &cross; Struggles with: ambiguous queries (can&rsquo;t disambiguate without seeing the document), highly specialized domains (trained on general text), documents &gt;512 tokens (truncated), queries needing multi-hop reasoning
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 11: PRODUCTION
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 12.How it runs in production</div>
-  <div class="prose fade">
-    <p>
-      Once trained, the student encodes all documents into fingerprints. These are loaded into a FAISS index, a data structure optimized for finding the closest vectors fast. When a query arrives, it&rsquo;s fingerprinted, the nearest vectors are found, and results are returned. Click any component below to see what&rsquo;s inside.
-    </p>
-  </div>
+  <div class="sec fade">Chapter 7. Production serving</div>
 
   <div class="dia fade">
-    <div class="dia-title">Production architecture.click to expand</div>
-    <div class="flow">
-      <div class="flow-node" onclick="toggleDetail('d-query')">
-        <div class="flow-node-title">Query</div>
-        <div class="flow-node-sub">user text</div>
-      </div>
+    <div class="dia-title">Retrieval pipeline</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Query</div><div class="dia-box-sub">"query: " prefix<br>user text</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="flow-node" onclick="toggleDetail('d-encoder')">
-        <div class="flow-node-title">Student Encoder</div>
-        <div class="flow-node-sub">33M params &middot; ~1ms</div>
-      </div>
+      <div class="dia-box"><div class="dia-box-title">Student Encoder</div><div class="dia-box-sub">33M params<br>384-dim vector, ~1ms</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="flow-node" onclick="toggleDetail('d-faiss')">
-        <div class="flow-node-title">FAISS Index</div>
-        <div class="flow-node-sub">HNSW &middot; ~10ms</div>
-      </div>
+      <div class="dia-box"><div class="dia-box-title">FAISS HNSW</div><div class="dia-box-sub">M=32, efSearch=64<br>~10ms, 97%+ recall</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="flow-node" onclick="toggleDetail('d-api')">
-        <div class="flow-node-title">FastAPI</div>
-        <div class="flow-node-sub">&lt;12ms total</div>
-      </div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Top-K Results</div><div class="dia-box-sub">~11ms total<br>optional rerank +100ms</div></div>
     </div>
+    <div class="dia-note">Documents encoded once, stored in HNSW index. ~1.75GB for 1M docs at 384-dim. Fits in a 2GB Cloud Run container.</div>
+  </div>
 
-    <div class="flow-detail" id="d-query">
-      <div class="flow-detail-title">Query Processing</div>
-      <p>The raw text is prefixed with <strong>&ldquo;query: &rdquo;</strong> before encoding. This is E5&rsquo;s convention. The prefix tells the model to produce a query-optimized fingerprint. Documents use a &ldquo;passage: &rdquo; prefix. Without the right prefix, query and document fingerprints would live in slightly different regions of the number space and search quality drops.</p>
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">FastAPI with security middleware</div>
+      <div class="pipe-desc">POST /search and POST /encode endpoints. Token-bucket rate limiting (100 req/min, 20-burst), API key auth (SHA-256 hashed), security headers (HSTS, CSP, X-Frame-Options), CORS. Prometheus metrics for latency and throughput.</div>
     </div>
-
-    <div class="flow-detail" id="d-encoder">
-      <div class="flow-detail-title">Student Encoder</div>
-      <p>The distilled model. Takes tokenized text, runs it through 6 transformer layers, and averages all token outputs into a single 384-number fingerprint. Because queries and documents are encoded independently, all document fingerprints are pre-computed once and stored in the index. Only the query needs to be encoded at search time.</p>
-      <div class="spec">
-        6-layer BERT &middot; 33M params &middot; 384-dim output<br>
-        ~1ms per query on CPU
-      </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">FAISS HNSW index</div>
+      <div class="pipe-desc">Hierarchical Navigable Small World graph. M=32 connections per node, efConstruction=200, efSearch=64. Inner product metric on L2-normalized vectors (equivalent to cosine similarity). <strong>97%+ recall vs brute-force exact search</strong>. Sub-15ms at 1M documents on CPU. Chose HNSW over IVF-PQ for recall quality at current scale, with a documented migration path to IVF-PQ if corpus grows beyond 10M.</div>
     </div>
-
-    <div class="flow-detail" id="d-faiss">
-      <div class="flow-detail-title">FAISS HNSW Index</div>
-      <p>A graph where each document fingerprint is a node connected to its nearest neighbors. To search, you enter the graph at a random point and hop to closer and closer nodes. HNSW (&ldquo;Hierarchical Navigable Small World&rdquo;) builds multiple layers of these graphs at different scales for faster convergence. It finds approximate nearest neighbors in milliseconds instead of comparing every vector.</p>
-      <div class="spec">
-        M=32 connections per node &middot; efSearch=50<br>
-        Recall: &gt;97% &middot; ~10ms for 10K documents
-      </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Optional teacher reranking</div>
+      <div class="pipe-desc">For high-stakes queries, the teacher cross-encoder re-reads the top 10 results with the query. Adds ~100ms but pushes accuracy from 0.882 to 0.910. Confidence threshold at 0.6 with a 5-second timeout circuit breaker. The system degrades gracefully if the reranker times out.</div>
     </div>
-
-    <div class="flow-detail" id="d-api">
-      <div class="flow-detail-title">FastAPI Production Service</div>
-      <p>The API layer running on GCP Cloud Run. Multi-stage Docker build with a non-root user for security. Middleware stack: security headers (HSTS, CSP, X-Frame-Options), token-bucket rate limiting (100 req/min, 20-burst), API key authentication (keys stored as SHA-256 hashes), CORS configuration. Prometheus exports latency and throughput metrics. Health, readiness, and liveness endpoints for Kubernetes.</p>
-      <div class="spec">
-        POST /search &middot; POST /encode &middot; GET /health<br>
-        CI/CD: Ruff &rarr; MyPy &rarr; pytest &rarr; Docker &rarr; Cloud Run<br>
-        ~$40/month for 10K queries/day
-      </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-title">Docker + Cloud Run deployment</div>
+      <div class="pipe-desc">Multi-stage Docker build with non-root user. GCS model download at startup. <strong>Cloud Run</strong>: 8 vCPU, 32GB memory, 0-100 instances, 80 concurrency. CI/CD: ruff + mypy + pytest + Docker build + Cloud Run deploy. ~$40/month for moderate traffic.</div>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════
-       STACK + LINK
+       CH 8: WHAT I'D CHANGE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 8. What I would change</div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">The evaluation dataset is small</div>
+      <div class="pipe-desc">The 0.882 nDCG@10 is measured on 200 held-out queries. MS MARCO's full dev set has 6,980 queries. A larger evaluation would give more confidence in the number, especially for tail queries where the student might struggle. I would run the full dev set evaluation.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">ANCE refresh is expensive</div>
+      <div class="pipe-desc">Re-encoding the entire corpus every 500 steps takes 20-30 minutes per refresh on a single GPU. For large corpora, this becomes the training bottleneck. I would explore <strong>approximate ANCE</strong> with partial corpus refresh (re-encode only documents that the student's confidence changed significantly on).</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">No domain adaptation</div>
+      <div class="pipe-desc">The system is trained on MS MARCO (general web queries). Performance would likely degrade on specialized domains (medical, legal, financial) where the vocabulary and relevance patterns differ substantially. Domain-specific fine-tuning or continued KD on in-domain data would help.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-title">Loss weights are hand-tuned</div>
+      <div class="pipe-desc">The 60/20/20 split between MarginMSE, ListwiseKD, and Contrastive was determined experimentally. A proper ablation study varying these weights systematically would identify the optimal ratio, or suggest that the ratio should change across training stages.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       STACK
        ═══════════════════════════════════════ -->
   <div class="sec fade">Stack</div>
-  <div class="stack fade">
-    <span class="stack-tag">PyTorch</span>
-    <span class="stack-tag">Sentence-Transformers</span>
-    <span class="stack-tag">FAISS</span>
-    <span class="stack-tag">FastAPI</span>
-    <span class="stack-tag">BM25</span>
-    <span class="stack-tag">Docker</span>
-    <span class="stack-tag">GCP Cloud Run</span>
-    <span class="stack-tag">Prometheus</span>
-    <span class="stack-tag">MS MARCO</span>
-    <span class="stack-tag">Poetry</span>
-    <span class="stack-tag">pytest</span>
+  <div class="stack-group">
+    <div class="stack-group-label">ML &amp; Retrieval</div>
+    <div class="stack">
+      <span class="stack-tag">PyTorch</span>
+      <span class="stack-tag">Sentence-Transformers</span>
+      <span class="stack-tag">FAISS HNSW</span>
+      <span class="stack-tag">BM25</span>
+      <span class="stack-tag">MS MARCO</span>
+    </div>
+  </div>
+  <div class="stack-group">
+    <div class="stack-group-label">Serving &amp; Infra</div>
+    <div class="stack">
+      <span class="stack-tag">FastAPI</span>
+      <span class="stack-tag">Docker</span>
+      <span class="stack-tag">GCP Cloud Run</span>
+      <span class="stack-tag">Prometheus</span>
+      <span class="stack-tag">Terraform</span>
+    </div>
+  </div>
+  <div class="stack-group">
+    <div class="stack-group-label">Code Quality</div>
+    <div class="stack">
+      <span class="stack-tag">pytest</span>
+      <span class="stack-tag">mypy</span>
+      <span class="stack-tag">ruff</span>
+      <span class="stack-tag">Poetry</span>
+    </div>
   </div>
 
-  <a href="https://github.com/Axionis47/semantic-search-kd" target="_blank" class="proj-link fade">View on GitHub &rarr;</a>
+  <a href="https://github.com/Axionis47/semantic-search-kd" target="_blank" class="proj-link fade">View on GitHub &rsaquo;</a>
 
 </main>
 
@@ -747,25 +473,300 @@
 </footer>
 
 <script>
-function toggleDetail(id){
-  const el = document.getElementById(id);
-  const wasOpen = el.classList.contains('open');
-  document.querySelectorAll('.flow-detail').forEach(d => d.classList.remove('open'));
-  document.querySelectorAll('.flow-node').forEach(n => n.classList.remove('active'));
-  if(!wasOpen){
-    el.classList.add('open');
-    const details = [...document.querySelectorAll('.flow-detail')];
-    const idx = details.indexOf(el);
-    const nodes = document.querySelectorAll('.flow-node');
-    if(nodes[idx]) nodes[idx].classList.add('active');
-  }
-}
+/* ─── Fade-in ─── */
 const obs = new IntersectionObserver(es => {
   es.forEach((e, i) => {
-    if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 70); obs.unobserve(e.target); }
+    if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
   });
 }, { threshold: .12 });
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+/* ─── Shared ─── */
+const accent='#d88c3a',t1='#e0e0e0',t2='#ababab',t3='#787880',green='#5a9a5a',red='#9a5a5a',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+function initCanvas(id){
+  const c=document.getElementById(id);if(!c)return null;
+  const dpr=window.devicePixelRatio||1,rect=c.getBoundingClientRect();
+  c.width=rect.width*dpr;c.height=rect.height*dpr;
+  const ctx=c.getContext('2d');ctx.scale(dpr,dpr);
+  return{c,ctx,w:rect.width,h:rect.height};
+}
+
+/* ═══════════════════════════════════════
+   ANIMATION 1: KL Divergence
+   Shows teacher distribution (bars) and student
+   distribution converging toward it over time,
+   with temperature annealing sharpening both.
+   ═══════════════════════════════════════ */
+let klInited=false;
+function initKLAnim(){
+  if(klInited)return;klInited=true;
+  const cv=initCanvas('klCanvas');if(!cv)return;
+  const{ctx,w,h}=cv;
+  const status=document.getElementById('klStatus');
+
+  const docs=['Doc A','Doc B','Doc C','Doc D','Doc E','Doc F','Doc G'];
+  // Teacher's "true" scores (fixed)
+  const teacherScores=[9.2,7.1,5.8,3.2,2.1,1.0,0.3];
+
+  // Student starts random, converges to teacher
+  const studentStart=[3.0,5.0,2.0,6.0,1.0,4.0,2.5];
+
+  const barW=50,barGap=14,chartH=180,chartY=h-80;
+  const totalBarW=docs.length*(barW+barGap)-barGap;
+  const startX=(w-totalBarW)/2;
+
+  // Phases
+  const learnFrames=300; // student converges
+  const holdFrames=80;
+  const cycleLength=learnFrames+holdFrames;
+  let frame=0;
+
+  function softmax(scores,T){
+    const scaled=scores.map(s=>s/T);
+    const maxS=Math.max(...scaled);
+    const exps=scaled.map(s=>Math.exp(s-maxS));
+    const sum=exps.reduce((a,b)=>a+b,0);
+    return exps.map(e=>e/sum);
+  }
+
+  function animate(){
+    ctx.clearRect(0,0,w,h);
+    frame++;
+    const lf=frame%cycleLength;
+    const progress=Math.min(lf/learnFrames,1);
+    const eased=1-Math.pow(1-progress,3); // ease-out
+
+    // Temperature annealing: 4.0 -> 2.0
+    const temp=4.0-2.0*eased;
+
+    // Teacher distribution at current temperature
+    const teacherDist=softmax(teacherScores,temp);
+
+    // Student scores lerp toward teacher
+    const studentScores=studentStart.map((s,i)=>s+(teacherScores[i]-s)*eased);
+    const studentDist=softmax(studentScores,temp);
+
+    // Labels
+    ctx.font='600 11px JetBrains Mono';
+    ctx.textAlign='left';
+    ctx.globalAlpha=1;
+
+    // Teacher label
+    ctx.fillStyle=t3;
+    ctx.fillText('Teacher',startX,28);
+    // Student label
+    ctx.fillStyle=accent;
+    ctx.fillText('Student',startX+100,28);
+    // Temperature
+    ctx.fillStyle=t3;
+    ctx.font='10px JetBrains Mono';
+    ctx.textAlign='right';
+    ctx.fillText('T = '+temp.toFixed(1),w-startX,28);
+
+    // Draw bars
+    docs.forEach((doc,i)=>{
+      const x=startX+i*(barW+barGap);
+
+      // Teacher bar (background)
+      const tH=teacherDist[i]*chartH*3;
+      ctx.globalAlpha=0.25;
+      ctx.fillStyle=t3;
+      ctx.beginPath();
+      ctx.roundRect(x,chartY-tH,barW/2-2,tH,3);
+      ctx.fill();
+
+      // Student bar (foreground)
+      const sH=studentDist[i]*chartH*3;
+      ctx.globalAlpha=0.8;
+      ctx.fillStyle=accent;
+      ctx.beginPath();
+      ctx.roundRect(x+barW/2+2,chartY-sH,barW/2-2,sH,3);
+      ctx.fill();
+
+      // Percentage labels
+      ctx.globalAlpha=0.5;
+      ctx.font='8px JetBrains Mono';
+      ctx.textAlign='center';
+      ctx.fillStyle=t3;
+      ctx.fillText((teacherDist[i]*100).toFixed(0)+'%',x+barW/4-1,chartY-tH-6);
+      ctx.fillStyle=accent;
+      ctx.fillText((studentDist[i]*100).toFixed(0)+'%',x+3*barW/4+1,chartY-sH-6);
+
+      // Doc label
+      ctx.globalAlpha=0.6;
+      ctx.font='9px JetBrains Mono';
+      ctx.fillStyle=t2;
+      ctx.textAlign='center';
+      ctx.fillText(doc,x+barW/2,chartY+16);
+    });
+
+    // KL divergence value
+    let kl=0;
+    for(let i=0;i<docs.length;i++){
+      if(teacherDist[i]>1e-10 && studentDist[i]>1e-10){
+        kl+=teacherDist[i]*Math.log(teacherDist[i]/studentDist[i]);
+      }
+    }
+    ctx.globalAlpha=1;
+    ctx.font='10px JetBrains Mono';
+    ctx.fillStyle=t2;
+    ctx.textAlign='center';
+    ctx.fillText('KL divergence: '+kl.toFixed(4),w/2,chartY+38);
+
+    // Epoch indicator
+    const epoch=Math.min(Math.floor(progress*3)+1,3);
+    status.textContent='Epoch '+epoch+'/3  ·  Temperature: '+temp.toFixed(1)+'  ·  Student converging to teacher distribution';
+    if(progress>=1) status.textContent='Converged  ·  KL divergence: '+kl.toFixed(4)+'  ·  Student matches teacher ranking';
+
+    ctx.globalAlpha=1;
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+/* ═══════════════════════════════════════
+   ANIMATION 2: Mining Curriculum
+   Shows quality climbing through 3 stages
+   with example negatives appearing
+   ═══════════════════════════════════════ */
+let miningInited=false;
+function initMiningAnim(){
+  if(miningInited)return;miningInited=true;
+  const cv=initCanvas('miningCanvas');if(!cv)return;
+  const{ctx,w,h}=cv;
+  const status=document.getElementById('miningStatus');
+
+  const stages=[
+    {name:'Random',quality:75,color:t3,examples:['recipe for pasta','history of Rome','cat videos']},
+    {name:'BM25',quality:85,color:t2,examples:['"Python snake" for "Python exceptions"','"Java island" for "Java memory"','"Apple fruit" for "Apple stock"']},
+    {name:'Teacher',quality:93,color:accent,examples:['Semantically close but irrelevant','Passes keyword test, fails understanding','Plausible but wrong domain']},
+    {name:'ANCE',quality:97,color:green,examples:["Student's confident mistake #1","Student's blind spot on edge case","Model-specific false positive"]},
+  ];
+
+  const stageFrames=100;
+  const holdFrames=60;
+  const cycleLength=stages.length*(stageFrames+holdFrames);
+  let frame=0;
+
+  function animate(){
+    ctx.clearRect(0,0,w,h);
+    frame++;
+    const lf=frame%cycleLength;
+    const stageIdx=Math.min(Math.floor(lf/(stageFrames+holdFrames)),stages.length-1);
+    const stageProgress=Math.min((lf-stageIdx*(stageFrames+holdFrames))/stageFrames,1);
+
+    // Quality meter (left side)
+    const meterX=60,meterY=40,meterH=h-100,meterW=24;
+
+    // Meter background
+    ctx.globalAlpha=0.3;
+    ctx.fillStyle=inset;
+    ctx.beginPath();
+    ctx.roundRect(meterX-meterW/2,meterY,meterW,meterH,6);
+    ctx.fill();
+
+    // Meter ticks
+    ctx.globalAlpha=0.3;
+    ctx.font='8px JetBrains Mono';
+    ctx.fillStyle=t3;
+    ctx.textAlign='right';
+    for(let pct=75;pct<=100;pct+=5){
+      const y=meterY+meterH-(pct-70)/(100-70)*meterH;
+      ctx.fillText(pct+'%',meterX-meterW/2-6,y+3);
+      ctx.beginPath();
+      ctx.moveTo(meterX-meterW/2,y);
+      ctx.lineTo(meterX+meterW/2,y);
+      ctx.strokeStyle=t3;
+      ctx.lineWidth=0.5;
+      ctx.stroke();
+    }
+
+    // Current quality (animated fill)
+    let currentQuality=stages[0].quality;
+    for(let i=0;i<=stageIdx;i++){
+      if(i<stageIdx) currentQuality=stages[i].quality;
+      else currentQuality=stages[Math.max(0,i-1)].quality+(stages[i].quality-stages[Math.max(0,i-1)].quality)*Math.min(stageProgress*1.5,1);
+    }
+    const fillH=(currentQuality-70)/(100-70)*meterH;
+    const fillY=meterY+meterH-fillH;
+    ctx.globalAlpha=0.7;
+    const grad=ctx.createLinearGradient(0,fillY,0,meterY+meterH);
+    grad.addColorStop(0,stages[stageIdx].color);
+    grad.addColorStop(1,inset);
+    ctx.fillStyle=grad;
+    ctx.beginPath();
+    ctx.roundRect(meterX-meterW/2+2,fillY,meterW-4,fillH,4);
+    ctx.fill();
+
+    // Quality number
+    ctx.globalAlpha=1;
+    ctx.font='600 16px JetBrains Mono';
+    ctx.fillStyle=stages[stageIdx].color;
+    ctx.textAlign='center';
+    ctx.fillText(Math.round(currentQuality)+'%',meterX,meterY-10);
+    ctx.font='8px JetBrains Mono';
+    ctx.fillStyle=t3;
+    ctx.fillText('teacher quality',meterX,meterY-22);
+
+    // Stage cards (right side)
+    const cardX=140,cardW=w-cardX-40,cardH=52;
+    stages.forEach((stage,i)=>{
+      const cy=meterY+i*(cardH+12);
+      const isActive=i===stageIdx;
+      const isPast=i<stageIdx;
+
+      ctx.globalAlpha=isActive?0.9:isPast?0.4:0.15;
+      ctx.fillStyle=isActive?raised:inset;
+      ctx.beginPath();
+      ctx.roundRect(cardX,cy,cardW,cardH,8);
+      ctx.fill();
+
+      if(isActive){
+        ctx.strokeStyle=stage.color;
+        ctx.lineWidth=1;
+        ctx.globalAlpha=0.4;
+        ctx.beginPath();
+        ctx.roundRect(cardX,cy,cardW,cardH,8);
+        ctx.stroke();
+      }
+
+      // Stage name
+      ctx.globalAlpha=isActive?1:isPast?0.5:0.2;
+      ctx.font='600 10px JetBrains Mono';
+      ctx.fillStyle=isActive?stage.color:t2;
+      ctx.textAlign='left';
+      ctx.fillText('Stage: '+stage.name+' ('+stage.quality+'%)',cardX+14,cy+18);
+
+      // Example negatives
+      if(isActive && stageProgress>0.3){
+        const exAlpha=Math.min((stageProgress-0.3)/0.3,1);
+        ctx.globalAlpha=exAlpha*0.6;
+        ctx.font='9px JetBrains Mono';
+        ctx.fillStyle=t2;
+        const ex=stage.examples[Math.floor((frame/30)%stage.examples.length)];
+        ctx.fillText(ex,cardX+14,cy+36);
+      }
+    });
+
+    status.textContent='Stage: '+stages[stageIdx].name+'  ·  Quality: '+Math.round(currentQuality)+'% of teacher';
+
+    ctx.globalAlpha=1;
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+/* ─── Auto-start on scroll ─── */
+function observeAnim(selector,initFn){
+  const el=document.querySelector(selector);
+  if(!el)return;
+  const o=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){initFn();o.disconnect();}});
+  },{threshold:.2});
+  o.observe(el);
+}
+observeAnim('#klCanvas',initKLAnim);
+observeAnim('#miningCanvas',initMiningAnim);
 </script>
 </body>
 </html>
