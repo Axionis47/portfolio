@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Graph Recommendation Engine — Sai Siddharth Yalamanchili</title>
+<title>Session-Based GNN Recommendations — Sai Siddharth Yalamanchili</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
@@ -22,64 +22,46 @@
   body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
   a{color:var(--accent);text-decoration:none;transition:color .2s}
   a:hover{color:#eaa050}
-
   nav{display:flex;justify-content:space-between;align-items:center;max-width:1200px;width:100%;margin:0 auto;padding:2.5rem 3rem 1.5rem}
   nav .logo{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--t1);text-decoration:none}
   nav .back{font-family:var(--mono);font-size:.8rem;color:var(--t3);text-decoration:none;transition:color .2s}
   nav .back:hover{color:var(--accent)}
-
   main{max-width:1200px;width:100%;margin:0 auto;padding:2rem 3rem 4rem;flex:1}
-
   .proj-label{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
-  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
+  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:.4rem}
+  .proj-subtitle{font-family:var(--mono);font-size:.78rem;color:var(--t3);margin-bottom:2.5rem}
   .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
-
   .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 28px;margin-bottom:36px}
   .brief-label{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
   .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
   .brief-key{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:right;white-space:nowrap}
   .brief-val{font-family:var(--mono);font-size:.78rem;color:var(--t1);line-height:1.7}
-
   .prose{margin-bottom:1.8rem}
   .prose p{font-family:var(--sans);font-size:1.05rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
   .prose strong{color:var(--t1);font-weight:500}
-
   .sec{font-family:var(--mono);font-size:.7rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
-
   .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 24px;margin:20px 0}
   .dia-title{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia-group{font-family:var(--mono);font-size:.56rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;margin:16px 0 6px;padding-left:4px}
   .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
   .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
   .dia-box-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
   .dia-box-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2);line-height:1.7}
-  .dia-arrow{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;padding:0 10px;flex-shrink:0}
+  .dia-arrow{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;padding:0 12px;flex-shrink:0}
   .dia-arrow-down{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;text-align:center;padding:8px 0}
   .dia-note{font-family:var(--mono);font-size:.62rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
-  .dia-note-left{font-family:var(--mono);font-size:.62rem;color:var(--t2);margin-top:12px;line-height:1.7}
   .dia-good{border:1px solid rgba(90,154,90,0.2)}
   .dia-bad{border:1px solid rgba(154,90,90,0.2)}
-  .dia-result{font-family:var(--mono);font-size:.7rem;text-align:center;padding:10px 0;margin-top:8px}
-  .dia-result.good{color:var(--green)}
-  .dia-result.bad{color:var(--red)}
-
-  .example{background:var(--inset);border-radius:10px;padding:18px 20px;margin:12px 0;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
-  .example-q{font-family:var(--mono);font-size:.7rem;color:var(--accent);margin-bottom:10px}
-  .example-doc{font-family:var(--serif);font-size:.88rem;color:var(--t1);flex:1;line-height:1.7}
-  .example-why{font-family:var(--mono);font-size:.62rem;color:var(--t2);margin-top:4px;margin-bottom:12px;padding-left:10px;border-left:1px solid rgba(255,255,255,0.06)}
-
   .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
   .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:22px 16px;text-align:center;transition:all .3s}
   .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
   .stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:5px}
   .stat-label{font-family:var(--mono);font-size:.58rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
-
-  .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
-  .compare-card{background:var(--inset);border-radius:10px;padding:22px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
-  .compare-label{font-family:var(--mono);font-size:.52rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
-  .compare-name{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--t1);margin-bottom:8px}
-  .compare-desc{font-family:var(--serif);font-size:.82rem;color:var(--t2);line-height:1.9}
-  .compare-spec{font-family:var(--mono);font-size:.62rem;color:var(--t2);line-height:2;margin-top:10px}
-
+  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
+  .rtable th{font-family:var(--mono);font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.68rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable tr.best td{color:var(--accent);font-weight:500}
+  .rtable tr.nogo td{color:var(--red);opacity:.7}
   .pipeline{position:relative;padding-left:32px;margin:20px 0}
   .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
   .pipe-step{position:relative;margin-bottom:24px}
@@ -88,26 +70,15 @@
   .pipe-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:6px}
   .pipe-desc{font-family:var(--sans);font-size:.92rem;color:var(--t2);line-height:1.95}
   .pipe-desc strong{color:var(--t1);font-weight:500}
-
-  /* Results table */
-  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
-  .rtable th{font-family:var(--mono);font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
-  .rtable td{font-family:var(--mono);font-size:.68rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
-  .rtable tr.best td{color:var(--accent);font-weight:500}
-
-  .flow-node{background:var(--inset);border-radius:10px;padding:14px 18px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:110px;cursor:pointer;transition:all .3s}
-  .flow-node:hover{box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl),0 0 12px var(--glow)}
-  .flow-node.active{box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl),0 0 16px rgba(216,140,58,0.1);border:1px solid rgba(216,140,58,0.15)}
-  .flow-node-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
-  .flow-node-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2)}
-  .flow-detail{display:none;background:var(--inset);border-radius:10px;padding:20px 22px;margin-top:14px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
-  .flow-detail.open{display:block}
-  .flow-detail-title{font-family:var(--mono);font-size:.66rem;font-weight:500;color:var(--accent);margin-bottom:8px}
-  .flow-detail p{font-family:var(--serif);font-size:.84rem;color:var(--t2);line-height:1.9;margin-bottom:6px}
-  .flow-detail .spec{font-family:var(--mono);font-size:.62rem;color:var(--t2);line-height:2}
-
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .compare-card{background:var(--inset);border-radius:10px;padding:22px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
+  .compare-label{font-family:var(--mono);font-size:.52rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .compare-name{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--t1);margin-bottom:8px}
+  .compare-spec{font-family:var(--mono);font-size:.62rem;color:var(--t2);line-height:2;margin-top:10px}
   .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
   .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .stack-group{margin-bottom:16px}
+  .stack-group-label{font-family:var(--mono);font-size:.56rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
   .proj-link{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
   .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
   footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
@@ -116,18 +87,15 @@
   .ft-l{display:flex;gap:18px}
   .ft-l a{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-decoration:none;transition:color .2s}
   .ft-l a:hover{color:var(--accent)}
-
   @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
   .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
   .fade.v{opacity:1;transform:translateY(0)}
-
   @media(max-width:768px){
     main{padding:1rem 1rem 3rem}
     .results{grid-template-columns:repeat(2,1fr)}
     .compare{grid-template-columns:1fr}
     .dia-row{flex-direction:column;gap:0}
     .dia-arrow{transform:rotate(90deg);padding:6px 0}
-    .rtable{font-size:.6rem}
     .ft{flex-direction:column;gap:10px;text-align:center}
   }
 </style>
@@ -142,440 +110,98 @@
 <main>
 
   <div class="proj-label fade">Project</div>
-  <h1 class="proj-title fade">Graph Recommendation Engine</h1>
+  <h1 class="proj-title fade">Session-Based Recommendations with Graph Neural Networks</h1>
+  <div class="proj-subtitle fade">Predicting what anonymous shoppers buy next, on a $300 budget</div>
   <div class="divider"></div>
 
-  <!-- Engineering Brief -->
   <div class="brief fade">
     <div class="brief-label">Engineering Brief</div>
     <div class="brief-grid">
       <span class="brief-key">Problem</span>
-      <span class="brief-val">Recommend products to anonymous users with no purchase history. Only signal: a short browsing session of 5-6 items.</span>
+      <span class="brief-val">Anonymous e-commerce visitors with no purchase history. Only signal: the last 3 to 10 items they browsed. Traditional recommenders (collaborative filtering) cannot work here.</span>
       <span class="brief-key">Approach</span>
-      <span class="brief-val">Build a co-occurrence graph of 82K items from 172K sessions. Compare GraphSAGE, GAT, and Graph Transformer architectures with Laplacian positional encodings.</span>
+      <span class="brief-val">Build a co-occurrence graph (82K items, 738K edges) from 172K sessions. Compare GraphSAGE, GAT, and Graph Transformer architectures. Temporal splits with blackout periods to prevent data leakage. Laplacian positional encoding to solve structural equivalence.</span>
       <span class="brief-key">Result</span>
-      <span class="brief-val">38.28% Recall@10 (2.6x over GraphSAGE baseline). Removing FFN layers gave 88x training speedup with only 3% accuracy loss.</span>
-      <span class="brief-key">Why it matters</span>
-      <span class="brief-val">Most e-commerce users never log in. Graph-based recommendations work without user profiles, scale to millions of items, and serve in real time via ONNX.</span>
+      <span class="brief-val">38.28% Recall@10 (2.6x over baseline). Removed FFN layers from the Graph Transformer: 88x faster training, 90x cheaper ($21 vs $1,880), and 1.6% better accuracy. The cheaper model was the better model.</span>
       <span class="brief-key">Stack</span>
-      <span class="brief-val">PyTorch, PyTorch Geometric, FAISS, FastAPI, ONNX, GCP Vertex AI, MLflow</span>
+      <span class="brief-val">PyTorch, PyTorch Geometric, DVC, FastAPI, ONNX Runtime, GCP Vertex AI, Terraform, Docker, MLflow, Prometheus</span>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════
        CH 1: THE PROBLEM
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 1. The problem</div>
+  <div class="sec fade">Chapter 1. The cold-start problem</div>
   <div class="prose fade">
     <p>
-      You run an e-commerce site. A user lands on your page. They browse a few products: a wireless keyboard, a mouse, a monitor stand. They have not logged in. They have no account. You have no purchase history, no profile, no preferences. All you know is what they have looked at in the last five minutes.
+      Most e-commerce visitors never log in. No account, no purchase history, no profile. The only signal is a short browsing session: the last 3 to 10 items they looked at. Traditional recommendation systems like collaborative filtering need user history to work. They are useless for anonymous visitors.
     </p>
     <p>
-      Can you recommend what they should look at next?
+      I needed a system that could recommend the next item based purely on a short browsing session. No user identity. No metadata about the products. Just "this person looked at A, B, and C, what should they see next?" across a catalogue of 82,000 items.
     </p>
     <p>
-      Traditional recommendation systems (like Netflix or Spotify) rely on <strong>user profiles</strong>. They know your history: what you watched, what you liked, what you skipped. They compare you to similar users and recommend accordingly. But on most e-commerce sites, the majority of users never log in. They are anonymous. Profile-based systems are useless here.
-    </p>
-    <p>
-      What you need is a system that can recommend products based purely on the <strong>current browsing session</strong>. A short sequence of 5-6 items. No history. No identity. Just "this person looked at A, B, and C. What should they see next?"
+      The constraint that shaped everything: I had <strong>$300 in GCP credits</strong>, multiple projects to deliver, and the standard Graph Transformer architecture wanted $1,880 just for training. So the question became: can I make it dramatically cheaper and still get the accuracy?
     </p>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 2: WHAT DOES THE DATA LOOK LIKE
+       CH 2: THE APPROACH
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 2. What does the raw data actually look like?</div>
-  <div class="prose fade">
-    <p>
-      Before choosing any model, you need to look at the data. The RetailRocket dataset has 2.76 million events: a user viewed an item, added it to cart, or bought it. Each event is a row in a table with a timestamp, a user ID, an item ID, and an event type. That is it. No product descriptions. No categories. No images. Just "user 4829 viewed item 1172 at 3:42 PM."
-    </p>
-  </div>
+  <div class="sec fade">Chapter 2. From event log to product graph</div>
 
   <div class="dia fade">
-    <div class="dia-title">The raw data</div>
-    <div class="example">
-      <div class="example-q">A flat event log. Each row is one action.</div>
-      <div class="example-why">timestamp: 2015-06-01 14:32 | user: 4829 | item: 1172 | event: view</div>
-      <div class="example-why">timestamp: 2015-06-01 14:33 | user: 4829 | item: 3390 | event: view</div>
-      <div class="example-why">timestamp: 2015-06-01 14:35 | user: 4829 | item: 1172 | event: addtocart</div>
-      <div class="example-why">timestamp: 2015-06-01 14:36 | user: 4829 | item: 7241 | event: view</div>
-      <div class="example-why" style="margin-bottom:0">2.76 million rows like this. 92% views, 6% add-to-cart, 2% purchases.</div>
-    </div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      So the question becomes: where is the signal hiding?
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 3: WHERE IS THE SIGNAL
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 3. Where is the signal?</div>
-  <div class="prose fade">
-    <p>
-      Look at that event log again. There are no product descriptions. No categories. No images. No reviews. No prices. Nothing that tells you what an item <em>is</em>. So where is the recommendation signal hiding?
-    </p>
-    <p>
-      It is in the <strong>co-occurrence patterns</strong>. When user 4829 views item 1172, then views item 3390, then views item 7241 in the same sitting, that sequence contains information. Not about the items themselves, but about the <strong>relationships between them</strong>. If thousands of different users view item 1172 and then view item 3390, there is a connection between those two items. Something about 1172 leads people to 3390.
-    </p>
-    <p>
-      You do not need to know that item 1172 is a keyboard and item 3390 is a mouse. The behavior tells you they are related. The signal is not in any single row of the table. It is in <strong>the pattern across rows</strong>. Which items tend to appear together in the same session? How frequently? And if A relates to B and B relates to C, is there an indirect signal from A to C?
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Three sources of signal in the event log</div>
-    <div class="dia-row" style="gap:14px;flex-wrap:wrap">
-      <div class="dia-box" style="flex:1;min-width:180px">
-        <div class="dia-box-title">Co-occurrence</div>
-        <div class="dia-box-sub">Items A and B appear in the<br>same session 200 times.<br>They are strongly related.</div>
-      </div>
-      <div class="dia-box" style="flex:1;min-width:180px">
-        <div class="dia-box-title">Frequency</div>
-        <div class="dia-box-sub">Items that co-occur more<br>often have a stronger signal<br>than one-time coincidences.</div>
-      </div>
-      <div class="dia-box" style="flex:1;min-width:180px">
-        <div class="dia-box-title">Transitivity</div>
-        <div class="dia-box-sub">If A relates to B and B<br>relates to C, there is an<br>indirect signal from A to C.</div>
-      </div>
-    </div>
-    <div class="dia-note">No product metadata needed. The signal comes entirely from user behavior.</div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      This is the key realization. The data is not a table of item features. It is a <strong>network of behavioral relationships</strong>. Co-occurrence gives you direct connections. Frequency gives you edge weights. Transitivity gives you multi-hop structure. The question now is: what data structure captures all three?
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 4: OBVIOUS APPROACHES AND WHY THEY FAIL
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 4. The obvious approaches (and why they fall short)</div>
-  <div class="prose fade">
-    <p>
-      <strong>Approach 1: Treat it as a table.</strong> Build a user-item matrix. Rows are users, columns are items, values are interaction counts. Apply collaborative filtering or matrix factorization. This is textbook. But it assumes you have a user identity to build a row for. Anonymous users do not have a row. And the matrix is extremely sparse: 2.76M events across 235K items means most cells are empty. Collaborative filtering struggles with this level of sparsity.
-    </p>
-    <p>
-      <strong>Approach 2: Treat it as a sequence.</strong> Each session is a sequence of item IDs: [1172, 3390, 7241]. Use an RNN or Transformer to predict the next item. This works, but it treats every session as independent. A session [keyboard, mouse] and a session [keyboard, monitor] share the keyboard, but a sequence model learns nothing from that overlap unless both sessions appear in training. It cannot generalize across sessions that share items.
-    </p>
-    <p>
-      <strong>Approach 3: Treat it as a graph.</strong> This is the insight. Instead of modeling users or sequences, model the <strong>relationships between items</strong>. If two items appear in the same session, they are connected. The more sessions they co-appear in, the stronger the connection. Now the keyboard is explicitly linked to mice, monitors, desk mats, and USB hubs. A model that learns on this graph can generalize: it knows that keyboards relate to mice <em>regardless</em> of which specific session the pair appeared in.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Three ways to represent the same data</div>
-    <div class="dia-row" style="gap:14px;flex-wrap:wrap">
-      <div class="dia-box dia-bad" style="flex:1;min-width:180px">
-        <div class="dia-box-title">Table (matrix)</div>
-        <div class="dia-box-sub">User-item matrix.<br>Fails for anonymous users.<br>Extremely sparse.</div>
-      </div>
-      <div class="dia-box" style="flex:1;min-width:180px">
-        <div class="dia-box-title">Sequence</div>
-        <div class="dia-box-sub">Session as ordered list.<br>Works, but cannot share<br>knowledge across sessions.</div>
-      </div>
-      <div class="dia-box dia-good" style="flex:1;min-width:180px">
-        <div class="dia-box-title">Graph</div>
-        <div class="dia-box-sub">Items as nodes, co-occurrence<br>as edges. Captures cross-session<br>relationships. Generalizes.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 4: BUILDING THE GRAPH
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 5. Building the graph</div>
-  <div class="prose fade">
-    <p>
-      The raw event log is grouped into sessions. If a user is inactive for more than 30 minutes, a new session starts. Sessions shorter than 3 items are dropped (too little signal). This leaves 172,066 sessions containing 99,439 unique items.
-    </p>
-    <p>
-      Then, for every session, each pair of items that appear within a sliding window of 5 positions gets an edge. If item A and item B co-appear in 200 sessions, their edge weight is 200. The result: a graph with 82,173 nodes and 737,716 edges.
-    </p>
-    <p>
-      Wait. 99,439 unique items in sessions, but only 82,173 nodes in the graph. Where did 17,266 items go? They are <strong>isolated items</strong>. Items that appeared in sessions but never co-occurred with another item within the 5-item window. A user viewed the item alone, or it only appeared at the edge of very short sessions. No co-occurrence means no edges. No edges means no signal. These items cannot be recommended through graph relationships, so they are not in the graph. This is not a bug. It is the graph telling you: "I have no behavioral evidence about these items."
-    </p>
-    <p>
-      The data is split temporally: 70% training (120,436 sessions), 15% validation (23,861), 15% test (23,408), with a <strong>2-day blackout period</strong> between each split. The blackout prevents information leakage. Without it, a session that spans the split boundary could leak future browsing behavior into training data.
-    </p>
-    <p>
-      Now every product in the graph has neighbors. A keyboard is connected to mice, monitors, desk mats, and USB hubs. A winter coat is connected to scarves, gloves, and boots. The graph captures what people actually browse together, not what a product catalog says is related.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Building the product graph</div>
+    <div class="dia-title">Data Pipeline</div>
     <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Raw events</div><div class="dia-box-sub">2.76M events<br>235K raw items</div></div>
+      <div class="dia-box"><div class="dia-box-title">Raw Events</div><div class="dia-box-sub">2.76M events<br>RetailRocket dataset</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Sessionize</div><div class="dia-box-sub">30-min gap, drop &lt;3<br>99K unique items</div></div>
+      <div class="dia-box"><div class="dia-box-title">Sessionize</div><div class="dia-box-sub">30-min gap, drop &lt;3<br>172K sessions</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Co-occurrence</div><div class="dia-box-sub">5-item window<br>17K isolated items dropped</div></div>
+      <div class="dia-box"><div class="dia-box-title">Co-occurrence Graph</div><div class="dia-box-sub">5-item window<br>82K nodes, 738K edges</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box dia-good"><div class="dia-box-title">Product graph</div><div class="dia-box-sub">82K nodes<br>738K edges</div></div>
-    </div>
-    <div class="dia-arrow-down">&darr;</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Temporal split</div><div class="dia-box-sub">70% train | 15% val | 15% test<br>2-day blackout between splits</div></div>
-    </div>
-    <div class="dia-note">172,066 sessions. 17,266 items had no co-occurrence signal and are excluded from the graph.</div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 6: SHAPE OF THE GRAPH
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 6. What does this graph actually look like?</div>
-  <div class="prose fade">
-    <p>
-      Numbers alone do not tell the story. 82,173 nodes and 737,716 edges. But what does that mean in practice? What is the shape of this graph, and what does that shape tell you about how to model it?
-    </p>
-    <p>
-      <strong>Density.</strong> Each item is connected to about 18 other items on average. That is sparse. In a fully connected graph of 82K items, each node would have 82,172 edges. We have 18. This means most items are not directly related to most other items. The graph has clear structure, not noise.
-    </p>
-    <p>
-      <strong>Edge weight distribution.</strong> The median edge weight is 1. Most pairs of items co-occur in only a single session. The mean is 2.4. But the maximum is 1,424. This is a power law: a small number of item pairs are very strongly related (viewed together by thousands of users), while the vast majority are weakly related (co-occurred once or twice). The model needs to learn that a co-occurrence of 1,424 is a fundamentally different signal than a co-occurrence of 1.
-    </p>
-    <p>
-      <strong>Session structure.</strong> The average session has 5.6 items, but only 3.7 unique items (people revisit items). The median session is 4 items long and lasts about 6 minutes. Some sessions are as long as 417 items. This tells you: sessions are short. The model must extract signal from very few items.
-    </p>
-    <p>
-      <strong>What this means for model depth.</strong> With an average degree of 18, a 2-layer GNN lets each item "see" about 18 + 18&times;18 = 342 other items. That covers a meaningful neighborhood without over-smoothing (a known problem where too many layers cause all embeddings to converge to the same values). Deeper is not better here. 2 layers is the sweet spot.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Graph and session statistics</div>
-    <div class="dia-row" style="gap:14px;flex-wrap:wrap">
-      <div class="dia-box" style="flex:1;min-width:130px">
-        <div class="dia-box-title">82,173</div>
-        <div class="dia-box-sub">items (nodes)</div>
-      </div>
-      <div class="dia-box" style="flex:1;min-width:130px">
-        <div class="dia-box-title">737,716</div>
-        <div class="dia-box-sub">co-occurrence edges</div>
-      </div>
-      <div class="dia-box" style="flex:1;min-width:130px">
-        <div class="dia-box-title">18</div>
-        <div class="dia-box-sub">avg connections per item</div>
-      </div>
-      <div class="dia-box" style="flex:1;min-width:130px">
-        <div class="dia-box-title">1,424</div>
-        <div class="dia-box-sub">strongest edge weight</div>
-      </div>
-    </div>
-    <div class="dia-row" style="gap:14px;flex-wrap:wrap;margin-top:14px">
-      <div class="dia-box" style="flex:1;min-width:130px">
-        <div class="dia-box-title">172,066</div>
-        <div class="dia-box-sub">sessions</div>
-      </div>
-      <div class="dia-box" style="flex:1;min-width:130px">
-        <div class="dia-box-title">5.6 items</div>
-        <div class="dia-box-sub">mean session length</div>
-      </div>
-      <div class="dia-box" style="flex:1;min-width:130px">
-        <div class="dia-box-title">6 min</div>
-        <div class="dia-box-sub">median session duration</div>
-      </div>
-      <div class="dia-box" style="flex:1;min-width:130px">
-        <div class="dia-box-title">3.7</div>
-        <div class="dia-box-sub">unique items per session</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      This is a sparse, power-law graph with short sessions. A model that works here must handle weak signals (edge weight 1), exploit strong signals (edge weight 1,424), and extract recommendations from as few as 3 unique items per session.
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 7: HOW GRAPH NEURAL NETWORKS WORK
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 7. How a graph neural network learns</div>
-  <div class="prose fade">
-    <p>
-      A graph neural network (GNN) gives every item a set of numbers (an embedding) that captures its meaning and its position in the graph. But unlike a simple lookup table, these numbers are not fixed. Each item <strong>updates its embedding by looking at its neighbors</strong>.
-    </p>
-    <p>
-      Think of it like a rumor network. Each person starts with their own opinion. Then they talk to their friends and update their opinion based on what they hear. After one round, each person&rsquo;s opinion reflects their immediate circle. After two rounds, it reflects friends-of-friends. The more rounds (layers), the more of the graph each node "sees."
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Message passing in a GNN</div>
-    <div class="example">
-      <div class="example-q">Item: Wireless Keyboard</div>
-      <div class="example-why">Layer 1: looks at its direct neighbors (mouse, monitor, USB hub).<br>Its embedding now reflects "things people buy with keyboards."</div>
-      <div class="example-why">Layer 2: its neighbors have already absorbed THEIR neighbors.<br>So the keyboard now indirectly knows about mousepads, cable organizers, desk lamps.<br>Two hops of context.</div>
-    </div>
-    <div class="dia-note">This project uses 2 layers. With an average degree of 18, each item "sees" roughly 18 + 18&times;18 = 342 items after 2 layers.</div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      The question is: <strong>how</strong> should each item combine information from its neighbors? This is where the three model architectures differ.
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 4: THREE APPROACHES
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 8. Three approaches, compared</div>
-  <div class="prose fade">
-    <p>
-      <strong>GraphSAGE</strong> is the simplest approach. Each item takes the <em>average</em> of all its neighbors&rsquo; embeddings and combines it with its own. Simple, fast, but it treats all neighbors equally. A keyboard connected to a mouse (strong signal) gets the same weight as a keyboard connected to a random novelty item someone browsed once (weak signal).
-    </p>
-    <p>
-      <strong>GAT (Graph Attention Network)</strong> adds attention. Instead of averaging all neighbors equally, it learns <em>which</em> neighbors matter more. The keyboard pays more attention to the mouse (frequently co-purchased) and less to the novelty item (rarely co-purchased). This is a meaningful improvement: 20.10% Recall vs 14.79% for GraphSAGE.
-    </p>
-    <p>
-      <strong>Graph Transformer</strong> takes this further. In a standard GAT, each item only attends to its direct neighbors. A Graph Transformer allows each item to attend to <em>all</em> items in its computation subgraph, with multi-head attention (the same mechanism that powers ChatGPT and other language models). This gives it a much richer view of the graph.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">How each model aggregates neighbors</div>
-    <div class="dia-row" style="gap:14px;flex-wrap:wrap">
-      <div class="dia-box" style="flex:1;min-width:180px">
-        <div class="dia-box-title">GraphSAGE</div>
-        <div class="dia-box-sub">Equal average of all<br>neighbors. Simple. Fast.<br>Treats all edges the same.</div>
-      </div>
-      <div class="dia-box" style="flex:1;min-width:180px">
-        <div class="dia-box-title">GAT</div>
-        <div class="dia-box-sub">Learned attention weights.<br>Important neighbors get<br>more influence. Local only.</div>
-      </div>
-      <div class="dia-box dia-good" style="flex:1;min-width:180px">
-        <div class="dia-box-title">Graph Transformer</div>
-        <div class="dia-box-sub">Multi-head attention over<br>full subgraph. Global view.<br>+ positional encoding.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 5: POSITIONAL ENCODING
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 9. The position problem</div>
-  <div class="prose fade">
-    <p>
-      There is a subtle problem with graph neural networks. Two items can have <strong>identical neighborhoods</strong> but be in completely different parts of the graph. Imagine two keyboards: one connected to gaming mice, RGB lighting, and mechanical switches. The other connected to office mice, ergonomic wrist rests, and standing desks. Both are "keyboards with 18 neighbors." Without positional information, a GNN would give them the same embedding.
-    </p>
-    <p>
-      In language models, this is solved by positional encoding: "this word is at position 5 in the sentence." But graphs don&rsquo;t have a natural ordering. There is no "position 5."
-    </p>
-    <p>
-      The solution is <strong>Laplacian positional encoding</strong>. You compute the eigenvectors of the graph&rsquo;s Laplacian matrix (a matrix that captures the structure of connections). Each eigenvector acts like a "frequency" on the graph. Low-frequency eigenvectors capture large-scale community structure (gaming gear vs office gear). High-frequency eigenvectors capture fine-grained local differences. Each item gets 16 of these values as a positional fingerprint.
-    </p>
-    <p>
-      The practical effect: items that are close in the graph get similar positional encodings. Items far apart get different ones. The two keyboards are now distinguishable.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Why positional encoding matters</div>
-    <div class="compare" style="margin:0">
-      <div class="compare-card">
-        <div class="compare-label">Without positional encoding</div>
-        <div class="compare-desc">
-          Gaming keyboard and office keyboard have identical local neighborhoods (18 neighbors each). The model sees them as the same item. It cannot distinguish them.
-        </div>
-      </div>
-      <div class="compare-card">
-        <div class="compare-label">With Laplacian PE (k=16)</div>
-        <div class="compare-desc">
-          Each item gets a 16-number fingerprint based on its global position in the graph. The gaming keyboard is in the "gaming cluster." The office keyboard is in the "office cluster." Now the model can distinguish them.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 6: THE FFN INSIGHT
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 10. The engineering insight that changed everything</div>
-  <div class="prose fade">
-    <p>
-      The standard Graph Transformer architecture includes feed-forward network (FFN) layers after each attention layer. These are dense layers that expand the embedding dimension by 4x and then compress it back. In language models, FFN layers store factual knowledge ("Paris is the capital of France"). They are essential.
-    </p>
-    <p>
-      But graph recommendations are different. There are no "facts" to memorize. The model only needs to learn relationships between items. The FFN layers add massive compute cost with almost no benefit.
-    </p>
-    <p>
-      Removing the FFN layers produced a surprising result:
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">FFN removal impact</div>
-    <div class="compare" style="margin:0">
-      <div class="compare-card">
-        <div class="compare-label">With FFN</div>
-        <div class="compare-name">36.66% Recall@10</div>
-        <div class="compare-spec">
-          112K parameters<br>
-          40+ hours per epoch<br>
-          96 epochs to converge<br>
-          ~$1,880 for 100 epochs on GCP L4
-        </div>
-      </div>
-      <div class="compare-card dia-good">
-        <div class="compare-label">Without FFN (optimized)</div>
-        <div class="compare-name">38.28% Recall@10</div>
-        <div class="compare-spec">
-          46K parameters (2.4x smaller)<br>
-          27 minutes per epoch (88x faster)<br>
-          67 epochs to converge<br>
-          ~$21 for 100 epochs on GCP L4
-        </div>
-      </div>
-    </div>
-    <div class="dia-result good">Removing FFN: 88x faster training. 90x cheaper. AND 1.6% better accuracy.</div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      The model without FFN layers is not just cheaper. It is <strong>more accurate</strong>. The FFN layers were adding noise, not signal. This is a case where understanding the domain (graph relationships, not factual knowledge) led to an architectural decision that standard practice would never suggest.
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 11: HOW TRAINING WORKS
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 11. How training works</div>
-  <div class="prose fade">
-    <p>
-      The model learns by predicting what comes next in a session. Given items [A, B, C], predict D. The training signal is a <strong>listwise loss</strong>: score the correct next item higher than 5 randomly sampled negative items. This is cross-entropy ranking, the same loss used in learning-to-rank systems.
-    </p>
-    <p>
-      To represent a session, the model takes the embeddings of all items in the session and averages them (mean pooling). This "session embedding" is compared to candidate item embeddings via cosine similarity. The candidate with the highest similarity is the recommendation.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Training loop</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Session</div><div class="dia-box-sub">[keyboard, mouse,<br>monitor]</div></div>
+      <div class="dia-box"><div class="dia-box-title">GNN</div><div class="dia-box-sub">Graph Transformer<br>learns item embeddings</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">GNN</div><div class="dia-box-sub">each item gets<br>graph-aware embedding</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Mean pool</div><div class="dia-box-sub">average into one<br>session vector</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Rank candidates</div><div class="dia-box-sub">cosine similarity<br>1 positive + 5 negatives</div></div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Recommendations</div><div class="dia-box-sub">top-K by cosine<br>similarity</div></div>
     </div>
-    <div class="dia-arrow-down">&darr;</div>
-    <div class="dia-row">
-      <div class="dia-box dia-good"><div class="dia-box-title">Loss</div><div class="dia-box-sub">cross-entropy ranking. Score the correct<br>next item higher than the negatives.</div></div>
-    </div>
-    <div class="dia-note">AdamW optimizer. lr=1e-3. Batch size 32. 256-dim embeddings. 2 GNN layers. 2 attention heads.</div>
+    <div class="dia-note">17,266 items had no co-occurrence signal and are excluded. The graph captures what people actually browse together.</div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      The insight is that the data is not a table of user preferences. It is a <strong>network of item relationships</strong>. If two items appear in the same session, they are connected. The more sessions they co-appear in, the stronger the edge. A keyboard is connected to mice, monitors, and desk mats because that is what people browse together. No product metadata needed.
+    </p>
+    <p>
+      The graph has 82,173 nodes and 737,716 edges. Average degree of 18 (each item connects to about 18 others). Edge weights follow a power law: median weight of 1, max of 1,424. The model needs to treat a co-occurrence of 1,424 very differently from a co-occurrence of 1.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 9: RESULTS
+       CH 3: THREE DECISIONS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 12. Results</div>
+  <div class="sec fade">Chapter 3. Three decisions that shaped the architecture</div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">Temporal splits with blackout periods</div>
+      <div class="pipe-desc">The data is split 70/15/15 by time, not randomly. A <strong>2-day blackout period</strong> between each split prevents information leakage. Without the blackout, a session spanning the split boundary could leak future browsing behavior into training data. This is a detail that most academic implementations skip, but it is the difference between honest and dishonest evaluation.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">Laplacian positional encoding</div>
+      <div class="pipe-desc">Two items can have identical neighborhoods but sit in completely different parts of the graph. A gaming keyboard connected to RGB mice and a office keyboard connected to ergonomic wrist rests both have 18 neighbors. Without positional information, the GNN treats them identically. <strong>Laplacian PE</strong> computes 16 eigenvectors of the graph's Laplacian matrix, giving each item a structural fingerprint. Low-frequency eigenvectors capture community structure (gaming vs office clusters). High-frequency ones capture local differences.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Removed FFN layers (the 88x speedup)</div>
+      <div class="pipe-desc">Standard Graph Transformers include feed-forward network layers after each attention layer. In language models, FFN layers store factual knowledge. But graph recommendations have no "facts" to memorize, only relationships. I removed the FFN layers entirely. The result: <strong>88x faster training, 90x cheaper, and 1.6% better accuracy</strong>. The FFN layers were adding parameters that caused slight overfitting (112K vs 46K params). Removing them acted as implicit regularization.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 4: THE RESULTS TABLE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 4. The results</div>
+
   <div class="results fade">
     <div class="stat">
       <div class="stat-val">38.28%</div>
@@ -591,110 +217,160 @@
     </div>
     <div class="stat">
       <div class="stat-val">$21</div>
-      <div class="stat-label">100 Epochs</div>
+      <div class="stat-label">Training Cost</div>
     </div>
-  </div>
-  <div class="prose fade">
-    <p>
-      Recall@10 means: "out of all the items users actually clicked next, how often was the correct item in our top 10 recommendations?" Higher is better. The optimized Graph Transformer hits 38.28%, meaning it correctly predicts the next item within its top 10 recommendations more than a third of the time, despite having 82,000 possible items to choose from.
-    </p>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">Full comparison</div>
+    <div class="dia-title">Model comparison</div>
     <table class="rtable">
       <thead>
-        <tr><th>Model</th><th>Recall@10</th><th>Recall@20</th><th>NDCG@10</th><th>Params</th><th>Time/epoch</th></tr>
+        <tr><th>Model</th><th>Recall@10</th><th>NDCG@10</th><th>Params</th><th>Cost (100 epochs)</th><th>Trained?</th></tr>
       </thead>
       <tbody>
-        <tr><td>GraphSAGE</td><td>14.79%</td><td>18.19%</td><td>9.87%</td><td>29K</td><td>~16 min</td></tr>
-        <tr><td>GAT</td><td>20.10%</td><td>24.01%</td><td>13.64%</td><td>29K</td><td>~14 min</td></tr>
-        <tr><td>Graph Transformer (FFN)</td><td>36.66%</td><td>39.61%</td><td>29.75%</td><td>112K</td><td>40+ hrs</td></tr>
-        <tr class="best"><td>Graph Transformer (no FFN)</td><td>38.28%</td><td>41.29%</td><td>30.65%</td><td>46K</td><td>27 min</td></tr>
+        <tr><td>GraphSAGE</td><td>14.79%</td><td>9.87%</td><td>29K</td><td>~$22</td><td>Yes</td></tr>
+        <tr><td>GAT</td><td>20.10%</td><td>13.64%</td><td>29K</td><td>~$30</td><td>Yes</td></tr>
+        <tr class="nogo"><td>Graph Transformer (with FFN)</td><td>36.66%</td><td>29.75%</td><td>112K</td><td>~$1,880</td><td>No</td></tr>
+        <tr class="best"><td>Graph Transformer (optimized)</td><td>38.28%</td><td>30.65%</td><td>46K</td><td>~$21</td><td>Yes</td></tr>
       </tbody>
     </table>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 10: SERVING
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 13. How it serves in production</div>
-  <div class="prose fade">
-    <p>
-      Once trained, the item embeddings are frozen. The model is exported to ONNX for fast inference. A FastAPI service accepts a list of item IDs (the current session), looks up their embeddings, averages them into a session vector, and finds the nearest items via cosine similarity. Click any component to see details.
-    </p>
+    <div class="dia-note">Recall@10: correct next item in top 10 of 82K candidates. Cost estimated on GCP L4 GPU at $0.47/hour.</div>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">Serving architecture. Click to expand.</div>
-    <div class="dia-row" style="flex-wrap:wrap">
-      <div class="flow-node" onclick="toggleDetail('d-input')">
-        <div class="flow-node-title">Session items</div>
-        <div class="flow-node-sub">[item_1, item_2, ...]</div>
+    <div class="dia-title">The FFN removal</div>
+    <div class="compare" style="margin:0">
+      <div class="compare-card">
+        <div class="compare-label">With FFN (standard architecture)</div>
+        <div class="compare-name">36.66% Recall@10</div>
+        <div class="compare-spec">
+          112K parameters<br>
+          40+ hours per epoch<br>
+          ~$1,880 for 100 epochs<br>
+          Could not afford to train
+        </div>
       </div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="flow-node" onclick="toggleDetail('d-embed')">
-        <div class="flow-node-title">Embedding lookup</div>
-        <div class="flow-node-sub">frozen 256-dim vectors</div>
-      </div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="flow-node" onclick="toggleDetail('d-pool')">
-        <div class="flow-node-title">Mean pool</div>
-        <div class="flow-node-sub">session vector</div>
-      </div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="flow-node" onclick="toggleDetail('d-rank')">
-        <div class="flow-node-title">Rank all items</div>
-        <div class="flow-node-sub">cosine similarity</div>
-      </div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="flow-node" onclick="toggleDetail('d-serve')">
-        <div class="flow-node-title">FastAPI</div>
-        <div class="flow-node-sub">top-K response</div>
+      <div class="compare-card dia-good">
+        <div class="compare-label">Without FFN (my optimization)</div>
+        <div class="compare-name">38.28% Recall@10</div>
+        <div class="compare-spec">
+          46K parameters (2.4x smaller)<br>
+          27 minutes per epoch (88x faster)<br>
+          ~$21 for 100 epochs<br>
+          Trained to convergence at epoch 57
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="flow-detail" id="d-input">
-      <div class="flow-detail-title">Session Input</div>
-      <p>The client sends a list of item IDs representing the user&rsquo;s current browsing session. No user identity needed. No login required. Just the items they looked at.</p>
+  <div class="prose fade">
+    <p>
+      Recall@10 means: out of 82,000 possible items, the correct next item appeared in my top 10 recommendations 38% of the time. The optimized model is not just cheaper. It is more accurate. The smaller parameter count (46K vs 112K) acts as a regularizer, preventing the overfitting that the full architecture was prone to.
+    </p>
+    <p>
+      The Graph Transformer with FFN was estimated at $1,880 for training. I could not afford to run it. The optimized version trained for $21. The budget constraint forced an architectural decision that turned out to be the better engineering choice.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 5: MODEL ARCHITECTURE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 5. How the model works</div>
+
+  <div class="dia fade">
+    <div class="dia-title">Graph Transformer (Optimized) Architecture</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Item Embedding</div><div class="dia-box-sub">82K items &times; 256 dims</div></div>
+      <div class="dia-arrow">+</div>
+      <div class="dia-box"><div class="dia-box-title">Laplacian PE</div><div class="dia-box-sub">k=16 eigenvectors<br>&rarr; 256 dims</div></div>
     </div>
-    <div class="flow-detail" id="d-embed">
-      <div class="flow-detail-title">Embedding Lookup</div>
-      <p>Each item ID maps to a 256-dimensional vector that was learned during training. These embeddings are frozen at serving time. They encode both the item&rsquo;s features and its position in the product graph.</p>
-      <div class="spec">82,173 items &times; 256 dims = ~80MB embedding table</div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">TransformerConv &times; 2</div><div class="dia-box-sub">2 attention heads, 128 dims/head<br>BatchNorm + Residual + Dropout 0.1<br>No FFN layers</div></div>
     </div>
-    <div class="flow-detail" id="d-pool">
-      <div class="flow-detail-title">Session Pooling</div>
-      <p>All item embeddings in the session are averaged into a single 256-dim "session vector." This captures the overall intent of the browsing session. Mean pooling is simple but effective because the GNN has already encoded relational information into each item&rsquo;s embedding.</p>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Session Readout</div><div class="dia-box-sub">Mean pool session items<br>&rarr; [batch, 256]</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Cosine Ranking</div><div class="dia-box-sub">Score against all 82K items<br>BPR loss, 5 negatives</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Top-K</div><div class="dia-box-sub">Recommendations</div></div>
     </div>
-    <div class="flow-detail" id="d-rank">
-      <div class="flow-detail-title">Candidate Ranking</div>
-      <p>The session vector is compared to all 82K item embeddings via cosine similarity (dot product of normalized vectors). The top-K highest scoring items become the recommendations. Items already in the session are excluded.</p>
+    <div class="dia-note">2 GNN layers is the sweet spot. Avg degree 18, so 2 hops covers ~324 items. 3+ layers cause over-smoothing.</div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      Each item starts with a learned 256-dim embedding plus a Laplacian positional encoding (16 eigenvectors projected to 256 dims). Two layers of TransformerConv with multi-head attention let each item update its embedding based on its graph neighborhood. At inference, a session's item embeddings are averaged into a single session vector, then ranked against all 82K items by cosine similarity.
+    </p>
+    <p>
+      Training uses <strong>BPR (Bayesian Personalized Ranking)</strong> loss: given items [A, B, C] in a session, score the correct next item higher than 5 randomly sampled negatives. AdamW optimizer, learning rate 1e-3, batch size 32. Early stopping with patience of 10 epochs. The model converged at epoch 57 of 67.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 6: ENGINEERING STACK
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 6. The engineering stack</div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">ML Engineering</div>
+      <div class="pipe-desc"><strong>PyTorch + PyTorch Geometric</strong> for model training. <strong>DVC pipeline</strong> (5 stages: sessionize, split, build_graph, validate, train) for reproducibility. Ablation studies across FFN vs no-FFN, number of layers, negative sampling count, and positional encoding variants.</div>
     </div>
-    <div class="flow-detail" id="d-serve">
-      <div class="flow-detail-title">FastAPI Service</div>
-      <p>Production API with POST /recommend (single session) and POST /recommend/batch (multiple sessions). Model exported to ONNX for optimized inference. Health check at /health returns model info and item count.</p>
-      <div class="spec">Trained on GCP Vertex AI with NVIDIA L4 GPU (24GB VRAM). Experiments tracked with MLflow.</div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">Production Serving</div>
+      <div class="pipe-desc"><strong>FastAPI</strong> with POST /recommend (single session) and POST /recommend/batch. Item embeddings exported to <strong>ONNX Runtime</strong> for inference. The ONNX model does pure dot-product ranking at serving time, no GNN forward pass needed. <strong>Docker</strong> images for both training and serving.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Cloud Infrastructure</div>
+      <div class="pipe-desc"><strong>GCP Vertex AI</strong> for training on NVIDIA L4 GPU (24GB VRAM). <strong>Terraform</strong> for infrastructure-as-code: Artifact Registry, GCS buckets with lifecycle rules, service accounts with scoped IAM roles. <strong>Cloud Build</strong> pipelines for CI/CD. <strong>Prometheus</strong> for monitoring.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-title">Code Quality</div>
+      <div class="pipe-desc"><strong>pytest</strong> test suite, <strong>mypy</strong> type checking, <strong>ruff</strong> linting, <strong>black</strong> formatting. <strong>MLflow</strong> for experiment tracking. Full C4 architecture documentation (context, containers, components, code-level walkthroughs).</div>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════
-       STACK + LINK
+       STACK
        ═══════════════════════════════════════ -->
   <div class="sec fade">Stack</div>
-  <div class="stack fade">
-    <span class="stack-tag">PyTorch</span>
-    <span class="stack-tag">PyTorch Geometric</span>
-    <span class="stack-tag">SciPy (eigendecomposition)</span>
-    <span class="stack-tag">ONNX Runtime</span>
-    <span class="stack-tag">FastAPI</span>
-    <span class="stack-tag">GCP Vertex AI</span>
-    <span class="stack-tag">NVIDIA L4 GPU</span>
-    <span class="stack-tag">MLflow</span>
-    <span class="stack-tag">RetailRocket</span>
+  <div class="stack-group">
+    <div class="stack-group-label">ML Engineering</div>
+    <div class="stack">
+      <span class="stack-tag">PyTorch</span>
+      <span class="stack-tag">PyTorch Geometric</span>
+      <span class="stack-tag">SciPy</span>
+      <span class="stack-tag">DVC</span>
+      <span class="stack-tag">MLflow</span>
+    </div>
+  </div>
+  <div class="stack-group">
+    <div class="stack-group-label">Production Serving</div>
+    <div class="stack">
+      <span class="stack-tag">FastAPI</span>
+      <span class="stack-tag">ONNX Runtime</span>
+      <span class="stack-tag">Docker</span>
+      <span class="stack-tag">Uvicorn</span>
+    </div>
+  </div>
+  <div class="stack-group">
+    <div class="stack-group-label">Cloud &amp; Infra</div>
+    <div class="stack">
+      <span class="stack-tag">GCP Vertex AI</span>
+      <span class="stack-tag">Terraform</span>
+      <span class="stack-tag">Cloud Build</span>
+      <span class="stack-tag">Prometheus</span>
+      <span class="stack-tag">NVIDIA L4 GPU</span>
+    </div>
   </div>
 
-  <a href="https://github.com/Axionis47/GAT-Recommendation" target="_blank" class="proj-link fade">View on GitHub &rarr;</a>
+  <a href="https://github.com/Axionis47/GAT-Recommendation" target="_blank" class="proj-link fade">View on GitHub &rsaquo;</a>
 
 </main>
 
@@ -710,22 +386,9 @@
 </footer>
 
 <script>
-function toggleDetail(id){
-  const el = document.getElementById(id);
-  const wasOpen = el.classList.contains('open');
-  document.querySelectorAll('.flow-detail').forEach(d => d.classList.remove('open'));
-  document.querySelectorAll('.flow-node').forEach(n => n.classList.remove('active'));
-  if(!wasOpen){
-    el.classList.add('open');
-    const details = [...document.querySelectorAll('.flow-detail')];
-    const idx = details.indexOf(el);
-    const nodes = document.querySelectorAll('.flow-node');
-    if(nodes[idx]) nodes[idx].classList.add('active');
-  }
-}
 const obs = new IntersectionObserver(es => {
   es.forEach((e, i) => {
-    if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 70); obs.unobserve(e.target); }
+    if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
   });
 }, { threshold: .12 });
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
