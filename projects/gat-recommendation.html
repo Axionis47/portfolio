@@ -81,6 +81,32 @@
   .stack-group-label{font-family:var(--mono);font-size:.56rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
   .proj-link{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
   .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+
+  /* ─── Graph Animation ─── */
+  .graph-canvas-wrap{position:relative;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);margin:20px 0;overflow:hidden}
+  .graph-canvas-wrap canvas{display:block;width:100%;height:340px}
+  .graph-canvas-label{position:absolute;top:16px;left:20px;font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase}
+  .graph-canvas-status{position:absolute;bottom:16px;left:20px;font-family:var(--mono);font-size:.6rem;color:var(--t2);transition:opacity .4s}
+  .graph-canvas-btn{position:absolute;bottom:14px;right:20px;font-family:var(--mono);font-size:.6rem;color:var(--accent);background:var(--inset);border:none;padding:5px 14px;border-radius:50px;cursor:pointer;box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl);transition:color .2s}
+  .graph-canvas-btn:hover{color:#eaa050}
+
+  /* ─── Train vs Predict Visual ─── */
+  .dual-graph{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
+  .dual-graph-panel{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);overflow:hidden;position:relative}
+  .dual-graph-panel canvas{display:block;width:100%;height:260px}
+  .dual-graph-label{position:absolute;top:14px;left:18px;font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.04em;text-transform:uppercase}
+  .dual-graph-caption{font-family:var(--mono);font-size:.62rem;color:var(--t2);padding:14px 18px;line-height:1.8;border-top:1px solid rgba(255,255,255,0.03)}
+
+  /* ─── Cascade Diagram ─── */
+  .cascade{position:relative;padding-left:32px;margin:20px 0}
+  .cascade::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
+  .cascade-step{position:relative;margin-bottom:16px}
+  .cascade-step::before{content:'';position:absolute;left:-25px;top:10px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
+  .cascade-fact{font-family:var(--mono);font-size:.72rem;font-weight:500;color:var(--t1);margin-bottom:2px}
+  .cascade-why{font-family:var(--mono);font-size:.62rem;color:var(--t3);line-height:1.7}
+
+  @media(max-width:768px){.dual-graph{grid-template-columns:1fr}}
+
   footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
   .ft{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
   .ft-c{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
@@ -165,6 +191,14 @@
     <div class="dia-note">17,266 items had no co-occurrence signal and are excluded. The graph captures what people actually browse together.</div>
   </div>
 
+  <!-- Graph building animation -->
+  <div class="graph-canvas-wrap fade">
+    <div class="graph-canvas-label">Sessions &rarr; Graph</div>
+    <canvas id="graphBuildCanvas"></canvas>
+    <div class="graph-canvas-status" id="graphBuildStatus">Click replay to watch sessions become a graph</div>
+    <button class="graph-canvas-btn" id="graphBuildBtn" onclick="startGraphBuild()">&#9654; Play</button>
+  </div>
+
   <div class="prose fade">
     <p>
       The insight is that the data is not a table of user preferences. It is a <strong>network of item relationships</strong>. If two items appear in the same session, they are connected. The more sessions they co-appear in, the stronger the edge. A keyboard is connected to mice, monitors, and desk mats because that is what people browse together. No product metadata needed.
@@ -198,9 +232,103 @@
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 4: THE RESULTS TABLE
+       CH 3.5: TRAIN BIG, PREDICT SMALL
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 4. The results</div>
+  <div class="sec fade">Chapter 4. Train on the big graph, predict on tiny subgraphs</div>
+
+  <div class="prose fade">
+    <p>
+      This is the part that trips people up. The GNN trains on the full 82K-node graph, learning embeddings for every item by absorbing neighborhood structure. But at prediction time, it works with a tiny subgraph: just the 3 to 5 items from the current session.
+    </p>
+  </div>
+
+  <div class="dual-graph fade">
+    <div class="dual-graph-panel">
+      <div class="dual-graph-label">Training: Full Graph</div>
+      <canvas id="trainGraphCanvas"></canvas>
+      <div class="dual-graph-caption">82K nodes, 738K edges. The GNN runs message passing across the entire graph, learning embeddings that encode each item's neighborhood.</div>
+    </div>
+    <div class="dual-graph-panel">
+      <div class="dual-graph-label">Prediction: Session Subgraph</div>
+      <canvas id="predictGraphCanvas"></canvas>
+      <div class="dual-graph-caption">3-5 nodes from the session. Embeddings are already trained. Mean pool into a session vector, rank all 82K items by cosine similarity.</div>
+    </div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      The session is the query: "these 3 items are what the user cares about." The graph is the knowledge base: "here is what 120,436 sessions tell us about how items relate." Each item's embedding is not just its own, it has been enriched by 324 neighbors through 2 layers of message passing. So even a 3-item session carries the signal of thousands of prior sessions.
+    </p>
+    <p>
+      This has a direct consequence for model capacity. Training subgraphs are 3 to 5 nodes with 3 to 10 edges. The FFN layer has more parameters (524K) than data points per forward pass. It memorizes rather than generalizes. <strong>Removing FFN is not a cost optimization. It is the correct architectural choice for tiny subgraphs.</strong>
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 5: THE DESIGN CASCADE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 5. Why every parameter traces back to one fact</div>
+
+  <div class="prose fade">
+    <p>
+      Sessions are short. Average 5.55 items, median 4. This single data characteristic cascades into every architectural decision. None of the parameters are arbitrary. They are consequences.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">The Design Cascade</div>
+    <div class="cascade">
+      <div class="cascade-step">
+        <div class="cascade-fact">Sessions are short (median 4 items)</div>
+        <div class="cascade-why">Most visitors browse 3 to 6 items and leave</div>
+      </div>
+      <div class="cascade-step">
+        <div class="cascade-fact">Co-occurrence window = 5</div>
+        <div class="cascade-why">Window &ge; median session length, so most sessions become fully connected subgraphs</div>
+      </div>
+      <div class="cascade-step">
+        <div class="cascade-fact">Graph is dense (avg degree 18)</div>
+        <div class="cascade-why">Full-coverage window on short sessions creates many overlapping edges</div>
+      </div>
+      <div class="cascade-step">
+        <div class="cascade-fact">2 GNN layers (not 3, not 4)</div>
+        <div class="cascade-why">Degree 18, so 2 hops = 324 nodes (enough context). 3 hops = 5,832 (over-smoothing)</div>
+      </div>
+      <div class="cascade-step">
+        <div class="cascade-fact">Training subgraphs are tiny (3-5 nodes)</div>
+        <div class="cascade-why">Short sessions extract small subgraphs from the global graph</div>
+      </div>
+      <div class="cascade-step">
+        <div class="cascade-fact">FFN removed (88x speedup, better accuracy)</div>
+        <div class="cascade-why">524K FFN parameters overfitting on 3-5 node subgraphs. Removal = implicit regularization</div>
+      </div>
+      <div class="cascade-step">
+        <div class="cascade-fact">Laplacian PE is critical</div>
+        <div class="cascade-why">Dense graph means similar neighborhoods. PE gives each item a unique structural fingerprint</div>
+      </div>
+    </div>
+    <div class="dia-note">Change the session length, and most of these parameters should change with it. The numbers are consequences, not choices.</div>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Parameter Table (with reasoning chain)</div>
+    <table class="rtable">
+      <tr><th>Parameter</th><th>Value</th><th>Why</th></tr>
+      <tr><td>co_event_window</td><td>5</td><td>Window &ge; median session (4) for full coverage</td></tr>
+      <tr><td>num_layers</td><td>2</td><td>Degree 18: 2 hops = 324 nodes. 3 = over-smoothing</td></tr>
+      <tr><td>num_heads</td><td>2</td><td>2 attention patterns (same-category vs complementary)</td></tr>
+      <tr><td>use_ffn</td><td>False</td><td>Tiny subgraphs cannot support 524K extra params</td></tr>
+      <tr><td>laplacian_k</td><td>16</td><td>16 eigenvectors capture global structure in dense graph</td></tr>
+      <tr><td>embedding_dim</td><td>256</td><td>82K items need room to be distinguishable</td></tr>
+      <tr><td>dropout</td><td>0.1</td><td>Light regularization on top of implicit (no FFN)</td></tr>
+      <tr><td>neg_samples</td><td>5</td><td>Sufficient contrast for BPR pairwise ranking</td></tr>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 6: THE RESULTS TABLE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 6. The results</div>
 
   <div class="results fade">
     <div class="stat">
@@ -275,7 +403,7 @@
   <!-- ═══════════════════════════════════════
        CH 5: MODEL ARCHITECTURE
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 5. How the model works</div>
+  <div class="sec fade">Chapter 7. How the model works</div>
 
   <div class="dia fade">
     <div class="dia-title">Graph Transformer (Optimized) Architecture</div>
@@ -311,7 +439,7 @@
   <!-- ═══════════════════════════════════════
        CH 6: ENGINEERING STACK
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 6. The engineering stack</div>
+  <div class="sec fade">Chapter 8. The engineering stack</div>
 
   <div class="pipeline fade">
     <div class="pipe-step">
@@ -386,12 +514,396 @@
 </footer>
 
 <script>
+/* ─── Fade-in observer ─── */
 const obs = new IntersectionObserver(es => {
   es.forEach((e, i) => {
     if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
   });
 }, { threshold: .12 });
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+/* ─── Shared helpers ─── */
+const accent = '#d88c3a';
+const t1 = '#e0e0e0';
+const t2 = '#ababab';
+const t3 = '#787880';
+const bg = '#101012';
+const raised = '#1a1a1d';
+const inset = '#0a0a0c';
+
+function initCanvas(id){
+  const c = document.getElementById(id);
+  if(!c) return null;
+  const dpr = window.devicePixelRatio || 1;
+  const rect = c.getBoundingClientRect();
+  c.width = rect.width * dpr;
+  c.height = rect.height * dpr;
+  const ctx = c.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { c, ctx, w: rect.width, h: rect.height };
+}
+
+function drawNode(ctx, x, y, r, color, alpha, label){
+  ctx.globalAlpha = alpha;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.globalAlpha = alpha * 0.3;
+  ctx.beginPath();
+  ctx.arc(x, y, r + 4, 0, Math.PI*2);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  if(label){
+    ctx.globalAlpha = alpha * 0.8;
+    ctx.font = '10px JetBrains Mono';
+    ctx.fillStyle = t2;
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x, y + r + 14);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawEdge(ctx, x1, y1, x2, y2, alpha, weight){
+  ctx.globalAlpha = alpha * Math.min(weight / 4, 1);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = Math.min(weight, 3);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
+/* ─── Animation 1: Session to Graph ─── */
+let graphBuildAnim = null;
+
+function startGraphBuild(){
+  if(graphBuildAnim) cancelAnimationFrame(graphBuildAnim);
+  const cv = initCanvas('graphBuildCanvas');
+  if(!cv) return;
+  const {ctx, w, h} = cv;
+
+  const items = [
+    {id:'Keyboard', x:0, y:0}, {id:'Mouse', x:0, y:0}, {id:'Monitor', x:0, y:0},
+    {id:'USB Hub', x:0, y:0}, {id:'Desk Mat', x:0, y:0}, {id:'Webcam', x:0, y:0},
+    {id:'Headset', x:0, y:0}, {id:'Lamp', x:0, y:0}, {id:'Chair', x:0, y:0},
+    {id:'Stand', x:0, y:0}, {id:'Cable', x:0, y:0}, {id:'Mousepad', x:0, y:0}
+  ];
+
+  // Position in a circle on the right side
+  const cx = w * 0.6, cy = h * 0.5, radius = Math.min(w, h) * 0.32;
+  items.forEach((item, i) => {
+    const a = (i / items.length) * Math.PI * 2 - Math.PI / 2;
+    item.x = cx + Math.cos(a) * radius;
+    item.y = cy + Math.sin(a) * radius;
+  });
+
+  const sessions = [
+    {items: [0, 1, 2], label: 'Session 1: Keyboard, Mouse, Monitor'},
+    {items: [0, 4, 3], label: 'Session 2: Keyboard, Desk Mat, USB Hub'},
+    {items: [5, 6, 1], label: 'Session 3: Webcam, Headset, Mouse'},
+    {items: [7, 8, 9], label: 'Session 4: Lamp, Chair, Stand'},
+    {items: [1, 11, 4], label: 'Session 5: Mouse, Mousepad, Desk Mat'},
+    {items: [2, 10, 3], label: 'Session 6: Monitor, Cable, USB Hub'},
+    {items: [6, 5, 10], label: 'Session 7: Headset, Webcam, Cable'},
+    {items: [8, 7, 2], label: 'Session 8: Chair, Lamp, Monitor'}
+  ];
+
+  const edges = {};
+  const edgeList = [];
+  sessions.forEach(s => {
+    for(let i=0;i<s.items.length;i++){
+      for(let j=i+1;j<s.items.length;j++){
+        const a = Math.min(s.items[i], s.items[j]);
+        const b = Math.max(s.items[i], s.items[j]);
+        const key = a+'-'+b;
+        if(!edges[key]){ edges[key]={a,b,w:0}; edgeList.push(edges[key]); }
+        edges[key].w++;
+      }
+    }
+  });
+
+  let currentSession = 0;
+  let sessionProgress = 0;
+  const sessionDuration = 80;
+  const pauseDuration = 30;
+  let frame = 0;
+  const totalFrames = sessions.length * (sessionDuration + pauseDuration) + 60;
+
+  const activeEdgesUpTo = [];
+  let nodeAlpha = items.map(() => 0.15);
+
+  const status = document.getElementById('graphBuildStatus');
+  const btn = document.getElementById('graphBuildBtn');
+  btn.textContent = '⟳ Replay';
+
+  function animate(){
+    ctx.clearRect(0, 0, w, h);
+    frame++;
+
+    // Determine current session
+    let f = frame;
+    let sessIdx = 0;
+    while(sessIdx < sessions.length && f > sessionDuration + pauseDuration){
+      f -= sessionDuration + pauseDuration;
+      sessIdx++;
+    }
+    if(sessIdx < sessions.length){
+      currentSession = sessIdx;
+      sessionProgress = Math.min(f / sessionDuration, 1);
+    } else {
+      currentSession = sessions.length;
+      sessionProgress = 1;
+    }
+
+    // Build active edges up to current session
+    const visibleEdges = {};
+    for(let s=0; s<Math.min(currentSession + 1, sessions.length); s++){
+      const sess = sessions[s];
+      const prog = s < currentSession ? 1 : sessionProgress;
+      for(let i=0;i<sess.items.length;i++){
+        for(let j=i+1;j<sess.items.length;j++){
+          const a = Math.min(sess.items[i], sess.items[j]);
+          const b = Math.max(sess.items[i], sess.items[j]);
+          const key = a+'-'+b;
+          if(!visibleEdges[key]) visibleEdges[key] = {a,b,w:0,alpha:0};
+          if(s < currentSession){ visibleEdges[key].w++; visibleEdges[key].alpha = 1; }
+          else { visibleEdges[key].w++; visibleEdges[key].alpha = prog; }
+        }
+      }
+    }
+
+    // Light up session nodes
+    nodeAlpha = items.map(() => 0.2);
+    if(currentSession < sessions.length){
+      sessions[currentSession].items.forEach(i => nodeAlpha[i] = 0.5 + sessionProgress * 0.5);
+    }
+    // Keep previously seen nodes brighter
+    for(let s=0;s<currentSession;s++){
+      sessions[s].items.forEach(i => { if(nodeAlpha[i] < 0.6) nodeAlpha[i] = 0.6; });
+    }
+
+    // Draw session text on the left
+    ctx.fillStyle = raised;
+    ctx.fillRect(0, 0, w * 0.28, h);
+    ctx.font = '10px JetBrains Mono';
+    ctx.textAlign = 'left';
+    for(let s=0;s<sessions.length;s++){
+      const yy = 50 + s * 34;
+      const isActive = s === currentSession;
+      const isPast = s < currentSession;
+      ctx.globalAlpha = isActive ? 1 : isPast ? 0.5 : 0.15;
+      ctx.fillStyle = isActive ? accent : t2;
+      ctx.fillText(sessions[s].label, 16, yy);
+      if(isActive){
+        ctx.fillStyle = accent;
+        ctx.globalAlpha = 0.3;
+        ctx.fillRect(10, yy - 12, w * 0.26, 20);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Draw edges
+    Object.values(visibleEdges).forEach(e => {
+      drawEdge(ctx, items[e.a].x, items[e.a].y, items[e.b].x, items[e.b].y, e.alpha, e.w);
+    });
+
+    // Draw nodes
+    items.forEach((item, i) => {
+      drawNode(ctx, item.x, item.y, 6, nodeAlpha[i] > 0.5 ? accent : t3, nodeAlpha[i], item.id);
+    });
+
+    // Status
+    if(currentSession < sessions.length){
+      status.textContent = 'Processing ' + sessions[currentSession].label + '...';
+    } else {
+      const edgeCount = Object.keys(visibleEdges).length;
+      status.textContent = items.length + ' nodes, ' + edgeCount + ' edges built from ' + sessions.length + ' sessions';
+    }
+
+    if(frame < totalFrames){
+      graphBuildAnim = requestAnimationFrame(animate);
+    }
+  }
+  animate();
+}
+
+/* ─── Animation 2: Train vs Predict side-by-side ─── */
+function initDualGraphs(){
+  // Training graph (big, many nodes)
+  const cv1 = initCanvas('trainGraphCanvas');
+  const cv2 = initCanvas('predictGraphCanvas');
+  if(!cv1 || !cv2) return;
+
+  // --- Training graph: ~40 nodes in clusters ---
+  const nodes1 = [];
+  const edges1 = [];
+  const clusters = [
+    {cx: 0.3, cy: 0.35, n: 8, label: 'Electronics'},
+    {cx: 0.7, cy: 0.35, n: 7, label: 'Office'},
+    {cx: 0.5, cy: 0.75, n: 8, label: 'Gaming'},
+    {cx: 0.15, cy: 0.7, n: 5, label: ''},
+    {cx: 0.85, cy: 0.7, n: 5, label: ''},
+    {cx: 0.5, cy: 0.2, n: 4, label: ''}
+  ];
+
+  clusters.forEach(cl => {
+    const start = nodes1.length;
+    for(let i=0;i<cl.n;i++){
+      const a = (i / cl.n) * Math.PI * 2;
+      const r = 30 + Math.random() * 25;
+      nodes1.push({
+        x: cl.cx * cv1.w + Math.cos(a) * r,
+        y: cl.cy * cv1.h + Math.sin(a) * r,
+        cluster: clusters.indexOf(cl)
+      });
+    }
+    // Intra-cluster edges
+    for(let i=start;i<nodes1.length;i++){
+      for(let j=i+1;j<nodes1.length;j++){
+        if(Math.random() < 0.5) edges1.push({a:i, b:j});
+      }
+    }
+  });
+  // Inter-cluster edges (sparse)
+  for(let i=0;i<nodes1.length;i++){
+    for(let j=i+1;j<nodes1.length;j++){
+      if(nodes1[i].cluster !== nodes1[j].cluster && Math.random() < 0.03){
+        edges1.push({a:i, b:j});
+      }
+    }
+  }
+
+  // Animate training graph with pulsing message passing
+  let frame = 0;
+  function drawTraining(){
+    const {ctx, w, h} = cv1;
+    ctx.clearRect(0, 0, w, h);
+    frame++;
+    const pulse = 0.5 + 0.2 * Math.sin(frame * 0.03);
+
+    // Draw edges
+    edges1.forEach(e => {
+      const wave = 0.15 + 0.1 * Math.sin(frame * 0.02 + e.a * 0.5);
+      ctx.globalAlpha = wave;
+      ctx.beginPath();
+      ctx.moveTo(nodes1[e.a].x, nodes1[e.a].y);
+      ctx.lineTo(nodes1[e.b].x, nodes1[e.b].y);
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Message passing particles
+    edges1.forEach((e, idx) => {
+      if(idx % 4 !== Math.floor(frame / 20) % 4) return;
+      const t = (frame % 40) / 40;
+      const px = nodes1[e.a].x + (nodes1[e.b].x - nodes1[e.a].x) * t;
+      const py = nodes1[e.a].y + (nodes1[e.b].y - nodes1[e.a].y) * t;
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.arc(px, py, 2, 0, Math.PI*2);
+      ctx.fillStyle = accent;
+      ctx.fill();
+    });
+
+    // Draw nodes
+    nodes1.forEach((n, i) => {
+      const glow = i % 7 === Math.floor(frame / 15) % 7 ? 0.9 : pulse;
+      drawNode(ctx, n.x, n.y, 4, accent, glow, null);
+    });
+
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(drawTraining);
+  }
+
+  // --- Prediction graph: 4 highlighted nodes, small subgraph ---
+  const sessionNodes = [
+    {x: cv2.w * 0.3, y: cv2.h * 0.35, label: 'Keyboard'},
+    {x: cv2.w * 0.6, y: cv2.h * 0.25, label: 'Mouse'},
+    {x: cv2.w * 0.5, y: cv2.h * 0.55, label: 'Monitor'},
+  ];
+  // Ghost nodes (the 82K background)
+  const ghostNodes = [];
+  for(let i=0;i<30;i++){
+    ghostNodes.push({
+      x: cv2.w * (0.1 + Math.random() * 0.8),
+      y: cv2.h * (0.1 + Math.random() * 0.8)
+    });
+  }
+  // Result node
+  const resultNode = {x: cv2.w * 0.75, y: cv2.h * 0.65, label: 'USB Hub'};
+
+  let pFrame = 0;
+  function drawPredict(){
+    const {ctx, w, h} = cv2;
+    ctx.clearRect(0, 0, w, h);
+    pFrame++;
+
+    // Ghost nodes (faint)
+    ghostNodes.forEach(n => {
+      drawNode(ctx, n.x, n.y, 3, t3, 0.1, null);
+    });
+
+    // Session edges
+    for(let i=0;i<sessionNodes.length;i++){
+      for(let j=i+1;j<sessionNodes.length;j++){
+        drawEdge(ctx, sessionNodes[i].x, sessionNodes[i].y, sessionNodes[j].x, sessionNodes[j].y, 0.6, 2);
+      }
+    }
+
+    // Session nodes
+    sessionNodes.forEach(n => {
+      drawNode(ctx, n.x, n.y, 7, accent, 0.9, n.label);
+    });
+
+    // Mean pool arrow
+    const poolX = cv2.w * 0.5, poolY = cv2.h * 0.42;
+    ctx.globalAlpha = 0.4;
+    ctx.font = '9px JetBrains Mono';
+    ctx.fillStyle = t3;
+    ctx.textAlign = 'center';
+    ctx.fillText('mean pool', poolX, poolY - 2);
+
+    // Animated arrow to result
+    const pulse = 0.4 + 0.3 * Math.sin(pFrame * 0.04);
+    ctx.globalAlpha = pulse;
+    ctx.beginPath();
+    ctx.moveTo(poolX + 30, poolY);
+    ctx.lineTo(resultNode.x - 14, resultNode.y - 8);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Result node (pulsing)
+    const rPulse = 0.5 + 0.4 * Math.sin(pFrame * 0.05);
+    ctx.globalAlpha = rPulse;
+    ctx.beginPath();
+    ctx.arc(resultNode.x, resultNode.y, 10, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(90,154,90,0.15)';
+    ctx.fill();
+    drawNode(ctx, resultNode.x, resultNode.y, 7, '#5a9a5a', rPulse, resultNode.label + ' ✓');
+
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(drawPredict);
+  }
+
+  drawTraining();
+  drawPredict();
+}
+
+// Auto-init dual graphs when they scroll into view
+const dualObs = new IntersectionObserver(es => {
+  es.forEach(e => {
+    if(e.isIntersecting){ initDualGraphs(); dualObs.disconnect(); }
+  });
+}, { threshold: .2 });
+const dualEl = document.querySelector('.dual-graph');
+if(dualEl) dualObs.observe(dualEl);
 </script>
 </body>
 </html>
