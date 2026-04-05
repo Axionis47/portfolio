@@ -167,6 +167,9 @@
     <p>
       The orchestrator evolved through two versions. <strong>v1</strong> was a structured tool-call loop: 15 max iterations, 4 tools (<code>dispatch_to_agent</code>, <code>dispatch_parallel_agents</code>, <code>request_critique</code>, <code>finalize_analysis</code>). It built a context string each turn listing what was completed and what remained, which nudged the LLM toward a fixed sequence. It worked, but it was not truly autonomous. <strong>v2</strong> is the ReActOrchestrator: a full observe-reason-act loop over 20 steps. It sees its own last 3 actions, has a <code>reflect</code> tool for mid-run self-correction, a timeout guard (<code>asyncio.wait_for</code>), and stuck-loop detection that breaks out after 3 consecutive errors. The LLM genuinely adapts. If an agent fails, it reasons about what to try next instead of following a script.
     </p>
+    <p>
+      I chose a ReAct orchestrator over a hardcoded pipeline because causal analysis is inherently adaptive. Data characteristics should drive method selection, not fixed rules. The LLM reasons about what is needed next, allowing the system to skip unnecessary steps or iterate when critique flags issues. MAX_STEPS of 20 prevents runaway loops, and 3 consecutive null actions trigger an automatic break.
+    </p>
   </div>
 
   <!-- Canvas Animation: ReAct Orchestration Loop -->
@@ -232,7 +235,7 @@
   <!-- ═══════════════════════════════════════
        CH 3: CONTEXT ENGINEERING
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 3. Pull, don&rsquo;t push</div>
+  <div class="sec fade">Chapter 3. Pull, don't push</div>
   <div class="prose fade">
     <p>
       The naive approach to multi-agent systems: dump the entire state into every agent's system prompt. The profiler produced a 200-row summary? Every downstream agent gets it. The DAG has 40 edges? Paste the adjacency list into every prompt. This is how you burn tokens and bury signal in noise.
@@ -245,6 +248,9 @@
     </p>
     <p>
       The key: context pulls and domain actions <strong>interleave in the same ReAct loop.</strong> The effect estimator calls <code>get_confounder_analysis()</code> to pull the adjustment set, then immediately calls <code>run_method("aipw")</code> with those confounders. The LLM decides when to pull and when to act. Six of the eight specialists use this pattern. The two exceptions are the notebook generator (reads state directly, no tools) and the critique agent, which has its own eight investigation tools instead of the generic context mixin.
+    </p>
+    <p>
+      I chose pull-based context tools over state dumps because agents that receive full state attend to noise. The Sensitivity Analyst does not need the data profile. Context tools let each agent query exactly what it needs: <code>get_eda_finding(topic)</code>, <code>get_confounder_analysis(top_n)</code>, <code>get_dag_adjustment_set(treatment, outcome)</code>. This reduces token overhead and prevents anchoring on irrelevant findings.
     </p>
   </div>
 
@@ -263,6 +269,9 @@
     </p>
     <p>
       The effect estimator agent does not hardcode this decision. It <strong>inspects the data</strong> and reasons about applicability. Binary treatment with less than 100 observations? OLS and IPW only. More than 500 observations with potential nonlinear effects? Add causal forests and double ML. Time dimension? Try difference-in-differences. A variable that looks like an instrument? Try IV. The agent runs every applicable method, then the LLM selects the most credible subset based on diagnostics, not the smallest p-value.
+    </p>
+    <p>
+      I chose to implement all 12 estimation methods with sample-size gating because no single method works for all datasets. OLS needs 30+ samples. Causal Forest needs 500+. The system auto-selects feasible methods based on data characteristics: sample size, treatment type (binary vs continuous), and special requirements (time dimension for DID, instruments for IV, running variable for RDD). A shared <code>treatment_binarization_threshold</code> ensures all methods encode continuous treatments identically.
     </p>
   </div>
 
@@ -300,6 +309,9 @@
     <p>
       The DAG expert agent then takes the algorithmic output and <strong>refines it with domain knowledge</strong>. If the Kaggle metadata says this is a medical dataset and the algorithm puts "age" as caused by "blood pressure," the LLM catches that and flips the edge. It enforces forbidden edges, computes the backdoor adjustment set, and assigns confidence scores to each edge.
     </p>
+    <p>
+      I chose NOTEARS as the primary discovery algorithm because it produces a true DAG via continuous optimization with an acyclicity constraint (<code>h_tol=1e-8</code>), making results directly usable for backdoor adjustment. PC and FCI produce equivalence classes with undirected edges that require additional assumptions to orient. The L1 penalty (<code>lambda1=0.1</code>) enforces sparsity without a separate edge thresholding step.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -316,6 +328,9 @@
     <p>
       If the critique finds problems, the orchestrator sends the analysis back to the estimation stage with feedback injected into context. This can happen up to three times. The output is a 14-section Jupyter notebook with executable code. Not a summary. A notebook you can run, modify, and verify every claim.
     </p>
+    <p>
+      I chose an evidence-based critique loop over simple LLM review because the critic must investigate actual data, not just summarize. The CritiqueAgent has 7 investigation tools: <code>check_covariate_balance()</code>, <code>check_estimate_consistency()</code>, <code>check_subgroup_effects()</code>, <code>verify_propensity_scores()</code>, and 3 others. It debates from three perspectives (Advocate, Skeptic, Methodologist) and can trigger re-runs up to 3 times. Beyond that, returns diminish and risk analysis paralysis.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -328,6 +343,9 @@
     </p>
     <p>
       At the bottom, tenacity retries absorb transient network errors. Above that, the ReAct loop detects when an agent is stuck and breaks out. The orchestrator isolates state so one agent's failure cannot corrupt another's work. The job manager enforces global resource limits. And on restart, orphaned jobs from dead processes are automatically recovered. No single layer is sophisticated. The value is that they are stacked: a rate limit spike does not crash the agent, a crashed agent does not corrupt state, a corrupted job does not block the server.
+    </p>
+    <p>
+      I chose 5 independent reliability layers because each catches a different failure mode. Retries (exponential backoff, base 5s, up to 5 attempts) handle transient API errors. Circuit breaker (opens after 5 consecutive failures, 60s cooldown) prevents cascading load. Timeouts (300s per agent) prevent hung operations. Backpressure (semaphore, max 3 concurrent jobs) prevents memory exhaustion. Data loss filters (reject estimates exceeding 100x outcome standard deviation) prevent numerical blow-ups from corrupting results.
     </p>
   </div>
 
@@ -425,6 +443,28 @@
       <div class="pipe-title">Full-stack with real-time progress</div>
       <div class="pipe-desc">FastAPI backend, React/TypeScript frontend, SSE streaming for live agent progress. Zustand for state, React Query for async. Docker Compose for one-command deployment.</div>
     </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 9: WHAT I WOULD CHANGE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 9. What I would change</div>
+  <div class="prose fade">
+    <p>
+      <strong>No fallback method selection.</strong> If a primary estimation method fails (bad convergence, numerical error), the system skips it and moves on. There is no fallback to a simpler method. A failed Causal Forest should gracefully degrade to a T-Learner or S-Learner, not produce a gap in the results.
+    </p>
+    <p>
+      <strong>Critique evidence not timestamped.</strong> The CritiqueAgent records findings but does not timestamp each investigation step. When auditing why a critique loop took 3 iterations, you can see what was found but not when. Temporal ordering matters for understanding whether findings were sequential or parallel.
+    </p>
+    <p>
+      <strong>No caching for expensive operations.</strong> The EDA correlation matrix and NOTEARS DAG fit are computed from scratch every time. For large datasets, these are the bottleneck. Caching keyed by data hash would eliminate redundant computation on re-runs.
+    </p>
+    <p>
+      <strong>Circuit breaker is per-instance.</strong> Each LLM client has its own circuit breaker state. In a multi-replica deployment, one replica's breaker opening does not inform the others. A shared breaker (via Redis or similar) would provide system-wide protection against provider outages.
+    </p>
+    <p>
+      <strong>No detection of perfect separation.</strong> When the treatment variable perfectly predicts a subset of outcomes, logistic regression in the propensity score model fails silently (coefficients diverge). The system should detect this and switch to exact matching or warn the user.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════

@@ -72,6 +72,9 @@
   .stack-tag{font-family:var(--mono);font-size:.66rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
   .proj-link{display:inline-block;font-family:var(--mono);font-size:.78rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
   .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+  .graph-canvas-wrap{position:relative;margin:24px 0;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);overflow:hidden}
+  .graph-canvas-wrap canvas{display:block;width:100%}
+  .prose code{font-family:var(--mono);font-size:.82rem;color:var(--accent);background:var(--inset);padding:2px 6px;border-radius:4px}
   .example-output{background:var(--inset);border-radius:10px;padding:20px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);font-family:var(--mono);font-size:.78rem;color:var(--t2);line-height:2;text-align:left;margin:16px 0}
   .example-output .eo-header{color:var(--t3);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
   .example-output .eo-decision{color:var(--red);font-weight:500}
@@ -90,6 +93,7 @@
     .results{grid-template-columns:repeat(2,1fr)}
     .dia-row{flex-direction:column;gap:0}
     .dia-arrow{transform:rotate(90deg);padding:6px 0}
+    .graph-canvas-wrap canvas{height:320px}
     .ft{flex-direction:column;gap:10px;text-align:center}
   }
 </style>
@@ -187,12 +191,17 @@
     </div>
   </div>
 
+  <div class="graph-canvas-wrap fade" style="padding:0"><canvas id="scoring-canvas" height="440"></canvas></div>
+
   <div class="prose fade">
     <p>
       An application comes in as a JSON payload. FastAPI validates the schema, the feature engine computes 44 features from borrower, transaction, and payment data (with Redis caching for repeated lookups), and the model ensemble runs PD, LGD, EAD, and fraud scoring in sequence. On a decline, SHAP generates local feature contributions, the adverse action module maps them to ECOA-compliant reason codes, and the response goes back with a credit score, a decision, and up to four specific reasons.
     </p>
     <p>
       The monitoring layer is not bolted on after the fact. Shadow mode scores a challenger model on every request in parallel with the champion. The fairness monitor checks three metrics on every batch. The drift detector computes PSI per feature against training distributions. All of this feeds into Prometheus, and all scoring results are logged to PostgreSQL for audit.
+    </p>
+    <p>
+      I chose a 6-model system over a single model because regulatory credit scoring requires separable components. PD, LGD, and EAD must be independently auditable for Basel III compliance. A single end-to-end model that outputs expected loss directly cannot explain which component drove the decision. Separating them also means each can be retrained independently when its specific domain drifts.
     </p>
   </div>
 
@@ -259,6 +268,9 @@
     <p>
       For missing values, most nulls get median imputation. The exception is <strong>months_since_last_delinquency</strong>, which gets set to -1 when there is no delinquency history, with a separate binary <strong>has_delinquency</strong> flag. The absence of a delinquency is itself a signal, not missing data.
     </p>
+    <p>
+      I chose 7 feature groups with a registry rather than raw feature engineering because feature provenance matters in regulated environments. Every feature traces to a group (demographic, credit history, velocity, aggregation, behavioral, time series, payment risk), and the registry documents what each computes and why it exists. When an auditor asks "why does this feature affect the score," the answer is in the registry, not in someone's head.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -323,6 +335,9 @@
     <p>
       The <strong>EAD model</strong> predicts how much the borrower will owe at the moment of default. A credit card with a $10,000 limit and $3,000 drawn might be at $7,000 by default. The Credit Conversion Factor model predicts this utilization increase, with a regulatory fallback of CCF = 0.75 when the model is unavailable.
     </p>
+    <p>
+      I chose Nelder-Mead for ensemble weight optimization because it is gradient-free and works directly on the AUC objective. Grid search over 3 model weights is feasible but coarse. Nelder-Mead finds the optimal weighting without requiring a differentiable loss. The result (XGBoost 98.6%, Logistic 1.4%, LightGBM ~0%) is informative even when it looks surprising: it tells you the ensemble collapsed, which is itself a diagnostic signal I discuss in Chapter 7.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -347,6 +362,8 @@
       <div class="pipe-desc">BiasMonitor stores a timestamped fairness history. <strong>check_degradation()</strong> alerts when any metric fails its threshold. This is not a one-time audit. It runs on every batch and feeds into Prometheus for alerting.</div>
     </div>
   </div>
+
+  <div class="graph-canvas-wrap fade" style="padding:0"><canvas id="fairness-canvas" height="360"></canvas></div>
 
   <div class="dia fade">
     <div class="dia-title">All 20 ECOA adverse action codes</div>
@@ -381,10 +398,10 @@
     <div class="example-output">
       <div class="eo-header">Application #A-7829 &nbsp;|&nbsp; Credit Score: 512 &nbsp;|&nbsp; Decision: <span class="eo-decision">DECLINED</span></div>
       <br>
-      <div class="eo-reason">1. AA001 &mdash; High credit utilization ratio (SHAP impact: +0.147)</div>
-      <div class="eo-reason">2. AA003 &mdash; Number of delinquent accounts (SHAP impact: +0.089)</div>
-      <div class="eo-reason">3. AA006 &mdash; Number of missed payments (SHAP impact: +0.071)</div>
-      <div class="eo-reason">4. AA011 &mdash; Average days past due (SHAP impact: +0.058)</div>
+      <div class="eo-reason">1. AA001: High credit utilization ratio (SHAP impact: +0.147)</div>
+      <div class="eo-reason">2. AA003: Number of delinquent accounts (SHAP impact: +0.089)</div>
+      <div class="eo-reason">3. AA006: Number of missed payments (SHAP impact: +0.071)</div>
+      <div class="eo-reason">4. AA011: Average days past due (SHAP impact: +0.058)</div>
     </div>
     <div class="dia-note">Each reason maps to a specific feature the applicant can understand and potentially improve.</div>
   </div>
@@ -392,6 +409,12 @@
   <div class="prose fade">
     <p>
       When the model declines an application (credit score below 550), the system computes SHAP values for every feature, filters to risk-increasing contributions only, excludes age and state from the candidate set, ranks by absolute SHAP impact, and returns the top four as ECOA-compliant adverse action codes. The applicant gets specific, actionable reasons, not "the model said no."
+    </p>
+    <p>
+      I chose three fairness metrics rather than one because demographic parity alone misses error rate differences across groups. Equalized odds captures whether the model makes the same types of mistakes regardless of demographics. Disparate impact ratio implements the FTC's 4/5 rule (approval rate of any group must be at least 80% of the majority). A model can pass one metric and fail another, so monitoring all three simultaneously is the only defensible approach.
+    </p>
+    <p>
+      I chose SHAP-based adverse action codes over rule-based reasons because SHAP reflects what the model actually uses, not what a human guesses it uses. The top risk-increasing features map to 20 ECOA-compliant codes, with protected features (age, <code>state_encoded</code>) explicitly excluded from the explanation set regardless of their SHAP magnitude.
     </p>
   </div>
 
@@ -438,6 +461,14 @@
     <div class="dia-note">PSI is computed per feature, not globally. A single drifting feature triggers investigation before the whole model degrades.</div>
   </div>
 
+  <div class="graph-canvas-wrap fade" style="padding:0"><canvas id="drift-canvas" height="440"></canvas></div>
+
+  <div class="prose fade">
+    <p>
+      I chose shadow mode A/B testing over direct model replacement because a challenger model that looks good on holdout data can behave differently in production. The shadow router scores both champion and challenger on every request, logs agreement rates, and only recommends promotion at 95%+ agreement with 0.98+ PD correlation. Below 80% agreement, the system returns "DO NOT PROMOTE" regardless of the challenger's offline metrics.
+    </p>
+  </div>
+
   <!-- ═══════════════════════════════════════
        CH 7: WHAT I'D IMPROVE
        ═══════════════════════════════════════ -->
@@ -468,6 +499,26 @@
       <div class="pipe-num">04</div>
       <div class="pipe-title">Synthetic data is a double-edged sword</div>
       <div class="pipe-desc">The behavioral features are computed from synthetic transactions generated via Gaussian copula. The copula preserves correlations from the seed profiles, but the distributions are smoother than real transaction data. Real-world data has <strong>heavy tails, seasonal patterns, and messy missing values</strong> that the synthetic generator does not fully capture. The model may be overfit to the synthetic distribution.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">05</div>
+      <div class="pipe-title">Shadow mode storage is ephemeral</div>
+      <div class="pipe-desc">ShadowResult objects are stored in an in-memory list. If the server restarts, all comparison data is lost. Historical trend analysis is impossible. I would persist shadow results to PostgreSQL alongside scoring results, with a TTL-based cleanup.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">06</div>
+      <div class="pipe-title">No automated retraining on drift alert</div>
+      <div class="pipe-desc">When PSI crosses 0.25, the system alerts but does not act. A human must investigate and decide whether to retrain. I would add an automated retraining trigger that runs the full training pipeline, evaluates the retrained model in shadow mode, and promotes only if it passes both performance and fairness gates.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">07</div>
+      <div class="pipe-title">Adverse action codes capped at 4</div>
+      <div class="pipe-desc">ECOA requires "specific reasons" but does not mandate exactly 4. Some declines have 6 or 7 meaningful risk factors. I would make the count configurable (default 4, max 8) and let the consumer decide how many reasons to surface.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">08</div>
+      <div class="pipe-title">Redis caching not fully implemented</div>
+      <div class="pipe-desc">Redis is configured with 3600s TTL, but actual feature caching is minimal. Repeated scoring of the same borrower recomputes all 44 features from scratch. I would cache the full feature vector keyed by borrower_id with cache invalidation on profile update events.</div>
     </div>
   </div>
 
@@ -513,6 +564,777 @@ const obs = new IntersectionObserver(es => {
   });
 }, { threshold: .12 });
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION 1: Scoring Pipeline (scoring-canvas)
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+  const canvas=document.getElementById('scoring-canvas');
+  if(!canvas) return;
+  const wrap=canvas.parentElement;
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const mono='JetBrains Mono, monospace';
+  let ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    w=rect.width; h=440;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  const P=[
+    {name:'enter',dur:90},
+    {name:'pdScore',dur:150},
+    {name:'combine',dur:120},
+    {name:'lgdEad',dur:120},
+    {name:'ecl',dur:100},
+    {name:'fraud',dur:80},
+    {name:'decision',dur:100},
+    {name:'shap',dur:120},
+    {name:'codes',dur:120},
+    {name:'hold',dur:100}
+  ];
+  const totalF=P.reduce((s,p)=>s+p.dur,0);
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    const f=frame%totalF;
+    let phase=0,pf=0,acc=0;
+    for(let i=0;i<P.length;i++){
+      if(f<acc+P[i].dur){phase=i;pf=f-acc;break;}
+      acc+=P[i].dur;
+    }
+    const prog=pf/P[phase].dur;
+
+    // Layout
+    const col1=30, col2=w*0.18, col3=w*0.42, col4=w*0.62, col5=w*0.80;
+    const bw=Math.min(120,w*0.14), bh=38, gap=8;
+    const midY=h/2;
+
+    // Global fade for hold/reset
+    let ga=1;
+    if(phase===0) ga=Math.min(1,prog*3);
+    if(phase===9&&prog>0.7) ga=1-(prog-0.7)/0.3;
+    ctx.globalAlpha=ga;
+
+    // --- Application packet ---
+    var appX=col1, appAlpha=1;
+    if(phase===0) appX=col1-40+40*prog;
+    if(phase>=1) appX=col1+(col2-col1-bw-10)*Math.min(1,(phase===1?prog:1));
+    drawRR(appX,midY-20,bw,40,8,inset,accent,1.2);
+    ctx.font='600 10px '+mono;
+    ctx.fillStyle=accent;
+    ctx.textAlign='center';
+    ctx.fillText('Application',appX+bw/2,midY-3);
+    ctx.font='500 8px '+mono;
+    ctx.fillStyle=t3;
+    ctx.fillText('JSON payload',appX+bw/2,midY+12);
+
+    // --- PD Models (3 parallel boxes) ---
+    var pdModels=['Logistic','XGBoost','LightGBM'];
+    var pdWeights=['1.4%','98.6%','~0%'];
+    var pdColors=[t3,accent,t3];
+    var pdX=col2, pdW=Math.min(100,w*0.12);
+    for(var mi=0;mi<3;mi++){
+      var by=midY-70+mi*(bh+gap);
+      var bAlpha=(phase>=1)?Math.min(1,(phase===1?prog*2:1)):0;
+      ctx.save();
+      ctx.globalAlpha=ga*bAlpha;
+      drawRR(pdX,by,pdW,bh,6,inset,pdColors[mi],1);
+      ctx.font='600 9px '+mono;
+      ctx.fillStyle=pdColors[mi];
+      ctx.textAlign='center';
+      ctx.fillText(pdModels[mi],pdX+pdW/2,by+15);
+      // Progress bar
+      if(phase>=1){
+        var pProg=(phase===1)?prog:(phase>=2?1:0);
+        var barW=(pdW-16)*pProg;
+        drawRR(pdX+8,by+bh-12,barW,6,3,pdColors[mi],null);
+      }
+      // Weight label
+      if(phase>=2){
+        var wAlpha=(phase===2)?prog:1;
+        ctx.globalAlpha=ga*wAlpha;
+        ctx.font='500 8px '+mono;
+        ctx.fillStyle=t2;
+        ctx.textAlign='left';
+        ctx.fillText(pdWeights[mi],pdX+pdW+6,by+22);
+      }
+      ctx.restore();
+    }
+
+    // --- Combiner ---
+    if(phase>=2){
+      var cAlpha=(phase===2)?prog:1;
+      ctx.save();
+      ctx.globalAlpha=ga*cAlpha;
+      var cX=col3, cY=midY-22;
+      drawRR(cX,cY,pdW,44,8,inset,accent,1.2);
+      ctx.font='600 9px '+mono;
+      ctx.fillStyle=accent;
+      ctx.textAlign='center';
+      ctx.fillText('Nelder-Mead',cX+pdW/2,cY+17);
+      ctx.font='500 8px '+mono;
+      ctx.fillStyle=t3;
+      ctx.fillText('Combiner',cX+pdW/2,cY+31);
+      // Arrow from PD area to combiner
+      ctx.beginPath();
+      ctx.moveTo(pdX+pdW+30,midY);
+      ctx.lineTo(cX-6,midY);
+      ctx.strokeStyle=accent;
+      ctx.globalAlpha=ga*cAlpha*0.4;
+      ctx.lineWidth=1;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // --- LGD + EAD ---
+    if(phase>=3){
+      var leAlpha=(phase===3)?prog:1;
+      ctx.save();
+      ctx.globalAlpha=ga*leAlpha;
+      var leX=col4, leY1=midY-50, leY2=midY+12;
+      drawRR(leX,leY1,pdW,bh,6,inset,green,1);
+      ctx.font='600 9px '+mono;
+      ctx.fillStyle=green;
+      ctx.textAlign='center';
+      ctx.fillText('LGD',leX+pdW/2,leY1+15);
+      ctx.font='500 8px '+mono;
+      ctx.fillStyle=t3;
+      ctx.fillText('Two-stage',leX+pdW/2,leY1+28);
+
+      drawRR(leX,leY2,pdW,bh,6,inset,green,1);
+      ctx.font='600 9px '+mono;
+      ctx.fillStyle=green;
+      ctx.textAlign='center';
+      ctx.fillText('EAD',leX+pdW/2,leY2+15);
+      ctx.font='500 8px '+mono;
+      ctx.fillStyle=t3;
+      ctx.fillText('CCF=0.75 fb',leX+pdW/2,leY2+28);
+      // Arrow from combiner
+      ctx.beginPath();
+      ctx.moveTo(col3+pdW+4,midY);
+      ctx.lineTo(leX-6,midY);
+      ctx.strokeStyle=accent;
+      ctx.globalAlpha=ga*leAlpha*0.4;
+      ctx.lineWidth=1;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // --- ECL result ---
+    if(phase>=4){
+      var eAlpha=(phase===4)?prog:1;
+      ctx.save();
+      ctx.globalAlpha=ga*eAlpha;
+      var eX=col5, eY=midY-55;
+      drawRR(eX,eY,pdW,44,8,inset,accent,1.5);
+      ctx.font='600 10px '+mono;
+      ctx.fillStyle=accent;
+      ctx.textAlign='center';
+      ctx.fillText('ECL',eX+pdW/2,eY+17);
+      ctx.font='500 8px '+mono;
+      ctx.fillStyle=t2;
+      ctx.fillText('PD x LGD x EAD',eX+pdW/2,eY+31);
+      ctx.restore();
+    }
+
+    // --- Fraud scorer (parallel) ---
+    if(phase>=5){
+      var fAlpha=(phase===5)?prog:1;
+      ctx.save();
+      ctx.globalAlpha=ga*fAlpha;
+      var fX=col5, fY=midY+20;
+      drawRR(fX,fY,pdW,bh,6,inset,red,1);
+      ctx.font='600 9px '+mono;
+      ctx.fillStyle=red;
+      ctx.textAlign='center';
+      ctx.fillText('Fraud',fX+pdW/2,fY+15);
+      ctx.font='500 8px '+mono;
+      ctx.fillStyle=t3;
+      ctx.fillText('LightGBM',fX+pdW/2,fY+28);
+      ctx.restore();
+    }
+
+    // --- Decision ---
+    if(phase>=6){
+      var dAlpha=(phase===6)?prog:1;
+      ctx.save();
+      ctx.globalAlpha=ga*dAlpha;
+      var dX=w*0.35, dY=h-120;
+      drawRR(dX,dY,Math.min(180,w*0.22),50,8,inset,red,1.5);
+      ctx.font='600 11px '+mono;
+      ctx.fillStyle=red;
+      ctx.textAlign='center';
+      ctx.fillText('Score: 512  DECLINED',dX+Math.min(90,w*0.11),dY+20);
+      ctx.font='500 9px '+mono;
+      ctx.fillStyle=t3;
+      ctx.fillText('Below 550 threshold',dX+Math.min(90,w*0.11),dY+37);
+      ctx.restore();
+    }
+
+    // --- SHAP arrows ---
+    if(phase>=7){
+      var sAlpha=(phase===7)?prog:1;
+      ctx.save();
+      ctx.globalAlpha=ga*sAlpha*0.5;
+      ctx.strokeStyle=accent;
+      ctx.lineWidth=1;
+      ctx.setLineDash([4,3]);
+      var sX=w*0.35+Math.min(180,w*0.22)+4;
+      ctx.beginPath();
+      ctx.moveTo(sX,h-95);
+      ctx.lineTo(sX+30,h-95);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha=ga*sAlpha;
+      drawRR(sX+34,h-115,Math.min(80,w*0.1),40,6,inset,accent,1);
+      ctx.font='600 9px '+mono;
+      ctx.fillStyle=accent;
+      ctx.textAlign='center';
+      ctx.fillText('SHAP',sX+34+Math.min(40,w*0.05),h-100);
+      ctx.font='500 8px '+mono;
+      ctx.fillStyle=t3;
+      ctx.fillText('Explainer',sX+34+Math.min(40,w*0.05),h-87);
+      ctx.restore();
+    }
+
+    // --- Adverse action codes ---
+    if(phase>=8){
+      var aAlpha=(phase===8)?prog:1;
+      var codes=['AA001: High utilization','AA003: Delinquencies','AA006: Missed payments','AA011: Days past due'];
+      ctx.save();
+      for(var ci=0;ci<4;ci++){
+        var codeAlpha=Math.min(1,aAlpha*4-ci);
+        if(codeAlpha<=0) continue;
+        ctx.globalAlpha=ga*codeAlpha;
+        var cy=h-120+ci*18;
+        var cx=20;
+        ctx.font='500 9px '+mono;
+        ctx.fillStyle=red;
+        ctx.textAlign='left';
+        ctx.fillText(codes[ci],cx,cy);
+      }
+      ctx.restore();
+    }
+
+    ctx.globalAlpha=1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  const cObs=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting&&!running){running=true;initCanvas();draw();}
+      else if(!entry.isIntersecting&&running){running=false;}
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+  window.addEventListener('resize',()=>{if(running) initCanvas();});
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION 2: Fairness Monitor (fairness-canvas)
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+  const canvas=document.getElementById('fairness-canvas');
+  if(!canvas) return;
+  const wrap=canvas.parentElement;
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const mono='JetBrains Mono, monospace';
+  let ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    w=rect.width; h=360;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  var gauges=[
+    {label:'Demographic Parity',thresh:0.10,groups:[{name:'Group A',val:0.82},{name:'Group B',val:0.78}],pass:true,metric:'Approval diff: 4%'},
+    {label:'Equalized Odds',thresh:0.10,groups:[{name:'TPR A',val:0.75},{name:'TPR B',val:0.72},{name:'FPR A',val:0.12},{name:'FPR B',val:0.14}],pass:true,metric:'Max diff: 3%'},
+    {label:'Disparate Impact',thresh:0.80,groups:[{name:'Ratio',val:0.76}],pass:false,metric:'Ratio: 0.76'}
+  ];
+
+  const P=[
+    {name:'init',dur:60},
+    {name:'fill',dur:180},
+    {name:'result',dur:120},
+    {name:'excluded',dur:150},
+    {name:'alert',dur:150},
+    {name:'hold',dur:140}
+  ];
+  const totalF=P.reduce((s,p)=>s+p.dur,0);
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    const f=frame%totalF;
+    let phase=0,pf=0,acc=0;
+    for(let i=0;i<P.length;i++){
+      if(f<acc+P[i].dur){phase=i;pf=f-acc;break;}
+      acc+=P[i].dur;
+    }
+    const prog=pf/P[phase].dur;
+
+    let ga=1;
+    if(phase===0) ga=prog;
+    if(phase===5&&prog>0.7) ga=1-(prog-0.7)/0.3;
+    ctx.globalAlpha=ga;
+
+    var gaugeH=80, gaugeGap=16, startY=30;
+    var barLeft=w*0.22, barRight=w*0.75, barH=18;
+
+    for(var gi=0;gi<3;gi++){
+      var g=gauges[gi];
+      var gy=startY+gi*(gaugeH+gaugeGap);
+
+      // Label
+      ctx.font='600 11px '+mono;
+      ctx.fillStyle=t1;
+      ctx.textAlign='left';
+      ctx.fillText(g.label,20,gy+14);
+
+      // Background bar track
+      drawRR(barLeft,gy+4,barRight-barLeft,barH,4,inset,null);
+
+      // Threshold line
+      if(gi<2){
+        // threshold is a diff (0.10), show as right side mark
+        var thX=barLeft+(barRight-barLeft)*0.9;
+        ctx.save();
+        ctx.strokeStyle=accent;
+        ctx.globalAlpha=ga*0.5;
+        ctx.setLineDash([3,3]);
+        ctx.beginPath();
+        ctx.moveTo(thX,gy+2);
+        ctx.lineTo(thX,gy+barH+6);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha=ga;
+        ctx.font='500 7px '+mono;
+        ctx.fillStyle=t3;
+        ctx.textAlign='center';
+        ctx.fillText('10% thresh',thX,gy+barH+16);
+        ctx.restore();
+      } else {
+        // 4/5 rule line at 0.80
+        var thX2=barLeft+(barRight-barLeft)*0.80;
+        ctx.save();
+        ctx.strokeStyle=accent;
+        ctx.globalAlpha=ga*0.5;
+        ctx.setLineDash([3,3]);
+        ctx.beginPath();
+        ctx.moveTo(thX2,gy+2);
+        ctx.lineTo(thX2,gy+barH+6);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha=ga;
+        ctx.font='500 7px '+mono;
+        ctx.fillStyle=t3;
+        ctx.textAlign='center';
+        ctx.fillText('4/5 rule (0.80)',thX2,gy+barH+16);
+        ctx.restore();
+      }
+
+      // Fill bars per group
+      if(phase>=1){
+        var fillProg=(phase===1)?prog:1;
+        var groupBarH=Math.max(6,Math.floor((barH-4)/g.groups.length)-2);
+        for(var bi=0;bi<g.groups.length;bi++){
+          var bv=g.groups[bi].val;
+          var bw=(barRight-barLeft)*bv*fillProg;
+          var by=gy+4+2+bi*(groupBarH+2);
+          var bColor=g.pass?green:red;
+          if(gi===2&&!g.pass){
+            bColor=red;
+            // Flash effect
+            if(phase>=2){
+              var flash=Math.sin(frame*0.15);
+              bColor=(flash>0)?red:'#c05050';
+            }
+          } else {
+            bColor=green;
+          }
+          drawRR(barLeft+2,by,Math.max(0,bw-4),groupBarH,3,bColor,null);
+        }
+      }
+
+      // Result label
+      if(phase>=2){
+        var rAlpha=(phase===2)?prog:1;
+        ctx.save();
+        ctx.globalAlpha=ga*rAlpha;
+        ctx.font='600 9px '+mono;
+        ctx.fillStyle=g.pass?green:red;
+        ctx.textAlign='left';
+        ctx.fillText(g.pass?'PASS':'FAIL',barRight+10,gy+16);
+        ctx.font='500 8px '+mono;
+        ctx.fillStyle=t3;
+        ctx.fillText(g.metric,barRight+10,gy+28);
+        ctx.restore();
+      }
+    }
+
+    // Phase 3: Protected features excluded
+    if(phase>=3){
+      var eAlpha=(phase===3)?prog:1;
+      ctx.save();
+      ctx.globalAlpha=ga*eAlpha;
+      var ey=startY+3*(gaugeH+gaugeGap)+10;
+      drawRR(20,ey,w-40,40,8,inset,accent,1);
+      ctx.font='600 10px '+mono;
+      ctx.fillStyle=accent;
+      ctx.textAlign='center';
+      ctx.fillText('Protected features excluded from SHAP explanations',w/2,ey+17);
+      ctx.font='500 9px '+mono;
+      ctx.fillStyle=t3;
+      ctx.fillText('age, state_encoded filtered regardless of SHAP magnitude',w/2,ey+31);
+      ctx.restore();
+    }
+
+    // Phase 4: Alert
+    if(phase>=4){
+      var aAlpha=(phase===4)?Math.min(1,prog*2):1;
+      ctx.save();
+      ctx.globalAlpha=ga*aAlpha;
+      var ay=h-40;
+      var pulse=0.7+0.3*Math.sin(frame*0.1);
+      ctx.font='600 10px '+mono;
+      ctx.fillStyle=red;
+      ctx.globalAlpha=ga*aAlpha*pulse;
+      ctx.textAlign='center';
+      ctx.fillText('Disparate impact below 0.80 threshold. Monitoring active.',w/2,ay);
+      ctx.restore();
+    }
+
+    ctx.globalAlpha=1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  const cObs=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting&&!running){running=true;initCanvas();draw();}
+      else if(!entry.isIntersecting&&running){running=false;}
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+  window.addEventListener('resize',()=>{if(running) initCanvas();});
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION 3: Drift + Shadow (drift-canvas)
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+  const canvas=document.getElementById('drift-canvas');
+  if(!canvas) return;
+  const wrap=canvas.parentElement;
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const amber='#b8963a';
+  const mono='JetBrains Mono, monospace';
+  let ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    w=rect.width; h=440;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  var features=[
+    {name:'credit_util',target:0.06,zone:'green'},
+    {name:'dti_ratio',target:0.04,zone:'green'},
+    {name:'txn_vel_7d',target:0.18,zone:'amber'},
+    {name:'spend_trend',target:0.08,zone:'green'},
+    {name:'days_past_due',target:0.31,zone:'red'},
+    {name:'acct_age',target:0.03,zone:'green'}
+  ];
+
+  const P=[
+    {name:'init',dur:60},
+    {name:'barsGreen',dur:80},
+    {name:'barsDrift',dur:180},
+    {name:'alertTrigger',dur:100},
+    {name:'shadowAppear',dur:120},
+    {name:'shadowScore',dur:160},
+    {name:'shadowResult',dur:140},
+    {name:'hold',dur:160}
+  ];
+  const totalF=P.reduce((s,p)=>s+p.dur,0);
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    const f=frame%totalF;
+    let phase=0,pf=0,acc=0;
+    for(let i=0;i<P.length;i++){
+      if(f<acc+P[i].dur){phase=i;pf=f-acc;break;}
+      acc+=P[i].dur;
+    }
+    const prog=pf/P[phase].dur;
+
+    let ga=1;
+    if(phase===0) ga=prog;
+    if(phase===7&&prog>0.7) ga=1-(prog-0.7)/0.3;
+    ctx.globalAlpha=ga;
+
+    // --- Top half: PSI bars ---
+    var topH=h*0.45;
+    var barLeft=w*0.22, barMaxW=w*0.55, barH=16, barGap=10;
+    var startY=30;
+
+    // Title
+    ctx.font='600 10px '+mono;
+    ctx.fillStyle=t3;
+    ctx.textAlign='left';
+    ctx.fillText('PSI DRIFT MONITOR',20,18);
+
+    // Zone legend
+    var legX=w-200;
+    ctx.font='500 8px '+mono;
+    ctx.fillStyle=green; ctx.fillText('< 0.10 stable',legX,18);
+    ctx.fillStyle=amber; ctx.fillText('0.10-0.25 warn',legX+80,18);
+    ctx.fillStyle=red; ctx.fillText('> 0.25 alert',legX+170,18);
+
+    // Threshold lines
+    var th1X=barLeft+barMaxW*0.10/0.40;
+    var th2X=barLeft+barMaxW*0.25/0.40;
+    ctx.save();
+    ctx.setLineDash([3,3]);
+    ctx.globalAlpha=ga*0.3;
+    ctx.strokeStyle=green;
+    ctx.beginPath(); ctx.moveTo(th1X,startY-5); ctx.lineTo(th1X,startY+features.length*(barH+barGap)); ctx.stroke();
+    ctx.strokeStyle=red;
+    ctx.beginPath(); ctx.moveTo(th2X,startY-5); ctx.lineTo(th2X,startY+features.length*(barH+barGap)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    for(var fi=0;fi<features.length;fi++){
+      var feat=features[fi];
+      var fy=startY+fi*(barH+barGap);
+
+      // Label
+      ctx.font='500 9px '+mono;
+      ctx.fillStyle=t2;
+      ctx.textAlign='right';
+      ctx.fillText(feat.name,barLeft-10,fy+12);
+
+      // Bar background
+      drawRR(barLeft,fy,barMaxW,barH,3,inset,null);
+
+      // Animated bar
+      var curVal=0;
+      if(phase<=1){
+        curVal=0.04*((phase===1)?prog:0);
+      } else if(phase===2){
+        var startVal=0.04;
+        curVal=startVal+(feat.target-startVal)*prog;
+      } else {
+        curVal=feat.target;
+      }
+
+      var barW=barMaxW*curVal/0.40;
+      var barColor=green;
+      if(curVal>=0.25) barColor=red;
+      else if(curVal>=0.10) barColor=amber;
+
+      if(barW>0){
+        drawRR(barLeft,fy,Math.min(barW,barMaxW),barH,3,barColor,null);
+      }
+
+      // PSI value
+      if(phase>=2){
+        ctx.font='500 8px '+mono;
+        ctx.fillStyle=t1;
+        ctx.textAlign='left';
+        ctx.fillText(curVal.toFixed(2),barLeft+barMaxW+8,fy+12);
+      }
+    }
+
+    // --- Alert trigger ---
+    if(phase>=3){
+      var atAlpha=(phase===3)?prog:1;
+      ctx.save();
+      ctx.globalAlpha=ga*atAlpha;
+      var pulse=0.6+0.4*Math.sin(frame*0.12);
+      ctx.globalAlpha=ga*atAlpha*pulse;
+      ctx.font='600 10px '+mono;
+      ctx.fillStyle=red;
+      ctx.textAlign='center';
+      ctx.fillText('ALERT: days_past_due PSI=0.31 exceeds 0.25 threshold',w/2,topH-5);
+      ctx.restore();
+    }
+
+    // --- Divider ---
+    ctx.save();
+    ctx.globalAlpha=ga*0.15;
+    ctx.strokeStyle=t3;
+    ctx.beginPath();
+    ctx.moveTo(20,topH+5);
+    ctx.lineTo(w-20,topH+5);
+    ctx.stroke();
+    ctx.restore();
+
+    // --- Bottom half: Shadow mode ---
+    if(phase>=4){
+      var sAlpha=(phase===4)?prog:1;
+      ctx.save();
+      ctx.globalAlpha=ga*sAlpha;
+
+      var sY=topH+25;
+      ctx.font='600 10px '+mono;
+      ctx.fillStyle=t3;
+      ctx.textAlign='left';
+      ctx.fillText('SHADOW MODE COMPARISON',20,sY);
+      sY+=20;
+
+      var boxW=Math.min(140,w*0.18), boxH=70;
+      var champX=w*0.15, challX=w*0.55;
+
+      // Champion box
+      drawRR(champX,sY,boxW,boxH,8,inset,green,1);
+      ctx.font='600 10px '+mono;
+      ctx.fillStyle=green;
+      ctx.textAlign='center';
+      ctx.fillText('Champion',champX+boxW/2,sY+20);
+      ctx.font='500 9px '+mono;
+      ctx.fillStyle=t2;
+      ctx.fillText('Production model',champX+boxW/2,sY+36);
+
+      // Challenger box
+      drawRR(challX,sY,boxW,boxH,8,inset,accent,1);
+      ctx.font='600 10px '+mono;
+      ctx.fillStyle=accent;
+      ctx.textAlign='center';
+      ctx.fillText('Challenger',challX+boxW/2,sY+20);
+      ctx.font='500 9px '+mono;
+      ctx.fillStyle=t2;
+      ctx.fillText('Retrained model',challX+boxW/2,sY+36);
+
+      // Application arrow into both
+      if(phase>=5){
+        var scAlpha=(phase===5)?prog:1;
+        ctx.globalAlpha=ga*sAlpha*scAlpha;
+
+        // Scores
+        ctx.font='600 12px '+mono;
+        ctx.fillStyle=green;
+        ctx.textAlign='center';
+        ctx.fillText('PD = 0.34',champX+boxW/2,sY+boxH+20);
+        ctx.fillStyle=accent;
+        ctx.fillText('PD = 0.31',challX+boxW/2,sY+boxH+20);
+      }
+
+      // Agreement meter
+      if(phase>=6){
+        var rAlpha=(phase===6)?prog:1;
+        ctx.globalAlpha=ga*sAlpha*rAlpha;
+
+        var mY=sY+boxH+40;
+        var mLeft=w*0.2, mRight=w*0.8, mH=20;
+
+        ctx.font='500 9px '+mono;
+        ctx.fillStyle=t3;
+        ctx.textAlign='left';
+        ctx.fillText('Agreement',mLeft-80,mY+14);
+
+        // Meter background
+        drawRR(mLeft,mY,mRight-mLeft,mH,4,inset,null);
+
+        // Fill to 94%
+        var mProg=(phase===6)?prog:1;
+        var fillW=(mRight-mLeft)*0.94*mProg;
+        var mColor=amber;
+        drawRR(mLeft,mY,fillW,mH,4,mColor,null);
+
+        // 95% threshold line
+        var th95X=mLeft+(mRight-mLeft)*0.95;
+        ctx.save();
+        ctx.setLineDash([3,3]);
+        ctx.strokeStyle=green;
+        ctx.globalAlpha=ga*sAlpha*rAlpha*0.5;
+        ctx.beginPath();
+        ctx.moveTo(th95X,mY-4);
+        ctx.lineTo(th95X,mY+mH+4);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+        ctx.globalAlpha=ga*sAlpha*rAlpha;
+
+        ctx.font='500 7px '+mono;
+        ctx.fillStyle=t3;
+        ctx.textAlign='center';
+        ctx.fillText('95% target',th95X,mY+mH+14);
+
+        // Result
+        if(mProg>0.8){
+          ctx.font='600 11px '+mono;
+          ctx.fillStyle=amber;
+          ctx.textAlign='center';
+          ctx.fillText('94% Agreement: REVIEW NEEDED',w/2,mY+mH+32);
+        }
+      }
+
+      ctx.restore();
+    }
+
+    ctx.globalAlpha=1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  const cObs=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting&&!running){running=true;initCanvas();draw();}
+      else if(!entry.isIntersecting&&running){running=false;}
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+  window.addEventListener('resize',()=>{if(running) initCanvas();});
+})();
 </script>
 </body>
 </html>

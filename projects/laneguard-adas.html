@@ -101,6 +101,9 @@
   @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
   .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
   .fade.v{opacity:1;transform:translateY(0)}
+  .graph-canvas-wrap{position:relative;margin:24px 0;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);overflow:hidden}
+  .graph-canvas-wrap canvas{display:block;width:100%}
+  .prose code{font-family:var(--mono);font-size:.82rem;color:var(--accent);background:var(--inset);padding:2px 6px;border-radius:4px}
   @media(max-width:768px){
     main{padding:1rem 1rem 3rem}
     .results{grid-template-columns:repeat(2,1fr)}
@@ -108,6 +111,7 @@
     .dia-row{flex-direction:column;gap:0}
     .dia-arrow{transform:rotate(90deg);padding:6px 0}
     .ft{flex-direction:column;gap:10px;text-align:center}
+    .graph-canvas-wrap canvas{height:320px}
   }
 </style>
 </head>
@@ -196,6 +200,9 @@
     <p>
       Each encoder stage contains self-attention blocks with an efficient reduction ratio (reducing the key/value sequence length to keep attention tractable at high resolutions). The decoder is deliberately simple: four MLP layers that unify the multi-scale features, followed by a classification head. No complex feature pyramid. No attention in the decoder. The encoder does the heavy lifting.
     </p>
+    <p>
+      I chose SegFormer-B0 over larger variants because 3.8M parameters fit on CPU and edge devices while being sufficient for binary drivable-area segmentation. The Mix Transformer encoder already understands road scenes from Cityscapes pretraining. For a two-class task (drivable vs not), the smallest variant captures enough spatial hierarchy without the overhead of B2 or B5.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -255,6 +262,9 @@
   <div class="prose fade">
     <p>
       The 526K trainable parameters include both the 131K LoRA adapters and the ~395K decode head weights (which were randomly reinitialized for 2-class output). The entire encoder is frozen. The <code>inject_lora_into_attention()</code> function walks the model tree, finds every <strong>nn.Linear</strong> named query, key, value, or dense, and wraps it with a <strong>LoRALinear</strong> module. One function, 32 injection points, scales automatically across all stages.
+    </p>
+    <p>
+      I chose to implement LoRA manually rather than using HuggingFace PEFT because PEFT does not support SegFormer's attention architecture. Manual injection into all Q, K, V, and Dense projections (rank=16, alpha=32, scaling factor 2.0) gives full control over which layers adapt. Kaiming init on the A matrix and zero init on B means the adapters start as identity and gradually learn task-specific routing. Only 131K LoRA parameters (3.4% of the total 3.8M) are trainable.
     </p>
   </div>
 
@@ -328,6 +338,13 @@
     <p>
       The mechanism is straightforward. On a calibration set (held-out data), compute a non-conformity score for each pixel: 1 minus the softmax probability for the true class. Take the (1-&alpha;) quantile of all scores, with a finite-sample correction. This gives threshold q&#770;. At inference, include every class whose softmax probability exceeds 1-q&#770;. The uncertain pixels (where both classes make the cut) are exactly where the model's decision boundary is weak.
     </p>
+    <p>
+      I chose conformal prediction over softmax thresholding because softmax scores are not calibrated probabilities. A model can output 0.95 confidence and be wrong 30% of the time. Conformal prediction provides a mathematical coverage guarantee: the true class is in the prediction set with probability at least 1 minus alpha, regardless of the model's calibration quality. For safety-critical perception, a guarantee beats a heuristic.
+    </p>
+  </div>
+
+  <div class="graph-canvas-wrap fade" style="padding:0">
+    <canvas id="conformal-canvas" height="440"></canvas>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -340,6 +357,9 @@
     </p>
     <p>
       I use Inverse Perspective Mapping (IPM), a classical homography approach. Under the flat-ground assumption (z=0), a 3x3 matrix maps camera pixels to positions in a metric ground plane. No neural network needed, pure geometry. The camera is modeled at 1.5m height with 0.05 radians (~2.9 degrees) downward pitch, matching typical BDD100K dashcam placement.
+    </p>
+    <p>
+      I chose Inverse Perspective Mapping over learned BEV methods (BEVFormer, LSS) because IPM is pure geometry: zero parameters, fully interpretable, and deterministic. It assumes a flat ground plane, which holds for typical urban driving. Learned BEV handles hills and uneven terrain but adds model complexity and failure modes that are hard to diagnose in safety-critical systems. The BEV grid covers 20x20 meters at 10cm resolution, with a 3m to 50m forward range.
     </p>
   </div>
 
@@ -398,6 +418,12 @@
     </div>
   </div>
 
+  <div class="prose fade">
+    <p>
+      I chose 145 tests across 13 modules because in safety-critical perception, untested code is undeployable code. The CI pipeline enforces lint (ruff), typecheck (mypy), test (pytest), then build (Docker). Broken code cannot produce a container image. Tests cover model forward and backward passes, LoRA parameter tracking, corrupt file handling, BEV homography math, IoU computation, and cloud deployment scripts.
+    </p>
+  </div>
+
   <!-- ═══════════════════════════════════════
        CH 8: WHAT I'D CHANGE
        ═══════════════════════════════════════ -->
@@ -424,6 +450,18 @@
       <div class="pipe-title">No camera intrinsic calibration per-image</div>
       <div class="pipe-desc">BDD100K does not provide exact camera intrinsics. I estimated focal length as 0.8 &times; image width and assumed 1.5m camera height. Different vehicles and mounting positions would give different intrinsics. A proper deployment would calibrate per-vehicle or estimate intrinsics from vanishing points.</div>
     </div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      <strong>Small evaluation scale.</strong> The reported 0.806 mIoU comes from 200 training images at 256x256 resolution over 3 epochs on CPU. This is a controlled LoRA evaluation experiment, not full-scale training. The full pipeline (7,000 images, 512x512, NVIDIA T4 GPU, 15 epochs) is designed but results are not yet reported. The 0.806 number is real, but it is from a deliberately constrained setup.
+    </p>
+    <p>
+      <strong>No per-image camera calibration.</strong> BDD100K does not provide exact camera intrinsics per image. Focal length is estimated as 0.8 times image width, and camera height is fixed at 1.5m. Different vehicles and dashcam mounts would need per-vehicle calibration or vanishing point estimation for accurate BEV projection.
+    </p>
+    <p>
+      <strong>Static conformal calibration.</strong> The non-conformity threshold is computed once on a held-out calibration set (5% of data) and fixed at serving time. If the input distribution shifts (nighttime images after daytime calibration), the coverage guarantee weakens. An adaptive conformal approach with a rolling calibration window would maintain the guarantee under distribution shift.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -675,6 +713,344 @@ const loraObs = new IntersectionObserver(es => {
 }, { threshold: .2 });
 const loraEl = document.querySelector('.lora-canvas-wrap');
 if(loraEl) loraObs.observe(loraEl);
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION 2: Conformal Prediction Pipeline (conformal-canvas)
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('conformal-canvas');
+  if(!canvas) return;
+  const wrap = canvas.parentElement;
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const amber='#c9963a';
+  const mono='JetBrains Mono, monospace';
+  let ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    w=rect.width; h=440;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  // 5x5 grid data: softmax scores and ground truth
+  // predicted class: 1=drivable(green), 0=non-drivable(dark)
+  // Two cells are wrong-confident: high softmax but wrong class
+  const cells=[];
+  const scores=[
+    [0.92,0.78,0.85,0.96,0.88],
+    [0.67,0.95,0.91,0.72,0.93],
+    [0.88,0.55,0.97,0.82,0.76],
+    [0.94,0.83,0.69,0.99,0.87],
+    [0.73,0.90,0.86,0.77,0.95]
+  ];
+  const predicted=[
+    [1,0,1,1,1],
+    [0,1,1,0,1],
+    [1,0,1,1,0],
+    [1,1,0,1,1],
+    [0,1,1,0,1]
+  ];
+  const truth=[
+    [1,0,1,1,0],  // row0 col4: predicted 1, truth 0 (wrong, score 0.88)
+    [0,1,1,0,1],
+    [1,0,1,1,0],
+    [1,1,0,1,1],
+    [0,0,1,0,1]   // row4 col1: predicted 1, truth 0 (wrong, score 0.90)
+  ];
+  // wrong cells: (0,4) score 0.88 and (4,1) score 0.90
+  const wrongCells=[[0,4],[4,1]];
+
+  const cellSize=40, cellGap=4;
+  const gridW=5*(cellSize+cellGap)-cellGap;
+
+  const P=[
+    {name:'fadeIn',       dur:60},
+    {name:'highlight',    dur:120},
+    {name:'calibrate',    dur:150},
+    {name:'applyThreshold',dur:150},
+    {name:'guarantee',    dur:120},
+    {name:'hold',         dur:120},
+    {name:'reset',        dur:60}
+  ];
+  const totalFrames=P.reduce((s,p)=>s+p.dur,0);
+
+  function getPhase(){
+    let f=frame%totalFrames, idx=0;
+    for(let i=0;i<P.length;i++){
+      if(f<P[i].dur) return {name:P[i].name,t:f/P[i].dur,idx:i,localFrame:f};
+      f-=P[i].dur; idx++;
+    }
+    return {name:'hold',t:1,idx:P.length-1,localFrame:0};
+  }
+
+  function isWrong(r,c){
+    return wrongCells.some(w=>w[0]===r&&w[1]===c);
+  }
+
+  function cellColor(r,c,pred){
+    return pred===1?green:'#2a2a30';
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+    const ph=getPhase();
+    const globalAlpha=ph.name==='fadeIn'?ph.t:ph.name==='reset'?1-ph.t:1;
+
+    // Layout: left grid at x=leftX, center arrow+box, right grid at x=rightX
+    const leftX=Math.max(30,w*0.05);
+    const rightX=w-leftX-gridW;
+    const centerX=w/2;
+    const gridY=60;
+
+    ctx.globalAlpha=globalAlpha;
+
+    // Title
+    ctx.font='600 11px '+mono;
+    ctx.fillStyle=t3;
+    ctx.textAlign='center';
+    ctx.fillText('CONFORMAL PREDICTION PIPELINE',centerX,30);
+
+    // LEFT GRID: Softmax scores
+    ctx.font='600 10px '+mono;
+    ctx.fillStyle=t2;
+    ctx.textAlign='center';
+    ctx.fillText('Softmax Predictions',leftX+gridW/2,gridY-10);
+
+    for(let r=0;r<5;r++){
+      for(let c=0;c<5;c++){
+        const x=leftX+c*(cellSize+cellGap);
+        const y=gridY+r*(cellSize+cellGap);
+        const pred=predicted[r][c];
+        const score=scores[r][c];
+        const wrong=isWrong(r,c);
+
+        // Highlight phase: wrong cells flash red
+        let fillCol=cellColor(r,c,pred);
+        let borderCol='rgba(255,255,255,0.06)';
+        if(ph.name==='highlight'&&wrong){
+          const flash=Math.sin(ph.t*Math.PI*4);
+          if(flash>0){fillCol=red;borderCol='rgba(154,90,90,0.6)';}
+        }
+
+        drawRR(x,y,cellSize,cellSize,6,fillCol,borderCol,1);
+
+        // Score text
+        ctx.font='600 10px '+mono;
+        ctx.fillStyle=t1;
+        ctx.textAlign='center';
+        ctx.globalAlpha=globalAlpha*0.9;
+        ctx.fillText(score.toFixed(2),x+cellSize/2,y+cellSize/2+4);
+        ctx.globalAlpha=globalAlpha;
+
+        // Wrong label during highlight
+        if(ph.name==='highlight'&&wrong&&ph.t>0.3){
+          ctx.font='600 8px '+mono;
+          ctx.fillStyle=red;
+          ctx.globalAlpha=globalAlpha*Math.min(1,(ph.t-0.3)/0.2);
+          ctx.fillText('WRONG',x+cellSize/2,y-3);
+          ctx.globalAlpha=globalAlpha;
+        }
+      }
+    }
+
+    // CENTER: Calibration process (phases calibrate+)
+    if(ph.idx>=2){
+      const calAlpha=ph.name==='calibrate'?ph.t:1;
+      ctx.globalAlpha=globalAlpha*calAlpha;
+
+      // Arrow from left grid
+      const arrowY=gridY+gridW/2;
+      const arrowStartX=leftX+gridW+10;
+      const arrowEndX=centerX-70;
+      ctx.beginPath();
+      ctx.moveTo(arrowStartX,arrowY);
+      ctx.lineTo(arrowEndX,arrowY);
+      ctx.strokeStyle=accent;ctx.lineWidth=1.5;ctx.stroke();
+      // arrowhead
+      ctx.beginPath();
+      ctx.moveTo(arrowEndX,arrowY);
+      ctx.lineTo(arrowEndX-6,arrowY-4);
+      ctx.lineTo(arrowEndX-6,arrowY+4);
+      ctx.closePath();ctx.fillStyle=accent;ctx.fill();
+
+      // Arrow label
+      ctx.font='500 8px '+mono;
+      ctx.fillStyle=t3;
+      ctx.textAlign='center';
+      ctx.fillText('Non-conformity',( arrowStartX+arrowEndX)/2,arrowY-10);
+      ctx.fillText('scores',(arrowStartX+arrowEndX)/2,arrowY-1);
+
+      // Calibration box
+      const boxW=120,boxH=60;
+      const boxX=centerX-boxW/2,boxY=arrowY-boxH/2;
+      drawRR(boxX,boxY,boxW,boxH,8,inset,'rgba(216,140,58,0.3)',1);
+      ctx.font='600 10px '+mono;
+      ctx.fillStyle=accent;
+      ctx.textAlign='center';
+      ctx.fillText('Calibration',centerX,boxY+22);
+      ctx.font='500 9px '+mono;
+      ctx.fillStyle=t2;
+      ctx.fillText('(5% data)',centerX,boxY+36);
+
+      // q-hat value types out
+      if(ph.name==='calibrate'&&ph.t>0.5){
+        const typeProgress=Math.min(1,(ph.t-0.5)/0.4);
+        const qText='q-hat = 0.127';
+        const showChars=Math.floor(typeProgress*qText.length);
+        ctx.font='600 10px '+mono;
+        ctx.fillStyle=accent;
+        ctx.fillText(qText.substring(0,showChars),centerX,boxY+boxH+18);
+      } else if(ph.idx>2){
+        ctx.font='600 10px '+mono;
+        ctx.fillStyle=accent;
+        ctx.fillText('q-hat = 0.127',centerX,boxY+boxH+18);
+      }
+
+      // Arrow from center to right grid
+      if(ph.idx>=3){
+        const rAlpha=ph.name==='applyThreshold'?ph.t:1;
+        ctx.globalAlpha=globalAlpha*rAlpha;
+        const arrowStartX2=centerX+70;
+        const arrowEndX2=rightX-10;
+        ctx.beginPath();
+        ctx.moveTo(arrowStartX2,arrowY);
+        ctx.lineTo(arrowEndX2,arrowY);
+        ctx.strokeStyle=accent;ctx.lineWidth=1.5;ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(arrowEndX2,arrowY);
+        ctx.lineTo(arrowEndX2-6,arrowY-4);
+        ctx.lineTo(arrowEndX2-6,arrowY+4);
+        ctx.closePath();ctx.fillStyle=accent;ctx.fill();
+
+        ctx.font='500 8px '+mono;
+        ctx.fillStyle=t3;
+        ctx.textAlign='center';
+        ctx.fillText('Apply threshold',(arrowStartX2+arrowEndX2)/2,arrowY-8);
+      }
+
+      ctx.globalAlpha=globalAlpha;
+    }
+
+    // RIGHT GRID: Prediction sets
+    if(ph.idx>=3){
+      const rAlpha=ph.name==='applyThreshold'?ph.t:1;
+      ctx.globalAlpha=globalAlpha*rAlpha;
+
+      ctx.font='600 10px '+mono;
+      ctx.fillStyle=t2;
+      ctx.textAlign='center';
+      ctx.fillText('Prediction Sets',rightX+gridW/2,gridY-10);
+
+      for(let r=0;r<5;r++){
+        for(let c=0;c<5;c++){
+          const x=rightX+c*(cellSize+cellGap);
+          const y=gridY+r*(cellSize+cellGap);
+          const pred=predicted[r][c];
+          const wrong=isWrong(r,c);
+
+          if(wrong){
+            // Set size 2: striped two-color cell, amber border
+            // Pulse in guarantee phase
+            let pulseAlpha=1;
+            if(ph.name==='guarantee'||ph.name==='hold'){
+              pulseAlpha=0.7+0.3*Math.sin(frame*0.06);
+            }
+            ctx.globalAlpha=globalAlpha*rAlpha*pulseAlpha;
+
+            // Draw striped pattern (diagonal)
+            drawRR(x,y,cellSize,cellSize,6,'#2a2a30',null,0);
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(x+6,y); ctx.lineTo(x+cellSize-6,y);
+            ctx.quadraticCurveTo(x+cellSize,y,x+cellSize,y+6);
+            ctx.lineTo(x+cellSize,y+cellSize-6);
+            ctx.quadraticCurveTo(x+cellSize,y+cellSize,x+cellSize-6,y+cellSize);
+            ctx.lineTo(x+6,y+cellSize);
+            ctx.quadraticCurveTo(x,y+cellSize,x,y+cellSize-6);
+            ctx.lineTo(x,y+6);
+            ctx.quadraticCurveTo(x,y,x+6,y);
+            ctx.clip();
+            // Green stripes
+            for(let s=-cellSize;s<cellSize*2;s+=8){
+              ctx.fillStyle='rgba(90,154,90,0.4)';
+              ctx.fillRect(x+s,y,4,cellSize);
+            }
+            ctx.restore();
+
+            // Amber border
+            drawRR(x,y,cellSize,cellSize,6,null,amber,2);
+
+            ctx.globalAlpha=globalAlpha*rAlpha;
+            ctx.font='600 9px '+mono;
+            ctx.fillStyle=amber;
+            ctx.textAlign='center';
+            ctx.fillText('|C|=2',x+cellSize/2,y+cellSize/2+4);
+          } else {
+            // Set size 1: solid color, green border = confident
+            const fillCol=cellColor(r,c,pred);
+            drawRR(x,y,cellSize,cellSize,6,fillCol,green,1.5);
+
+            ctx.font='600 9px '+mono;
+            ctx.fillStyle=t1;
+            ctx.textAlign='center';
+            ctx.globalAlpha=globalAlpha*rAlpha*0.8;
+            ctx.fillText('|C|=1',x+cellSize/2,y+cellSize/2+4);
+            ctx.globalAlpha=globalAlpha*rAlpha;
+          }
+        }
+      }
+      ctx.globalAlpha=globalAlpha;
+    }
+
+    // BOTTOM: Coverage guarantee label
+    if(ph.idx>=4){
+      const gAlpha=ph.name==='guarantee'?ph.t:1;
+      ctx.globalAlpha=globalAlpha*gAlpha;
+      ctx.font='600 12px '+mono;
+      ctx.fillStyle=accent;
+      ctx.textAlign='center';
+      const labelY=gridY+gridW+40;
+      ctx.fillText('Coverage: P(true class in set) >= 90%',centerX,labelY);
+      ctx.font='500 9px '+mono;
+      ctx.fillStyle=t3;
+      ctx.fillText('Set size 2 = model admits uncertainty. Guaranteed to contain the right answer.',centerX,labelY+18);
+      ctx.globalAlpha=globalAlpha;
+    }
+  }
+
+  function tick(){
+    if(!running) return;
+    frame++;
+    draw();
+    requestAnimationFrame(tick);
+  }
+
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        if(!running){running=true;initCanvas();tick();}
+      } else {running=false;}
+    });
+  },{threshold:0.15});
+  io.observe(wrap);
+
+  window.addEventListener('resize',()=>{if(running)initCanvas();});
+})();
 </script>
 </body>
 </html>

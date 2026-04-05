@@ -205,6 +205,9 @@
     <p>
       The graph has 82,173 nodes and 737,716 edges. Average degree of 18 (each item connects to about 18 others). Edge weights follow a power law: median weight of 1, max of 1,424. The model needs to treat a co-occurrence of 1,424 very differently from a co-occurrence of 1.
     </p>
+    <p>
+      I chose a co-occurrence window of 5 because the median session length is 4 items. A window of 5 captures all item pairs within a typical session as a fully-connected subgraph. Larger windows would connect items browsed far apart, diluting the co-occurrence signal. Smaller windows would miss pairs at opposite ends of short sessions.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -228,6 +231,12 @@
       <div class="pipe-title">Removed FFN layers (the 88x speedup)</div>
       <div class="pipe-desc">Standard Graph Transformers include feed-forward network layers after each attention layer. In language models, FFN layers store factual knowledge. But graph recommendations have no "facts" to memorize, only relationships. I removed the FFN layers entirely. The result: <strong>88x faster training, 90x cheaper, and 1.6% better accuracy</strong>. The FFN layers were adding parameters that caused slight overfitting (112K vs 46K params). Removing them acted as implicit regularization.</div>
     </div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      I chose to remove FFN layers from the Graph Transformer because training subgraphs are tiny (3 to 5 nodes per session). The FFN adds 524K parameters per layer but only processes a handful of nodes, causing severe overfitting. Removing it acts as structural regularization: 88x faster training, 90x cheaper ($21 vs $1,880), and 1.6% better Recall@10. The cheaper model was the better model.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -261,6 +270,9 @@
     <p>
       This has a direct consequence for model capacity. Training subgraphs are 3 to 5 nodes with 3 to 10 edges. The FFN layer has more parameters (524K) than data points per forward pass. It memorizes rather than generalizes. <strong>Removing FFN is not a cost optimization. It is the correct architectural choice for tiny subgraphs.</strong>
     </p>
+    <p>
+      I chose temporal splits with 2-day blackout periods because random splits leak future information into training. A session that starts at time T can have events through T plus its duration. Without blackout, a training session ending near the split boundary overlaps with validation. The blackout forces clean temporal separation at the cost of approximately 4,300 discarded sessions.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -271,6 +283,12 @@
   <div class="prose fade">
     <p>
       Sessions are short. Average 5.55 items, median 4. This single data characteristic cascades into every architectural decision. None of the parameters are arbitrary. They are consequences.
+    </p>
+    <p>
+      I chose Laplacian positional encoding (k=16 eigenvectors) because the co-occurrence graph is dense (average degree 17.96). Without PE, items with identical local neighborhoods get identical embeddings regardless of global position. The 16 smallest eigenvectors give each node a unique structural fingerprint that distinguishes structurally equivalent but globally different items.
+    </p>
+    <p>
+      I chose 256-dimensional embeddings because 82K items need enough representational capacity to be distinguishable, but not so much that the model overfits on short sessions. 256 dimensions with 2 attention heads (128 per head) is sufficient for the similarity-based ranking task. Residual connections work cleanly when embedding and hidden dimensions match.
     </p>
   </div>
 
@@ -397,6 +415,9 @@
     <p>
       The Graph Transformer with FFN was estimated at $1,880 for training. I could not afford to run it. The optimized version trained for $21. The budget constraint forced an architectural decision that turned out to be the better engineering choice.
     </p>
+    <p>
+      I chose BPR (Bayesian Personalized Ranking) loss over cross-entropy because the task is ranking, not classification. BPR directly optimizes the pairwise ordering between the target item and 5 random negatives per positive. Cross-entropy treats all negatives equally. BPR focuses on getting the positive above each negative, which is what Recall@K measures.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -461,6 +482,25 @@
       <div class="pipe-title">Code Quality</div>
       <div class="pipe-desc"><strong>pytest</strong> test suite, <strong>mypy</strong> type checking, <strong>ruff</strong> linting, <strong>black</strong> formatting. <strong>MLflow</strong> for experiment tracking. Full C4 architecture documentation (context, containers, components, code-level walkthroughs).</div>
     </div>
+  </div>
+
+  <div class="sec fade">What I would change</div>
+  <div class="prose fade">
+    <p>
+      <strong>No item features.</strong> The model uses only co-occurrence structure. New items with no browsing history cannot be embedded because they have no edges. Adding item features (category, price range, image embeddings) would provide a cold-start signal and improve recommendations for tail items.
+    </p>
+    <p>
+      <strong>Static graph, no temporal decay.</strong> All edges are weighted equally regardless of when the co-occurrence happened. A browsing pattern from 6 months ago has the same weight as one from yesterday. Exponential temporal decay on edge weights would bias toward recent trends without discarding older structure entirely.
+    </p>
+    <p>
+      <strong>Session-based only.</strong> The system cannot learn cross-session user patterns because it has no user identity. A returning visitor who browsed cameras last week and lenses today gets no benefit from the earlier session. A user-level graph layer on top of the session model would capture these multi-session journeys.
+    </p>
+    <p>
+      <strong>Offline metrics only.</strong> 38.28% Recall@10 is measured on a held-out test set with temporal split. It tells you ranking quality but not business impact. Online A/B testing (click-through rate, add-to-cart rate) would measure whether better ranking actually translates to engagement.
+    </p>
+    <p>
+      <strong>ONNX export is partial.</strong> Only the scoring layer (dot product of session embedding against all item embeddings) is exported to ONNX. The GNN itself runs in PyTorch because dynamic graph structure is not ONNX-friendly. A full production system would need to pre-compute and cache session embeddings, adding an inference pipeline step.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════

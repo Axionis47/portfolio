@@ -182,6 +182,9 @@
     <p>
       I chose bge-reranker-large as teacher because its scores are well-calibrated (the difference between 9.2 and 7.1 is meaningful, not just ordinal). I chose e5-small-v2 as student because it has native asymmetric prefix support ("query:" vs "passage:"), which matters for retrieval quality, and it has a proven track record with knowledge distillation.
     </p>
+    <p>
+      I chose bge-reranker-large as teacher also because its output range (approximately -10 to +10) has clear margins between relevance levels. This matters for MarginMSE loss, which learns from score differences, not absolute values. A teacher with compressed scores (everything between 0.8 and 1.0) would give the student almost no pairwise signal to learn from.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -192,6 +195,9 @@
   <div class="prose fade">
     <p>
       The core of knowledge distillation is not matching the teacher's top-1 prediction. It is matching the teacher's <strong>entire probability distribution</strong> over documents. When the teacher says "70% Doc A, 20% Doc B, 10% Doc C," that 20% on Doc B contains information. The student needs to learn that B is a plausible answer, just not the best one. Three loss functions capture three different aspects of this signal.
+    </p>
+    <p>
+      I chose a 60/20/20 weighted combination of MarginMSE, KL divergence, and contrastive loss because each teaches something different. MarginMSE (60%) transfers pairwise ranking preferences, the dominant training signal. KL divergence (20%) transfers the full score distribution shape, preserving dark knowledge about non-obvious candidates. Contrastive loss (20%) regularizes embedding geometry so similar items cluster together in vector space. Single-loss training capped at 93% teacher quality. The combination reached 97%.
     </p>
   </div>
 
@@ -237,6 +243,9 @@
     <p>
       I anneal linearly from T=4.0 to T=2.0 over the course of training. High temperature early prevents over-specialization on hard examples. Low temperature late focuses on the top results that nDCG@10 weights most heavily. This added 1-2% nDCG@10 over a fixed temperature of 2.0.
     </p>
+    <p>
+      I chose linear annealing from T=4.0 to T=2.0 because high temperature early exposes the student to broad ranking signal across all candidates (the "dark knowledge" in low-ranked results), while low temperature late sharpens focus on the top results that matter for retrieval. Cosine annealing showed less than 0.3% difference and added complexity without benefit. Fixed T=1.0 loses dark knowledge entirely. The contrastive loss temperature stays fixed at 0.05 throughout, which is standard for InfoNCE.
+    </p>
   </div>
 
   <div class="dia fade">
@@ -270,6 +279,9 @@
   <div class="prose fade">
     <p>
       The quality of training examples matters more than the training algorithm. Naive distillation with random negatives gets you to about 85% of teacher quality. The last 12% comes from showing the student progressively harder examples. I used a 3-stage curriculum that increases difficulty.
+    </p>
+    <p>
+      I chose a 3-stage curriculum (BM25, then teacher-graded, then ANCE self-mining) because each stage targets different failure modes. BM25 negatives teach basic lexical discrimination. Teacher-graded negatives (confidence threshold 0.6, selecting from the top 100 BM25 candidates) teach semantic distinctions the student cannot yet make. ANCE negatives (margin=0.1, refreshed every 500 steps) target the student's specific blind spots: passages it currently ranks too high. Two-stage training capped at 93%. Three-stage reached 97%.
     </p>
   </div>
 
@@ -354,6 +366,12 @@
     <div class="dia-note">36% total loss reduction. MarginMSE improved 42%. Monotonic improvement, no early stopping triggered.</div>
   </div>
 
+  <div class="prose fade">
+    <p>
+      I report 0.882 nDCG@10 measured on 200 held-out MS MARCO queries, which is 96.9% of the teacher's 0.910. The remaining 3% gap can be closed with an optional reranking pass using the teacher on the top-100 candidates, bringing total latency to approximately 111ms, still far faster than teacher-only scoring of the full corpus.
+    </p>
+  </div>
+
   <!-- ═══════════════════════════════════════
        CH 7: PRODUCTION
        ═══════════════════════════════════════ -->
@@ -396,6 +414,12 @@
     </div>
   </div>
 
+  <div class="prose fade">
+    <p>
+      I chose HNSW (M=32, efConstruction=200) over IVF-PQ because at 1M documents, HNSW gives 97%+ recall versus 90-93% for IVF-PQ without aggressive tuning. The 33M student model plus the 1.5GB FAISS index fits in a 2GB Cloud Run container. <code>efSearch</code> is adjustable at query time without rebuilding the index, so latency and recall can be tuned per use case. When the corpus grows past 50M documents, the migration path to IVF-PQ exists.
+    </p>
+  </div>
+
   <!-- ═══════════════════════════════════════
        CH 8: WHAT I'D CHANGE
        ═══════════════════════════════════════ -->
@@ -422,6 +446,21 @@
       <div class="pipe-title">Loss weights are hand-tuned</div>
       <div class="pipe-desc">The 60/20/20 split between MarginMSE, ListwiseKD, and Contrastive was determined experimentally. A proper ablation study varying these weights systematically would identify the optimal ratio, or suggest that the ratio should change across training stages.</div>
     </div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      <strong>Fixed loss weights.</strong> The 60/20/20 split was determined by grid search on current data. Adaptive weighting methods like GradNorm could auto-tune these during training, potentially finding better ratios as the student's weaknesses shift across epochs.
+    </p>
+    <p>
+      <strong>Fixed ANCE refresh cadence.</strong> Self-mining refreshes every 500 steps regardless of whether the student has improved enough to make the old negatives stale. An adaptive trigger based on validation loss plateau would refresh only when beneficial, saving compute on the expensive corpus re-encoding step.
+    </p>
+    <p>
+      <strong>No post-training quantization.</strong> The student is served at full float32 precision. INT8 quantization would roughly halve the model size and improve inference speed with minimal accuracy loss, making edge deployment more feasible.
+    </p>
+    <p>
+      <strong>HNSW does not support deletion.</strong> Any change to the document corpus requires a full index rebuild. A blacklist-at-query-time approach could handle deletions without rebuild, but is not implemented. For frequently updated corpora, an incremental index like ScaNN or Vamana might be more practical.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
