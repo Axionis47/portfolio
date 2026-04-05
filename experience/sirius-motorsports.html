@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sirius Motorsports BMS Firmware — Sai Siddharth Yalamanchili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{font-size:18px}
+  :root{
+    --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
+    --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
+    --t1:#e0e0e0;--t2:#ababab;--t3:#787880;
+    --accent:#d88c3a;--green:#5a9a5a;--red:#9a5a5a;
+    --r:14px;
+    --mono:'JetBrains Mono',monospace;
+    --serif:'Source Serif 4',serif;
+    --sans:'DM Sans',sans-serif;
+  }
+  body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
+  a{color:var(--accent);text-decoration:none;transition:color .2s}
+  a:hover{color:#eaa050}
+  nav{display:flex;justify-content:space-between;align-items:center;max-width:1440px;width:100%;margin:0 auto;padding:2.5rem 3rem 1.5rem}
+  nav .logo{font-family:var(--mono);font-weight:600;font-size:1.02rem;color:var(--t1);text-decoration:none}
+  nav .back{font-family:var(--mono);font-size:.86rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  nav .back:hover{color:var(--accent)}
+  main{max-width:1440px;width:100%;margin:0 auto;padding:2rem 3rem 4rem;flex:1}
+  .proj-label{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
+  .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
+  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 34px;margin-bottom:36px}
+  .brief-label{font-family:var(--mono);font-size:.66rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+  .brief-key{font-family:var(--mono);font-size:.78rem;color:var(--t2);text-align:right;white-space:nowrap}
+  .brief-val{font-family:var(--mono);font-size:.84rem;color:var(--t1);line-height:1.7}
+  .prose{margin-bottom:1.8rem}
+  .prose p{font-family:var(--sans);font-size:1.08rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
+  .prose strong{color:var(--t1);font-weight:500}
+  .sec{font-family:var(--mono);font-size:.78rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
+  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 30px;margin:20px 0}
+  .dia-title{font-family:var(--mono);font-size:.72rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia-group{font-family:var(--mono);font-size:.66rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;margin:16px 0 6px;padding-left:4px}
+  .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
+  .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
+  .dia-box-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:3px}
+  .dia-box-sub{font-family:var(--mono);font-size:.68rem;color:var(--t2);line-height:1.7}
+  .dia-arrow{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;padding:0 12px;flex-shrink:0}
+  .dia-arrow-down{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;text-align:center;padding:8px 0}
+  .dia-note{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
+  .dia-good{border:1px solid rgba(90,154,90,0.2)}
+  .dia-bad{border:1px solid rgba(154,90,90,0.2)}
+  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
+  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:26px 20px;text-align:center;transition:all .3s}
+  .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+  .stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:5px}
+  .stat-label{font-family:var(--mono);font-size:.68rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
+  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
+  .rtable th{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.76rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable tr.best td{color:var(--accent);font-weight:500}
+  .pipeline{position:relative;padding-left:32px;margin:20px 0}
+  .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
+  .pipe-step{position:relative;margin-bottom:24px}
+  .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
+  .pipe-num{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;margin-bottom:3px}
+  .pipe-title{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+  .pipe-desc{font-family:var(--sans);font-size:.96rem;color:var(--t2);line-height:1.95}
+  .pipe-desc strong{color:var(--t1);font-weight:500}
+  .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
+  .stack-tag{font-family:var(--mono);font-size:.66rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .proj-link{display:inline-block;font-family:var(--mono);font-size:.78rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+  .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+  .graph-canvas-wrap{position:relative;margin:24px 0;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);overflow:hidden}
+  .graph-canvas-wrap canvas{display:block;width:100%}
+  .prose code{font-family:var(--mono);font-size:.82rem;color:var(--accent);background:var(--inset);padding:2px 6px;border-radius:4px}
+  .example-output{background:var(--inset);border-radius:10px;padding:20px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);font-family:var(--mono);font-size:.78rem;color:var(--t2);line-height:2;text-align:left;margin:16px 0}
+  .example-output .eo-header{color:var(--t3);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
+  .example-output .eo-decision{color:var(--red);font-weight:500}
+  .example-output .eo-reason{color:var(--t1)}
+  footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
+  .ft{max-width:1440px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+  .ft-c{font-family:var(--mono);font-size:.72rem;color:var(--t3)}
+  .ft-l{display:flex;gap:18px}
+  .ft-l a{font-family:var(--mono);font-size:.76rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  .ft-l a:hover{color:var(--accent)}
+  @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+  .fade.v{opacity:1;transform:translateY(0)}
+  @media(max-width:768px){
+    main{padding:1rem 1rem 3rem}
+    .results{grid-template-columns:repeat(2,1fr)}
+    .dia-row{flex-direction:column;gap:0}
+    .dia-arrow{transform:rotate(90deg);padding:6px 0}
+    .graph-canvas-wrap canvas{height:320px}
+    .ft{flex-direction:column;gap:10px;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="logo">sai.</a>
+  <a href="../#experience" class="back">&larr; experience</a>
+</nav>
+
+<main>
+
+  <div class="proj-label fade">Experience</div>
+  <h1 class="proj-title fade">Sirius Motorsports: Embedded BMS Firmware for a Lead-Acid EV Prototype</h1>
+  <div class="divider"></div>
+
+  <div class="brief fade">
+    <div class="brief-label">Engineering Brief</div>
+    <div class="brief-grid">
+      <span class="brief-key">Role</span>
+      <span class="brief-val">Battery Simulation Intern, 2022, Chennai, India</span>
+      <span class="brief-key">Problem</span>
+      <span class="brief-val">A 24V lead-acid battery pack (two 12V SLA in series) for a portable EV prototype (~20km range) needed embedded protection firmware. Without reliable cutoffs, deep discharge damages the batteries and overcurrent risks hardware failure.</span>
+      <span class="brief-key">Approach</span>
+      <span class="brief-val">Bare-metal C on an ARM Cortex-M MCU. ADC-based monitoring of pack voltage (resistive divider, 62k/10k), discharge current (shunt resistor + amplifier), and temperature (NTC thermistor). State machine with hysteresis-guarded thresholds. Software averaging to filter sensor noise.</span>
+      <span class="brief-key">Result</span>
+      <span class="brief-val">Zero false fault triggers in final validation. Undervoltage cutoff at 21.0V (1.75V/cell), overcurrent at 6A, thermal fault at 55C. All thresholds calibrated against bench instruments.</span>
+      <span class="brief-key">Stack</span>
+      <span class="brief-val">Embedded C, ARM Cortex-M (STM32), ADC, UART, NTC Thermistor, Shunt Resistor, Oscilloscope, Electronic Load</span>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="results fade">
+    <div class="stat">
+      <div class="stat-val">24V</div>
+      <div class="stat-label">Pack voltage</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">21.0V</div>
+      <div class="stat-label">Undervoltage cutoff</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">6A</div>
+      <div class="stat-label">Overcurrent limit</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">0</div>
+      <div class="stat-label">False triggers in validation</div>
+    </div>
+  </div>
+
+  <!-- Chapter 1 -->
+  <div class="sec fade">Chapter 1 -- The battery problem</div>
+  <div class="prose fade">
+    <p>Lead-acid batteries have a narrow safe operating window. Full charge is about 2.3-2.45V per cell (13.8-14.7V per 12V block). Deep discharge below 1.75V/cell (10.5V per block) causes permanent sulfation damage. The prototype's 24V pack (two 12V blocks in series) needed firmware that enforced these limits without false triggers during normal operation.</p>
+    <p>The previous state: no reliable software cutoffs. The hardware had a charger and a load contactor, but nothing in between that could make decisions about when to disconnect. That was the gap I filled.</p>
+  </div>
+
+  <!-- Chapter 2 -->
+  <div class="sec fade">Chapter 2 -- Sensing the battery</div>
+  <div class="prose fade">
+    <p>Three measurements, three ADC channels.</p>
+    <p><strong>Voltage</strong>: A resistive divider (62k over 10k) scales the 24V pack voltage into the MCU's 3.3V ADC range. The code reads a 12-bit ADC value and converts: <code>voltage = raw * (3.3/4095) * ((62+10)/10)</code>. I calibrated by measuring a known voltage with a DMM and adjusting the scale factor in code.</p>
+    <p><strong>Current</strong>: A low-value shunt resistor (0.01-0.05 ohm) on the battery negative terminal. The voltage drop (tens of millivolts at working currents) is amplified before the ADC reads it. Early readings were noisy -- switching transients from the load caused jitter. I added software averaging (running mean of last 8 samples) and a small RC filter on the sensor input.</p>
+    <p><strong>Temperature</strong>: A 10k NTC thermistor on the battery case, in a voltage divider. The ADC voltage maps to temperature via a lookup table derived from the Steinhart-Hart equation. The thermal response is slow (battery case has thermal mass), so the temperature reading naturally filters fast transients.</p>
+    <p>I chose software averaging over hardware-only filtering because it was tunable without resoldering. When the shunt noise changed after we swapped amplifier gains during calibration, I adjusted the averaging window in code rather than redesigning the RC filter. The 8-sample window added less than 1ms latency at our 100ms sample rate.</p>
+  </div>
+
+  <!-- Chapter 3 -->
+  <div class="sec fade">Chapter 3 -- The state machine</div>
+  <div class="prose fade">
+    <p>The firmware runs a state machine with 5 states: IDLE, CHARGING, DISCHARGING, WARNING, FAULT.</p>
+    <p>Transitions: IDLE to CHARGING when charger connected. IDLE to DISCHARGING when load applied. DISCHARGING to WARNING when voltage drops below 22.5V (1.875V/cell). WARNING to FAULT when voltage drops below 21.0V (1.75V/cell). Any state to FAULT on overcurrent (>6A) or over-temperature (>55C). FAULT to IDLE only when voltage recovers above 25.0V (recharged).</p>
+    <p>The hysteresis gap between cutoff (21.0V) and reset (25.0V) is 4V. This is intentionally wide. Without it, the battery voltage rebounds slightly when the load disconnects (internal resistance recovery), and the system oscillates: cut, rebound, reconnect, cut, rebound. A 4V gap means the battery must be meaningfully recharged before the system re-engages.</p>
+    <p>I chose a 4V hysteresis gap (21V cutoff, 25V reset) instead of the textbook 0.5-1V because the lead-acid pack exhibited 1.5-2V rebound under load removal. A narrow gap caused relay chatter in early testing. The 4V gap eliminates oscillation at the cost of requiring more recharging before reuse, which is acceptable for a prototype with a charger always nearby.</p>
+  </div>
+
+  <!-- Animation 1: BMS State Machine -->
+  <div class="graph-canvas-wrap fade">
+    <canvas id="bms-state-canvas" style="height:440px"></canvas>
+  </div>
+
+  <!-- Chapter 4 -->
+  <div class="sec fade">Chapter 4 -- Calibration and debugging</div>
+  <div class="prose fade">
+    <p>The gap between "code works" and "code works on real hardware" was the bulk of the internship.</p>
+    <p><strong>Threshold mismatch</strong>: Initially the code cut off at 20.5V instead of 21.0V. The divider calculation used integer math that truncated the scale factor. Fix: switched to float and re-calibrated against DMM readings.</p>
+    <p><strong>ADC reference drift</strong>: The MCU's reference voltage was not exactly 3.3V. Measured at 3.28V. Applied a correction factor in software.</p>
+    <p><strong>Battery sag under load</strong>: At 3A discharge, the terminal voltage sagged 0.5-1V below the open-circuit value. The warning threshold triggered prematurely at 50%+ state of charge. Adjusted the warning threshold to account for typical sag.</p>
+    <p><strong>Oscillation at cutoff</strong>: Without hysteresis, the relay cycled on/off at the cutoff point as the battery voltage rebounded after each disconnection. Adding the 4V hysteresis gap and a 500ms delay after fault detection eliminated the chatter.</p>
+    <p>Each fix: modify C code, reflash MCU, re-run the bench test. The debug log (UART at 115200 baud) printed voltage/current/temp every second, making it possible to trace exactly when and why a state transition fired.</p>
+  </div>
+
+  <!-- Chapter 5 -->
+  <div class="sec fade">Chapter 5 -- Threshold design</div>
+  <div class="prose fade">
+    <p>Every threshold traces back to battery chemistry.</p>
+  </div>
+
+  <div class="dia fade">
+    <table class="rtable">
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Threshold</th>
+          <th>Source</th>
+          <th>Reasoning</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Undervoltage cutoff</td>
+          <td>21.0V (1.75V/cell)</td>
+          <td>Lead-acid deep discharge limit</td>
+          <td>Below this, irreversible sulfation</td>
+        </tr>
+        <tr>
+          <td>Warning</td>
+          <td>22.5V (1.875V/cell)</td>
+          <td>90% of nominal</td>
+          <td>Early signal before cutoff</td>
+        </tr>
+        <tr>
+          <td>Reset (hysteresis)</td>
+          <td>25.0V</td>
+          <td>Empirical</td>
+          <td>Must be meaningfully recharged, not just rebounded</td>
+        </tr>
+        <tr>
+          <td>Overcurrent</td>
+          <td>6.0A</td>
+          <td>50% above expected peak (4A)</td>
+          <td>Margin for transients without false trips</td>
+        </tr>
+        <tr>
+          <td>Over-temperature</td>
+          <td>55C</td>
+          <td>Industry standard (TI app notes)</td>
+          <td>Lead-acid degrades above 50C; 5C margin</td>
+        </tr>
+        <tr>
+          <td>Charge voltage max</td>
+          <td>28.8V (2.4V/cell)</td>
+          <td>Float charge spec</td>
+          <td>Prevents overcharge gassing</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Animation 2: Voltage Threshold & Hysteresis -->
+  <div class="graph-canvas-wrap fade">
+    <canvas id="threshold-canvas" style="height:400px"></canvas>
+  </div>
+
+  <!-- Chapter 6 -->
+  <div class="sec fade">Chapter 6 -- What I would change</div>
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">No state-of-charge estimation</div>
+      <div class="pipe-desc">I used voltage as a proxy for battery level, which is unreliable under load (voltage sags). Coulomb counting (integrating current over time) or a hybrid approach would give more accurate remaining capacity.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">No CAN bus</div>
+      <div class="pipe-desc">The prototype used UART for debug only. A real BMS needs CAN for integration with motor controllers and chargers. Adding a CAN driver would make the firmware reusable in a multi-module vehicle.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Single-point temperature sensing</div>
+      <div class="pipe-desc">One NTC on the battery case misses hotspots. Cell-level thermal monitoring (one sensor per 12V block at minimum) would catch localized heating before the case sensor responds.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-title">Hardcoded thresholds</div>
+      <div class="pipe-desc">All voltage, current, and temperature limits are compile-time constants. A calibration mode that stores thresholds in flash (or reads from a config file at boot) would allow field adjustment without reflashing firmware.</div>
+    </div>
+  </div>
+
+  <!-- Stack Tags -->
+  <div class="sec fade">Stack</div>
+  <div class="stack fade">
+    <span class="stack-tag">Embedded C</span>
+    <span class="stack-tag">ARM Cortex-M</span>
+    <span class="stack-tag">STM32</span>
+    <span class="stack-tag">ADC</span>
+    <span class="stack-tag">UART</span>
+    <span class="stack-tag">NTC Thermistor</span>
+    <span class="stack-tag">Shunt Resistor</span>
+    <span class="stack-tag">Lead-Acid BMS</span>
+    <span class="stack-tag">Oscilloscope</span>
+    <span class="stack-tag">Electronic Load</span>
+  </div>
+
+</main>
+
+<footer>
+  <div class="ft">
+    <div class="ft-c">&copy; 2026 Sai Siddharth Yalamanchili</div>
+    <div class="ft-l">
+      <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
+      <a href="https://www.linkedin.com/in/siddharth-yalamanchili/" target="_blank">LinkedIn</a>
+      <a href="mailto:sy832@scarletmail.rutgers.edu">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(es => {
+  es.forEach((e, i) => {
+    if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
+  });
+}, { threshold: .12 });
+document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+/* ===================================================================
+   ANIMATION 1: BMS State Machine (bms-state-canvas)
+   =================================================================== */
+(function(){
+  var canvas = document.getElementById('bms-state-canvas');
+  if(!canvas) return;
+  var wrap = canvas.parentElement;
+  var accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  var amber='#c9963a';
+  var mono='JetBrains Mono, monospace';
+  var ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    var dpr=window.devicePixelRatio||1;
+    var rect=wrap.getBoundingClientRect();
+    w=rect.width; h=440;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  var states = [
+    {label:'IDLE',        short:'IDL'},
+    {label:'CHARGING',    short:'CHG'},
+    {label:'DISCHARGING', short:'DIS'},
+    {label:'WARNING',     short:'WRN'},
+    {label:'FAULT',       short:'FLT'}
+  ];
+
+  var P = [
+    {name:'fadeIn',        dur:60},
+    {name:'loadApplied',   dur:90},
+    {name:'discharge',     dur:180},
+    {name:'warning',       dur:90},
+    {name:'deepDischarge', dur:120},
+    {name:'fault',         dur:90},
+    {name:'rebound',       dur:120},
+    {name:'recharge',      dur:120},
+    {name:'hold',          dur:90},
+    {name:'reset',         dur:60}
+  ];
+  var totalF = P.reduce(function(s,p){return s+p.dur;},0);
+
+  function lerp(a,b,t){ return a+(b-a)*Math.min(1,Math.max(0,t)); }
+  function easeOut(t){ return 1-(1-t)*(1-t); }
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    var f = frame % totalF;
+
+    var phase=0, pf=0, acc=0;
+    for(var i=0;i<P.length;i++){
+      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
+      acc+=P[i].dur;
+    }
+    var prog = pf/P[phase].dur;
+
+    // Global alpha for fade in/out
+    var globalAlpha = 1;
+    if(phase === 0) globalAlpha = easeOut(prog);
+    if(phase === 9) globalAlpha = 1 - prog;
+    ctx.globalAlpha = globalAlpha;
+
+    // Layout
+    var stateW = Math.min(110, (w - 80) / 5 - 16);
+    var stateH = 44;
+    var stateY = 40;
+    var totalStatesW = 5 * stateW + 4 * 20;
+    var stateStartX = (w - totalStatesW) / 2;
+
+    // Determine active state index
+    var activeState = 0; // IDLE
+    if(phase >= 1) activeState = 2; // DISCHARGING
+    if(phase >= 3) activeState = 3; // WARNING
+    if(phase >= 5) activeState = 4; // FAULT
+    if(phase >= 8) activeState = 0; // back to IDLE
+
+    // Determine voltage, current, temp
+    var voltage = 28.0;
+    var current = 0;
+    var temp = 25;
+
+    if(phase === 0){ voltage = 28.0; current = 0; temp = 25; }
+    else if(phase === 1){ voltage = 28.0; current = lerp(0, 3.2, prog); temp = 25; }
+    else if(phase === 2){ voltage = lerp(28.0, 22.5, prog); current = 3.2; temp = lerp(25, 32, prog); }
+    else if(phase === 3){ voltage = 22.5; current = 3.2; temp = lerp(32, 34, prog); }
+    else if(phase === 4){ voltage = lerp(22.5, 21.0, prog); current = 3.2; temp = lerp(34, 36, prog); }
+    else if(phase === 5){ voltage = 21.0; current = lerp(3.2, 0, easeOut(prog)); temp = 36; }
+    else if(phase === 6){ voltage = lerp(21.0, 22.3, easeOut(prog)); current = 0; temp = lerp(36, 33, prog); }
+    else if(phase === 7){ voltage = lerp(22.3, 25.0, easeOut(prog)); current = 0; temp = lerp(33, 28, prog); }
+    else if(phase === 8){ voltage = 25.0; current = 0; temp = 28; }
+    else { voltage = 25.0; current = 0; temp = 28; }
+
+    // Draw state boxes
+    for(var s=0;s<5;s++){
+      var sx = stateStartX + s * (stateW + 20);
+      var isActive = (s === activeState);
+      var col = t3;
+      if(isActive){
+        if(s === 0) col = green;
+        else if(s === 1) col = accent;
+        else if(s === 2) col = accent;
+        else if(s === 3) col = amber;
+        else if(s === 4) col = red;
+      }
+
+      drawRR(sx, stateY, stateW, stateH, 8, isActive ? inset : 'rgba(10,10,12,0.5)', col, isActive ? 2 : 1);
+
+      ctx.font = '600 '+(stateW < 90 ? '9' : '11')+'px '+mono;
+      ctx.fillStyle = isActive ? col : t3;
+      ctx.textAlign = 'center';
+      ctx.fillText(stateW < 90 ? states[s].short : states[s].label, sx + stateW/2, stateY + stateH/2 + 4);
+
+      // Draw arrows between states
+      if(s < 4){
+        var arrowX = sx + stateW + 4;
+        var arrowY = stateY + stateH/2;
+        ctx.beginPath();
+        ctx.moveTo(arrowX, arrowY);
+        ctx.lineTo(arrowX + 12, arrowY);
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(arrowX + 9, arrowY - 3);
+        ctx.lineTo(arrowX + 13, arrowY);
+        ctx.lineTo(arrowX + 9, arrowY + 3);
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    // Gauge area
+    var gaugeX = w * 0.72;
+    var gaugeY = 120;
+    var gaugeW = w * 0.22;
+    var gaugeH = 280;
+
+    drawRR(gaugeX, gaugeY, gaugeW, gaugeH, 10, inset, null);
+
+    // Voltage gauge bar
+    var barX = gaugeX + 24;
+    var barY = gaugeY + 50;
+    var barW = 20;
+    var barH = 180;
+
+    // Background bar
+    drawRR(barX, barY, barW, barH, 4, 'rgba(255,255,255,0.03)', null);
+
+    // Voltage fill (18V=0%, 30V=100%)
+    var vPct = (voltage - 18) / (30 - 18);
+    var fillH = barH * vPct;
+    var fillColor = green;
+    if(voltage < 22.5) fillColor = amber;
+    if(voltage < 21.0) fillColor = red;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(barX, barY, barW, barH);
+    ctx.clip();
+    drawRR(barX, barY + barH - fillH, barW, fillH, 4, fillColor, null);
+    ctx.restore();
+
+    // Threshold markers on the gauge
+    var thresholds = [
+      {v:25.0, label:'25.0V', col:green},
+      {v:22.5, label:'22.5V', col:amber},
+      {v:21.0, label:'21.0V', col:red}
+    ];
+    for(var ti=0;ti<thresholds.length;ti++){
+      var th = thresholds[ti];
+      var ty = barY + barH - barH * ((th.v - 18) / (30 - 18));
+      ctx.beginPath();
+      ctx.setLineDash([3,3]);
+      ctx.moveTo(barX - 4, ty);
+      ctx.lineTo(barX + barW + 4, ty);
+      ctx.strokeStyle = th.col;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = globalAlpha * 0.6;
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = globalAlpha;
+
+      ctx.font = '500 9px '+mono;
+      ctx.fillStyle = th.col;
+      ctx.textAlign = 'left';
+      ctx.fillText(th.label, barX + barW + 10, ty + 3);
+    }
+
+    // Voltage readout label
+    ctx.font = '500 9px '+mono;
+    ctx.fillStyle = t3;
+    ctx.textAlign = 'left';
+    ctx.fillText('PACK VOLTAGE', gaugeX + 14, gaugeY + 24);
+
+    ctx.font = '600 18px '+mono;
+    ctx.fillStyle = fillColor;
+    ctx.textAlign = 'left';
+    ctx.fillText(voltage.toFixed(1) + 'V', gaugeX + 14, gaugeY + 44);
+
+    // Current and Temp readouts
+    var readoutX = gaugeX + gaugeW * 0.5 + 10;
+    var readoutY = gaugeY + 70;
+
+    ctx.font = '500 9px '+mono;
+    ctx.fillStyle = t3;
+    ctx.textAlign = 'left';
+    ctx.fillText('CURRENT', readoutX, readoutY);
+    ctx.font = '600 14px '+mono;
+    ctx.fillStyle = current > 6 ? red : t1;
+    ctx.fillText(current.toFixed(1) + 'A', readoutX, readoutY + 18);
+
+    ctx.font = '500 9px '+mono;
+    ctx.fillStyle = t3;
+    ctx.fillText('TEMPERATURE', readoutX, readoutY + 50);
+    ctx.font = '600 14px '+mono;
+    ctx.fillStyle = temp > 55 ? red : t1;
+    ctx.fillText(temp.toFixed(0) + 'C', readoutX, readoutY + 68);
+
+    // State label
+    ctx.font = '500 9px '+mono;
+    ctx.fillStyle = t3;
+    ctx.fillText('STATE', readoutX, readoutY + 100);
+    var stateLabel = states[activeState].label;
+    var stateCol = green;
+    if(activeState === 2) stateCol = accent;
+    if(activeState === 3) stateCol = amber;
+    if(activeState === 4) stateCol = red;
+    ctx.font = '600 13px '+mono;
+    ctx.fillStyle = stateCol;
+    ctx.fillText(stateLabel, readoutX, readoutY + 118);
+
+    // Event log / labels area (left side, below states)
+    var logX = stateStartX;
+    var logY = 120;
+    var logW = w * 0.60;
+
+    // Phase-specific labels
+    ctx.font = '500 11px '+mono;
+    ctx.textAlign = 'left';
+
+    if(phase === 1){
+      ctx.fillStyle = accent;
+      ctx.fillText('Load applied', logX, logY);
+      ctx.font = '400 10px '+mono;
+      ctx.fillStyle = t2;
+      ctx.fillText('IDLE -> DISCHARGING', logX, logY + 18);
+    }
+    else if(phase === 2){
+      ctx.fillStyle = t2;
+      ctx.fillText('Discharging...  voltage declining', logX, logY);
+      // Progress bar
+      drawRR(logX, logY + 12, logW * 0.5, 6, 3, 'rgba(255,255,255,0.03)', null);
+      drawRR(logX, logY + 12, logW * 0.5 * prog, 6, 3, accent, null);
+    }
+    else if(phase === 3){
+      ctx.fillStyle = amber;
+      ctx.fillText('WARNING: V < 22.5V (1.875V/cell)', logX, logY);
+      // Blinking LED
+      var blink = Math.sin(frame * 0.15) > 0;
+      if(blink){
+        ctx.beginPath();
+        ctx.arc(logX + logW * 0.5 + 20, logY - 3, 5, 0, Math.PI * 2);
+        ctx.fillStyle = amber;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(logX + logW * 0.5 + 20, logY - 3, 8, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(201,150,58,0.15)';
+        ctx.fill();
+      }
+    }
+    else if(phase === 4){
+      ctx.fillStyle = amber;
+      ctx.fillText('Deep discharge in progress...', logX, logY);
+      ctx.font = '400 10px '+mono;
+      ctx.fillStyle = t2;
+      ctx.fillText('22.5V -> 21.0V', logX, logY + 18);
+    }
+    else if(phase === 5){
+      ctx.fillStyle = red;
+      ctx.fillText('FAULT: V < 21.0V (1.75V/cell)', logX, logY);
+      ctx.font = '600 12px '+mono;
+      ctx.fillStyle = red;
+      ctx.fillText('DISCONNECT LOAD', logX, logY + 24);
+      ctx.font = '400 10px '+mono;
+      ctx.fillStyle = t2;
+      ctx.fillText('Load current cut to 0A', logX, logY + 44);
+    }
+    else if(phase === 6){
+      ctx.fillStyle = t1;
+      ctx.fillText('Voltage rebounds to ' + voltage.toFixed(1) + 'V', logX, logY);
+      ctx.font = '400 10px '+mono;
+      ctx.fillStyle = t2;
+      ctx.fillText('Internal resistance recovery (no load)', logX, logY + 18);
+      ctx.fillStyle = red;
+      ctx.fillText('System stays in FAULT (reset requires >25.0V)', logX, logY + 36);
+    }
+    else if(phase === 7){
+      ctx.fillStyle = accent;
+      ctx.fillText('Charger connected', logX, logY);
+      ctx.font = '400 10px '+mono;
+      ctx.fillStyle = t2;
+      ctx.fillText('Voltage climbing: ' + voltage.toFixed(1) + 'V', logX, logY + 18);
+      if(prog > 0.85){
+        ctx.fillStyle = green;
+        ctx.fillText('V > 25.0V: FAULT cleared -> IDLE', logX, logY + 36);
+      }
+    }
+    else if(phase === 8){
+      ctx.fillStyle = green;
+      ctx.fillText('System reset to IDLE', logX, logY);
+      ctx.font = '500 10px '+mono;
+      ctx.fillStyle = t2;
+      ctx.fillText('Hysteresis gap: 4.0V (21.0V cutoff -> 25.0V reset)', logX, logY + 22);
+    }
+
+    // Transition log (bottom area)
+    var logEntries = [];
+    if(phase >= 1) logEntries.push({t:'IDLE -> DISCHARGING', col:accent});
+    if(phase >= 3) logEntries.push({t:'DISCHARGING -> WARNING (V<22.5V)', col:amber});
+    if(phase >= 5) logEntries.push({t:'WARNING -> FAULT (V<21.0V)', col:red});
+    if(phase >= 7 && prog > 0.85) logEntries.push({t:'FAULT -> IDLE (V>25.0V)', col:green});
+    if(phase >= 8) logEntries.push({t:'FAULT -> IDLE (V>25.0V)', col:green});
+
+    // Deduplicate last entry
+    var shown = {};
+    var uniqueEntries = [];
+    for(var le=0;le<logEntries.length;le++){
+      if(!shown[logEntries[le].t]){
+        shown[logEntries[le].t] = true;
+        uniqueEntries.push(logEntries[le]);
+      }
+    }
+
+    var logBaseY = h - 20 - uniqueEntries.length * 16;
+    ctx.font = '400 9px '+mono;
+    ctx.textAlign = 'left';
+    for(var li=0;li<uniqueEntries.length;li++){
+      ctx.fillStyle = uniqueEntries[li].col;
+      ctx.globalAlpha = globalAlpha * 0.7;
+      ctx.fillText('> ' + uniqueEntries[li].t, logX, logBaseY + li * 16);
+    }
+    ctx.globalAlpha = globalAlpha;
+
+    ctx.globalAlpha = 1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  var cObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting && !running){
+        running=true; initCanvas(); draw();
+      } else if(!entry.isIntersecting && running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+  window.addEventListener('resize',function(){ if(running) initCanvas(); });
+})();
+
+/* ===================================================================
+   ANIMATION 2: Voltage Threshold & Hysteresis (threshold-canvas)
+   =================================================================== */
+(function(){
+  var canvas = document.getElementById('threshold-canvas');
+  if(!canvas) return;
+  var wrap = canvas.parentElement;
+  var accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  var amber='#c9963a';
+  var mono='JetBrains Mono, monospace';
+  var ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    var dpr=window.devicePixelRatio||1;
+    var rect=wrap.getBoundingClientRect();
+    w=rect.width; h=400;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  var P = [
+    {name:'fadeIn',           dur:60},
+    {name:'draw_discharge',   dur:240},
+    {name:'rebound',          dur:120},
+    {name:'recharge',         dur:180},
+    {name:'label_hysteresis', dur:120},
+    {name:'hold',             dur:120},
+    {name:'reset',            dur:60}
+  ];
+  var totalF = P.reduce(function(s,p){return s+p.dur;},0);
+
+  function lerp(a,b,t){ return a+(b-a)*Math.min(1,Math.max(0,t)); }
+
+  // Build voltage curve data points
+  // Discharge: 28 -> 21 (t=0 to 0.4)
+  // Rebound:   21 -> 22.3 (t=0.4 to 0.55)
+  // Recharge:  22.3 -> 25 (t=0.55 to 0.85)
+  // Hold:      25 (t=0.85 to 1.0)
+  function voltageAt(t){
+    if(t < 0.40) return lerp(28, 21, t / 0.40);
+    if(t < 0.55) return lerp(21, 22.3, (t - 0.40) / 0.15);
+    if(t < 0.85) return lerp(22.3, 25.0, (t - 0.55) / 0.30);
+    return 25.0;
+  }
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    var f = frame % totalF;
+
+    var phase=0, pf=0, acc=0;
+    for(var i=0;i<P.length;i++){
+      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
+      acc+=P[i].dur;
+    }
+    var prog = pf/P[phase].dur;
+
+    var globalAlpha = 1;
+    if(phase === 0) globalAlpha = prog;
+    if(phase === 6) globalAlpha = 1 - prog;
+    ctx.globalAlpha = globalAlpha;
+
+    // Chart area
+    var padL = 60, padR = 30, padT = 50, padB = 50;
+    var chartW = w - padL - padR;
+    var chartH = h - padT - padB;
+
+    // Y axis: 18V to 30V
+    var vMin = 18, vMax = 30;
+    function yForV(v){ return padT + chartH * (1 - (v - vMin) / (vMax - vMin)); }
+    function xForT(t){ return padL + chartW * t; }
+
+    // Draw zone fills
+    // Green zone: above 22.5V
+    ctx.fillStyle = 'rgba(90,154,90,0.04)';
+    ctx.fillRect(padL, yForV(vMax), chartW, yForV(22.5) - yForV(vMax));
+    // Amber zone: 21.0 - 22.5
+    ctx.fillStyle = 'rgba(201,150,58,0.04)';
+    ctx.fillRect(padL, yForV(22.5), chartW, yForV(21.0) - yForV(22.5));
+    // Red zone: below 21.0
+    ctx.fillStyle = 'rgba(154,90,90,0.04)';
+    ctx.fillRect(padL, yForV(21.0), chartW, yForV(vMin) - yForV(21.0));
+
+    // Draw axes
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, padT + chartH);
+    ctx.lineTo(padL + chartW, padT + chartH);
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Y axis labels
+    ctx.font = '400 9px '+mono;
+    ctx.fillStyle = t3;
+    ctx.textAlign = 'right';
+    for(var v=18;v<=30;v+=2){
+      var yy = yForV(v);
+      ctx.fillText(v+'V', padL - 8, yy + 3);
+      if(v > 18 && v < 30){
+        ctx.beginPath();
+        ctx.setLineDash([2,4]);
+        ctx.moveTo(padL, yy);
+        ctx.lineTo(padL + chartW, yy);
+        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    // X axis label
+    ctx.font = '500 9px '+mono;
+    ctx.fillStyle = t3;
+    ctx.textAlign = 'center';
+    ctx.fillText('TIME', padL + chartW / 2, h - 10);
+
+    // Threshold lines
+    var threshLines = [
+      {v:22.5, label:'WARNING 22.5V', col:amber, dash:[6,4]},
+      {v:21.0, label:'CUTOFF 21.0V',  col:red,   dash:[6,4]},
+      {v:25.0, label:'RESET 25.0V',   col:green,  dash:[6,4]}
+    ];
+    for(var ti=0;ti<threshLines.length;ti++){
+      var th = threshLines[ti];
+      var ty = yForV(th.v);
+      ctx.beginPath();
+      ctx.setLineDash(th.dash);
+      ctx.moveTo(padL, ty);
+      ctx.lineTo(padL + chartW, ty);
+      ctx.strokeStyle = th.col;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = globalAlpha * 0.5;
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = globalAlpha;
+
+      ctx.font = '500 8px '+mono;
+      ctx.fillStyle = th.col;
+      ctx.textAlign = 'right';
+      ctx.fillText(th.label, padL + chartW - 4, ty - 5);
+    }
+
+    // Determine how far along the voltage line to draw
+    var drawT = 0; // 0 to 1 representing full curve progress
+    if(phase === 0){
+      drawT = 0;
+    } else if(phase === 1){
+      // Discharge: draw from t=0 to t=0.40
+      drawT = prog * 0.40;
+    } else if(phase === 2){
+      // Rebound: t=0.40 to t=0.55
+      drawT = 0.40 + prog * 0.15;
+    } else if(phase === 3){
+      // Recharge: t=0.55 to t=0.85
+      drawT = 0.55 + prog * 0.30;
+    } else {
+      drawT = 0.85;
+    }
+
+    // Draw voltage line
+    if(drawT > 0){
+      ctx.beginPath();
+      var steps = Math.floor(drawT * 200);
+      for(var si=0;si<=steps;si++){
+        var t = (si / 200);
+        if(t > drawT) break;
+        var vv = voltageAt(t);
+        var px = xForT(t);
+        var py = yForV(vv);
+        if(si === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw dot at current position
+      var curV = voltageAt(drawT);
+      var dotX = xForT(drawT);
+      var dotY = yForV(curV);
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, 4, 0, Math.PI * 2);
+      ctx.fillStyle = accent;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, 7, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(216,140,58,0.2)';
+      ctx.fill();
+    }
+
+    // State label in top-left
+    var stateLabel = 'IDLE';
+    var stateLabelCol = green;
+    var curVoltage = drawT > 0 ? voltageAt(drawT) : 28;
+    if(phase >= 1 && curVoltage > 22.5){ stateLabel = 'DISCHARGING'; stateLabelCol = accent; }
+    if(phase >= 1 && curVoltage <= 22.5 && curVoltage > 21.0){ stateLabel = 'WARNING'; stateLabelCol = amber; }
+    if(phase >= 1 && curVoltage <= 21.0){ stateLabel = 'FAULT'; stateLabelCol = red; }
+    // After rebound, still FAULT until recharge past 25V
+    if(phase === 2){ stateLabel = 'FAULT'; stateLabelCol = red; }
+    if(phase === 3 && curVoltage < 25.0){ stateLabel = 'FAULT'; stateLabelCol = red; }
+    if(phase === 3 && curVoltage >= 25.0){ stateLabel = 'IDLE'; stateLabelCol = green; }
+    if(phase >= 4){ stateLabel = 'IDLE'; stateLabelCol = green; }
+
+    drawRR(padL + 8, padT + 8, 100, 24, 6, inset, stateLabelCol, 1);
+    ctx.font = '600 10px '+mono;
+    ctx.fillStyle = stateLabelCol;
+    ctx.textAlign = 'center';
+    ctx.fillText('STATE: ' + stateLabel, padL + 58, padT + 24);
+
+    // Event markers
+    if(phase >= 1){
+      // Warning crossing
+      var warnT = 0;
+      // Find t where voltage = 22.5
+      // discharge: lerp(28,21,t/0.40) = 22.5 -> t/0.40 = (28-22.5)/(28-21) = 5.5/7 -> t = 0.314
+      var warnCrossT = 0.40 * (28 - 22.5) / (28 - 21);
+      if(drawT >= warnCrossT){
+        var mx = xForT(warnCrossT);
+        var my = yForV(22.5);
+        ctx.beginPath();
+        ctx.arc(mx, my, 3, 0, Math.PI * 2);
+        ctx.fillStyle = amber;
+        ctx.fill();
+      }
+
+      // Cutoff crossing
+      if(drawT >= 0.40){
+        var cx2 = xForT(0.40);
+        var cy2 = yForV(21.0);
+        ctx.beginPath();
+        ctx.arc(cx2, cy2, 3, 0, Math.PI * 2);
+        ctx.fillStyle = red;
+        ctx.fill();
+        ctx.font = '600 9px '+mono;
+        ctx.fillStyle = red;
+        ctx.textAlign = 'left';
+        ctx.fillText('LOAD CUT', cx2 + 10, cy2 - 6);
+      }
+    }
+
+    // Rebound label
+    if(phase >= 2 && phase < 6){
+      var rbX = xForT(0.50);
+      var rbY = yForV(22.3);
+      if(phase === 2 && prog > 0.5){
+        ctx.font = '400 9px '+mono;
+        ctx.fillStyle = t2;
+        ctx.textAlign = 'left';
+        ctx.fillText('Rebounded but still in FAULT', rbX + 10, rbY - 8);
+      }
+      if(phase >= 3){
+        ctx.font = '400 9px '+mono;
+        ctx.fillStyle = t2;
+        ctx.textAlign = 'left';
+        ctx.fillText('Rebounded but still in FAULT', rbX + 10, rbY - 8);
+      }
+    }
+
+    // Fault cleared marker
+    if(phase >= 3){
+      // Find t where recharge hits 25V
+      // recharge: lerp(22.3, 25.0, (t-0.55)/0.30) = 25 -> (t-0.55)/0.30 = 1 -> t = 0.85
+      // But partial: we need when voltage first = 25 during recharge
+      var clearT = 0.55 + 0.30 * ((25.0 - 22.3) / (25.0 - 22.3)); // = 0.85
+      if(drawT >= 0.84){
+        var clX = xForT(0.85);
+        var clY = yForV(25.0);
+        ctx.beginPath();
+        ctx.arc(clX, clY, 3, 0, Math.PI * 2);
+        ctx.fillStyle = green;
+        ctx.fill();
+        ctx.font = '600 9px '+mono;
+        ctx.fillStyle = green;
+        ctx.textAlign = 'left';
+        ctx.fillText('FAULT CLEARED', clX + 10, clY - 6);
+      }
+    }
+
+    // Hysteresis gap annotation
+    if(phase >= 4){
+      var hProg = phase === 4 ? prog : 1;
+      ctx.save();
+      ctx.globalAlpha = globalAlpha * hProg;
+
+      var hx = padL + chartW + 6;
+      if(hx > w - 30) hx = w - 30;
+      // Actually draw on right side of chart
+      var arrowX2 = padL + chartW - 20;
+      var y21 = yForV(21.0);
+      var y25 = yForV(25.0);
+
+      // Vertical double-headed arrow
+      ctx.beginPath();
+      ctx.moveTo(arrowX2, y25);
+      ctx.lineTo(arrowX2, y21);
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Arrow heads
+      ctx.beginPath();
+      ctx.moveTo(arrowX2 - 4, y25 + 6);
+      ctx.lineTo(arrowX2, y25);
+      ctx.lineTo(arrowX2 + 4, y25 + 6);
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(arrowX2 - 4, y21 - 6);
+      ctx.lineTo(arrowX2, y21);
+      ctx.lineTo(arrowX2 + 4, y21 - 6);
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Label
+      var midY = (y21 + y25) / 2;
+      ctx.font = '600 10px '+mono;
+      ctx.fillStyle = accent;
+      ctx.textAlign = 'right';
+      ctx.fillText('4.0V gap', arrowX2 - 8, midY - 4);
+
+      // Explanatory text at bottom
+      if(phase >= 4){
+        ctx.font = '400 9px '+mono;
+        ctx.fillStyle = t2;
+        ctx.textAlign = 'center';
+        ctx.fillText('Without this gap, voltage rebound causes relay chatter', padL + chartW / 2, h - 28);
+      }
+
+      ctx.restore();
+    }
+
+    ctx.globalAlpha = 1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  var cObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting && !running){
+        running=true; initCanvas(); draw();
+      } else if(!entry.isIntersecting && running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+  window.addEventListener('resize',function(){ if(running) initCanvas(); });
+})();
+</script>
+</body>
+</html>

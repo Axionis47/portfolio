@@ -1,4 +1,4 @@
-<div class="exp-card fade">
+<a href="experience/frenly.html" class="exp-card fade" style="text-decoration:none;color:inherit;display:block">
   <div class="exp-header">
     <div class="exp-logo">
       <span class="mono-icon">Fr</span>
@@ -6,7 +6,7 @@
     <div class="exp-meta">
       <div class="exp-top">
         <span class="exp-company">Frenly</span>
-        <span class="exp-date">Jan 2023 &ndash; Dec 2023</span>
+        <span class="exp-date">Jan 2023 - Dec 2023</span>
       </div>
       <div class="exp-role">Founding Engineer</div>
       <div class="exp-loc">India</div>
@@ -14,16 +14,16 @@
   </div>
   <div class="exp-body">
     <ul class="exp-bullets">
-      <li>Architected the backend for an end-to-end encrypted doctor-patient messaging platform &mdash; client-side encryption via Virgil E3Kit, server stores only ciphertext, even platform operators cannot read messages.</li>
-      <li>Built auth with RBAC (doctors, patients, admins), doctor availability scheduling with calendar sync, encrypted case records and file storage on S3, audit logging, and push notifications &mdash; deployed on AWS with containerized microservices.</li>
+      <li>Built the backend for an E2EE doctor-patient chat platform. Virgil E3Kit encrypts on the client, server stores only ciphertext. Even platform operators cannot read messages. JWT auth with RBAC across 3 roles.</li>
+      <li>Integrated Cronofy for real-time doctor availability, Stream/CometChat SDK for chat transport, S3 with SSE-AES-256 for file storage, and Firebase for push notifications. Deployed on AWS EC2 with Docker Compose.</li>
     </ul>
     <div class="exp-tags">
-      <span class="exp-tag">Next.js</span>
-      <span class="exp-tag">AWS</span>
+      <span class="exp-tag">Node.js</span>
+      <span class="exp-tag">Express</span>
       <span class="exp-tag">E2EE</span>
-      <span class="exp-tag">PostgreSQL</span>
-      <span class="exp-tag">Kubernetes</span>
       <span class="exp-tag">Virgil E3Kit</span>
+      <span class="exp-tag">AWS</span>
+      <span class="exp-tag">Docker</span>
     </div>
   </div>
-</div>
+</a>

@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LTIMindtree: Pipeline Reliability on Fosfor Spectra — Sai Siddharth Yalamanchili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{font-size:18px}
+  :root{
+    --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
+    --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
+    --t1:#e0e0e0;--t2:#ababab;--t3:#787880;
+    --accent:#d88c3a;--green:#5a9a5a;--red:#9a5a5a;
+    --r:14px;
+    --mono:'JetBrains Mono',monospace;
+    --serif:'Source Serif 4',serif;
+    --sans:'DM Sans',sans-serif;
+  }
+  body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
+  a{color:var(--accent);text-decoration:none;transition:color .2s}
+  a:hover{color:#eaa050}
+  nav{display:flex;justify-content:space-between;align-items:center;max-width:1440px;width:100%;margin:0 auto;padding:2.5rem 3rem 1.5rem}
+  nav .logo{font-family:var(--mono);font-weight:600;font-size:1.02rem;color:var(--t1);text-decoration:none}
+  nav .back{font-family:var(--mono);font-size:.86rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  nav .back:hover{color:var(--accent)}
+  main{max-width:1440px;width:100%;margin:0 auto;padding:2rem 3rem 4rem;flex:1}
+  .proj-label{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
+  .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
+  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 34px;margin-bottom:36px}
+  .brief-label{font-family:var(--mono);font-size:.66rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+  .brief-key{font-family:var(--mono);font-size:.78rem;color:var(--t2);text-align:right;white-space:nowrap}
+  .brief-val{font-family:var(--mono);font-size:.84rem;color:var(--t1);line-height:1.7}
+  .prose{margin-bottom:1.8rem}
+  .prose p{font-family:var(--sans);font-size:1.08rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
+  .prose strong{color:var(--t1);font-weight:500}
+  .sec{font-family:var(--mono);font-size:.78rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
+  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 30px;margin:20px 0}
+  .dia-title{font-family:var(--mono);font-size:.72rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia-group{font-family:var(--mono);font-size:.66rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;margin:16px 0 6px;padding-left:4px}
+  .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
+  .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
+  .dia-box-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:3px}
+  .dia-box-sub{font-family:var(--mono);font-size:.68rem;color:var(--t2);line-height:1.7}
+  .dia-arrow{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;padding:0 12px;flex-shrink:0}
+  .dia-arrow-down{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;text-align:center;padding:8px 0}
+  .dia-note{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
+  .dia-good{border:1px solid rgba(90,154,90,0.2)}
+  .dia-bad{border:1px solid rgba(154,90,90,0.2)}
+  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
+  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:26px 20px;text-align:center;transition:all .3s}
+  .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+  .stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:5px}
+  .stat-label{font-family:var(--mono);font-size:.68rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
+  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
+  .rtable th{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.76rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable tr.best td{color:var(--accent);font-weight:500}
+  .pipeline{position:relative;padding-left:32px;margin:20px 0}
+  .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
+  .pipe-step{position:relative;margin-bottom:24px}
+  .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
+  .pipe-num{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;margin-bottom:3px}
+  .pipe-title{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+  .pipe-desc{font-family:var(--sans);font-size:.96rem;color:var(--t2);line-height:1.95}
+  .pipe-desc strong{color:var(--t1);font-weight:500}
+  .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
+  .stack-tag{font-family:var(--mono);font-size:.66rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .proj-link{display:inline-block;font-family:var(--mono);font-size:.78rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+  .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+  .graph-canvas-wrap{position:relative;margin:24px 0;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);overflow:hidden}
+  .graph-canvas-wrap canvas{display:block;width:100%}
+  .prose code{font-family:var(--mono);font-size:.82rem;color:var(--accent);background:var(--inset);padding:2px 6px;border-radius:4px}
+  .example-output{background:var(--inset);border-radius:10px;padding:20px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);font-family:var(--mono);font-size:.78rem;color:var(--t2);line-height:2;text-align:left;margin:16px 0}
+  .example-output .eo-header{color:var(--t3);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
+  .example-output .eo-decision{color:var(--red);font-weight:500}
+  .example-output .eo-reason{color:var(--t1)}
+  footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
+  .ft{max-width:1440px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+  .ft-c{font-family:var(--mono);font-size:.72rem;color:var(--t3)}
+  .ft-l{display:flex;gap:18px}
+  .ft-l a{font-family:var(--mono);font-size:.76rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  .ft-l a:hover{color:var(--accent)}
+  @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+  .fade.v{opacity:1;transform:translateY(0)}
+  @media(max-width:768px){
+    main{padding:1rem 1rem 3rem}
+    .results{grid-template-columns:repeat(2,1fr)}
+    .dia-row{flex-direction:column;gap:0}
+    .dia-arrow{transform:rotate(90deg);padding:6px 0}
+    .graph-canvas-wrap canvas{height:320px}
+    .ft{flex-direction:column;gap:10px;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="logo">sai.</a>
+  <a href="../#experience" class="back">&larr; Experience</a>
+</nav>
+
+<main>
+
+  <div class="proj-label fade">Experience</div>
+  <h1 class="proj-title fade">LTIMindtree: Pipeline Reliability on the Fosfor Spectra DataOps Platform</h1>
+  <div class="divider"></div>
+
+  <div class="brief fade">
+    <div class="brief-label">Engineering Brief</div>
+    <div class="brief-grid">
+      <span class="brief-key">Role</span>
+      <span class="brief-val">Software Engineering Intern, May 2022 - Dec 2022, India (8 months)</span>
+      <span class="brief-key">Problem</span>
+      <span class="brief-val">The Fosfor Spectra DataOps platform had recurring pipeline failures: duplicate submissions wasting compute, invalid configs accepted then failing deep in execution, vague error messages slowing triage, and no automated regression tests.</span>
+      <span class="brief-key">Approach</span>
+      <span class="brief-val">6 targeted backend fixes to the Python/FastAPI submission and execution services. Idempotent submissions via SHA-256 fingerprinting. Pre-execution config validation. Failure classification with retry eligibility. Automated smoke-test harness for CI.</span>
+      <span class="brief-key">Result</span>
+      <span class="brief-val">~60% of invalid runs caught at submit-time. ~30% reduction in debugging time. ~25% reduction in manual QA effort. Zero ghost RUNNING states after the status fix.</span>
+      <span class="brief-key">Stack</span>
+      <span class="brief-val">Python, FastAPI, PostgreSQL, pytest, Kafka/RabbitMQ, Git</span>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="results fade">
+    <div class="stat">
+      <div class="stat-val">60%</div>
+      <div class="stat-label">Invalid runs caught early</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">30%</div>
+      <div class="stat-label">Debugging time reduced</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">30+</div>
+      <div class="stat-label">Tests added</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">6</div>
+      <div class="stat-label">Backend fixes shipped</div>
+    </div>
+  </div>
+
+  <!-- Chapter 1 -->
+  <div class="sec fade">Chapter 1 -- The pipeline reliability problem</div>
+  <div class="prose fade">
+    <p>Spectra orchestrates data pipelines across cloud infrastructure. When a workflow run fails, someone has to figure out why. Before these fixes, that process was slow and noisy. Duplicate submissions created redundant runs. Invalid configurations were accepted at the API layer but failed minutes later in the executor. When runs did fail, the error messages were raw stack traces with no classification. And retrying a run that failed for a permanent reason (bad config) just produced the same failure again.</p>
+    <p>Each of these problems was small individually. Together, they consumed hours of QA and engineering time every sprint. My job was to fix them one at a time, with tests, over 8 months.</p>
+  </div>
+
+  <!-- Chapter 2 -->
+  <div class="sec fade">Chapter 2 -- The architecture</div>
+  <div class="dia fade">
+    <div class="dia-title">Fosfor Spectra -- Submission and Execution Flow</div>
+
+    <div class="dia-group">Submission path</div>
+    <div class="dia-row">
+      <div class="dia-box">
+        <div class="dia-box-title">User / QA</div>
+        <div class="dia-box-sub">POST /api/v1/workflows/{id}/runs</div>
+      </div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box">
+        <div class="dia-box-title">Submission Service</div>
+        <div class="dia-box-sub">Python / FastAPI</div>
+      </div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box">
+        <div class="dia-box-title">Metadata DB</div>
+        <div class="dia-box-sub">PostgreSQL</div>
+      </div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row">
+      <div class="dia-box">
+        <div class="dia-box-title">Job Queue</div>
+        <div class="dia-box-sub">Kafka / RabbitMQ</div>
+      </div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box">
+        <div class="dia-box-title">Execution Service</div>
+        <div class="dia-box-sub">Python -- runs pipelines</div>
+      </div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box">
+        <div class="dia-box-title">Run Events</div>
+        <div class="dia-box-sub">run_events table</div>
+      </div>
+    </div>
+
+    <div class="dia-group">Read path</div>
+    <div class="dia-row">
+      <div class="dia-box">
+        <div class="dia-box-title">User / QA</div>
+        <div class="dia-box-sub">GET /status</div>
+      </div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box">
+        <div class="dia-box-title">Status API</div>
+        <div class="dia-box-sub">Python -- read-only</div>
+      </div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box">
+        <div class="dia-box-title">Metadata DB</div>
+        <div class="dia-box-sub">workflow_runs, run_events</div>
+      </div>
+    </div>
+
+    <div class="dia-group">Key tables</div>
+    <div class="dia-row">
+      <div class="dia-box" style="min-width:200px">
+        <div class="dia-box-title">workflow_runs</div>
+        <div class="dia-box-sub">run_id, workflow_id, status,<br>request_fingerprint, failure_class,<br>retry_eligible</div>
+      </div>
+      <div class="dia-box" style="min-width:160px">
+        <div class="dia-box-title">workflow_configs</div>
+        <div class="dia-box-sub">id, is_active,<br>supports_incremental</div>
+      </div>
+      <div class="dia-box" style="min-width:140px">
+        <div class="dia-box-title">run_events</div>
+        <div class="dia-box-sub">event log per run</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chapter 3 -->
+  <div class="sec fade">Chapter 3 -- Six fixes, each with tests</div>
+  <div class="prose fade">
+    <p>I chose to fix these issues one at a time rather than redesigning the submission pipeline because each fix was independently valuable and independently testable. A redesign would have blocked the team for weeks. Incremental fixes shipped value every sprint and built on each other: fingerprinting enabled idempotency, classification enabled retry gating, and the smoke harness validated all of them together.</p>
+  </div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">Duplicate submissions (idempotency)</div>
+      <div class="pipe-desc"><strong>Problem:</strong> The same workflow submission fired multiple times created redundant runs, wasting compute. About 3 duplicate submissions per week. <strong>Fix:</strong> Added SHA-256 request fingerprinting. Before INSERT, check for an existing active run with the same fingerprint (<code>sha256(workflow_id|environment|config_version|execution_mode)</code>). If found, return the existing run_id instead of creating a new one. Added a DB uniqueness constraint as a safety net. <strong>Impact:</strong> Prevented ~20-30% of duplicate runs.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">Invalid config accepted, fails late</div>
+      <div class="pipe-desc"><strong>Problem:</strong> Invalid configurations passed through the API, got enqueued, and failed minutes later during execution. About 10 bad runs per month. <strong>Fix:</strong> Added pre-execution validation in the submission service. Query <code>workflow_configs</code> for <code>is_active</code>, <code>supports_incremental</code>, and source/target compatibility. Return HTTP 400 with a specific error code on failure instead of creating a doomed run. <strong>Impact:</strong> Caught ~50-70% of bad runs at submit-time.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Run status stuck as RUNNING</div>
+      <div class="pipe-desc"><strong>Problem:</strong> When the executor hit an error, the exception propagated before the status update, leaving runs permanently stuck as RUNNING. <strong>Fix:</strong> Refactored the executor's error branch to a try/finally pattern that always persists the terminal status. Added guards preventing a completed-to-running flip. <strong>Impact:</strong> Eliminated ghost RUNNING states entirely.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-title">Vague failure messages</div>
+      <div class="pipe-desc"><strong>Problem:</strong> Failed runs returned raw stack traces. QA had to read Python tracebacks to figure out what went wrong. <strong>Fix:</strong> Introduced a failure classification layer. Map exceptions to <code>failure_class</code> codes: INVALID_CONFIG, DEPENDENCY_UNAVAILABLE, DATA_FORMAT_ERROR, TRANSIENT_TIMEOUT, INTERNAL_ERROR. Each maps to a <code>retry_eligible</code> flag (True for transient failures, False for permanent ones). <strong>Impact:</strong> Improved triage speed by ~30%.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">05</div>
+      <div class="pipe-title">Invalid retries allowed</div>
+      <div class="pipe-desc"><strong>Problem:</strong> Users could retry any failed run, including those that failed for permanent reasons (bad config, wrong data format). These retries always failed again. <strong>Fix:</strong> Gate the retry endpoint on the <code>retry_eligible</code> flag. Non-retryable failures (INVALID_CONFIG, DATA_FORMAT_ERROR) return HTTP 400 on retry attempt. <strong>Impact:</strong> Reduced ~20% of futile retries.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">06</div>
+      <div class="pipe-title">Manual regression testing</div>
+      <div class="pipe-desc"><strong>Problem:</strong> Every release required 3-4 hours of manual QA to verify the submission and execution flows. <strong>Fix:</strong> Built a smoke-test harness in Python using the requests library. 10+ scenarios covering valid submission, invalid config, duplicate detection, retry logic, and status polling. Integrated into CI. <strong>Impact:</strong> Reduced manual QA effort by ~25%, saving ~3-4 hours per release.</div>
+    </div>
+  </div>
+
+  <!-- Animation: Submission Pipeline with Guards -->
+  <div class="graph-canvas-wrap fade">
+    <canvas id="pipeline-guard-canvas" style="height:440px"></canvas>
+  </div>
+
+  <!-- Chapter 4 -->
+  <div class="sec fade">Chapter 4 -- The testing philosophy</div>
+  <div class="prose fade">
+    <p>Two levels of testing covered these fixes.</p>
+    <p><strong>Unit and integration tests (30+ with pytest):</strong> Each fix came with tests that verified both the happy path and the failure path. For fingerprinting: same payload twice returns the same run_id. For validation: missing config returns 400, inactive config returns 400, unsupported mode returns 400, valid config creates a run. For classification: simulate a TimeoutError, verify <code>failure_class = TRANSIENT_TIMEOUT</code> and <code>retry_eligible = True</code>.</p>
+    <p><strong>Smoke-test harness:</strong> A Python script using the requests library that calls the real APIs. 10+ scenarios covering submission, validation, duplicate detection, retry logic, and status polling. Runs in CI on every build. When a config-check omission slipped through a code review, the smoke harness caught it before release.</p>
+    <p>I chose to build the smoke harness as a standalone script rather than extending the pytest suite because it needed to run against a deployed instance, not mocked services. The pytest tests verify logic in isolation. The smoke harness verifies the system works end-to-end, including the queue, the executor, and the database. Both are necessary. Neither replaces the other.</p>
+  </div>
+
+  <!-- Chapter 5 -->
+  <div class="sec fade">Chapter 5 -- What I would change</div>
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">No schema evolution handling</div>
+      <div class="pipe-desc">The pre-execution validation checks the current config version. If a config is updated between submission and execution (rare but possible), the executor runs against the new version without warning. Snapshot-based validation (freezing the config at submission time) would prevent this.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">Metrics are estimates, not instrumented</div>
+      <div class="pipe-desc">The "30% debugging reduction" and "60% invalid runs caught" numbers are team estimates from sprint retrospectives, not Prometheus counters. Instrumenting actual triage time and rejection rates would provide real data.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Smoke harness is sequential</div>
+      <div class="pipe-desc">The 10+ scenarios run one after another. Parallel execution would cut CI time, but would require careful test isolation (separate workflow IDs, cleanup between runs).</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-title">No alerting on classification trends</div>
+      <div class="pipe-desc">The failure_class codes are stored but not monitored. A spike in DEPENDENCY_UNAVAILABLE failures (indicating an external service outage) should trigger an alert, not wait for someone to query the database.</div>
+    </div>
+  </div>
+
+  <!-- Stack Tags -->
+  <div class="sec fade">Stack</div>
+  <div class="stack fade">
+    <span class="stack-tag">Python</span>
+    <span class="stack-tag">FastAPI</span>
+    <span class="stack-tag">PostgreSQL</span>
+    <span class="stack-tag">pytest</span>
+    <span class="stack-tag">Kafka</span>
+    <span class="stack-tag">SHA-256</span>
+    <span class="stack-tag">Git</span>
+    <span class="stack-tag">CI/CD</span>
+    <span class="stack-tag">DataOps</span>
+  </div>
+
+</main>
+
+<footer>
+  <div class="ft">
+    <div class="ft-c">&copy; 2026 Sai Siddharth Yalamanchili</div>
+    <div class="ft-l">
+      <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
+      <a href="https://www.linkedin.com/in/siddharth-yalamanchili/" target="_blank">LinkedIn</a>
+      <a href="mailto:sy832@scarletmail.rutgers.edu">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+var obs = new IntersectionObserver(function(es){
+  es.forEach(function(e, i){
+    if(e.isIntersecting){ setTimeout(function(){ e.target.classList.add('v'); }, i * 80); obs.unobserve(e.target); }
+  });
+}, { threshold: .12 });
+document.querySelectorAll('.fade').forEach(function(el){ obs.observe(el); });
+
+/* ===================================================================
+   ANIMATION: Submission Pipeline with Guards (pipeline-guard-canvas)
+   =================================================================== */
+(function(){
+  var canvas = document.getElementById('pipeline-guard-canvas');
+  if(!canvas) return;
+  var wrap = canvas.parentElement;
+  var accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  var blue='#5a7a9a';
+  var mono='JetBrains Mono, monospace';
+  var ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    var dpr=window.devicePixelRatio||1;
+    var rect=wrap.getBoundingClientRect();
+    w=rect.width; h=440;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  function lerp(a,b,t){ return a+(b-a)*Math.min(1,Math.max(0,t)); }
+  function easeOut(t){ return 1-(1-t)*(1-t); }
+
+  // Phase timing
+  var P = [
+    {name:'fadeIn',          dur:60},   // 0
+    {name:'scenario1_label', dur:60},   // 1
+    {name:'s1_fingerprint',  dur:120},  // 2
+    {name:'s1_config',       dur:120},  // 3
+    {name:'s1_execute',      dur:120},  // 4
+    {name:'scenario2_label', dur:60},   // 5
+    {name:'s2_fingerprint',  dur:90},   // 6
+    {name:'s2_config',       dur:120},  // 7
+    {name:'s2_saved',        dur:90},   // 8
+    {name:'hold',            dur:90},   // 9
+    {name:'reset',           dur:60}    // 10
+  ];
+  var totalF = P.reduce(function(s,p){return s+p.dur;},0);
+
+  // Layout constants (computed in draw based on w)
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    var f = frame % totalF;
+
+    var phase=0, pf=0, acc=0;
+    for(var i=0;i<P.length;i++){
+      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
+      acc+=P[i].dur;
+    }
+    var prog = pf/P[phase].dur;
+
+    // Global alpha for fade in/out
+    var globalAlpha = 1;
+    if(phase === 0) globalAlpha = easeOut(prog);
+    if(phase === 10) globalAlpha = 1 - prog;
+    ctx.globalAlpha = globalAlpha;
+
+    // Layout
+    var padL = 30, padR = 30;
+    var usable = w - padL - padR;
+
+    // Boxes: Request -> Gate1 -> Gate2 -> Queue -> Executor -> Status API
+    var boxW = Math.min(120, usable / 7);
+    var boxH = 52;
+    var gapX = Math.max(8, (usable - boxW * 6) / 5);
+    var topY = 60;
+
+    var boxes = [
+      {label:'Request',            sub:'JSON payload',         x:padL},
+      {label:'Fingerprint Check',  sub:'SHA-256 gate',         x:padL + (boxW + gapX) * 1},
+      {label:'Config Validation',  sub:'Pre-exec check',       x:padL + (boxW + gapX) * 2},
+      {label:'Job Queue',          sub:'Kafka enqueue',        x:padL + (boxW + gapX) * 3},
+      {label:'Executor',           sub:'Run pipeline',         x:padL + (boxW + gapX) * 4},
+      {label:'Status API',         sub:'Structured response',  x:padL + (boxW + gapX) * 5}
+    ];
+
+    // Draw static layout (gates, boxes)
+    for(var bi=0;bi<boxes.length;bi++){
+      var b = boxes[bi];
+      var isGate = (bi === 1 || bi === 2);
+      var borderCol = isGate ? accent : 'rgba(255,255,255,0.06)';
+      drawRR(b.x, topY, boxW, boxH, 8, inset, borderCol, isGate ? 1.5 : 1);
+
+      ctx.font = '500 '+(boxW < 100 ? '8' : '10')+'px '+mono;
+      ctx.fillStyle = isGate ? accent : t1;
+      ctx.textAlign = 'center';
+      ctx.fillText(b.label, b.x + boxW/2, topY + boxH/2 - 4);
+
+      ctx.font = '400 '+(boxW < 100 ? '7' : '8')+'px '+mono;
+      ctx.fillStyle = t3;
+      ctx.fillText(b.sub, b.x + boxW/2, topY + boxH/2 + 10);
+
+      // Arrows between boxes
+      if(bi < boxes.length - 1){
+        var ax1 = b.x + boxW + 2;
+        var ax2 = boxes[bi+1].x - 2;
+        var ay = topY + boxH/2;
+        ctx.beginPath();
+        ctx.moveTo(ax1, ay);
+        ctx.lineTo(ax2, ay);
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(ax2 - 5, ay - 3);
+        ctx.lineTo(ax2, ay);
+        ctx.lineTo(ax2 - 5, ay + 3);
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    // Failure classification box below executor
+    var fcX = boxes[4].x - 10;
+    var fcY = topY + boxH + 30;
+    var fcW = boxW + 20;
+    var fcH = 40;
+    drawRR(fcX, fcY, fcW, fcH, 8, inset, 'rgba(255,255,255,0.06)', 1);
+    ctx.font = '500 '+(boxW < 100 ? '7' : '9')+'px '+mono;
+    ctx.fillStyle = t2;
+    ctx.textAlign = 'center';
+    ctx.fillText('Failure Classification', fcX + fcW/2, fcY + fcH/2 - 2);
+    ctx.font = '400 '+(boxW < 100 ? '6' : '7')+'px '+mono;
+    ctx.fillStyle = t3;
+    ctx.fillText('failure_class + retry_eligible', fcX + fcW/2, fcY + fcH/2 + 10);
+
+    // Arrow from executor down to classification
+    var exMidX = boxes[4].x + boxW/2;
+    ctx.beginPath();
+    ctx.moveTo(exMidX, topY + boxH + 2);
+    ctx.lineTo(exMidX, fcY - 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(exMidX - 3, fcY - 6);
+    ctx.lineTo(exMidX, fcY - 1);
+    ctx.lineTo(exMidX + 3, fcY - 6);
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Scenario area
+    var scnY = topY + boxH + 100;
+
+    // Animated dot representing the request
+    var dotR = 6;
+    var dotX = -20;
+    var dotY = topY + boxH/2;
+    var dotColor = accent;
+    var showDot = false;
+
+    // Scenario label
+    var scenarioLabel = '';
+    var scenarioLabelAlpha = 0;
+
+    // Detail text lines
+    var detailLines = [];
+    var detailColor = t2;
+
+    // -- SCENARIO 1: Valid submission --
+    if(phase >= 1 && phase <= 4){
+      scenarioLabel = 'Scenario 1: Valid submission';
+      scenarioLabelAlpha = (phase === 1) ? easeOut(prog) : 1;
+      dotColor = green;
+      showDot = true;
+
+      if(phase === 1){
+        // Label fading in, dot at start
+        dotX = boxes[0].x + boxW/2;
+      }
+      else if(phase === 2){
+        // Moving through fingerprint gate
+        var startX = boxes[0].x + boxW/2;
+        var endX = boxes[1].x + boxW/2;
+        dotX = lerp(startX, endX, easeOut(prog));
+
+        if(prog > 0.3){
+          detailLines.push({text:'Fingerprint: sha256(wf-42|prod|v3|full)', color:t2});
+        }
+        if(prog > 0.6){
+          detailLines.push({text:'Check: No active duplicate found', color:t2});
+        }
+        if(prog > 0.8){
+          detailLines.push({text:'PASS', color:green});
+        }
+      }
+      else if(phase === 3){
+        // Moving through config validation
+        var startX2 = boxes[1].x + boxW/2;
+        var endX2 = boxes[2].x + boxW/2;
+        dotX = lerp(startX2, endX2, easeOut(prog));
+
+        detailLines.push({text:'Fingerprint: PASS', color:green});
+        if(prog > 0.3){
+          detailLines.push({text:'is_active: true', color:t2});
+        }
+        if(prog > 0.5){
+          detailLines.push({text:'supports_incremental: true', color:t2});
+        }
+        if(prog > 0.7){
+          detailLines.push({text:'source/target: compatible', color:t2});
+        }
+        if(prog > 0.85){
+          detailLines.push({text:'Config validation: PASS', color:green});
+        }
+      }
+      else if(phase === 4){
+        // Execute and complete
+        if(prog < 0.3){
+          dotX = lerp(boxes[2].x + boxW/2, boxes[3].x + boxW/2, easeOut(prog / 0.3));
+          detailLines.push({text:'Enqueued to job queue', color:accent});
+        }
+        else if(prog < 0.6){
+          dotX = lerp(boxes[3].x + boxW/2, boxes[4].x + boxW/2, easeOut((prog - 0.3) / 0.3));
+          detailLines.push({text:'Enqueued to job queue', color:accent});
+          detailLines.push({text:'Status: QUEUED -> RUNNING', color:accent});
+        }
+        else if(prog < 0.85){
+          dotX = lerp(boxes[4].x + boxW/2, boxes[5].x + boxW/2, easeOut((prog - 0.6) / 0.25));
+          detailLines.push({text:'Status: RUNNING -> COMPLETED', color:green});
+        }
+        else{
+          dotX = boxes[5].x + boxW/2;
+          detailLines.push({text:'Status: COMPLETED', color:green});
+          detailLines.push({text:'{"run_id":"r-1847","status":"COMPLETED"}', color:green});
+        }
+      }
+    }
+
+    // -- SCENARIO 2: Invalid config --
+    if(phase >= 5 && phase <= 8){
+      scenarioLabel = 'Scenario 2: Invalid config';
+      scenarioLabelAlpha = (phase === 5) ? easeOut(prog) : 1;
+      dotColor = red;
+      showDot = true;
+
+      if(phase === 5){
+        dotX = boxes[0].x + boxW/2;
+      }
+      else if(phase === 6){
+        // Through fingerprint
+        var s2startX = boxes[0].x + boxW/2;
+        var s2endX = boxes[1].x + boxW/2;
+        dotX = lerp(s2startX, s2endX, easeOut(prog));
+
+        if(prog > 0.4){
+          detailLines.push({text:'Fingerprint: No active duplicate', color:t2});
+        }
+        if(prog > 0.7){
+          detailLines.push({text:'PASS', color:green});
+        }
+      }
+      else if(phase === 7){
+        // Hits config validation and fails
+        var s2startX2 = boxes[1].x + boxW/2;
+        var s2endX2 = boxes[2].x + boxW/2;
+        var s2dotProg = Math.min(1, prog / 0.5);
+        dotX = lerp(s2startX2, s2endX2, easeOut(s2dotProg));
+
+        detailLines.push({text:'Fingerprint: PASS', color:green});
+        if(prog > 0.3){
+          detailLines.push({text:'is_active: true', color:t2});
+        }
+        if(prog > 0.5){
+          detailLines.push({text:'supports_incremental: false', color:red});
+        }
+        if(prog > 0.65){
+          detailLines.push({text:'Requested mode: incremental', color:red});
+        }
+        if(prog > 0.8){
+          detailLines.push({text:'REJECTED: MODE_NOT_SUPPORTED', color:red});
+          detailLines.push({text:'HTTP 400 returned. No run created.', color:red});
+        }
+      }
+      else if(phase === 8){
+        dotX = boxes[2].x + boxW/2;
+        showDot = (Math.sin(frame * 0.2) > 0); // blink
+        detailLines.push({text:'Rejected at config validation gate.', color:red});
+        detailLines.push({text:'No run created. No compute wasted.', color:t1});
+        detailLines.push({text:'Error caught at submit-time, not after minutes of execution.', color:accent});
+      }
+    }
+
+    // Hold phase summary
+    if(phase === 9){
+      scenarioLabel = '';
+      detailLines.push({text:'Before: invalid configs failed after minutes of execution.', color:t3});
+      detailLines.push({text:'After: caught in milliseconds at the API layer.', color:accent});
+    }
+
+    // Draw scenario label
+    if(scenarioLabel){
+      ctx.save();
+      ctx.globalAlpha = globalAlpha * scenarioLabelAlpha;
+      ctx.font = '600 11px '+mono;
+      ctx.fillStyle = (phase >= 5 && phase <= 8) ? red : green;
+      ctx.textAlign = 'left';
+      ctx.fillText(scenarioLabel, padL, scnY - 30);
+      ctx.restore();
+    }
+
+    // Draw dot
+    if(showDot && phase >= 1 && phase <= 8){
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, dotR, 0, Math.PI * 2);
+      ctx.fillStyle = dotColor;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, dotR + 4, 0, Math.PI * 2);
+      ctx.fillStyle = dotColor === green ? 'rgba(90,154,90,0.2)' : 'rgba(154,90,90,0.2)';
+      ctx.fill();
+
+      // Highlight the box the dot is over
+      for(var hi=0;hi<boxes.length;hi++){
+        if(dotX >= boxes[hi].x && dotX <= boxes[hi].x + boxW){
+          drawRR(boxes[hi].x, topY, boxW, boxH, 8, null, dotColor, 2);
+          break;
+        }
+      }
+    }
+
+    // Draw check/X marks on gates after dot passes
+    if(phase >= 2 && phase <= 4){
+      // Scenario 1: green checks on gates
+      if(phase >= 3 || (phase === 2 && prog > 0.8)){
+        // Gate 1 passed
+        ctx.font = '600 14px '+mono;
+        ctx.fillStyle = green;
+        ctx.textAlign = 'center';
+        ctx.fillText('\u2713', boxes[1].x + boxW/2, topY - 8);
+      }
+      if(phase >= 4 || (phase === 3 && prog > 0.85)){
+        // Gate 2 passed
+        ctx.font = '600 14px '+mono;
+        ctx.fillStyle = green;
+        ctx.textAlign = 'center';
+        ctx.fillText('\u2713', boxes[2].x + boxW/2, topY - 8);
+      }
+    }
+
+    if(phase >= 6 && phase <= 8){
+      // Scenario 2: green check gate 1, red X gate 2
+      if(phase >= 7 || (phase === 6 && prog > 0.7)){
+        ctx.font = '600 14px '+mono;
+        ctx.fillStyle = green;
+        ctx.textAlign = 'center';
+        ctx.fillText('\u2713', boxes[1].x + boxW/2, topY - 8);
+      }
+      if(phase >= 8 || (phase === 7 && prog > 0.8)){
+        ctx.font = '600 14px '+mono;
+        ctx.fillStyle = red;
+        ctx.textAlign = 'center';
+        ctx.fillText('\u2717', boxes[2].x + boxW/2, topY - 8);
+      }
+    }
+
+    // Draw detail lines
+    var dlY = scnY;
+    ctx.textAlign = 'left';
+    for(var di=0;di<detailLines.length;di++){
+      var dl = detailLines[di];
+      ctx.font = '400 10px '+mono;
+      ctx.fillStyle = dl.color;
+      ctx.fillText((dl.color === green || dl.color === red ? '> ' : '  ') + dl.text, padL + 10, dlY + di * 18);
+    }
+
+    ctx.globalAlpha = 1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  var cObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting && !running){
+        running=true; initCanvas(); draw();
+      } else if(!entry.isIntersecting && running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+  window.addEventListener('resize',function(){ if(running) initCanvas(); });
+})();
+</script>
+</body>
+</html>

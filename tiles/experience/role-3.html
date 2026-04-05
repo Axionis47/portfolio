@@ -1,4 +1,4 @@
-<div class="exp-card fade">
+<a href="experience/sirius-motorsports.html" class="exp-card fade" style="text-decoration:none;color:inherit;display:block">
   <div class="exp-header">
     <div class="exp-logo">
       <span class="mono-icon">SM</span>
@@ -14,14 +14,15 @@
   </div>
   <div class="exp-body">
     <ul class="exp-bullets">
-      <li>Wrote embedded C logic for battery monitoring and protection in a lead-acid powered portable EV prototype &mdash; threshold-based checks for undervoltage, overcurrent, and temperature fault conditions.</li>
-      <li>Supported prototype validation and debugging during bench testing &mdash; traced mismatches between observed battery behavior and expected protection logic, refined controller response.</li>
+      <li>Wrote bare-metal C firmware for a 24V lead-acid BMS on an ARM Cortex-M MCU. Undervoltage cutoff at 21.0V (1.75V/cell), overcurrent at 6A, thermal fault at 55&deg;C. Hysteresis on all thresholds to prevent relay chatter.</li>
+      <li>Calibrated ADC readings against bench instruments (DMM, oscilloscope), debugged noisy shunt measurements with software averaging, and eliminated false fault triggers during load transients. Zero unintended trips in final validation.</li>
     </ul>
     <div class="exp-tags">
       <span class="exp-tag">Embedded C</span>
-      <span class="exp-tag">Battery Systems</span>
-      <span class="exp-tag">EV</span>
-      <span class="exp-tag">Prototype Testing</span>
+      <span class="exp-tag">ARM Cortex-M</span>
+      <span class="exp-tag">ADC</span>
+      <span class="exp-tag">BMS</span>
+      <span class="exp-tag">Lead-Acid</span>
     </div>
   </div>
-</div>
+</a>
