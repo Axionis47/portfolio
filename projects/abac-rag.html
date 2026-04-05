@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{font-size:18px}
   :root{
     --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
     --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
@@ -23,70 +23,75 @@
   a{color:var(--accent);text-decoration:none;transition:color .2s}
   a:hover{color:#eaa050}
 
-  nav{display:flex;justify-content:space-between;align-items:center;max-width:1200px;width:100%;margin:0 auto;padding:2.5rem 3rem 1.5rem}
-  nav .logo{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--t1);text-decoration:none}
-  nav .back{font-family:var(--mono);font-size:.8rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  nav{display:flex;justify-content:space-between;align-items:center;max-width:1440px;width:100%;margin:0 auto;padding:2.5rem 3rem 1.5rem}
+  nav .logo{font-family:var(--mono);font-weight:600;font-size:1.02rem;color:var(--t1);text-decoration:none}
+  nav .back{font-family:var(--mono);font-size:.86rem;color:var(--t3);text-decoration:none;transition:color .2s}
   nav .back:hover{color:var(--accent)}
 
-  main{max-width:1200px;width:100%;margin:0 auto;padding:2rem 3rem 4rem;flex:1}
+  main{max-width:1440px;width:100%;margin:0 auto;padding:2rem 3rem 4rem;flex:1}
 
-  .proj-label{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .proj-label{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
   .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
   .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
 
-  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 28px;margin-bottom:36px}
-  .brief-label{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 34px;margin-bottom:36px}
+  .brief-label{font-family:var(--mono);font-size:.66rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
   .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
-  .brief-key{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:right;white-space:nowrap}
-  .brief-val{font-family:var(--mono);font-size:.78rem;color:var(--t1);line-height:1.7}
+  .brief-key{font-family:var(--mono);font-size:.78rem;color:var(--t2);text-align:right;white-space:nowrap}
+  .brief-val{font-family:var(--mono);font-size:.84rem;color:var(--t1);line-height:1.7}
 
   .prose{margin-bottom:1.8rem}
-  .prose p{font-family:var(--sans);font-size:1.05rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
+  .prose p{font-family:var(--sans);font-size:1.08rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
   .prose strong{color:var(--t1);font-weight:500}
+  .prose code{font-family:var(--mono);font-size:.82rem;color:var(--accent);background:var(--inset);padding:2px 6px;border-radius:4px}
 
-  .sec{font-family:var(--mono);font-size:.7rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
+  .sec{font-family:var(--mono);font-size:.78rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
 
-  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 24px;margin:20px 0}
-  .dia-title{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 30px;margin:20px 0}
+  .dia-title{font-family:var(--mono);font-size:.72rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
   .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
   .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
-  .dia-box-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
-  .dia-box-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2);line-height:1.7}
+  .dia-box-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:3px}
+  .dia-box-sub{font-family:var(--mono);font-size:.68rem;color:var(--t2);line-height:1.7}
   .dia-arrow{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;padding:0 10px;flex-shrink:0}
   .dia-arrow-down{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;text-align:center;padding:8px 0}
-  .dia-note{font-family:var(--mono);font-size:.62rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
+  .dia-note{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
   .dia-good{border:1px solid rgba(90,154,90,0.2)}
   .dia-bad{border:1px solid rgba(154,90,90,0.2)}
 
   .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
-  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:22px 16px;text-align:center;transition:all .3s}
+  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:26px 20px;text-align:center;transition:all .3s}
   .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
   .stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:5px}
-  .stat-label{font-family:var(--mono);font-size:.58rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
+  .stat-label{font-family:var(--mono);font-size:.68rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
 
   .rtable{width:100%;border-collapse:collapse;margin:16px 0}
-  .rtable th{font-family:var(--mono);font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
-  .rtable td{font-family:var(--mono);font-size:.68rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable th{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.76rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
   .rtable tr.best td{color:var(--accent);font-weight:500}
 
   .pipeline{position:relative;padding-left:32px;margin:20px 0}
   .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
   .pipe-step{position:relative;margin-bottom:24px}
   .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
-  .pipe-num{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;margin-bottom:3px}
-  .pipe-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:6px}
-  .pipe-desc{font-family:var(--sans);font-size:.92rem;color:var(--t2);line-height:1.95}
+  .pipe-num{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;margin-bottom:3px}
+  .pipe-title{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+  .pipe-desc{font-family:var(--sans);font-size:.96rem;color:var(--t2);line-height:1.95}
   .pipe-desc strong{color:var(--t1);font-weight:500}
 
   .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
-  .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
-  .proj-link{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+  .stack-tag{font-family:var(--mono);font-size:.66rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .proj-link{display:inline-block;font-family:var(--mono);font-size:.78rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
   .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+
+  .graph-canvas-wrap{position:relative;margin:24px 0;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);overflow:hidden}
+  .graph-canvas-wrap canvas{display:block;width:100%}
+
   footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
-  .ft{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-  .ft-c{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
+  .ft{max-width:1440px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+  .ft-c{font-family:var(--mono);font-size:.72rem;color:var(--t3)}
   .ft-l{display:flex;gap:18px}
-  .ft-l a{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  .ft-l a{font-family:var(--mono);font-size:.76rem;color:var(--t3);text-decoration:none;transition:color .2s}
   .ft-l a:hover{color:var(--accent)}
 
   @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
@@ -98,6 +103,7 @@
     .results{grid-template-columns:repeat(2,1fr)}
     .dia-row{flex-direction:column;gap:0}
     .dia-arrow{transform:rotate(90deg);padding:6px 0}
+    .graph-canvas-wrap canvas{height:320px}
     .ft{flex-direction:column;gap:10px;text-align:center}
   }
 </style>
@@ -120,13 +126,13 @@
     <div class="brief-label">Engineering Brief</div>
     <div class="brief-grid">
       <span class="brief-key">Problem</span>
-      <span class="brief-val">Employees need one chat interface to query a company knowledge base. But HR salary data must never reach a marketing user &mdash; not through search results, not through cached LLM answers, not through embedding similarity.</span>
+      <span class="brief-val">Employees need one chat interface to query a company knowledge base. But HR salary data must never reach a marketing user. Not through search results, not through cached LLM answers, not through embedding similarity.</span>
       <span class="brief-key">Approach</span>
-      <span class="brief-val">Three-layer defense-in-depth: index-time role booleans, retrieval-time server-side filtering + ABAC PDP evaluation, and post-retrieval policy enforcement. Hybrid dense/sparse search with RRF fusion. Policy-fingerprinted caching with epoch-based invalidation.</span>
+      <span class="brief-val">Three-layer defense-in-depth: index-time role booleans, retrieval-time server-side filtering + ABAC PDP evaluation, and post-retrieval policy enforcement. Hybrid dense/sparse search with RRF fusion. Policy-fingerprinted caching with epoch-based invalidation. Multi-hop query decomposition with per-sub-query ABAC gating. Circuit breaker and singleflight reliability layers.</span>
       <span class="brief-key">Result</span>
-      <span class="brief-val">100% access control accuracy, zero cross-role leakage across 437 tests, 391&times; policy decision speedup and 1,400&times; LLM cache speedup via PolicyFingerprint. 5 LLM backends, 4 embedding backends, all swappable by env var.</span>
+      <span class="brief-val">100% access control accuracy, zero cross-role leakage across 36 test files, ~0.004ms cached policy decisions, ~0.04ms cached LLM lookups via PolicyFingerprint isolation. 5 LLM backends, 4 embedding backends, all swappable by env var.</span>
       <span class="brief-key">Why it matters</span>
-      <span class="brief-val">Most RAG systems bolt access control onto the UI layer. The data still leaks through cached answers, reranked results, and embedding similarity. This system enforces policy at three independent layers &mdash; if any one fails, the other two still block the leak.</span>
+      <span class="brief-val">Most RAG systems bolt access control onto the UI layer. The data still leaks through cached answers, reranked results, and embedding similarity. This system enforces policy at three independent layers. If any one fails, the other two still block the leak.</span>
       <span class="brief-key">Stack</span>
       <span class="brief-val">FastAPI, ChromaDB, OpenAI/Claude/Gemini/vLLM/Ollama, BM25, RRF, Kubernetes, Redis, Prometheus, YAML policy-as-code</span>
     </div>
@@ -138,22 +144,22 @@
   <div class="sec fade">Chapter 1. The leakage paths nobody checks</div>
   <div class="prose fade">
     <p>
-      You build a RAG chatbot for your company. Employees can ask questions about company documents &mdash; engineering specs, marketing plans, HR policies, financial reports. You add a role check: marketing users only see marketing docs. Finance users only see finance docs. Done, right?
+      You build a RAG chatbot for your company. Employees can ask questions about company documents: engineering specs, marketing plans, HR policies, financial reports. You add a role check: marketing users only see marketing docs. Finance users only see finance docs. Done, right?
     </p>
     <p>
       Wrong. There are <strong>four leakage paths</strong> that a UI-layer filter does not catch.
     </p>
     <p>
-      <strong>Path 1: Embedding similarity.</strong> You embed all documents into the same vector space. A marketing user asks about "Q2 revenue." The embedding is nearly identical to a finance document about Q2 revenue. The vector search returns the finance doc as a top match. The UI filter might catch this &mdash; but now the embedding itself has leaked the existence and relevance of a restricted document.
+      <strong>Path 1: Embedding similarity.</strong> You embed all documents into the same vector space. A marketing user asks about "Q2 revenue." The embedding is nearly identical to a finance document about Q2 revenue. The vector search returns the finance doc as a top match. The UI filter might catch this, but the embedding itself has leaked the existence and relevance of a restricted document.
     </p>
     <p>
       <strong>Path 2: Cached LLM answers.</strong> An HR user asks "what is the average salary?" The LLM generates an answer using HR salary data. That answer gets cached. A marketing user asks the same question. The cache returns the same answer. The marketing user just read HR salary data, and no filter was ever evaluated.
     </p>
     <p>
-      <strong>Path 3: Reranked results.</strong> The reranker sees all retrieved candidates and scores them by relevance. If an unauthorized document makes it past the initial retrieval (because the filter was applied too late), the reranker has already read it. Even if you filter after reranking, the reranker&rsquo;s scoring was influenced by content the user should not have seen.
+      <strong>Path 3: Reranked results.</strong> The reranker sees all retrieved candidates and scores them by relevance. If an unauthorized document makes it past the initial retrieval (because the filter was applied too late), the reranker has already read it. Even if you filter after reranking, the reranker's scoring was influenced by content the user should not have seen.
     </p>
     <p>
-      <strong>Path 4: LLM answer synthesis.</strong> The LLM generates an answer from multiple context chunks. If one unauthorized chunk slipped through, the LLM might reference it in the answer &mdash; even if the chunk itself is stripped from the citations. The information has already been absorbed into the generated text.
+      <strong>Path 4: LLM answer synthesis.</strong> The LLM generates an answer from multiple context chunks. If one unauthorized chunk slipped through, the LLM might reference it in the answer, even if the chunk itself is stripped from the citations. The information has already been absorbed into the generated text.
     </p>
     <p>
       The only solution: enforce access control at <strong>every layer independently</strong>. Before embedding, before retrieval, before reranking, before generation. If any one layer fails, the others catch it.
@@ -163,24 +169,28 @@
   <!-- ═══════════════════════════════════════
        CH 2: THREE LAYERS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 2. Defense in depth &mdash; three layers</div>
+  <div class="sec fade">Chapter 2. Defense in depth: three layers</div>
 
   <div class="pipeline fade">
     <div class="pipe-step">
-      <div class="pipe-num">Layer 1 &mdash; Index Time</div>
+      <div class="pipe-num">Layer 1: Index Time</div>
       <div class="pipe-title">Pre-computed role booleans</div>
-      <div class="pipe-desc">When a document is ingested, the system computes which roles can access it and stores boolean flags (<strong>role_finance=true, role_marketing=false</strong>) as chunk metadata in ChromaDB. These flags are denormalized &mdash; fast, but rigid. They handle the common case: "does this role have any access at all?"</div>
+      <div class="pipe-desc">When a document is ingested, <code>compute_allowed_roles()</code> determines which roles can access it and stores boolean flags (<strong>role_finance=true, role_marketing=false</strong>) as chunk metadata in ChromaDB. The <code>where</code> clause filters on these booleans before results leave the database. Unauthorized chunks never enter the scoring pipeline.</div>
     </div>
     <div class="pipe-step">
-      <div class="pipe-num">Layer 2 &mdash; Retrieval Time</div>
-      <div class="pipe-title">Server-side filtering + ABAC PDP</div>
-      <div class="pipe-desc">ChromaDB&rsquo;s <strong>where-clause</strong> filters on role booleans before results leave the database. Then each surviving chunk is evaluated by a full <strong>Policy Decision Point</strong> &mdash; 12 YAML-defined ABAC rules considering role, department, sensitivity, document type, and runtime feature flags. First match wins. Default: <strong>DENY</strong>.</div>
+      <div class="pipe-num">Layer 2: Retrieval Time</div>
+      <div class="pipe-title">Server-side filtering + BM25 prefilter</div>
+      <div class="pipe-desc">ChromaDB's <code>where</code> filter handles dense retrieval. For the sparse path, <code>prefilter_by_allowed_roles()</code> filters the BM25 index in-memory before scoring. Only items where the user's role appears in <code>allowed_roles</code> survive. Both retrieval paths are policy-gated before any ranking happens.</div>
     </div>
     <div class="pipe-step">
-      <div class="pipe-num">Layer 3 &mdash; Post-Retrieval</div>
-      <div class="pipe-title">Access tier enforcement</div>
-      <div class="pipe-desc">After the PDP permits a chunk, the system determines the <strong>access tier</strong>: full text (HR/C-level), PII-masked text (authorized departments), or aggregate statistics only (broader access). The reranker and LLM only see tier-appropriate content. Unauthorized text never reaches any downstream component.</div>
+      <div class="pipe-num">Layer 3: Post-Retrieval</div>
+      <div class="pipe-title">Full PDP evaluation per chunk</div>
+      <div class="pipe-desc">After RRF fusion but <strong>before</strong> reranking, every fused candidate is evaluated by the full <strong>Policy Decision Point</strong>: 12 YAML-defined ABAC rules considering role, department, sensitivity, document type, and runtime feature flags. First match wins. Default: <strong>DENY</strong>. This catches edge cases where index-time booleans are stale or flags have changed since ingestion.</div>
     </div>
+  </div>
+
+  <div class="graph-canvas-wrap fade" style="padding:0">
+    <canvas id="filter-canvas"></canvas>
   </div>
 
   <div class="dia fade">
@@ -213,8 +223,8 @@
       <div class="stat-label">Cross-role leaks</div>
     </div>
     <div class="stat">
-      <div class="stat-val">437</div>
-      <div class="stat-label">Automated tests</div>
+      <div class="stat-val">36</div>
+      <div class="stat-label">Test files</div>
     </div>
     <div class="stat">
       <div class="stat-val">12</div>
@@ -231,7 +241,7 @@
       Standard RAG systems embed raw text. This creates a problem. "Q2 revenue grew 15%" from a finance document and "Q2 revenue discussions" from a marketing document produce <strong>nearly identical vectors</strong>. A marketing user searching for "Q2 revenue" gets the finance document as a top match. The filter might catch it downstream, but the vector search has already revealed that a relevant finance document exists.
     </p>
     <p>
-      The fix: <strong>contextual embedding prefixes</strong>. Before computing the embedding, each chunk gets a structured metadata tag prepended:
+      The fix: <strong>contextual embedding prefixes</strong>. Before computing the embedding, <code>create_contextual_embedding_text()</code> prepends a structured metadata tag to each chunk:
     </p>
   </div>
 
@@ -254,6 +264,13 @@
     <p>
       Now the finance "Q2 revenue" chunk and the marketing "Q2 revenue" chunk live in different regions of the vector space. A search from a marketing user will naturally prefer marketing-department vectors over finance-department ones, even before any filter is applied. This is <strong>security-aware retrieval</strong>, not security-as-afterthought.
     </p>
+    <p>
+      I chose prefix injection over post-hoc filtering because filtering after embedding still leaks information through the vector similarity scores. The prefix changes the embedding itself, so the unauthorized document is never a top candidate in the first place. The alternative was separate vector collections per department, but that would break cross-department search for users with multi-department access (like C-level).
+    </p>
+  </div>
+
+  <div class="graph-canvas-wrap fade" style="padding:0">
+    <canvas id="embed-canvas"></canvas>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -262,13 +279,16 @@
   <div class="sec fade">Chapter 4. Policy as code</div>
   <div class="prose fade">
     <p>
-      The ABAC engine is a YAML-defined <strong>Policy Decision Point</strong>. Twelve rules, evaluated top-to-bottom, first match wins, default deny. Each rule considers four attribute categories: <strong>subject</strong> (the user&rsquo;s role), <strong>resource</strong> (the document&rsquo;s department, type, sensitivity), <strong>action</strong> (retrieve, view source, view row, aggregate), and <strong>environment</strong> (runtime feature flags).
+      I chose first-match-wins evaluation over XACML-style combining algorithms for one reason: auditability. When a policy decision needs explaining, you point to the single rule that fired. No combining, no weighting, no ambiguity. The PDP evaluates 12 rules top-to-bottom with four operators (<code>eq</code>, <code>ne</code>, <code>in</code>, <code>not_in</code>), stops at the first match, and returns the decision. If nothing matches, the default is <strong>DENY</strong>. Each rule considers four attribute categories: <strong>subject</strong> (the user's role), <strong>resource</strong> (the document's department, type, sensitivity), <strong>action</strong> (retrieve, view source, view row, aggregate), and <strong>environment</strong> (runtime feature flags). The intentional minimalism makes the policy auditable by someone who has never read the code.
     </p>
     <p>
-      Six roles: employee, engineering, marketing, finance, HR, C-level. C-level gets unrestricted access (rule 0). Employees see only general documents. Department users see their own department&rsquo;s internal docs. Cross-department access is denied by default. Confidential and restricted documents are denied to everyone except C-level.
+      Six roles: employee, engineering, marketing, finance, HR, C-level. C-level gets unrestricted access (rule 0, short-circuits all other checks). Employees see only general documents. Department users see their own department's internal docs. Cross-department access is denied by default. Confidential and restricted documents are denied to everyone except C-level.
     </p>
     <p>
       HR data gets special treatment: <strong>three-tier progressive disclosure</strong>. Full employee records (with PII) are visible only to HR and C-level. PII-masked records (with [REDACTED] fields) can be enabled for other roles via a runtime feature flag. Pre-computed aggregates (headcount, salary averages, location distribution) can be independently enabled. This means you can give a department head salary statistics without giving them individual records.
+    </p>
+    <p>
+      Beyond document-level policy, the system detects sensitive content at the chunk level. Nineteen keywords (<code>salary</code>, <code>ssn</code>, <code>termination</code>, <code>performance_review</code>, <code>disciplinary</code>, and others) trigger automatic access tightening via <code>contains_sensitive_content()</code>. A chunk from a general-access document that happens to mention salary figures gets reclassified to HR-only. This prevents the failure mode where meeting notes discuss compensation and leak through general access.
     </p>
   </div>
 
@@ -288,7 +308,11 @@
         <div class="dia-box-sub">Feature-flag gated<br>Headcount, averages<br>no individual data</div>
       </div>
     </div>
-    <div class="dia-note">Each tier is independently toggleable via runtime flags. Default: both disabled (principle of least privilege).</div>
+    <div class="dia-note">Each tier is independently toggleable via runtime flags. Default: both disabled (principle of least privilege). I chose feature flags over code-level access because compliance requirements change faster than deploy cycles.</div>
+  </div>
+
+  <div class="graph-canvas-wrap fade" style="padding:0">
+    <canvas id="pdp-canvas"></canvas>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -300,79 +324,137 @@
       Caching is the silent leakage vector. An HR user asks a question, the LLM generates an answer using HR data, the answer gets cached. A marketing user asks the same question. A naive cache returns the same answer. Zero access control was evaluated. The marketing user just read HR data.
     </p>
     <p>
-      The solution: <strong>PolicyFingerprint</strong>. Every cache key for sensitive data (LLM answers, allowed-set computations, policy decisions) includes a SHA-256 hash of the user&rsquo;s complete access profile: role, tenant ID, policy epoch, entitlement epoch, and feature flags. An HR user and a marketing user asking the exact same question produce <strong>different cache keys</strong>. The HR answer is fundamentally unreachable from a marketing session.
+      The solution: <strong>PolicyFingerprint</strong>. Every cache key for sensitive data (LLM answers, allowed-set computations, policy decisions) includes a SHA-256 hash of the user's complete access profile: role, tenant ID, policy epoch, entitlement epoch, and feature flags. The hash is truncated to 16 hex characters. An HR user and a marketing user asking the exact same question produce <strong>different cache keys</strong>. The HR answer is fundamentally unreachable from a marketing session.
     </p>
     <p>
-      When policies change, you bump the epoch integer. This changes every fingerprint hash. Every old cache entry becomes unreachable without scanning or deleting a single key. The stale data is still in the cache physically, but no lookup will ever produce a matching key. It expires via TTL on its own schedule.
+      When policies change, you bump the epoch integer in an environment variable. This changes every fingerprint hash. Every old cache entry becomes unreachable without scanning or deleting a single key. I chose epoch-based invalidation over scan-and-delete because scanning 10,000 cache entries to find ones affected by a policy change is slow and error-prone. With epochs, you change one integer and every stale entry becomes unreachable instantly. The data expires via TTL on its own schedule.
     </p>
     <p>
-      A <strong>singleflight mechanism</strong> deduplicates concurrent identical requests. If 20 users with the same role submit the same query at the same time, only one LLM call fires. The other 19 wait on the result. This prevents cache stampede and reduces LLM costs by 95% under concurrent load.
+      The benchmark suite measures cache hit latency at approximately 0.004ms for policy decisions and 0.04ms for LLM responses. I report absolute cache-hit times rather than multipliers against simulated baselines, because the actual speedup depends on your backend latency.
     </p>
+  </div>
+
+  <div class="graph-canvas-wrap fade" style="padding:0">
+    <canvas id="fingerprint-canvas"></canvas>
   </div>
 
   <div class="results fade">
     <div class="stat">
-      <div class="stat-val">391&times;</div>
-      <div class="stat-label">Policy cache speedup</div>
+      <div class="stat-val">~0.004ms</div>
+      <div class="stat-label">Cached PDP lookup</div>
     </div>
     <div class="stat">
-      <div class="stat-val">1,400&times;</div>
-      <div class="stat-label">LLM cache speedup</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">95%</div>
-      <div class="stat-label">Singleflight dedup</div>
+      <div class="stat-val">~0.04ms</div>
+      <div class="stat-label">Cached LLM lookup</div>
     </div>
     <div class="stat">
       <div class="stat-val">SHA-256</div>
       <div class="stat-label">Fingerprint hash</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">16 hex</div>
+      <div class="stat-label">Key truncation</div>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════
        CH 6: HYBRID RETRIEVAL
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 6. Dense + sparse &mdash; neither alone is enough</div>
+  <div class="sec fade">Chapter 6. Dense + sparse: neither alone is enough</div>
   <div class="prose fade">
     <p>
-      Dense retrieval (embedding similarity) captures semantic meaning. "Compensation package" matches "salary structure." But it misses exact terms &mdash; an employee name, a specific policy number, a financial figure. Sparse retrieval (BM25) catches exact keyword matches but misses semantic relationships.
+      Dense retrieval (embedding similarity) captures semantic meaning. "Compensation package" matches "salary structure." But it misses exact terms: an employee name, a specific policy number, a financial figure. Sparse retrieval (BM25) catches exact keyword matches but misses semantic relationships.
     </p>
     <p>
-      The system runs both in parallel and fuses results via <strong>Reciprocal Rank Fusion</strong> (k=60). Each item&rsquo;s score is 1/(k + rank) in each list. Items appearing in both lists get a natural boost &mdash; the system rewards documents that are both semantically relevant and keyword-matched.
+      The system runs both in parallel and fuses results via <strong>Reciprocal Rank Fusion</strong> (k=60, the standard value from the Cormack paper). I chose RRF over learned fusion because it requires no training data and is robust to score distribution differences between the dense and sparse paths. Each item's score is <code>1/(k + rank)</code> in each list. Items appearing in both lists get a natural boost. I implemented BM25 from scratch (<code>k1=1.5</code>, <code>b=0.75</code>, regex tokenizer) to avoid adding a search engine dependency for what amounts to 60 lines of code.
     </p>
     <p>
-      Both retrieval paths apply role-based pre-filtering <strong>before</strong> scoring. The BM25 index pre-filters by allowed roles. ChromaDB uses server-side where-clause filtering on role boolean metadata. Unauthorized documents are excluded at the database layer, not post-hoc.
+      Both retrieval paths apply role-based pre-filtering <strong>before</strong> scoring. The BM25 index pre-filters by allowed roles via <code>prefilter_by_allowed_roles()</code>. ChromaDB uses server-side <code>where</code> filtering on role boolean metadata. Unauthorized documents are excluded at the database layer, not post-hoc.
     </p>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 7: PLUGGABLE BACKENDS
+       CH 7: MULTI-HOP RAG
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 7. Five LLMs, four embedding models, zero code changes</div>
+  <div class="sec fade">Chapter 7. Multi-hop RAG</div>
   <div class="prose fade">
     <p>
-      The system supports five LLM backends (OpenAI GPT-4o-mini, Anthropic Claude, Google Vertex AI Gemini, vLLM with Llama 3.1 8B AWQ, and Ollama) and four embedding backends (OpenAI, Sentence Transformers, HuggingFace TEI, Vertex AI). Switching between any of them requires changing one environment variable.
+      Some questions require information from multiple documents. "What is the engineering team's budget compared to marketing?" needs data from both departments. A single retrieval pass will find the closest match but miss the comparison. The multi-hop module detects complex queries using keyword heuristics ("compare", "versus", "trend") and decomposes them into 2-4 sub-queries using the LLM.
     </p>
     <p>
-      This is not a nice-to-have. In production, you move between local development (Ollama, free), staging (vLLM on GPU, fixed cost), and production (OpenAI or Vertex AI, per-token cost). The same codebase runs everywhere. The provider pattern with singleton LRU-cached instances handles initialization, and the ABAC layer is provider-agnostic &mdash; it does not care which LLM generated the answer. It cares whether the user was authorized to see the context that produced it.
+      Each sub-query goes through the <strong>full ABAC pipeline independently</strong>. A marketing user asking that comparison question gets their own department's budget (permitted) but gets nothing from engineering finance docs (denied at Layer 1). The system does not reveal that engineering data exists. Sub-queries run in parallel via <code>ThreadPoolExecutor</code> with max 3 workers. Results are deduplicated by <code>source_path + section_path</code> and merged before reranking. Complex queries return up to 10 context chunks versus 5 for simple queries.
     </p>
   </div>
 
+  <div class="dia fade">
+    <div class="dia-title">Multi-hop query decomposition</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Complex Query</div><div class="dia-box-sub">"Compare eng vs mkt<br>budget allocation"</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">LLM Decomposer</div><div class="dia-box-sub">Detect complexity<br>Split into sub-queries</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row" style="gap:14px">
+      <div class="dia-box dia-good" style="flex:1;min-width:140px"><div class="dia-box-title">Sub-Q 1</div><div class="dia-box-sub">"marketing budget"<br>ABAC: PERMIT</div></div>
+      <div class="dia-box dia-bad" style="flex:1;min-width:140px"><div class="dia-box-title">Sub-Q 2</div><div class="dia-box-sub">"engineering budget"<br>ABAC: DENY</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Merge + Rerank</div><div class="dia-box-sub">Dedup by source_path<br>Top 10 chunks</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">LLM Generate</div><div class="dia-box-sub">Answer from<br>permitted chunks only</div></div>
+    </div>
+    <div class="dia-note">Each sub-query runs the full three-layer pipeline. Cross-department data is blocked per sub-query, not just at the final answer.</div>
+  </div>
+
   <!-- ═══════════════════════════════════════
-       CH 8: PRODUCTION
+       CH 8: RELIABILITY
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 8. Production infrastructure</div>
+  <div class="sec fade">Chapter 8. Reliability layers</div>
 
   <div class="pipeline fade">
     <div class="pipe-step">
       <div class="pipe-num">01</div>
-      <div class="pipe-title">437 tests across 45+ test files</div>
-      <div class="pipe-desc">Unit tests (PDP logic, chunker, BM25), integration tests (cache + fingerprints, HR tiers), <strong>security tests</strong> (cross-role access, response sanitization), edge cases (unicode, missing metadata, type mismatches), and end-to-end RAG pipeline tests. All run offline with mocked LLM/embedding services.</div>
+      <div class="pipe-title">Circuit breaker</div>
+      <div class="pipe-desc">A full state machine protects external API calls. <strong>CLOSED</strong> state allows calls through normally. After <strong>5 consecutive failures</strong>, the breaker transitions to <strong>OPEN</strong> and all calls fail fast without hitting the backend. After a 30-second recovery timeout, it transitions to <strong>HALF_OPEN</strong> and allows one probe call. Two consecutive successes return it to CLOSED. One failure sends it back to OPEN. This prevents cascading failures when an LLM backend goes down.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-title">Singleflight deduplication</div>
+      <div class="pipe-desc">When multiple users with the same role submit the same query concurrently, only one computation runs. The rest wait on a <code>threading.Event</code> with a 30-second timeout. One compute, N waiters. If the wait times out, the caller falls back to direct execution. The system tracks <strong>dedup_count</strong> and <strong>timeout_count</strong> for observability. This eliminates cache stampede on cold starts and reduces redundant LLM calls under concurrent load.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-title">Audit trail with correlation IDs</div>
+      <div class="pipe-desc">Every request gets a UUID correlation ID returned in the <code>X-Correlation-ID</code> header. Structured JSONL logs with daily rotation trace the full path: authentication, retrieval, policy evaluation, generation. Each log entry includes the correlation ID and the first 8 characters of the PolicyFingerprint hash, making it possible to reconstruct the complete request lifecycle and verify that access control was evaluated at every step.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 9: PLUGGABLE BACKENDS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 9. Five LLMs, four embedding models, zero code changes</div>
+  <div class="prose fade">
+    <p>
+      I needed to move between local development (Ollama, free), staging (vLLM on GPU, fixed cost), and production (Vertex AI, per-token cost) without changing code. So I built a provider pattern: five LLM backends (OpenAI GPT-4o-mini, Anthropic Claude, Google Vertex AI Gemini, vLLM with Llama 3.1 8B AWQ, and Ollama) and four embedding backends (OpenAI, Sentence Transformers, HuggingFace TEI, Vertex AI). Switching requires changing one environment variable: <code>LLM_BACKEND</code> or <code>EMBEDDING_BACKEND</code>. Factory functions with <code>@lru_cache(maxsize=1)</code> handle singleton initialization. The ABAC layer is provider-agnostic. It does not care which LLM generated the answer. It cares whether the user was authorized to see the context that produced it.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 10: PRODUCTION
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 10. Production infrastructure</div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-title">36 test files with cross-role leakage coverage</div>
+      <div class="pipe-desc">Unit tests (PDP logic, chunker, BM25), integration tests (cache + fingerprints, HR tiers), <strong>security tests</strong> (cross-role access via <code>TestCrossRoleDeptBoundary</code>, response sanitization that strips <code>allowed_roles</code> and <code>full_row</code> from API responses), edge cases (unicode, missing metadata, type mismatches), and end-to-end RAG pipeline tests. CI enforces <code>--cov-fail-under=70</code>.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">02</div>
       <div class="pipe-title">Kubernetes-ready</div>
-      <div class="pipe-desc">9 K8s manifests: 3 replicas, <strong>HPA scaling 2&ndash;10 pods</strong> at 70% CPU / 80% memory. NGINX ingress with TLS termination, rate limiting, and security headers (X-Frame-Options, CSP, XSS-Protection). Cloud Run config: 0&ndash;10 instances, 2 vCPU / 2GB each.</div>
+      <div class="pipe-desc">8 K8s manifests: 3 replicas, <strong>HPA scaling 2-10 pods</strong> at 70% CPU / 80% memory with 300-second scale-down stabilization. Security-hardened pods (<code>runAsNonRoot</code>, <code>readOnlyRootFilesystem</code>, drop ALL capabilities). NGINX ingress with TLS termination, rate limiting, and security headers. Cloud Run config: 0-10 instances, 2 vCPU / 2GB each.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">03</div>
@@ -382,14 +464,20 @@
     <div class="pipe-step">
       <div class="pipe-num">04</div>
       <div class="pipe-title">Security hardening</div>
-      <div class="pipe-desc">Input sanitization (HTML stripping, path traversal prevention, 10K char limit). Response sanitization strips internal fields (allowed_roles, full_row, access tier metadata). Circuit breakers for external API calls. Retry with exponential backoff. Graceful shutdown with 30-second drain.</div>
+      <div class="pipe-desc">Input sanitization (HTML stripping, path traversal prevention, 10K char limit). Response sanitization strips internal fields (allowed_roles, full_row, access tier metadata). 403 responses say only "Access denied" with no rule names leaked. 401 responses do not reveal whether a username exists. Graceful shutdown with 30-second drain.</div>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════
-       EVAL RESULTS
+       CH 11: EVAL RESULTS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Evaluation results</div>
+  <div class="sec fade">Chapter 11. Evaluation results</div>
+
+  <div class="prose fade">
+    <p>
+      The system includes a built-in evaluation pipeline using RAGAS metrics: context precision, context recall, faithfulness, and answer relevance. These validate that access control does not degrade retrieval quality for authorized users. If the RAGAS library is not installed, the evaluator falls back to simple heuristic metrics. The table below shows access control accuracy by role across the security test suite.
+    </p>
+  </div>
 
   <div class="dia fade">
     <div class="dia-title">Access control by role</div>
@@ -400,7 +488,7 @@
       <tr class="best"><td>Finance</td><td>3</td><td>100%</td><td>100%</td></tr>
       <tr class="best"><td>HR</td><td>3</td><td>100%</td><td>66.7%</td></tr>
     </table>
-    <div class="dia-note">100% access accuracy across all roles. Zero cross-role data leakage. Entitlement failures are over-permissive retrieval of general docs &mdash; not security violations.</div>
+    <div class="dia-note">100% access accuracy across all roles. Zero cross-role data leakage. Entitlement failures are over-permissive retrieval of general docs, not security violations.</div>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -447,6 +535,1089 @@ const obs = new IntersectionObserver(es => {
   });
 }, { threshold: .12 });
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION 1: Three-Layer Defense Filter (filter-canvas)
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('filter-canvas');
+  if(!canvas) return;
+  const wrap = canvas.parentElement;
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const blue='#5a7a9a';
+  const mono='JetBrains Mono, monospace';
+  let ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    w=rect.width; h=440;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  const chunks = [
+    {label:'HR-salary',   color:red,    blockedAt:0},
+    {label:'HR-review',   color:red,    blockedAt:0},
+    {label:'FIN-q2',      color:blue,   blockedAt:0},
+    {label:'FIN-budget',  color:blue,   blockedAt:0},
+    {label:'ENG-conf',    color:green,  blockedAt:1},
+    {label:'MKT-plan',    color:accent, blockedAt:-1},
+    {label:'MKT-brief',   color:accent, blockedAt:-1},
+    {label:'GEN-policy',  color:t3,     blockedAt:-1},
+  ];
+
+  const barriers = [
+    {label:'Layer 1: ChromaDB where'},
+    {label:'Layer 2: BM25 prefilter'},
+    {label:'Layer 3: PDP evaluate'},
+  ];
+
+  // Phase timing (frames at 60fps)
+  const P = [
+    {name:'init',    dur:60},   // 0
+    {name:'moveL1',  dur:120},  // 1
+    {name:'filterL1',dur:180},  // 2
+    {name:'moveL2',  dur:120},  // 3
+    {name:'filterL2',dur:120},  // 4
+    {name:'moveL3',  dur:120},  // 5
+    {name:'filterL3',dur:120},  // 6
+    {name:'arrive',  dur:120},  // 7
+    {name:'hold',    dur:120},  // 8
+    {name:'reset',   dur:120},  // 9
+  ];
+  const totalF = P.reduce((s,p)=>s+p.dur,0);
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    const f = frame % totalF;
+
+    // Find current phase
+    let phase=0, pf=0, acc=0;
+    for(let i=0;i<P.length;i++){
+      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
+      acc+=P[i].dur;
+    }
+    const prog = pf/P[phase].dur;
+
+    // Layout constants
+    const startX = 40;
+    const chunkW = 90, chunkH = 34, chunkGap = 8;
+    const totalChunkH = chunks.length*(chunkH+chunkGap)-chunkGap;
+    const chunkStartY = (h - totalChunkH)/2;
+
+    // Barrier x positions (evenly spaced)
+    const bx = [w*0.28, w*0.50, w*0.72];
+    // Destination
+    const destX = w*0.85, destW = 100, destH = 50;
+    const destY = h/2 - destH/2;
+
+    // Global fade for reset phase
+    let globalAlpha = 1;
+    if(phase === 9) globalAlpha = 1 - prog;
+    if(phase === 0) globalAlpha = prog;
+    ctx.globalAlpha = globalAlpha;
+
+    // Draw user badge
+    const badgeX = w - 180, badgeY = 20;
+    drawRR(badgeX, badgeY, 160, 30, 6, inset, accent, 1);
+    ctx.font = '600 11px '+mono;
+    ctx.fillStyle = accent;
+    ctx.textAlign = 'center';
+    ctx.fillText('ROLE: MARKETING', badgeX+80, badgeY+19);
+
+    // Draw barriers
+    for(let i=0;i<3;i++){
+      const bActive = phase >= (i*2+2);
+      ctx.save();
+      ctx.setLineDash([4,4]);
+      ctx.strokeStyle = bActive ? (i<2?red:green) : 'rgba(255,255,255,0.06)';
+      ctx.lineWidth = bActive ? 1.5 : 1;
+      ctx.globalAlpha = globalAlpha * (bActive ? 0.6 : 0.3);
+      ctx.beginPath();
+      ctx.moveTo(bx[i], 60);
+      ctx.lineTo(bx[i], h-40);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // Barrier label
+      ctx.save();
+      ctx.globalAlpha = globalAlpha * 0.7;
+      ctx.font = '500 9px '+mono;
+      ctx.fillStyle = bActive ? t1 : t3;
+      ctx.textAlign = 'center';
+      ctx.fillText(barriers[i].label, bx[i], 55);
+      ctx.restore();
+    }
+
+    // Draw destination box
+    if(phase >= 7){
+      const dp = phase===7 ? prog : 1;
+      ctx.save();
+      ctx.globalAlpha = globalAlpha * dp;
+      const pulse = 1 + 0.015*Math.sin(frame*0.08);
+      drawRR(destX-destW/2, destY, destW, destH, 8, inset, green, 1.5*pulse);
+      ctx.font = '600 11px '+mono;
+      ctx.fillStyle = green;
+      ctx.textAlign = 'center';
+      ctx.fillText('Reranker', destX, destY+20);
+      ctx.font = '500 9px '+mono;
+      ctx.fillText('LLM', destX, destY+36);
+      ctx.restore();
+    }
+
+    // Compute chunk positions
+    for(let i=0;i<chunks.length;i++){
+      const c = chunks[i];
+      const baseY = chunkStartY + i*(chunkH+chunkGap);
+      let cx = startX, cy = baseY;
+      let alpha = 1;
+      let blocked = false;
+      let passed = false;
+
+      // Determine which barrier this chunk needs to reach before being blocked
+      const targetBarrier = c.blockedAt; // 0,1, or -1 (passes all)
+
+      // Phase-based position
+      if(phase === 0){
+        // Init: fade in at start
+        alpha = prog;
+      } else if(phase === 1){
+        // Move all toward barrier 0
+        cx = startX + (bx[0] - chunkW - 10 - startX) * prog;
+      } else if(phase === 2){
+        // At barrier 0
+        cx = bx[0] - chunkW - 10;
+        if(targetBarrier === 0){
+          // Blocked here: slide down and fade
+          blocked = true;
+          cy = baseY + 40 * prog;
+          alpha = 1 - prog*0.8;
+        }
+      } else if(phase === 3){
+        // Move survivors toward barrier 1
+        if(targetBarrier === 0){ alpha=0; }
+        else{
+          const fromX = bx[0] - chunkW - 10;
+          const toX = bx[1] - chunkW - 10;
+          cx = fromX + (toX - fromX) * prog;
+        }
+      } else if(phase === 4){
+        // At barrier 1
+        if(targetBarrier === 0){ alpha=0; }
+        else{
+          cx = bx[1] - chunkW - 10;
+          if(targetBarrier === 1){
+            blocked = true;
+            cy = baseY + 40 * prog;
+            alpha = 1 - prog*0.8;
+          }
+        }
+      } else if(phase === 5){
+        // Move survivors toward barrier 2
+        if(targetBarrier >= 0 && targetBarrier <= 1){ alpha=0; }
+        else{
+          const fromX = bx[1] - chunkW - 10;
+          const toX = bx[2] - chunkW - 10;
+          cx = fromX + (toX - fromX) * prog;
+        }
+      } else if(phase === 6){
+        // At barrier 2 - all remaining pass
+        if(targetBarrier >= 0 && targetBarrier <= 1){ alpha=0; }
+        else{
+          cx = bx[2] - chunkW - 10;
+          passed = true;
+        }
+      } else if(phase >= 7){
+        // Move to destination
+        if(targetBarrier >= 0 && targetBarrier <= 1){ alpha=0; }
+        else{
+          const fromX = bx[2] - chunkW - 10;
+          const toX = destX - destW/2 - chunkW - 20;
+          const mp = phase===7 ? prog : 1;
+          cx = fromX + (toX - fromX) * mp;
+          passed = true;
+        }
+      }
+
+      if(alpha <= 0) continue;
+
+      ctx.save();
+      ctx.globalAlpha = globalAlpha * alpha;
+
+      // Draw chunk box
+      const borderColor = blocked ? red : (passed ? green : c.color);
+      drawRR(cx, cy, chunkW, chunkH, 6, inset, null);
+
+      // Left color bar
+      ctx.fillStyle = borderColor;
+      ctx.beginPath();
+      ctx.moveTo(cx+6, cy);
+      ctx.lineTo(cx+6, cy);
+      ctx.quadraticCurveTo(cx, cy, cx, cy+6);
+      ctx.lineTo(cx, cy+chunkH-6);
+      ctx.quadraticCurveTo(cx, cy+chunkH, cx+6, cy+chunkH);
+      ctx.lineTo(cx+4, cy+chunkH);
+      ctx.lineTo(cx+4, cy);
+      ctx.closePath();
+      ctx.fill();
+
+      // Label
+      ctx.font = '500 9px '+mono;
+      ctx.fillStyle = blocked ? red : t1;
+      ctx.textAlign = 'left';
+      ctx.fillText(c.label, cx+10, cy+chunkH/2+3);
+
+      // Check or X mark
+      if(blocked){
+        ctx.font = '600 12px '+mono;
+        ctx.fillStyle = red;
+        ctx.textAlign = 'right';
+        ctx.fillText('✕', cx+chunkW-6, cy+chunkH/2+4);
+      } else if(passed){
+        ctx.font = '600 12px '+mono;
+        ctx.fillStyle = green;
+        ctx.textAlign = 'right';
+        ctx.fillText('✓', cx+chunkW-6, cy+chunkH/2+4);
+      }
+
+      ctx.restore();
+    }
+
+    // Counter at bottom
+    let blockedCount = 0;
+    if(phase >= 2) blockedCount = 4; // L1
+    if(phase >= 4) blockedCount = 5; // L2
+    if(phase >= 2 && phase < 4 && prog > 0.3) blockedCount = 4;
+
+    if(phase >= 2){
+      ctx.save();
+      ctx.globalAlpha = globalAlpha;
+      ctx.font = '600 12px '+mono;
+      ctx.textAlign = 'center';
+      const counterY = h - 25;
+      ctx.fillStyle = red;
+      ctx.fillText(blockedCount + ' blocked', w/2 - 60, counterY);
+      if(phase >= 6){
+        ctx.fillStyle = green;
+        ctx.fillText('0 leaked', w/2 + 60, counterY);
+      }
+      ctx.restore();
+    }
+
+    ctx.globalAlpha = 1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  const cObs = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting && !running){
+        running=true; initCanvas(); draw();
+      } else if(!entry.isIntersecting && running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+  window.addEventListener('resize',()=>{ if(running) initCanvas(); });
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION 2: PolicyFingerprint Cache Isolation (fingerprint-canvas)
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('fingerprint-canvas');
+  if(!canvas) return;
+  const wrap = canvas.parentElement;
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const hrColor='#9a5a5a', mktColor='#d88c3a';
+  const mono='JetBrains Mono, monospace';
+  let ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    w=rect.width; h=480;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  const hrHash = 'a3f7c201e8b94d12';
+  const mktHash = '7e2b0f9a4c61d8e5';
+  const hrHash2 = 'd91a4b7f3c08e652';
+  const mktHash2 = '02c8e5f1a97b3d46';
+
+  // Phases
+  const P = [
+    {name:'users',     dur:90},   // 0
+    {name:'query',     dur:60},   // 1
+    {name:'hash',      dur:180},  // 2
+    {name:'lookup',    dur:120},  // 3
+    {name:'results',   dur:120},  // 4
+    {name:'hold',      dur:60},   // 5
+    {name:'epoch',     dur:150},  // 6
+    {name:'reset',     dur:120},  // 7
+  ];
+  const totalF = P.reduce((s,p)=>s+p.dur,0);
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    const f = frame % totalF;
+
+    let phase=0, pf=0, acc=0;
+    for(let i=0;i<P.length;i++){
+      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
+      acc+=P[i].dur;
+    }
+    const prog = pf/P[phase].dur;
+
+    // Global fade
+    let ga = 1;
+    if(phase === 7) ga = 1 - prog;
+    ctx.globalAlpha = ga;
+
+    // Layout
+    const midX = w/2;
+    const colW = Math.min(220, w*0.3);
+    const gap = 30;
+    const lx = midX - gap - colW; // left column x
+    const rx = midX + gap;        // right column x
+    const cardW = colW, cardH = 80;
+
+    // ===== ROW 1: User cards =====
+    if(phase >= 0){
+      const a = phase===0 ? prog : 1;
+      ctx.save(); ctx.globalAlpha = ga*a;
+
+      // HR user card
+      drawRR(lx, 20, cardW, cardH, 8, inset, hrColor, 1.5);
+      ctx.font = '600 12px '+mono;
+      ctx.fillStyle = hrColor;
+      ctx.textAlign = 'center';
+      ctx.fillText('HR User', lx+cardW/2, 44);
+      ctx.font = '400 9px '+mono;
+      ctx.fillStyle = t3;
+      ctx.fillText('role: "hr"', lx+cardW/2, 60);
+      ctx.fillText('epoch: 7, flags: [view_pii]', lx+cardW/2, 74);
+
+      // MKT user card
+      drawRR(rx, 20, cardW, cardH, 8, inset, mktColor, 1.5);
+      ctx.font = '600 12px '+mono;
+      ctx.fillStyle = mktColor;
+      ctx.textAlign = 'center';
+      ctx.fillText('Marketing User', rx+cardW/2, 44);
+      ctx.font = '400 9px '+mono;
+      ctx.fillStyle = t3;
+      ctx.fillText('role: "marketing"', rx+cardW/2, 60);
+      ctx.fillText('epoch: 7, flags: []', rx+cardW/2, 74);
+
+      ctx.restore();
+    }
+
+    // ===== ROW 2: Query text =====
+    if(phase >= 1){
+      const a = phase===1 ? prog : 1;
+      ctx.save(); ctx.globalAlpha = ga*a;
+      ctx.font = '500 11px '+mono;
+      ctx.fillStyle = t1;
+      ctx.textAlign = 'center';
+      ctx.fillText('"average salary by department"', midX, 128);
+      ctx.font = '400 9px '+mono;
+      ctx.fillStyle = t3;
+      ctx.fillText('same query', midX, 143);
+      ctx.restore();
+    }
+
+    // ===== ROW 3: SHA-256 hash boxes =====
+    const hashY = 160;
+    const hashH = 55;
+    if(phase >= 2){
+      const useNewHash = phase >= 6 && prog > 0.5;
+      const epochFlash = phase === 6 && prog > 0.2 && prog < 0.5;
+
+      // Draw arrows from users to hash boxes
+      if(phase === 2){
+        const ap = Math.min(prog*3, 1);
+        ctx.save();
+        ctx.globalAlpha = ga*0.5*ap;
+        ctx.strokeStyle = t3;
+        ctx.setLineDash([3,3]);
+        ctx.lineWidth = 1;
+        // Left arrow
+        ctx.beginPath();
+        ctx.moveTo(lx+cardW/2, 20+cardH);
+        ctx.lineTo(lx+cardW/2, hashY);
+        ctx.stroke();
+        // Right arrow
+        ctx.beginPath();
+        ctx.moveTo(rx+cardW/2, 20+cardH);
+        ctx.lineTo(rx+cardW/2, hashY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+
+      const ha = phase===2 ? Math.min(prog*2, 1) : 1;
+      ctx.save();
+      ctx.globalAlpha = ga*ha;
+
+      if(epochFlash){
+        ctx.globalAlpha = ga * (0.3 + 0.7*Math.abs(Math.sin(pf*0.15)));
+      }
+
+      // HR hash box
+      const hrBorderC = useNewHash ? green : (epochFlash ? red : hrColor);
+      drawRR(lx, hashY, cardW, hashH, 6, inset, hrBorderC, 1);
+      ctx.font = '600 9px '+mono;
+      ctx.fillStyle = t3;
+      ctx.textAlign = 'center';
+      ctx.fillText('SHA-256', lx+cardW/2, hashY+16);
+
+      // Type out hash
+      const hashToShow = useNewHash ? hrHash2 : hrHash;
+      let charsToShow = 16;
+      if(phase === 2) charsToShow = Math.floor(Math.max(0, (prog-0.3)/0.7) * 16);
+      if(phase === 6 && prog > 0.5) charsToShow = Math.floor((prog-0.5)/0.5 * 16);
+      ctx.font = '600 11px '+mono;
+      ctx.fillStyle = useNewHash ? green : hrColor;
+      ctx.fillText(hashToShow.substring(0, charsToShow), lx+cardW/2, hashY+36);
+
+      // MKT hash box
+      const mktBorderC = useNewHash ? green : (epochFlash ? red : mktColor);
+      drawRR(rx, hashY, cardW, hashH, 6, inset, mktBorderC, 1);
+      ctx.font = '600 9px '+mono;
+      ctx.fillStyle = t3;
+      ctx.textAlign = 'center';
+      ctx.fillText('SHA-256', rx+cardW/2, hashY+16);
+
+      const mktHashToShow = useNewHash ? mktHash2 : mktHash;
+      ctx.font = '600 11px '+mono;
+      ctx.fillStyle = useNewHash ? green : mktColor;
+      ctx.fillText(mktHashToShow.substring(0, charsToShow), rx+cardW/2, hashY+36);
+
+      ctx.restore();
+    }
+
+    // ===== ROW 4: Cache results =====
+    const resY = 240;
+    const resH = 70;
+    if(phase >= 3 && phase < 6){
+      const a = phase===3 ? prog : 1;
+      ctx.save(); ctx.globalAlpha = ga*a;
+
+      // Arrows from hash to result
+      if(phase === 3){
+        ctx.globalAlpha = ga*0.4*prog;
+        ctx.strokeStyle = t3;
+        ctx.setLineDash([3,3]);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(lx+cardW/2, hashY+hashH);
+        ctx.lineTo(lx+cardW/2, resY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(rx+cardW/2, hashY+hashH);
+        ctx.lineTo(rx+cardW/2, resY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha = ga*a;
+      }
+
+      // HR result: cache HIT with data
+      drawRR(lx, resY, cardW, resH, 6, inset, green, 1);
+      ctx.font = '600 10px '+mono;
+      ctx.fillStyle = green;
+      ctx.textAlign = 'center';
+      ctx.fillText('CACHE HIT', lx+cardW/2, resY+18);
+      ctx.font = '400 9px '+mono;
+      ctx.fillStyle = t2;
+      ctx.fillText('Salary by dept:', lx+cardW/2, resY+36);
+      ctx.fillText('Eng $145K, Mkt $128K', lx+cardW/2, resY+50);
+      ctx.fillText('Fin $152K, HR $118K', lx+cardW/2, resY+62);
+
+      // MKT result: cache MISS, no HR data
+      drawRR(rx, resY, cardW, resH, 6, inset, red, 1);
+      ctx.font = '600 10px '+mono;
+      ctx.fillStyle = red;
+      ctx.textAlign = 'center';
+      ctx.fillText('DIFFERENT KEY', rx+cardW/2, resY+18);
+      ctx.font = '400 9px '+mono;
+      ctx.fillStyle = t2;
+      ctx.fillText('No HR documents in', rx+cardW/2, resY+40);
+      ctx.fillText('marketing-scoped results', rx+cardW/2, resY+54);
+
+      ctx.restore();
+    }
+
+    // ===== ROW 5: Isolation label =====
+    if(phase >= 4 && phase < 6){
+      const a = phase===4 ? prog : 1;
+      ctx.save(); ctx.globalAlpha = ga*a*0.8;
+      ctx.font = '600 10px '+mono;
+      ctx.fillStyle = accent;
+      ctx.textAlign = 'center';
+      ctx.fillText('Same query, different fingerprint, different results', midX, resY+resH+24);
+      ctx.restore();
+    }
+
+    // ===== ROW 5b: Epoch bump =====
+    if(phase >= 6 && phase < 7){
+      ctx.save();
+      const a = Math.min(prog*3, 1);
+      ctx.globalAlpha = ga*a;
+      ctx.font = '600 12px '+mono;
+      ctx.fillStyle = accent;
+      ctx.textAlign = 'center';
+      ctx.fillText('POLICY UPDATE: epoch 7 → 8', midX, resY+20);
+
+      if(prog > 0.3){
+        ctx.font = '500 10px '+mono;
+        ctx.fillStyle = t2;
+        ctx.fillText('All old cache keys unreachable', midX, resY+42);
+      }
+      if(prog > 0.5){
+        ctx.font = '500 10px '+mono;
+        ctx.fillStyle = green;
+        ctx.fillText('New fingerprints generated', midX, resY+60);
+      }
+      ctx.restore();
+    }
+
+    // Legend at very bottom
+    ctx.save();
+    ctx.globalAlpha = ga * 0.5;
+    ctx.font = '400 9px '+mono;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = t3;
+    ctx.fillText('cache_key = f"llm:{pf_hash}:{query_hash}:{context_hash}:{model}"', midX, h-16);
+    ctx.restore();
+
+    ctx.globalAlpha = 1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  const cObs = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting && !running){
+        running=true; initCanvas(); draw();
+      } else if(!entry.isIntersecting && running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+  window.addEventListener('resize',()=>{ if(running) initCanvas(); });
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION 3: Embedding Space Separation (embed-canvas)
+   Shows how contextual prefixes push same-text chunks into
+   different regions of vector space by department.
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('embed-canvas');
+  if(!canvas) return;
+  const wrap = canvas.parentElement;
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const blue='#5a7a9a';
+  const mono='JetBrains Mono, monospace';
+  let ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    w=rect.width; h=400;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  // Document dots per department cluster
+  const clusters = [
+    {label:'Finance',   color:blue,   cx:0.25, cy:0.35, docs:6},
+    {label:'Marketing', color:accent, cx:0.55, cy:0.65, docs:5},
+    {label:'HR',        color:red,    cx:0.75, cy:0.30, docs:4},
+    {label:'Engineering',color:green, cx:0.40, cy:0.45, docs:5},
+    {label:'General',   color:t3,     cx:0.50, cy:0.50, docs:3},
+  ];
+
+  // Generate stable random positions using seed
+  function seededRandom(seed){ return ((Math.sin(seed*127.1+311.7)*43758.5453)%1+1)%1; }
+  const dots = [];
+  clusters.forEach((cl,ci)=>{
+    for(let d=0;d<cl.docs;d++){
+      const seed = ci*100+d;
+      const ang = seededRandom(seed)*Math.PI*2;
+      const dist = seededRandom(seed+50)*0.08+0.02;
+      dots.push({
+        // "without prefix" positions: all clustered near center
+        nx: 0.5 + (seededRandom(seed+10)-0.5)*0.15,
+        ny: 0.5 + (seededRandom(seed+20)-0.5)*0.15,
+        // "with prefix" positions: separated by department
+        px: cl.cx + Math.cos(ang)*dist,
+        py: cl.cy + Math.sin(ang)*dist,
+        color: cl.color,
+        cluster: ci
+      });
+    }
+  });
+
+  // Query dot (marketing user searching "Q2 revenue")
+  const queryNx = 0.48, queryNy = 0.47; // near center (ambiguous)
+  const queryPx = 0.53, queryPy = 0.63; // near marketing cluster
+
+  const P = [
+    {name:'without',  dur:180}, // 0: show "without prefix" - all mixed
+    {name:'label1',   dur:60},  // 1: label appears
+    {name:'transition',dur:120},// 2: dots separate to clusters
+    {name:'with',     dur:180}, // 3: show "with prefix" - separated
+    {name:'query',    dur:150}, // 4: query appears, nearest neighbor line
+    {name:'hold',     dur:90},  // 5: hold
+    {name:'reset',    dur:60},  // 6: fade
+  ];
+  const totalF = P.reduce((s,p)=>s+p.dur,0);
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    const f = frame % totalF;
+
+    let phase=0, pf=0, acc=0;
+    for(let i=0;i<P.length;i++){
+      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
+      acc+=P[i].dur;
+    }
+    const prog = pf/P[phase].dur;
+
+    let ga = 1;
+    if(phase===6) ga = 1-prog;
+    ctx.globalAlpha = ga;
+
+    // Compute blend factor (0 = no prefix, 1 = with prefix)
+    let blend = 0;
+    if(phase < 2) blend = 0;
+    else if(phase === 2) blend = prog;
+    else blend = 1;
+
+    // Draw axes hint
+    ctx.save();
+    ctx.globalAlpha = ga*0.15;
+    ctx.strokeStyle = t3;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2,4]);
+    // horizontal axis
+    ctx.beginPath(); ctx.moveTo(40, h*0.5); ctx.lineTo(w-40, h*0.5); ctx.stroke();
+    // vertical axis
+    ctx.beginPath(); ctx.moveTo(w*0.5, 30); ctx.lineTo(w*0.5, h-50); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Draw dots
+    dots.forEach(d=>{
+      const x = 40 + (d.nx + (d.px - d.nx)*blend) * (w-80);
+      const y = 30 + (d.ny + (d.py - d.ny)*blend) * (h-80);
+      ctx.save();
+      ctx.globalAlpha = ga*0.7;
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI*2);
+      ctx.fillStyle = d.color;
+      ctx.fill();
+      // Glow
+      ctx.shadowColor = d.color;
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    // Cluster labels (only when separated)
+    if(blend > 0.5){
+      const la = Math.min((blend-0.5)*2, 1);
+      ctx.save();
+      ctx.globalAlpha = ga*la*0.6;
+      ctx.font = '500 9px '+mono;
+      ctx.textAlign = 'center';
+      clusters.forEach(cl=>{
+        ctx.fillStyle = cl.color;
+        const lx = 40 + cl.cx*(w-80);
+        const ly = 30 + cl.cy*(h-80) - 18 - cl.docs*2;
+        ctx.fillText(cl.label, lx, ly);
+      });
+      ctx.restore();
+    }
+
+    // Query vector (phase 4+)
+    if(phase >= 4){
+      const qa = phase===4 ? Math.min(prog*2, 1) : 1;
+      const qx = 40 + (queryNx + (queryPx - queryNx)*blend) * (w-80);
+      const qy = 30 + (queryNy + (queryPy - queryNy)*blend) * (h-80);
+
+      ctx.save();
+      ctx.globalAlpha = ga*qa;
+
+      // Query dot (diamond shape)
+      ctx.fillStyle = t1;
+      ctx.beginPath();
+      ctx.moveTo(qx, qy-7); ctx.lineTo(qx+7, qy);
+      ctx.lineTo(qx, qy+7); ctx.lineTo(qx-7, qy);
+      ctx.closePath();
+      ctx.fill();
+
+      // Label
+      ctx.font = '600 9px '+mono;
+      ctx.fillStyle = t1;
+      ctx.textAlign = 'left';
+      ctx.fillText('QUERY: "Q2 revenue"', qx+12, qy+3);
+
+      // Draw line to nearest marketing dot (with prefix) or nearest finance dot (without)
+      if(phase >= 4 && prog > 0.3){
+        const lineA = Math.min((prog-0.3)/0.4, 1);
+        // Find nearest dot
+        let nearest = null, nearDist = Infinity;
+        dots.forEach(d=>{
+          const dx = 40 + (d.nx + (d.px - d.nx)*blend) * (w-80);
+          const dy = 30 + (d.ny + (d.py - d.ny)*blend) * (h-80);
+          const dist = Math.sqrt((dx-qx)**2+(dy-qy)**2);
+          if(dist < nearDist){ nearDist=dist; nearest={x:dx,y:dy,color:d.color,cluster:d.cluster}; }
+        });
+        if(nearest){
+          ctx.globalAlpha = ga*lineA*0.6;
+          ctx.strokeStyle = nearest.color;
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([4,3]);
+          ctx.lineDashOffset = -frame*0.3;
+          ctx.beginPath();
+          ctx.moveTo(qx, qy);
+          const ex = qx+(nearest.x-qx)*lineA;
+          const ey = qy+(nearest.y-qy)*lineA;
+          ctx.lineTo(ex, ey);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Label the match
+          if(lineA > 0.8){
+            ctx.globalAlpha = ga*0.8;
+            ctx.font = '600 9px '+mono;
+            ctx.fillStyle = nearest.color;
+            const matchLabel = nearest.cluster===1 ? 'NEAREST: Marketing (correct)' : 'NEAREST: Finance (wrong dept!)';
+            ctx.textAlign = 'center';
+            ctx.fillText(matchLabel, (qx+nearest.x)/2, Math.min(qy,nearest.y)-12);
+          }
+        }
+      }
+      ctx.restore();
+    }
+
+    // Phase labels
+    ctx.save();
+    ctx.globalAlpha = ga*0.8;
+    ctx.font = '600 11px '+mono;
+    ctx.textAlign = 'center';
+    if(phase <= 1){
+      ctx.fillStyle = red;
+      ctx.fillText('WITHOUT contextual prefix', w/2, h-20);
+      ctx.font = '400 9px '+mono;
+      ctx.fillStyle = t3;
+      ctx.fillText('All departments mixed in vector space', w/2, h-6);
+    } else if(phase >= 3){
+      ctx.fillStyle = green;
+      ctx.fillText('WITH contextual prefix', w/2, h-20);
+      ctx.font = '400 9px '+mono;
+      ctx.fillStyle = t3;
+      ctx.fillText('Departments naturally separated by embedding metadata', w/2, h-6);
+    } else if(phase === 2){
+      const a = prog;
+      ctx.fillStyle = `rgba(90,154,90,${a})`;
+      ctx.fillText('WITH contextual prefix', w/2, h-20);
+    }
+    ctx.restore();
+
+    ctx.globalAlpha = 1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  const cObs = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting && !running){
+        running=true; initCanvas(); draw();
+      } else if(!entry.isIntersecting && running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+  window.addEventListener('resize',()=>{ if(running) initCanvas(); });
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION 4: PDP Rule Evaluation (pdp-canvas)
+   Shows two requests evaluated against the 12 rules,
+   first-match-wins. One DENY, one PERMIT.
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('pdp-canvas');
+  if(!canvas) return;
+  const wrap = canvas.parentElement;
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const mono='JetBrains Mono, monospace';
+  let ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    w=rect.width; h=460;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  // Simplified rules (12 from policy.yaml)
+  const rules = [
+    {id:'R0',  name:'c_level_full_access',           effect:'permit'},
+    {id:'R1',  name:'general_docs_any_role',          effect:'permit'},
+    {id:'R2',  name:'same_dept_internal_docs',        effect:'permit'},
+    {id:'R3',  name:'employee_non_general_deny',      effect:'deny'},
+    {id:'R4',  name:'cross_department_deny',          effect:'deny'},
+    {id:'R5',  name:'hr_rows_hr_c_level_only',        effect:'permit'},
+    {id:'R6',  name:'non_hr_hr_rows_deny',            effect:'deny'},
+    {id:'R6b', name:'hr_masked_rows_if_enabled',      effect:'permit'},
+    {id:'R7',  name:'hr_aggregates_if_enabled',       effect:'permit'},
+    {id:'R8',  name:'hr_aggregates_hr_c_level',       effect:'permit'},
+    {id:'R9',  name:'high_sensitivity_deny',          effect:'deny'},
+    {id:'--',  name:'DEFAULT',                        effect:'deny'},
+  ];
+
+  // Two scenarios
+  const scenarios = [
+    {
+      label: 'Marketing user requests HR salary row',
+      ctx: 'role:"marketing" resource:{dept:"hr", type:"csv"} action:"view_row"',
+      matchIdx: 6, // R6: non_hr_hr_rows_deny → DENY
+    },
+    {
+      label: 'HR user requests HR salary row',
+      ctx: 'role:"hr" resource:{dept:"hr", type:"csv"} action:"view_row"',
+      matchIdx: 5, // R5: hr_rows_hr_c_level_only → PERMIT
+    },
+  ];
+
+  const ruleH = 28; // height per rule row
+  const scanSpeed = 12; // frames per rule scan step
+  const holdAfterMatch = 90;
+  const scenarioPause = 60;
+  const resetPause = 90;
+
+  // Phase 1: scenario 0 scan (scanSpeed * matchIdx + holdAfterMatch)
+  // Phase 2: pause
+  // Phase 3: scenario 1 scan
+  // Phase 4: hold + reset
+  const s0frames = scanSpeed * (scenarios[0].matchIdx + 1) + holdAfterMatch;
+  const s1frames = scanSpeed * (scenarios[1].matchIdx + 1) + holdAfterMatch;
+  const totalF = s0frames + scenarioPause + s1frames + resetPause;
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    const f = frame % totalF;
+
+    // Determine which scenario and scan position
+    let scenIdx, scanFrame, matched, holdFrame;
+    if(f < s0frames){
+      scenIdx = 0;
+      scanFrame = f;
+    } else if(f < s0frames + scenarioPause){
+      scenIdx = 0;
+      scanFrame = s0frames; // stay at matched
+    } else if(f < s0frames + scenarioPause + s1frames){
+      scenIdx = 1;
+      scanFrame = f - s0frames - scenarioPause;
+    } else {
+      scenIdx = 1;
+      scanFrame = s1frames;
+    }
+
+    const sc = scenarios[scenIdx];
+    const totalScanFrames = scanSpeed * (sc.matchIdx + 1);
+    const currentRuleIdx = Math.min(Math.floor(scanFrame / scanSpeed), sc.matchIdx);
+    const scanDone = scanFrame >= totalScanFrames;
+    const scanProg = scanDone ? 1 : (scanFrame % scanSpeed) / scanSpeed;
+
+    // Global fade at very end
+    let ga = 1;
+    const endF = totalF - resetPause;
+    if(f > endF) ga = 1 - (f - endF)/resetPause;
+    ctx.globalAlpha = ga;
+
+    // Layout
+    const ruleListX = Math.max(40, (w - 500) / 2);
+    const ruleListW = Math.min(500, w - 80);
+    const ruleListY = 80;
+
+    // Scenario label
+    ctx.save();
+    ctx.font = '600 11px '+mono;
+    ctx.fillStyle = accent;
+    ctx.textAlign = 'center';
+    ctx.fillText('Scenario: ' + sc.label, w/2, 25);
+    ctx.font = '400 9px '+mono;
+    ctx.fillStyle = t3;
+    ctx.fillText(sc.ctx, w/2, 42);
+    ctx.restore();
+
+    // "First match wins" label
+    ctx.save();
+    ctx.font = '500 9px '+mono;
+    ctx.fillStyle = t3;
+    ctx.textAlign = 'center';
+    ctx.fillText('▼  evaluating top-to-bottom  ▼', w/2, 65);
+    ctx.restore();
+
+    // Draw rules
+    for(let i = 0; i < rules.length; i++){
+      const r = rules[i];
+      const ry = ruleListY + i * ruleH;
+      const isMatch = i === sc.matchIdx && scanDone;
+      const isScanning = i === currentRuleIdx && !scanDone;
+      const isPast = i < currentRuleIdx;
+      const isFuture = i > currentRuleIdx && !scanDone;
+
+      // Background
+      let bgColor = inset;
+      let borderColor = 'rgba(255,255,255,0.02)';
+      let textAlpha = 0.3;
+
+      if(isMatch){
+        bgColor = r.effect === 'permit' ? 'rgba(90,154,90,0.12)' : 'rgba(154,90,90,0.12)';
+        borderColor = r.effect === 'permit' ? green : red;
+        textAlpha = 1;
+      } else if(isScanning){
+        bgColor = 'rgba(216,140,58,0.06)';
+        borderColor = accent;
+        textAlpha = 0.8;
+      } else if(isPast){
+        textAlpha = 0.25;
+      } else if(isFuture){
+        textAlpha = 0.15;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = ga * Math.max(textAlpha, 0.15);
+
+      drawRR(ruleListX, ry, ruleListW, ruleH-4, 4, bgColor, borderColor, isMatch ? 1.5 : 0.5);
+
+      // Rule ID
+      ctx.font = '600 9px '+mono;
+      ctx.fillStyle = t3;
+      ctx.textAlign = 'left';
+      ctx.fillText(r.id, ruleListX+8, ry+ruleH/2);
+
+      // Rule name
+      ctx.font = '400 9px '+mono;
+      ctx.fillStyle = isMatch ? t1 : t2;
+      ctx.fillText(r.name, ruleListX+40, ry+ruleH/2);
+
+      // Effect badge
+      const badgeW = 50, badgeH = 16;
+      const badgeX = ruleListX + ruleListW - badgeW - 8;
+      const badgeY = ry + (ruleH-4-badgeH)/2;
+      const badgeColor = r.effect === 'permit' ? green : red;
+      drawRR(badgeX, badgeY, badgeW, badgeH, 3, null, badgeColor, 0.5);
+      ctx.font = '600 8px '+mono;
+      ctx.fillStyle = badgeColor;
+      ctx.textAlign = 'center';
+      ctx.fillText(r.effect.toUpperCase(), badgeX+badgeW/2, badgeY+badgeH/2+1);
+
+      // Scan indicator (arrow)
+      if(isScanning){
+        ctx.globalAlpha = ga * (0.5+0.5*Math.sin(frame*0.15));
+        ctx.font = '600 12px '+mono;
+        ctx.fillStyle = accent;
+        ctx.textAlign = 'right';
+        ctx.fillText('▸', ruleListX-4, ry+ruleH/2+1);
+      }
+
+      ctx.restore();
+    }
+
+    // Result banner
+    if(scanDone){
+      const bannerY = ruleListY + rules.length * ruleH + 12;
+      const matchRule = rules[sc.matchIdx];
+      const isPermit = matchRule.effect === 'permit';
+      ctx.save();
+      ctx.globalAlpha = ga;
+      ctx.font = '600 13px '+mono;
+      ctx.fillStyle = isPermit ? green : red;
+      ctx.textAlign = 'center';
+      ctx.fillText(
+        (isPermit ? '✓ PERMIT' : '✕ DENY') + '  (matched ' + matchRule.id + ': ' + matchRule.name + ')',
+        w/2, bannerY
+      );
+      ctx.font = '400 9px '+mono;
+      ctx.fillStyle = t3;
+      ctx.fillText('First match wins. No further rules evaluated.', w/2, bannerY+18);
+      ctx.restore();
+    }
+
+    ctx.globalAlpha = 1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  const cObs = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting && !running){
+        running=true; initCanvas(); draw();
+      } else if(!entry.isIntersecting && running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+  window.addEventListener('resize',()=>{ if(running) initCanvas(); });
+})();
 </script>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{font-size:18px}
   :root{
     --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
     --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
@@ -23,70 +23,76 @@
   a{color:var(--accent);text-decoration:none;transition:color .2s}
   a:hover{color:#eaa050}
 
-  nav{display:flex;justify-content:space-between;align-items:center;max-width:1200px;width:100%;margin:0 auto;padding:2.5rem 3rem 1.5rem}
-  nav .logo{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--t1);text-decoration:none}
-  nav .back{font-family:var(--mono);font-size:.8rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  nav{display:flex;justify-content:space-between;align-items:center;max-width:1440px;width:100%;margin:0 auto;padding:2.5rem 3rem 1.5rem}
+  nav .logo{font-family:var(--mono);font-weight:600;font-size:1.02rem;color:var(--t1);text-decoration:none}
+  nav .back{font-family:var(--mono);font-size:.86rem;color:var(--t3);text-decoration:none;transition:color .2s}
   nav .back:hover{color:var(--accent)}
 
-  main{max-width:1200px;width:100%;margin:0 auto;padding:2rem 3rem 4rem;flex:1}
+  main{max-width:1440px;width:100%;margin:0 auto;padding:2rem 3rem 4rem;flex:1}
 
-  .proj-label{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .proj-label{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
   .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
   .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
 
-  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 28px;margin-bottom:36px}
-  .brief-label{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 34px;margin-bottom:36px}
+  .brief-label{font-family:var(--mono);font-size:.66rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
   .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
-  .brief-key{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:right;white-space:nowrap}
-  .brief-val{font-family:var(--mono);font-size:.78rem;color:var(--t1);line-height:1.7}
+  .brief-key{font-family:var(--mono);font-size:.78rem;color:var(--t2);text-align:right;white-space:nowrap}
+  .brief-val{font-family:var(--mono);font-size:.84rem;color:var(--t1);line-height:1.7}
 
   .prose{margin-bottom:1.8rem}
-  .prose p{font-family:var(--sans);font-size:1.05rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
+  .prose p{font-family:var(--sans);font-size:1.08rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
   .prose strong{color:var(--t1);font-weight:500}
+  .prose code{font-family:var(--mono);font-size:.82rem;color:var(--accent);background:var(--inset);padding:2px 6px;border-radius:4px}
 
-  .sec{font-family:var(--mono);font-size:.7rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
+  .sec{font-family:var(--mono);font-size:.78rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
 
-  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:28px 24px;margin:20px 0}
-  .dia-title{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 30px;margin:20px 0}
+  .dia-title{font-family:var(--mono);font-size:.72rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
   .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
   .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
-  .dia-box-title{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--t1);margin-bottom:3px}
-  .dia-box-sub{font-family:var(--mono);font-size:.58rem;color:var(--t2);line-height:1.7}
+  .dia-box-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:3px}
+  .dia-box-sub{font-family:var(--mono);font-size:.68rem;color:var(--t2);line-height:1.7}
   .dia-arrow{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;padding:0 10px;flex-shrink:0}
   .dia-arrow-down{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;text-align:center;padding:8px 0}
-  .dia-note{font-family:var(--mono);font-size:.62rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
+  .dia-note{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
   .dia-good{border:1px solid rgba(90,154,90,0.2)}
   .dia-bad{border:1px solid rgba(154,90,90,0.2)}
+  .dia-layer-label{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;text-align:center;padding:4px 0;opacity:.7}
 
   .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
-  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:22px 16px;text-align:center;transition:all .3s}
+  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:26px 20px;text-align:center;transition:all .3s}
   .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
   .stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:5px}
-  .stat-label{font-family:var(--mono);font-size:.58rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
+  .stat-label{font-family:var(--mono);font-size:.68rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
 
   .rtable{width:100%;border-collapse:collapse;margin:16px 0}
-  .rtable th{font-family:var(--mono);font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
-  .rtable td{font-family:var(--mono);font-size:.68rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable th{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.76rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
   .rtable tr.best td{color:var(--accent);font-weight:500}
 
   .pipeline{position:relative;padding-left:32px;margin:20px 0}
   .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
   .pipe-step{position:relative;margin-bottom:24px}
   .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
-  .pipe-num{font-family:var(--mono);font-size:.58rem;color:var(--accent);opacity:.7;margin-bottom:3px}
-  .pipe-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:6px}
-  .pipe-desc{font-family:var(--sans);font-size:.92rem;color:var(--t2);line-height:1.95}
+  .pipe-num{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;margin-bottom:3px}
+  .pipe-title{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+  .pipe-desc{font-family:var(--sans);font-size:.96rem;color:var(--t2);line-height:1.95}
   .pipe-desc strong{color:var(--t1);font-weight:500}
 
   .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
-  .stack-tag{font-family:var(--mono);font-size:.56rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
-  .proj-link{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+  .stack-tag{font-family:var(--mono);font-size:.66rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .proj-link{display:inline-block;font-family:var(--mono);font-size:.78rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
   .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+
+  .graph-canvas-wrap{position:relative;margin:24px 0;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);overflow:hidden}
+  .graph-canvas-wrap canvas{display:block;width:100%;height:400px}
+
   footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
-  .ft{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-  .ft-c{font-family:var(--mono);font-size:.62rem;color:var(--t3)}
+  .ft{max-width:1440px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+  .ft-c{font-family:var(--mono);font-size:.72rem;color:var(--t3)}
   .ft-l{display:flex;gap:18px}
-  .ft-l a{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  .ft-l a{font-family:var(--mono);font-size:.76rem;color:var(--t3);text-decoration:none;transition:color .2s}
   .ft-l a:hover{color:var(--accent)}
 
   @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
@@ -99,6 +105,7 @@
     .dia-row{flex-direction:column;gap:0}
     .dia-arrow{transform:rotate(90deg);padding:6px 0}
     .ft{flex-direction:column;gap:10px;text-align:center}
+    .graph-canvas-wrap canvas{height:320px}
   }
 </style>
 </head>
@@ -112,7 +119,7 @@
 <main>
 
   <div class="proj-label fade">Project</div>
-  <h1 class="proj-title fade">Causal Inference Agent: 13 Specialists, One Notebook</h1>
+  <h1 class="proj-title fade">Causal Inference Agent: 13 Specialists, One Orchestrator</h1>
   <div class="divider"></div>
 
   <!-- Engineering Brief -->
@@ -120,48 +127,51 @@
     <div class="brief-label">Engineering Brief</div>
     <div class="brief-grid">
       <span class="brief-key">Problem</span>
-      <span class="brief-val">Causal inference is hard. Method selection alone requires years of training. Most data scientists pick OLS and hope for the best. The wrong method gives the wrong answer &mdash; and you cannot tell from the output.</span>
+      <span class="brief-val">Causal inference requires years of training. Method selection, confounder identification, sensitivity analysis, DAG construction. The wrong method gives a precise but wrong answer, and nothing in the output tells you.</span>
       <span class="brief-key">Approach</span>
-      <span class="brief-val">13 specialist LLM agents orchestrated by an LLM-driven dispatcher (no hardcoded routing). ReAct pattern throughout. Pull-based context engineering saves 70% of prompt tokens. Critique loop iterates up to 3 times.</span>
+      <span class="brief-val">13 specialist LLM agents coordinated by an autonomous ReAct orchestrator (evolved from a structured v1 to a fully autonomous v2). Pull-based context engineering. Critique loop iterates up to 3 times. Multi-layer reliability: retries, circuit breaker, timeouts, backpressure.</span>
       <span class="brief-key">Result</span>
-      <span class="brief-val">Drop in a Kaggle URL, get a publication-ready Jupyter notebook: DAG discovery, 12 estimation methods, sensitivity analysis, and executable verification cells. 5&ndash;10 minutes end to end.</span>
-      <span class="brief-key">Why it matters</span>
-      <span class="brief-val">Correlation is not causation, but most tools stop at correlation. This system reasons about confounders, instruments, and assumptions &mdash; then checks its own work.</span>
+      <span class="brief-val">Drop in a Kaggle URL, get a publication-ready Jupyter notebook: DAG discovery, 12 estimation methods, sensitivity analysis, and executable verification cells. 5 to 10 minutes end to end.</span>
       <span class="brief-key">Stack</span>
-      <span class="brief-val">FastAPI, React/TS, Claude/Vertex/Gemini (swappable), econml, pgmpy, Docker, Firestore, structlog</span>
+      <span class="brief-val">FastAPI, React/TS, Claude/Vertex/Gemini (swappable via Protocol), econml, pgmpy, Docker, Firestore, structlog, SSE</span>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════
        CH 1: THE PROBLEM
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 1. Why most causal analysis is wrong</div>
+  <div class="sec fade">Chapter 1. Why causal analysis breaks silently</div>
   <div class="prose fade">
     <p>
       You have a dataset. You want to know: <strong>does X cause Y?</strong> Not "are X and Y correlated." Not "does X predict Y." You want the causal effect. If you intervene on X, what happens to Y?
     </p>
     <p>
-      This sounds like a simple question. It is not. The answer depends entirely on which <strong>confounders</strong> you control for, which <strong>method</strong> you use, and which <strong>assumptions</strong> you make. Use OLS when you should use instrumental variables, and you get a biased estimate. Control for a mediator instead of a confounder, and you introduce bias that was not there before. Ignore a collider, and you create a spurious association from nothing.
+      The answer depends entirely on which <strong>confounders</strong> you control for, which <strong>method</strong> you use, and which <strong>assumptions</strong> you make. Use OLS when you should use instrumental variables, and you get a biased estimate. Control for a mediator instead of a confounder, and you introduce bias that was not there before. Ignore a collider, and you create a spurious association from nothing.
     </p>
     <p>
-      The terrifying part: <strong>the output looks fine either way.</strong> You get a coefficient, a p-value, a confidence interval. Nothing in the output tells you the method was wrong. The numbers are precise. They are just precisely wrong.
+      The terrifying part: <strong>the output looks fine either way.</strong> You get a coefficient, a p-value, a confidence interval. Nothing tells you the method was wrong. The numbers are precise. They are just precisely wrong.
     </p>
     <p>
-      A trained causal inference researcher knows how to navigate this. They draw a DAG, identify the adjustment set, check positivity, run sensitivity analysis. But this takes years of training. Most data scientists do not have it. They run a regression, report the coefficient, and move on. The question is: can you encode that expertise into a system that does not skip steps?
+      A trained causal researcher draws a DAG, identifies the adjustment set, checks positivity, runs sensitivity analysis. That takes years of training. The question is: can you encode that expertise into a system that does not skip steps?
     </p>
   </div>
 
   <!-- ═══════════════════════════════════════
        CH 2: THE ARCHITECTURE
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 2. Thirteen agents, one orchestrator</div>
+  <div class="sec fade">Chapter 2. Thirteen agents, one ReAct orchestrator</div>
   <div class="prose fade">
     <p>
-      The system decomposes causal analysis into the steps a careful researcher would take &mdash; and assigns each to a specialist agent. Not a monolithic prompt. Not a chain of prompts. Thirteen independent agents, each with its own tools, its own state contract, and its own ReAct loop.
+      The system decomposes causal analysis into the steps a careful researcher would take and assigns each to a specialist agent. Not a monolithic prompt. Thirteen independent agents, each with its own tools, its own state contract, and its own ReAct loop (observe, reason, act). A decorator registry (<code>@register_agent("name")</code>) handles discovery. The orchestrator calls <code>create_all_agents()</code> and sees every specialist without manual wiring.
     </p>
     <p>
-      The orchestrator is the critical design decision. It is <strong>not</strong> a hardcoded pipeline. There is no <code>if data_has_time: run_did()</code>. The orchestrator is an LLM that sees the registered agents, their capabilities, and the current state of the analysis. It decides which agent to dispatch next based on what has been learned so far. If the data has no instruments, it skips the IV estimator. If the DAG discovery fails, it proceeds with confounder heuristics. The routing is <strong>reasoning</strong>, not branching.
+      The orchestrator evolved through two versions. <strong>v1</strong> was a structured tool-call loop: 15 max iterations, 4 tools (<code>dispatch_to_agent</code>, <code>dispatch_parallel_agents</code>, <code>request_critique</code>, <code>finalize_analysis</code>). It built a context string each turn listing what was completed and what remained, which nudged the LLM toward a fixed sequence. It worked, but it was not truly autonomous. <strong>v2</strong> is the ReActOrchestrator: a full observe-reason-act loop over 20 steps. It sees its own last 3 actions, has a <code>reflect</code> tool for mid-run self-correction, a timeout guard (<code>asyncio.wait_for</code>), and stuck-loop detection that breaks out after 3 consecutive errors. The LLM genuinely adapts. If an agent fails, it reasons about what to try next instead of following a script.
     </p>
+  </div>
+
+  <!-- Canvas Animation: ReAct Orchestration Loop -->
+  <div class="graph-canvas-wrap fade" style="padding:0">
+    <canvas id="orchestrator-canvas"></canvas>
   </div>
 
   <div class="dia fade">
@@ -193,7 +203,7 @@
     <div class="dia-row">
       <div class="dia-box"><div class="dia-box-title">Sensitivity</div><div class="dia-box-sub">E-values, bounds<br>placebo tests</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box dia-good"><div class="dia-box-title">Critique</div><div class="dia-box-sub">5-dimension review<br>iterate up to 3&times;</div></div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Critique</div><div class="dia-box-sub">3-perspective debate<br>iterate up to 3&times;</div></div>
       <div class="dia-arrow">&rarr;</div>
       <div class="dia-box dia-good"><div class="dia-box-title">Notebook</div><div class="dia-box-sub">14-section Jupyter<br>executable output</div></div>
     </div>
@@ -225,17 +235,22 @@
   <div class="sec fade">Chapter 3. Pull, don&rsquo;t push</div>
   <div class="prose fade">
     <p>
-      The naive approach to multi-agent systems: dump the entire state into every agent&rsquo;s system prompt. The profiler produced a 200-row summary? Every downstream agent gets it. The DAG has 40 edges? Paste the adjacency list into every prompt. This is how most agentic systems work. It is also how you burn tokens.
+      The naive approach to multi-agent systems: dump the entire state into every agent's system prompt. The profiler produced a 200-row summary? Every downstream agent gets it. The DAG has 40 edges? Paste the adjacency list into every prompt. This is how you burn tokens and bury signal in noise.
     </p>
     <p>
-      The problem is not just cost. It is <strong>noise</strong>. An effect estimator does not need the full data profile. It needs the treatment variable, the outcome variable, the confounders, and the sample size. Giving it everything else is not helpful &mdash; it is distracting. LLMs perform worse when the relevant information is buried in irrelevant context.
+      The solution: <strong>pull-based context.</strong> Every ReAct agent inherits a <code>ContextTools</code> mixin that registers seven query tools: <code>ask_domain_knowledge</code>, <code>get_eda_finding</code>, <code>get_previous_finding</code>, <code>get_treatment_outcome</code>, <code>get_confounder_analysis</code>, <code>analyze_variable_semantics</code>, and <code>get_dag_adjustment_set</code>. Instead of receiving a bloated initial prompt, agents start with a lean observation (job ID, dataset name, treatment/outcome, sample count) and request exactly what they need, when they need it.
     </p>
     <p>
-      The solution: <strong>pull-based context.</strong> Every ReAct agent has access to four context query tools. Instead of receiving a bloated initial prompt, agents request exactly what they need, when they need it. The profiler agent calls <code>get_profile_for_variables(["age", "income"])</code> and gets stats for those two columns. Not all 50.
+      Initial observation tokens dropped from 500 to 800 per agent down to 150 to 200. Across a full job with 13 agents and up to 3 critique iterations, that is roughly <strong>6,800 fewer tokens per job</strong>, a 70% reduction in input costs. The agents also perform better: relevant information is not buried in irrelevant context.
     </p>
     <p>
-      The result: initial observation tokens dropped from 500&ndash;800 per agent to 150&ndash;200. Across a full job with 13 agents and up to 3 critique iterations, that is roughly <strong>6,800 fewer tokens per job</strong> &mdash; a 70% reduction in input costs.
+      The key: context pulls and domain actions <strong>interleave in the same ReAct loop.</strong> The effect estimator calls <code>get_confounder_analysis()</code> to pull the adjustment set, then immediately calls <code>run_method("aipw")</code> with those confounders. The LLM decides when to pull and when to act. Six of the eight specialists use this pattern. The two exceptions are the notebook generator (reads state directly, no tools) and the critique agent, which has its own eight investigation tools instead of the generic context mixin.
     </p>
+  </div>
+
+  <!-- ReAct Loop with Context Pulling animation -->
+  <div class="graph-canvas-wrap fade" style="padding:0">
+    <canvas id="context-canvas"></canvas>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -247,10 +262,7 @@
       This is the core intellectual challenge. You have a dataset, a treatment, an outcome, and a set of confounders. Which estimation method should you use? The answer depends on the data structure, the sample size, the treatment type, and which assumptions you are willing to make.
     </p>
     <p>
-      The effect estimator agent does not hardcode this decision. It <strong>inspects the data</strong> and reasons about applicability. Binary treatment with less than 100 observations? OLS and IPW only &mdash; propensity score matching needs more data to find good matches. More than 500 observations with potential nonlinear effects? Add causal forests and double ML. Time dimension in the data? Try difference-in-differences. A variable that looks like an instrument? Try IV.
-    </p>
-    <p>
-      The agent runs every applicable method, produces a comparison table with point estimates and confidence intervals, and the LLM selects the most credible subset based on diagnostics. This is not "pick the method with the smallest p-value." It is "pick the method whose assumptions are best supported by the data."
+      The effect estimator agent does not hardcode this decision. It <strong>inspects the data</strong> and reasons about applicability. Binary treatment with less than 100 observations? OLS and IPW only. More than 500 observations with potential nonlinear effects? Add causal forests and double ML. Time dimension? Try difference-in-differences. A variable that looks like an instrument? Try IV. The agent runs every applicable method, then the LLM selects the most credible subset based on diagnostics, not the smallest p-value.
     </p>
   </div>
 
@@ -260,7 +272,7 @@
       <tr><th>Method</th><th>Estimand</th><th>When to use</th></tr>
       <tr><td>OLS</td><td>ATE</td><td>Linear baseline, always applicable</td></tr>
       <tr><td>IPW</td><td>ATE</td><td>Propensity weighting, good overlap</td></tr>
-      <tr><td>AIPW</td><td>ATE</td><td>Doubly robust &mdash; consistent if either model is correct</td></tr>
+      <tr><td>AIPW</td><td>ATE</td><td>Doubly robust, consistent if either model is correct</td></tr>
       <tr><td>PSM</td><td>ATT</td><td>Matching designs, n &gt; 100</td></tr>
       <tr><td>DiD</td><td>ATT</td><td>Panel data with parallel trends</td></tr>
       <tr><td>IV (2SLS)</td><td>LATE</td><td>Endogeneity with valid instruments</td></tr>
@@ -280,13 +292,13 @@
   <div class="sec fade">Chapter 5. Learning the causal graph</div>
   <div class="prose fade">
     <p>
-      Before you can estimate a causal effect, you need to know the causal structure. Which variables cause which? What are the confounders? Are there mediators? Colliders? Instruments? The answer is a <strong>Directed Acyclic Graph</strong> (DAG) &mdash; and getting it wrong means every downstream estimate is biased.
+      Before you can estimate a causal effect, you need to know the causal structure. Which variables cause which? What are the confounders? Are there mediators? Colliders? Instruments? The answer is a <strong>Directed Acyclic Graph</strong> (DAG), and getting it wrong means every downstream estimate is biased.
     </p>
     <p>
-      The discovery agent runs five algorithms, each with different assumptions and strengths. <strong>PC</strong> uses conditional independence tests &mdash; it is fast but assumes no latent confounders. <strong>FCI</strong> relaxes that assumption and can detect hidden common causes via bidirected edges. <strong>GES</strong> takes a score-based approach, greedily searching for the graph that best fits the data under BIC. <strong>NOTEARS</strong> formulates structure learning as continuous optimization with an acyclicity constraint. <strong>LiNGAM</strong> exploits non-Gaussianity to identify the full causal ordering.
+      The discovery agent runs five algorithms, each with different assumptions. <strong>PC</strong> uses conditional independence tests, fast but assumes no latent confounders. <strong>FCI</strong> relaxes that and can detect hidden common causes. <strong>GES</strong> takes a score-based approach, greedily searching under BIC. <strong>NOTEARS</strong> formulates structure learning as continuous optimization with an acyclicity constraint. <strong>LiNGAM</strong> exploits non-Gaussianity to identify the full causal ordering.
     </p>
     <p>
-      The DAG expert agent then takes the algorithmic output and <strong>refines it with domain knowledge</strong>. If the Kaggle metadata says this is a medical dataset and the algorithm puts "age" as caused by "blood pressure," the LLM catches that and flips the edge. It also enforces forbidden edges &mdash; relationships that are structurally impossible regardless of what the statistics say.
+      The DAG expert agent then takes the algorithmic output and <strong>refines it with domain knowledge</strong>. If the Kaggle metadata says this is a medical dataset and the algorithm puts "age" as caused by "blood pressure," the LLM catches that and flips the edge. It enforces forbidden edges, computes the backdoor adjustment set, and assigns confidence scores to each edge.
     </p>
   </div>
 
@@ -296,20 +308,88 @@
   <div class="sec fade">Chapter 6. The system that checks its own work</div>
   <div class="prose fade">
     <p>
-      Here is the part that separates this from a prompt chain: the <strong>critique agent</strong>. After all estimation and sensitivity analysis is complete, a dedicated agent reviews the entire analysis across five dimensions: methodology rigor, statistical validity, robustness, reproducibility, and completeness. Each dimension gets a 1&ndash;5 score with specific issues and suggested improvements.
+      After estimation and sensitivity analysis, a dedicated critique agent reviews the entire analysis across five dimensions: methodology rigor, statistical validity, robustness, reproducibility, and completeness. Each dimension gets a 1 to 5 score with specific issues and suggested improvements.
     </p>
     <p>
-      If the critique finds problems &mdash; say, the estimator did not check positivity, or the sensitivity analysis skipped placebo tests &mdash; the orchestrator sends the analysis back to the estimation stage. The estimator re-runs with the critique feedback injected into its context. This can happen up to three times. The system <strong>iterates toward correctness</strong> rather than hoping it gets it right the first time.
+      The critique agent is not just a summarizer. It has its own investigation tools: it can check actual covariate balance in the data, verify treatment effect estimates, run diagnostic checks, and compare estimates across subgroups. Three perspectives debate the analysis: an <strong>Advocate</strong> argues validity and investigates evidence in favor, a <strong>Skeptic</strong> challenges claims and looks for problems, and a <strong>Methodologist</strong> acts as neutral technical arbiter verifying quality. The debate is grounded in evidence, not summaries.
     </p>
     <p>
-      The output is a 14-section Jupyter notebook with executable code. Not a summary. Not a report. A notebook you can run, modify, and verify every claim. Each section maps 1:1 to a pipeline agent: data loading, profiling, repairs, EDA, causal structure, confounder analysis, propensity diagnostics, treatment effects, sensitivity analysis, and the critique feedback itself.
+      If the critique finds problems, the orchestrator sends the analysis back to the estimation stage with feedback injected into context. This can happen up to three times. The output is a 14-section Jupyter notebook with executable code. Not a summary. A notebook you can run, modify, and verify every claim.
     </p>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 7: ARCHITECTURE DECISIONS
+       CH 7: RELIABILITY
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 7. The engineering under the hood</div>
+  <div class="sec fade">Chapter 7. Five layers of failure handling</div>
+  <div class="prose fade">
+    <p>
+      An agentic system that calls LLM APIs in a loop will encounter failures: rate limits, timeouts, malformed responses, stuck reasoning loops, crashed processes. The question is not whether things fail. It is whether the system recovers or silently produces garbage. Each layer in this stack catches what the layer below could not handle.
+    </p>
+    <p>
+      At the bottom, tenacity retries absorb transient network errors. Above that, the ReAct loop detects when an agent is stuck and breaks out. The orchestrator isolates state so one agent's failure cannot corrupt another's work. The job manager enforces global resource limits. And on restart, orphaned jobs from dead processes are automatically recovered. No single layer is sophisticated. The value is that they are stacked: a rate limit spike does not crash the agent, a crashed agent does not corrupt state, a corrupted job does not block the server.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Layered reliability</div>
+
+    <div class="dia-layer-label">LLM layer</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">tenacity 3x</div><div class="dia-box-sub">Exponential backoff<br>2s to 10s</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Rate limit 5x</div><div class="dia-box-sub">429 detection<br>up to 80s backoff</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Circuit breaker</div><div class="dia-box-sub">5 failures &rarr; 60s cooldown<br>auto-reset on success</div></div>
+    </div>
+
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-layer-label">Agent layer</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Timeout guard</div><div class="dia-box-sub">asyncio.wait_for<br>300s per agent</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Stuck detection</div><div class="dia-box-sub">3 consecutive errors<br>&rarr; break loop</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Self-debug</div><div class="dia-box-sub">DebugContext &rarr;<br>LLM recovery select</div></div>
+    </div>
+
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-layer-label">Orchestrator layer</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Deep-copy state</div><div class="dia-box-sub">Pydantic model_copy<br>before each dispatch</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Merge WRITES only</div><div class="dia-box-sub">WRITES_STATE_FIELDS<br>declared per agent</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">No contamination</div><div class="dia-box-sub">Parallel agents<br>cannot overwrite</div></div>
+    </div>
+
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-layer-label">Job layer</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Job timeout</div><div class="dia-box-sub">50 min total<br>agent &times; multiplier</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Backpressure</div><div class="dia-box-sub">asyncio.Semaphore<br>+ Firestore txn</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Graceful cancel</div><div class="dia-box-sub">CANCELLING &rarr;<br>CANCELLED</div></div>
+    </div>
+
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-layer-label">Infrastructure layer</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Orphan recovery</div><div class="dia-box-sub">Dead-instance jobs<br>marked FAILED on boot</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Heartbeat 30s</div><div class="dia-box-sub">Proactive detection<br>stale instances</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">Firestore txns</div><div class="dia-box-sub">Atomic capacity<br>status guards</div></div>
+    </div>
+
+    <div class="dia-note">Each layer catches what the layer below could not handle. No single layer is the hero.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 8: ARCHITECTURE DECISIONS
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 8. The engineering under the hood</div>
 
   <div class="pipeline fade">
     <div class="pipe-step">
@@ -320,17 +400,25 @@
     <div class="pipe-step">
       <div class="pipe-num">02</div>
       <div class="pipe-title">State contracts for parallel execution</div>
-      <div class="pipe-desc">Every agent declares <strong>REQUIRED_STATE_FIELDS</strong> (what it reads) and <strong>WRITES_STATE_FIELDS</strong> (what it produces). Parallel agents get deep copies via Pydantic v2. Merge back by declared fields only &mdash; no accidental overwrites.</div>
+      <div class="pipe-desc">Every agent declares <strong>REQUIRED_STATE_FIELDS</strong> (what it reads) and <strong>WRITES_STATE_FIELDS</strong> (what it produces). Parallel agents get deep copies via Pydantic v2. Merge back by declared fields only.</div>
     </div>
+  </div>
+
+  <!-- State flow animation -->
+  <div class="graph-canvas-wrap fade" style="padding:0">
+    <canvas id="state-canvas"></canvas>
+  </div>
+
+  <div class="pipeline fade">
     <div class="pipe-step">
       <div class="pipe-num">03</div>
       <div class="pipe-title">Decorator-based agent registration</div>
-      <div class="pipe-desc"><strong>@register_agent("my_agent")</strong> &mdash; no config files. Import triggers registration. The orchestrator sees all registered agents and their capabilities without manual wiring.</div>
+      <div class="pipe-desc"><strong>@register_agent("my_agent")</strong>. Import triggers registration. The orchestrator sees all registered agents and their capabilities without manual wiring or config files.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">04</div>
-      <div class="pipe-title">Structured logging, not f-strings</div>
-      <div class="pipe-desc"><strong>structlog</strong> with JSON output. Every event includes job_id, agent name, duration, and structured metadata. Machine-readable audit trails for every decision in the pipeline.</div>
+      <div class="pipe-title">Structured logging and decision audit</div>
+      <div class="pipe-desc"><strong>structlog</strong> with JSON output. Every event includes job_id, agent name, duration, token usage. A separate decision audit trail records every method selection and rejection with reasoning.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">05</div>
@@ -377,12 +465,813 @@
 </footer>
 
 <script>
+/* ── Fade-in on scroll ── */
 const obs = new IntersectionObserver(es => {
   es.forEach((e, i) => {
     if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
   });
 }, { threshold: .12 });
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+/* ── Orchestration Flow Animation ── */
+(function(){
+  const canvas=document.getElementById('orchestrator-canvas');
+  if(!canvas)return;
+  const wrap=canvas.parentElement;
+
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    const w=rect.width,h=440;
+    canvas.width=w*dpr;canvas.height=h*dpr;
+    canvas.style.width=w+'px';canvas.style.height=h+'px';
+    const ctx=canvas.getContext('2d');
+    ctx.scale(dpr,dpr);
+    return{ctx,w,h};
+  }
+
+  const mono='JetBrains Mono';
+
+  function drawRR(x,y,rw,rh,r,fill,stroke){
+    ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+rw-r,y);ctx.quadraticCurveTo(x+rw,y,x+rw,y+r);
+    ctx.lineTo(x+rw,y+rh-r);ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh);ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke();}
+  }
+
+  function drawAnimArrow(x1,y1,x2,y2,p,color,dashed){
+    if(p<=0)return;
+    const ex=x1+(x2-x1)*p,ey=y1+(y2-y1)*p;
+    ctx.save();ctx.globalAlpha=0.8;ctx.strokeStyle=color;ctx.lineWidth=2;
+    if(dashed){ctx.setLineDash([5,4]);ctx.lineDashOffset=-frame*0.5;}
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(ex,ey);ctx.stroke();
+    if(p>0.5){const a=Math.atan2(y2-y1,x2-x1);ctx.beginPath();
+      ctx.moveTo(ex,ey);ctx.lineTo(ex-7*Math.cos(a-0.4),ey-7*Math.sin(a-0.4));
+      ctx.moveTo(ex,ey);ctx.lineTo(ex-7*Math.cos(a+0.4),ey-7*Math.sin(a+0.4));ctx.stroke();}
+    ctx.setLineDash([]);ctx.restore();
+  }
+
+  // Pipeline steps from actual code
+  const steps=[
+    {agent:'domain_knowledge',reason:'Metadata available, extract causal hints',writes:'domain_knowledge',dur:90},
+    {agent:'data_profiler',reason:'Need statistical profile before analysis',writes:'data_profile, dataframe_path',dur:90},
+    {agent:'data_repair',reason:'Fix missing values and outliers first',writes:'data_repairs',dur:80},
+    {agent:'eda_agent',reason:'Independent tasks, safe to parallelize',writes:'eda_result',dur:100,
+     parallel:'causal_discovery',pWrites:'proposed_dag',pLabel:'asyncio.gather'},
+    {agent:'dag_expert',reason:'Refine DAG with domain knowledge',writes:'proposed_dag (refined)',dur:80},
+    {agent:'confounder_discovery',reason:'Identify confounders before estimation',writes:'confounder_discovery',dur:80},
+    {agent:'effect_estimator',reason:'Run OLS, IPW, AIPW based on data profile',writes:'treatment_effects',dur:100},
+    {agent:'critique',reason:'Review methodology and robustness',writes:'critique_history',dur:90,
+     result:'ITERATE',resultColor:red,resultReason:'No sensitivity analysis'},
+    {agent:'sensitivity_analyst',reason:'Address critique: run sensitivity tests',writes:'sensitivity_results',dur:90},
+    {agent:'critique',reason:'Final review after addressing feedback',writes:'critique_history',dur:80,
+     result:'APPROVE',resultColor:green,resultReason:'All dimensions pass'},
+    {agent:'notebook_generator',reason:'Generate reproducible Jupyter notebook',writes:'notebook_path',dur:80},
+    {agent:'',reason:'',writes:'',dur:80},
+  ];
+
+  const totalF=steps.reduce((s,p)=>s+p.dur,0);
+  let frame=0,running=false;
+  let {ctx,w,h}=initCanvas();
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+
+    const f=frame%totalF;
+    const cx=w/2;
+    const orchY=40,orchW=200,orchH=50,orchX=cx-orchW/2;
+    const agentY=190,agentH=70;
+    const agentW=Math.min(210,w*0.24);
+    const stateBarY=h-55,stateBarH=28;
+
+    // Current step
+    let curStep=0,stepFrame=0,fAcc=0;
+    for(let i=0;i<steps.length;i++){
+      if(f<fAcc+steps[i].dur){curStep=i;stepFrame=f-fAcc;break;}
+      fAcc+=steps[i].dur;if(i===steps.length-1)curStep=steps.length-1;
+    }
+    const step=steps[curStep];
+    const progress=stepFrame/step.dur;
+
+    // Completed agents
+    const completed=[];
+    for(let i=0;i<curStep;i++){if(steps[i].agent)completed.push(steps[i].agent);if(steps[i].parallel)completed.push(steps[i].parallel);}
+
+    // ── Orchestrator (top center) ──
+    const pulse=1+0.02*Math.sin(frame*0.06);
+    ctx.save();if(step.agent){ctx.shadowColor=accent;ctx.shadowBlur=12*pulse;}
+    drawRR(orchX,orchY,orchW,orchH,10,raised,'rgba(216,140,58,0.3)');ctx.restore();
+    ctx.font='600 12px '+mono;ctx.fillStyle=accent;ctx.textAlign='center';
+    ctx.fillText('ReAct Orchestrator',cx,orchY+22);
+    ctx.font='400 9px '+mono;ctx.fillStyle=t3;
+    ctx.fillText('Step '+(curStep+1)+'/'+steps.length,cx,orchY+38);ctx.textAlign='left';
+
+    // ── Reasoning bubble ──
+    if(step.reason){
+      const rAlpha=Math.min(progress*3,1);
+      ctx.save();ctx.globalAlpha=rAlpha;ctx.font='400 9px '+mono;ctx.fillStyle=t2;ctx.textAlign='center';
+      ctx.fillText('"'+step.reason+'"',cx,orchY+orchH+16);ctx.textAlign='left';ctx.restore();
+    }
+
+    // ── Active agent(s) ──
+    // Arrow endpoints: leave 8px gap from box edges
+    const orchBot=orchY+orchH+8;
+    const agentTop=agentY-8;
+    const agentBot=agentY+agentH+8;
+    const orchRet=orchY+orchH+28; // return arrow target (below reasoning text)
+
+    if(step.agent){
+      const isP=!!step.parallel;
+      const dp=Math.min(progress*2.5,1);
+      const rp=Math.max(0,(progress-0.5)*2);
+
+      if(isP){
+        const gap=30,ax1=cx-agentW-gap/2,ax2=cx+gap/2;
+
+        // Draw agent boxes first (so arrows don't overlap them visually)
+        if(dp>0.3){
+          const a=Math.min((dp-0.3)*3,1);ctx.save();ctx.globalAlpha=a;
+          ctx.shadowColor=accent;ctx.shadowBlur=10;
+          drawRR(ax1,agentY,agentW,agentH,8,inset,'rgba(216,140,58,0.25)');ctx.shadowBlur=0;
+          ctx.font='600 10px '+mono;ctx.fillStyle=accent;ctx.fillText(step.agent,ax1+12,agentY+20);
+          ctx.font='400 8px '+mono;ctx.fillStyle=t3;ctx.fillText('writes: '+step.writes,ax1+12,agentY+36,agentW-24);
+          ctx.shadowColor=accent;ctx.shadowBlur=10;
+          drawRR(ax2,agentY,agentW,agentH,8,inset,'rgba(216,140,58,0.25)');ctx.shadowBlur=0;
+          ctx.font='600 10px '+mono;ctx.fillStyle=accent;ctx.fillText(step.parallel,ax2+12,agentY+20);
+          ctx.font='400 8px '+mono;ctx.fillStyle=t3;ctx.fillText('writes: '+step.pWrites,ax2+12,agentY+36,agentW-24);
+          ctx.restore();
+          ctx.font='500 9px '+mono;ctx.fillStyle=t3;ctx.textAlign='center';
+          ctx.fillText(step.pLabel,cx,agentY+agentH+16);ctx.textAlign='left';
+        }
+
+        // Dispatch arrows (stop at agent top)
+        drawAnimArrow(cx,orchBot,ax1+agentW/2,agentTop,dp,accent,true);
+        drawAnimArrow(cx,orchBot,ax2+agentW/2,agentTop,dp,accent,true);
+
+        // Return arrows (start from agent bottom, stop before orchestrator)
+        if(rp>0){
+          drawAnimArrow(ax1+agentW/2,agentBot,cx,orchRet,rp,green,false);
+          drawAnimArrow(ax2+agentW/2,agentBot,cx,orchRet,rp,green,false);
+        }
+      } else {
+        const ax=cx-agentW/2;
+
+        // Draw agent box first
+        if(dp>0.3){
+          const a=Math.min((dp-0.3)*3,1);ctx.save();ctx.globalAlpha=a;
+          const sc=step.result?step.resultColor:accent;
+          ctx.shadowColor=sc;ctx.shadowBlur=12;
+          drawRR(ax,agentY,agentW,agentH,8,inset,sc==='#9a5a5a'?'rgba(154,90,90,0.3)':sc==='#5a9a5a'?'rgba(90,154,90,0.3)':'rgba(216,140,58,0.25)');
+          ctx.shadowBlur=0;
+          ctx.font='600 10px '+mono;ctx.fillStyle=step.result?step.resultColor:accent;
+          ctx.fillText(step.agent,ax+12,agentY+20);
+          ctx.font='400 8px '+mono;ctx.fillStyle=t3;
+          ctx.fillText('writes: '+step.writes,ax+12,agentY+36,agentW-24);
+          if(step.result&&progress>0.6){
+            const ba=Math.min((progress-0.6)*4,1);ctx.globalAlpha=ba;
+            ctx.font='600 11px '+mono;ctx.fillStyle=step.resultColor;
+            ctx.fillText(step.result,ax+12,agentY+56);
+            ctx.font='400 8px '+mono;ctx.fillStyle=t2;
+            ctx.fillText(step.resultReason,ax+70,agentY+56,agentW-84);
+          }
+          ctx.restore();
+        }
+
+        // Dispatch arrow (orchestrator bottom → agent top, with gap)
+        drawAnimArrow(cx,orchBot,cx,agentTop,dp,accent,true);
+
+        // Deep copy label on the side
+        if(dp>0.2&&dp<0.8){ctx.save();ctx.globalAlpha=Math.min((dp-0.2)*3,1)*0.5;
+          ctx.font='400 8px '+mono;ctx.fillStyle=t3;
+          ctx.fillText('deep copy state',cx+10,(orchBot+agentTop)/2);ctx.restore();}
+
+        // Return arrow (agent bottom → below orchestrator, with gap)
+        if(rp>0){
+          drawAnimArrow(cx,agentBot,cx,orchRet,rp,step.result==='ITERATE'?red:green,false);
+          if(rp>0.3&&rp<0.9){ctx.save();ctx.globalAlpha=Math.min((rp-0.3)*3,1)*0.5;
+            ctx.font='400 8px '+mono;ctx.fillStyle=t3;
+            ctx.fillText('merge WRITES only',cx+10,(agentBot+orchRet)/2);ctx.restore();}
+        }
+      }
+    }
+
+    // ── State bar (bottom) ──
+    const sf=['domain','profile','repair','eda','dag','confounders','effects','critique','sensitivity','notebook'];
+    const sfW=(w-60)/sf.length,sfX0=30;
+    drawRR(sfX0-6,stateBarY-4,w-48,stateBarH+8,6,raised,'rgba(255,255,255,0.02)');
+    ctx.font='500 7px '+mono;ctx.fillStyle=t3;ctx.textAlign='center';
+    ctx.fillText('ANALYSIS STATE',cx,stateBarY-10);ctx.textAlign='left';
+
+    const agentMap={domain:'domain_knowledge',profile:'data_profiler',repair:'data_repair',
+      eda:'eda_agent',dag:'causal_discovery',confounders:'confounder_discovery',
+      effects:'effect_estimator',critique:'critique',sensitivity:'sensitivity_analyst',notebook:'notebook_generator'};
+
+    for(let i=0;i<sf.length;i++){
+      const x=sfX0+i*sfW,name=sf[i];
+      const isDone=completed.includes(agentMap[name]);
+      const isActive=step.agent===agentMap[name]||(step.parallel&&step.parallel===agentMap[name]);
+      if(isDone)drawRR(x+2,stateBarY,sfW-4,stateBarH,4,'rgba(90,154,90,0.15)','rgba(90,154,90,0.3)');
+      else if(isActive&&progress>0.4)drawRR(x+2,stateBarY,sfW-4,stateBarH,4,'rgba(216,140,58,0.08)','rgba(216,140,58,0.2)');
+      else drawRR(x+2,stateBarY,sfW-4,stateBarH,4,inset,'rgba(255,255,255,0.03)');
+      ctx.font='400 7px '+mono;ctx.fillStyle=isDone?green:(isActive?accent:'rgba(255,255,255,0.2)');
+      ctx.textAlign='center';ctx.fillText(name,x+sfW/2,stateBarY+12);
+      if(isDone){ctx.fillStyle=green;ctx.font='400 9px '+mono;ctx.fillText('\u2713',x+sfW/2,stateBarY+24);}
+      ctx.textAlign='left';
+    }
+
+    frame++;if(running)requestAnimationFrame(draw);
+  }
+
+  const canvasObs=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting&&!running){running=true;({ctx,w,h}=initCanvas());draw();}
+      else if(!entry.isIntersecting&&running){running=false;}
+    });
+  },{threshold:0.15});
+  canvasObs.observe(wrap);
+
+  window.addEventListener('resize',()=>{if(running)({ctx,w,h}=initCanvas());});
+})();
+
+/* ── ReAct Loop with Context Pulling Animation ── */
+(function(){
+  const canvas=document.getElementById('context-canvas');
+  if(!canvas)return;
+  const wrap=canvas.parentElement;
+
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d';
+  const mono='JetBrains Mono';
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    const w=rect.width,h=520;
+    canvas.width=w*dpr;canvas.height=h*dpr;
+    canvas.style.width=w+'px';canvas.style.height=h+'px';
+    const ctx=canvas.getContext('2d');
+    ctx.scale(dpr,dpr);
+    return{ctx,w,h};
+  }
+
+  // Phase 1: EffectEstimator full ReAct loop
+  // Each block: {tag, tagColor, type:'context'|'domain'|'think'|'obs', lines[]}
+  const estBlocks=[
+    {tag:'OBSERVE',tagColor:accent,type:'obs',lines:[
+      {t:'_get_initial_observation()  — 47 tokens',c:t3},
+      {t:'Task: Estimate treatment effects',c:t1},
+      {t:'Treatment: email_campaign  |  Outcome: revenue',c:t2},
+      {t:'Samples: 5847  |  Features: 12',c:t2},
+    ]},
+    {tag:'THINK',tagColor:t1,type:'think',lines:[
+      {t:'Need confounders before running any methods.',c:t2},
+      {t:'Pull treatment/outcome confirmation and adjustment set.',c:t2},
+    ]},
+    {tag:'CONTEXT',tagColor:accent,type:'context',lines:[
+      {t:'\u2190 get_treatment_outcome()',c:accent},
+      {t:'  {treatment: "email_campaign", outcome: "revenue",',c:t2},
+      {t:'   confirmed: true, source: "inferred"}',c:t2},
+    ]},
+    {tag:'CONTEXT',tagColor:accent,type:'context',lines:[
+      {t:'\u2190 get_confounder_analysis(top_n=5)',c:accent},
+      {t:'  {source: "confounder_discovery",',c:t2},
+      {t:'   ranked: [age, income, region, gender],',c:t2},
+      {t:'   strategy: "backdoor adjustment"}',c:t2},
+    ]},
+    {tag:'CONTEXT',tagColor:accent,type:'context',lines:[
+      {t:'\u2190 get_dag_adjustment_set()',c:accent},
+      {t:'  {adjust_for: [age, income, gender, region],',c:t2},
+      {t:'   mediators: [], method: "backdoor_criterion"}',c:t2},
+    ]},
+    {tag:'THINK',tagColor:t1,type:'think',lines:[
+      {t:'4 confounders identified. Binary treatment, n=5847.',c:t2},
+      {t:'Good sample size. Start with OLS baseline, then AIPW.',c:t2},
+    ]},
+    {tag:'DOMAIN',tagColor:green,type:'domain',lines:[
+      {t:'\u2192 run_method(method="ols", covariates=[age,income,gender,region])',c:green},
+      {t:'  ATE = 0.084, SE = 0.012, CI [0.061, 0.107], p < 0.001',c:t1},
+    ]},
+    {tag:'DOMAIN',tagColor:green,type:'domain',lines:[
+      {t:'\u2192 run_method(method="aipw", covariates=[...])',c:green},
+      {t:'  ATE = 0.089, SE = 0.013, CI [0.064, 0.114], p < 0.001',c:t1},
+    ]},
+    {tag:'DOMAIN',tagColor:green,type:'domain',lines:[
+      {t:'\u2192 compare_results(focus="robustness")',c:green},
+      {t:'  2 methods, CIs overlap, AIPW preferred (doubly robust)',c:t1},
+    ]},
+    {tag:'DOMAIN',tagColor:green,type:'domain',lines:[
+      {t:'\u2192 finish(summary="Consistent ATE ~0.09, AIPW preferred")',c:green},
+    ]},
+  ];
+
+  // Phase 2: Other agents — same pattern
+  const otherAgents=[
+    {name:'causal_discovery',cls:'ReActAgent + ContextTools',lines:[
+      {t:'\u2190 CONTEXT  ask_domain_knowledge("temporal ordering?")',c:accent},
+      {t:'\u2190 CONTEXT  get_eda_finding("correlations")',c:accent},
+      {t:'\u2192 DOMAIN   run_discovery_algorithm("PC")',c:green},
+      {t:'\u2192 DOMAIN   validate_graph()',c:green},
+      {t:'\u2192 DOMAIN   finalize_discovery()',c:green},
+    ]},
+    {name:'sensitivity_analyst',cls:'ReActAgent + ContextTools',lines:[
+      {t:'\u2190 CONTEXT  get_previous_finding("effect_estimator")',c:accent},
+      {t:'\u2190 CONTEXT  get_treatment_outcome()',c:accent},
+      {t:'\u2192 DOMAIN   compute_e_value()',c:green},
+      {t:'\u2192 DOMAIN   run_placebo_test()',c:green},
+      {t:'\u2192 DOMAIN   finalize_sensitivity()',c:green},
+    ]},
+    {name:'confounder_discovery',cls:'ReActAgent + ContextTools',lines:[
+      {t:'\u2190 CONTEXT  ask_domain_knowledge("immutable variables?")',c:accent},
+      {t:'\u2190 CONTEXT  get_eda_finding("balance")',c:accent},
+      {t:'\u2192 DOMAIN   test_confounder_criteria()',c:green},
+      {t:'\u2192 DOMAIN   compute_partial_correlation()',c:green},
+      {t:'\u2192 DOMAIN   finalize_confounders()',c:green},
+    ]},
+  ];
+
+  // Phase 3: CritiqueAgent exception
+  const critiqueLines=[
+    {t:'critique (BaseAgent \u2014 no ReAct loop, no ContextTools)',c:red},
+    {t:'',c:t3},
+    {t:'3-perspective debate:',c:t2},
+    {t:'  Advocate    \u2014 argues analysis is valid',c:t1},
+    {t:'  Skeptic     \u2014 challenges claims, looks for problems',c:t1},
+    {t:'  Methodologist \u2014 neutral technical arbiter',c:t1},
+    {t:'',c:t3},
+    {t:'Each perspective investigates with specialized tools:',c:t2},
+    {t:'  check_covariate_balance()',c:red},
+    {t:'  check_estimate_consistency()',c:red},
+    {t:'  verify_propensity_scores()',c:red},
+    {t:'  check_influential_observations()',c:red},
+    {t:'  check_subgroup_effects()',c:red},
+    {t:'',c:t3},
+    {t:'Decision: ITERATE or APPROVE',c:t1},
+  ];
+
+  // Timing
+  const CPS=3;
+  const BLOCK_PAUSE=30;
+  const PHASE_PAUSE=60;
+  const END_PAUSE=120;
+
+  function blockChars(lines){return lines.reduce((s,l)=>s+Math.max(l.t.length,1),0)}
+
+  // Compute total frames
+  let estFrames=0;
+  estBlocks.forEach(b=>{estFrames+=Math.ceil(blockChars(b.lines)/CPS)+BLOCK_PAUSE});
+  estFrames+=PHASE_PAUSE;
+
+  let otherFrames=0;
+  otherAgents.forEach(a=>{otherFrames+=Math.ceil(blockChars(a.lines)/CPS)+PHASE_PAUSE});
+
+  let critiqueFrames=Math.ceil(blockChars(critiqueLines)/CPS)+END_PAUSE;
+
+  const totalF=estFrames+otherFrames+critiqueFrames+END_PAUSE;
+
+  let frame=0,running=false;
+  let {ctx,w,h}=initCanvas();
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=bg;
+    ctx.fillRect(0,0,w,h);
+
+    const f=frame%totalF;
+    const lineH=15;
+    const logX=20;
+    const maxLines=Math.floor((h-40)/lineH);
+    let allLines=[];
+
+    // ── Phase 1: EffectEstimator ──
+    if(f<estFrames){
+      // Header
+      allLines.push({t:'effect_estimator (ReActAgent + ContextTools)',c:accent,isBold:true});
+      allLines.push({t:'',c:t3});
+
+      let fAcc=0;
+      for(let bi=0;bi<estBlocks.length;bi++){
+        const block=estBlocks[bi];
+        const bChars=blockChars(block.lines);
+        const bFrames=Math.ceil(bChars/CPS)+BLOCK_PAUSE;
+        const isActive=(f>=fAcc && f<fAcc+bFrames);
+        const isDone=(f>=fAcc+bFrames);
+
+        if(!isDone && !isActive){fAcc+=bFrames;continue;}
+
+        // Step separators for OBSERVE blocks
+        if(block.type==='obs'){
+          allLines.push({t:'',c:t3});
+        }
+
+        // Tag line with type indicator
+        const tagPrefix=block.type==='context'?'\u2190 ':block.type==='domain'?'\u2192 ':'  ';
+        allLines.push({t:'['+block.tag+']',c:block.tagColor,isBold:true});
+
+        // Lines
+        const charsToShow=isActive?Math.min((f-fAcc)*CPS,bChars):bChars;
+        let charsSoFar=0;
+        for(let li=0;li<block.lines.length;li++){
+          const ln=block.lines[li];
+          const lineLen=Math.max(ln.t.length,1);
+          const rem=charsToShow-charsSoFar;
+          if(rem<=0)break;
+          allLines.push({t:ln.t.substring(0,rem),c:ln.c});
+          charsSoFar+=lineLen;
+        }
+
+        if(isActive)break;
+        fAcc+=bFrames;
+      }
+    }
+    // ── Phase 2: Other agents ──
+    else if(f<estFrames+otherFrames){
+      const f2=f-estFrames;
+      allLines.push({t:'Same pattern across all specialists:',c:t3,isBold:true});
+      allLines.push({t:'',c:t3});
+
+      let fAcc=0;
+      for(let ai=0;ai<otherAgents.length;ai++){
+        const agent=otherAgents[ai];
+        const aChars=blockChars(agent.lines);
+        const aFrames=Math.ceil(aChars/CPS)+PHASE_PAUSE;
+        const isActive=(f2>=fAcc && f2<fAcc+aFrames);
+        const isDone=(f2>=fAcc+aFrames);
+
+        if(!isDone && !isActive){fAcc+=aFrames;continue;}
+
+        allLines.push({t:agent.name+' ('+agent.cls+')',c:accent,isBold:true});
+
+        const charsToShow=isActive?Math.min((f2-fAcc)*CPS,aChars):aChars;
+        let charsSoFar=0;
+        for(let li=0;li<agent.lines.length;li++){
+          const ln=agent.lines[li];
+          const lineLen=Math.max(ln.t.length,1);
+          const rem=charsToShow-charsSoFar;
+          if(rem<=0)break;
+          allLines.push({t:ln.t.substring(0,rem),c:ln.c});
+          charsSoFar+=lineLen;
+        }
+        allLines.push({t:'',c:t3});
+
+        if(isActive)break;
+        fAcc+=aFrames;
+      }
+    }
+    // ── Phase 3: Critique exception ──
+    else{
+      const f3=f-estFrames-otherFrames;
+      allLines.push({t:'The exception:',c:t3,isBold:true});
+      allLines.push({t:'',c:t3});
+
+      const cChars=blockChars(critiqueLines);
+      const charsToShow=Math.min(f3*CPS,cChars);
+      let charsSoFar=0;
+      for(let li=0;li<critiqueLines.length;li++){
+        const ln=critiqueLines[li];
+        const lineLen=Math.max(ln.t.length,1);
+        const rem=charsToShow-charsSoFar;
+        if(rem<=0)break;
+        allLines.push({t:ln.t.substring(0,rem),c:ln.c});
+        charsSoFar+=lineLen;
+      }
+    }
+
+    // Render lines (scroll if needed)
+    const startLine=Math.max(0,allLines.length-maxLines);
+    let y=24;
+    for(let i=startLine;i<allLines.length;i++){
+      const ln=allLines[i];
+      if(ln.isBold){
+        ctx.font='600 10px '+mono;
+      } else {
+        ctx.font='400 10px '+mono;
+      }
+      ctx.fillStyle=ln.c;
+      ctx.fillText(ln.t,logX,y,ctx.canvas.width/window.devicePixelRatio-40);
+      y+=lineH;
+    }
+
+    // Blinking cursor
+    if(Math.floor(frame/20)%2===0){
+      ctx.fillStyle=accent;
+      ctx.fillRect(logX,y-10,7,12);
+    }
+
+    // Legend at bottom right
+    const legendY=h-16;
+    const legendX=ctx.canvas.width/(window.devicePixelRatio||1)-200;
+    ctx.font='400 9px '+mono;
+    ctx.fillStyle=accent;ctx.fillText('\u2190 CONTEXT pull',legendX,legendY);
+    ctx.fillStyle=green;ctx.fillText('\u2192 DOMAIN action',legendX+100,legendY);
+
+    frame++;
+    if(running)requestAnimationFrame(draw);
+  }
+
+  const canvasObs=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting&&!running){
+        running=true;
+        ({ctx,w,h}=initCanvas());
+        draw();
+      } else if(!entry.isIntersecting&&running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  canvasObs.observe(wrap);
+
+  window.addEventListener('resize',()=>{
+    if(running)({ctx,w,h}=initCanvas());
+  });
+})();
+
+/* ── AnalysisState Flow Animation ── */
+(function(){
+  const canvas=document.getElementById('state-canvas');
+  if(!canvas)return;
+  const wrap=canvas.parentElement;
+
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const mono='JetBrains Mono';
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    const w=rect.width,h=480;
+    canvas.width=w*dpr;canvas.height=h*dpr;
+    canvas.style.width=w+'px';canvas.style.height=h+'px';
+    const ctx=canvas.getContext('2d');
+    ctx.scale(dpr,dpr);
+    return{ctx,w,h};
+  }
+
+  // State fields
+  const fields=[
+    'dataset_info','domain_knowledge','data_profile','dataframe_path',
+    'treatment_encoding','data_repairs','eda_result','proposed_dag',
+    'confounder_discovery','ps_diagnostics','treatment_effects',
+    'sensitivity_results','critique_history','notebook_path'
+  ];
+
+  // Pipeline phases: {agent, reads[], writes[], parallel?}
+  const phases=[
+    {agent:'(init)',reads:[],writes:['dataset_info'],dur:40},
+    {agent:'domain_knowledge',reads:['dataset_info'],writes:['domain_knowledge'],dur:80},
+    {agent:'data_profiler',reads:['dataset_info'],writes:['data_profile','dataframe_path','treatment_encoding'],dur:90},
+    {agent:'data_repair',reads:['data_profile','dataframe_path'],writes:['data_repairs'],dur:70},
+    {agent:'eda + discovery',reads:['data_profile','dataframe_path'],writes:['eda_result','proposed_dag'],dur:90,parallel:true,label:'asyncio.gather'},
+    {agent:'dag_expert',reads:['dataset_info','proposed_dag'],writes:['proposed_dag'],dur:70,refine:true},
+    {agent:'confounder_discovery',reads:['data_profile','dataframe_path'],writes:['confounder_discovery'],dur:70},
+    {agent:'effect_estimator',reads:['data_profile','dataframe_path'],writes:['treatment_effects'],dur:90},
+    {agent:'ps_diagnostics',reads:['data_profile','dataframe_path'],writes:['ps_diagnostics'],dur:60},
+    {agent:'sensitivity_analyst',reads:['treatment_effects'],writes:['sensitivity_results'],dur:70},
+    {agent:'critique',reads:[],writes:['critique_history'],dur:60},
+    {agent:'notebook_generator',reads:['data_profile'],writes:['notebook_path'],dur:70},
+    {agent:'',reads:[],writes:[],dur:80}, // pause at end
+  ];
+
+  const totalF=phases.reduce((s,p)=>s+p.dur,0);
+
+  let frame=0,running=false;
+  let {ctx,w,h}=initCanvas();
+
+  function fieldY(idx){return 30+idx*30}
+  function fieldIdx(name){return fields.indexOf(name)}
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=bg;
+    ctx.fillRect(0,0,w,h);
+
+    const f=frame%totalF;
+    const fieldW=150;
+    const fieldH=22;
+    const totalContentW=fieldW+80+220;
+    const fieldX=Math.max(30,(w-totalContentW)/2);
+    const agentX=fieldX+fieldW+80;
+
+    // Determine current phase and which fields are written
+    const written=new Set();
+    let curPhase=0,phaseFrame=0,fAcc=0;
+    for(let i=0;i<phases.length;i++){
+      // Collect all writes from completed phases
+      if(f>=fAcc+phases[i].dur){
+        phases[i].writes.forEach(w=>written.add(w));
+        fAcc+=phases[i].dur;
+      } else {
+        curPhase=i;
+        phaseFrame=f-fAcc;
+        break;
+      }
+      if(i===phases.length-1) curPhase=phases.length-1;
+    }
+
+    const phase=phases[curPhase];
+    const progress=phaseFrame/phase.dur;
+    const activeReads=new Set(phase.reads);
+    const activeWrites=new Set(phase.writes);
+
+    // Title
+    ctx.font='500 9px '+mono;
+    ctx.fillStyle=t3;
+    ctx.textAlign='center';
+    ctx.fillText('ANALYSIS STATE',fieldX+fieldW/2,18);
+    ctx.textAlign='left';
+
+    // Draw state fields
+    for(let i=0;i<fields.length;i++){
+      const y=fieldY(i);
+      const fname=fields[i];
+      const isWritten=written.has(fname);
+      const isBeingRead=activeReads.has(fname);
+      const isBeingWritten=activeWrites.has(fname);
+
+      // Field box
+      ctx.fillStyle=inset;
+      if(isBeingWritten && progress>0.4){
+        ctx.fillStyle='rgba(90,154,90,0.08)';
+      }
+      ctx.fillRect(fieldX,y,fieldW,fieldH);
+
+      // Border
+      if(isWritten || (isBeingWritten && progress>0.5)){
+        ctx.strokeStyle='rgba(90,154,90,0.3)';
+        ctx.lineWidth=1;
+        ctx.strokeRect(fieldX,y,fieldW,fieldH);
+      } else {
+        ctx.strokeStyle='rgba(255,255,255,0.03)';
+        ctx.lineWidth=1;
+        ctx.strokeRect(fieldX,y,fieldW,fieldH);
+      }
+
+      // Glow on active read
+      if(isBeingRead){
+        ctx.save();
+        ctx.shadowColor=accent;
+        ctx.shadowBlur=8;
+        ctx.strokeStyle='rgba(216,140,58,0.4)';
+        ctx.lineWidth=1;
+        ctx.strokeRect(fieldX,y,fieldW,fieldH);
+        ctx.restore();
+      }
+
+      // Label
+      ctx.font='400 9px '+mono;
+      if(isWritten || (isBeingWritten && progress>0.5)){
+        ctx.fillStyle=green;
+      } else if(isBeingRead){
+        ctx.fillStyle=accent;
+      } else {
+        ctx.fillStyle='rgba(255,255,255,0.2)';
+      }
+      ctx.fillText(fname,fieldX+8,y+15);
+
+      // Checkmark for written fields
+      if(isWritten){
+        ctx.fillStyle=green;
+        ctx.font='400 10px '+mono;
+        ctx.fillText('\u2713',fieldX+fieldW-16,y+15);
+      }
+    }
+
+    // Draw current agent
+    if(phase.agent){
+      const agentY=h/2-20;
+
+      // Agent box
+      ctx.fillStyle=raised;
+      const boxW=Math.min(220,w-agentX-30);
+      ctx.fillRect(agentX,agentY,boxW,44);
+      ctx.strokeStyle='rgba(216,140,58,0.2)';
+      ctx.lineWidth=1;
+      ctx.strokeRect(agentX,agentY,boxW,44);
+
+      // Agent name
+      ctx.font='600 11px '+mono;
+      ctx.fillStyle=accent;
+      ctx.fillText(phase.agent,agentX+12,agentY+18);
+
+      // Writes label
+      ctx.font='400 8px '+mono;
+      ctx.fillStyle=t3;
+      const writesStr='writes: '+phase.writes.join(', ');
+      ctx.fillText(writesStr,agentX+12,agentY+34,boxW-24);
+
+      // Parallel label
+      if(phase.parallel && phase.label){
+        ctx.font='500 9px '+mono;
+        ctx.fillStyle=t3;
+        ctx.fillText(phase.label,agentX+12,agentY-8);
+      }
+
+      // Refine label
+      if(phase.refine){
+        ctx.font='400 8px '+mono;
+        ctx.fillStyle=t3;
+        ctx.fillText('(refines existing)',agentX+12,agentY+56);
+      }
+
+      // Draw read arrows (field → agent)
+      const readProgress=Math.min(progress*2,1);
+      phase.reads.forEach(fname=>{
+        const fi=fieldIdx(fname);
+        if(fi<0)return;
+        const fy=fieldY(fi)+fieldH/2;
+        const fx=fieldX+fieldW;
+        const ax=agentX;
+        const ay=agentY+22;
+
+        // Curved line
+        const midX=(fx+ax)/2;
+        ctx.save();
+        ctx.globalAlpha=0.6*readProgress;
+        ctx.strokeStyle=accent;
+        ctx.lineWidth=1.5;
+        ctx.setLineDash([4,3]);
+        ctx.lineDashOffset=-frame*0.4;
+        ctx.beginPath();
+        ctx.moveTo(fx,fy);
+        ctx.quadraticCurveTo(midX,fy,ax,ay);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Arrow tip
+        if(readProgress>0.3){
+          ctx.beginPath();
+          ctx.moveTo(ax,ay);
+          ctx.lineTo(ax-6,ay-4);
+          ctx.moveTo(ax,ay);
+          ctx.lineTo(ax-6,ay+4);
+          ctx.stroke();
+        }
+        ctx.restore();
+      });
+
+      // Draw write arrows (agent → field)
+      const writeProgress=Math.max(0,Math.min((progress-0.3)*2,1));
+      phase.writes.forEach(fname=>{
+        const fi=fieldIdx(fname);
+        if(fi<0)return;
+        const fy=fieldY(fi)+fieldH/2;
+        const fx=fieldX+fieldW;
+        const ax=agentX;
+        const ay=agentY+22;
+
+        if(writeProgress<=0)return;
+
+        const midX=(fx+ax)/2;
+        ctx.save();
+        ctx.globalAlpha=0.7*writeProgress;
+        ctx.strokeStyle=green;
+        ctx.lineWidth=2;
+        ctx.beginPath();
+        ctx.moveTo(ax,ay);
+        ctx.quadraticCurveTo(midX,fy,fx,fy);
+        ctx.stroke();
+
+        // Arrow tip at field
+        if(writeProgress>0.3){
+          ctx.beginPath();
+          ctx.moveTo(fx,fy);
+          ctx.lineTo(fx+6,fy-4);
+          ctx.moveTo(fx,fy);
+          ctx.lineTo(fx+6,fy+4);
+          ctx.stroke();
+        }
+        ctx.restore();
+      });
+    }
+
+    // Legend (centered)
+    const legendX=(w-340)/2;
+    ctx.font='400 8px '+mono;
+    ctx.fillStyle=accent;ctx.fillText('\u2190 reads (REQUIRED_STATE_FIELDS)',legendX,h-10);
+    ctx.fillStyle=green;ctx.fillText('\u2192 writes (WRITES_STATE_FIELDS)',legendX+200,h-10);
+
+    frame++;
+    if(running)requestAnimationFrame(draw);
+  }
+
+  const canvasObs=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting&&!running){
+        running=true;
+        ({ctx,w,h}=initCanvas());
+        draw();
+      } else if(!entry.isIntersecting&&running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  canvasObs.observe(wrap);
+
+  window.addEventListener('resize',()=>{
+    if(running)({ctx,w,h}=initCanvas());
+  });
+})();
 </script>
 </body>
 </html>
