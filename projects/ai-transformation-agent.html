@@ -93,12 +93,17 @@
   .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
   .fade.v{opacity:1;transform:translateY(0)}
 
+  .graph-canvas-wrap{position:relative;margin:24px 0;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);overflow:hidden}
+  .graph-canvas-wrap canvas{display:block;width:100%}
+  .prose code{font-family:var(--mono);font-size:.82rem;color:var(--accent);background:var(--inset);padding:2px 6px;border-radius:4px}
+
   @media(max-width:768px){
     main{padding:1rem 1rem 3rem}
     .results{grid-template-columns:repeat(2,1fr)}
     .dia-row{flex-direction:column;gap:0}
     .dia-arrow{transform:rotate(90deg);padding:6px 0}
     .ft{flex-direction:column;gap:10px;text-align:center}
+    .graph-canvas-wrap canvas{height:320px}
   }
 </style>
 </head>
@@ -124,7 +129,7 @@
       <span class="brief-key">Approach</span>
       <span class="brief-val">6 specialist agents orchestrated by pure Python control flow (not an LLM). Hypothesis-driven: form hypotheses from evidence, stress-test via disconfirmation search, report only what survives. Budget-capped at 25 search queries.</span>
       <span class="brief-key">Result</span>
-      <span class="brief-val">89.7% field coverage, 4.8 opportunities per run, 100% budget adherence across 25 eval bundles spanning 8 industries. Every claim traces to a specific evidence source.</span>
+      <span class="brief-val">89.7% field coverage (proportion of report fields populated with evidence-backed content), 4.8 opportunities per run, 100% budget adherence across 25 eval bundles spanning 8 industries. Every claim traces to a specific evidence source.</span>
       <span class="brief-key">Why it matters</span>
       <span class="brief-val">Most AI research tools summarize what they find. This one forms hypotheses and tries to disprove them. What survives the disconfirmation search is what gets recommended.</span>
       <span class="brief-key">Stack</span>
@@ -141,7 +146,7 @@
       A company hires you to figure out where AI can help them. Before you can recommend anything, you need to understand what they do, how their industry works, where the pain points are, and which of those pain points are actually solvable with current AI. This is <strong>research</strong>, not engineering. And it takes days.
     </p>
     <p>
-      The senior analyst reads the company website, scans industry reports, pulls up competitor information, talks to stakeholders, and gradually builds a mental model. Then they brainstorm opportunities, sanity-check them against what they know about similar engagements, and write up a report. Most of this work follows a pattern. The same kinds of questions get asked. The same kinds of signals get looked for. The same kinds of mistakes get made &mdash; anchoring on the first thing that looks promising, skipping the disconfirmation step, recommending what the client wants to hear instead of what the evidence supports.
+      The senior analyst reads the company website, scans industry reports, pulls up competitor information, talks to stakeholders, and gradually builds a mental model. Then they brainstorm opportunities, sanity-check them against what they know about similar engagements, and write up a report. Most of this work follows a pattern. The same kinds of questions get asked. The same kinds of signals get looked for. The same kinds of mistakes get made. Anchoring on the first thing that looks promising. Skipping the disconfirmation step. Recommending what the client wants to hear instead of what the evidence supports.
     </p>
     <p>
       The question is not "can an LLM do research." The question is: can you build a system that follows the <strong>disciplined research methodology</strong> that a good analyst uses, including the parts that are cognitively expensive and easy to skip?
@@ -157,32 +162,15 @@
       The system takes a company name and an industry. It returns an adaptive report with ranked AI opportunities, evidence citations, confidence scores, and an explicit "what we don't know" section. Between input and output, seven stages execute in sequence, with parallelism where the data allows.
     </p>
     <p>
-      The orchestrator is <strong>pure Python</strong>. Not an LLM agent. This is a deliberate architectural decision. The orchestrator controls flow, manages parallel dispatch, promotes results to shared state, and enforces budgets. It does not reason. It does not hallucinate. It does not skip steps because a prompt was ambiguous. Every state transition is explicit and auditable.
+      The orchestrator is <strong>pure Python</strong>. Not an LLM agent. The orchestrator controls flow, manages parallel dispatch, promotes results to shared state, and enforces budgets. It does not reason. It does not hallucinate. It does not skip steps because a prompt was ambiguous. Every state transition is explicit and auditable.
+    </p>
+    <p>
+      I chose a pure Python orchestrator over an LLM-based router because the orchestrator's job is control flow, not reasoning. An LLM router can skip stages, reorder them, or invent new ones based on prompt interpretation. A Python state machine does exactly what it is told. When a pipeline run fails, the trace log shows exactly which transition fired and why. There is no prompt to debug.
     </p>
   </div>
 
-  <div class="dia fade">
-    <div class="dia-title">The seven-stage pipeline</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Intake</div><div class="dia-box-sub">Company name<br>industry, context</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Grounding</div><div class="dia-box-sub">Profiler + Analyst<br>run in parallel</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Deep Research</div><div class="dia-box-sub">Pain discovery<br>grounding + RAG</div></div>
-    </div>
-    <div class="dia-arrow-down">&darr;</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Hypothesize</div><div class="dia-box-sub">Form 2&ndash;10<br>from evidence</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Test</div><div class="dia-box-sub">Parallel testers<br>disconfirmation</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box dia-good"><div class="dia-box-title">Synthesize</div><div class="dia-box-sub">Adaptive report<br>evidence-traced</div></div>
-    </div>
-    <div class="dia-arrow-down">&darr;</div>
-    <div class="dia-row">
-      <div class="dia-box dia-good"><div class="dia-box-title">Review</div><div class="dia-box-sub">Edit, deepen, or<br>reinvestigate</div></div>
-    </div>
-    <div class="dia-note">Grounding agents run in parallel. Hypothesis testers run in parallel (one per hypothesis). Budget enforced at every tool call.</div>
+  <div class="graph-canvas-wrap fade" style="padding:0">
+    <canvas id="pipeline-canvas" height="440"></canvas>
   </div>
 
   <div class="results fade">
@@ -210,7 +198,13 @@
   <div class="sec fade">Chapter 3. Six agents, each with one job</div>
   <div class="prose fade">
     <p>
-      Every agent follows the <strong>ReAct pattern</strong>: observe the scoped context, think about what to investigate next, call a tool, observe the result, repeat. Each agent has a configurable MAX_STEPS that scales with a user-controlled depth slider (1&ndash;10). Agents never mutate shared state directly &mdash; they return typed outputs, and the orchestrator decides what gets promoted.
+      Every agent follows the <strong>ReAct pattern</strong>: observe the scoped context, think about what to investigate next, call a tool, observe the result, repeat. Each agent has a configurable MAX_STEPS that scales with a user-controlled depth slider (1 to 10). Agents never mutate shared state directly. They return typed outputs, and the orchestrator decides what gets promoted.
+    </p>
+    <p>
+      I chose the ReAct pattern with hard MAX_STEPS limits because unbounded reasoning loops are the primary failure mode in agent systems. An agent that "thinks harder" does not produce better research, it produces longer chains of speculation. MAX_STEPS forces the agent to prioritize: which dimensions matter most, which tool call will fill the biggest gap. The depth slider lets the user trade thoroughness for speed, but the ceiling is always explicit.
+    </p>
+    <p>
+      I chose scoped context over full-state access because agents that see everything attend to nothing. The CompanyProfiler does not need hypothesis test results. The Hypothesis Former does not need raw search snippets. <code>AgentContextProvider</code> builds a phase-appropriate briefing for each agent, grouped by dimension. This reduces token cost and, more importantly, reduces the chance of an agent anchoring on irrelevant evidence.
     </p>
   </div>
 
@@ -221,11 +215,15 @@
       <tr><td>Company Profiler</td><td>Grounding</td><td>What they do, revenue, scale, tech stack, org structure</td><td>Google Search</td></tr>
       <tr><td>Industry Analyst</td><td>Grounding</td><td>Trends, competition, regulation, AI adoption level</td><td>Google Search</td></tr>
       <tr><td>Pain Investigator</td><td>Deep Research</td><td>Operational pain points with severity and workarounds</td><td>Search + RAG</td></tr>
-      <tr><td>Hypothesis Former</td><td>Formation</td><td>Reasons over all evidence, forms 2&ndash;10 hypotheses with causal chains</td><td>None (reasoning only)</td></tr>
+      <tr><td>Hypothesis Former</td><td>Formation</td><td>Reasons over all evidence, forms 2-10 hypotheses with causal chains</td><td>None (reasoning only)</td></tr>
       <tr class="best"><td>Hypothesis Tester</td><td>Testing</td><td>Stress-tests one hypothesis via disconfirmation search</td><td>Search + RAG</td></tr>
       <tr><td>Report Synthesizer</td><td>Synthesis</td><td>Converts validated hypotheses into adaptive report</td><td>None (single-shot)</td></tr>
     </table>
     <div class="dia-note">Profiler and Analyst run in parallel. One Tester instance per hypothesis, all in parallel.</div>
+  </div>
+
+  <div class="graph-canvas-wrap fade" style="padding:0">
+    <canvas id="react-canvas" height="440"></canvas>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -237,14 +235,21 @@
       This is the core intellectual move. Most AI research tools work by <strong>confirmation</strong>: find evidence that supports the recommendation, present it, done. This is exactly how a bad analyst works. A good analyst does the opposite: they try to <strong>disprove</strong> their own hypothesis before recommending it.
     </p>
     <p>
-      The Hypothesis Former reads all accumulated evidence &mdash; company profile, industry context, pain points, past engagement wins &mdash; and forms hypotheses. Each hypothesis has a causal reasoning chain: "Because [pain point X exists] and [the company has Y infrastructure], applying [AI technique Z] should produce [outcome W]."
+      The Hypothesis Former reads all accumulated evidence (company profile, industry context, pain points, past engagement wins) and forms hypotheses. Each hypothesis has a causal reasoning chain: "Because [pain point X exists] and [the company has Y infrastructure], applying [AI technique Z] should produce [outcome W]."
     </p>
     <p>
-      Then the testers go to work. One tester per hypothesis, running in parallel. Each tester searches for <strong>disconfirming evidence</strong>. Has this approach failed in similar companies? Are there regulatory barriers? Is the data infrastructure too immature? Each test produces a finding with an impact on confidence. If the hypothesis survives stress-testing &mdash; if the tester cannot find strong evidence against it &mdash; it gets validated. If confidence drops below the rejection threshold, it gets killed.
+      Then the testers go to work. One tester per hypothesis, running in parallel via <code>asyncio.gather()</code>. Each tester searches for <strong>disconfirming evidence</strong>. Has this approach failed in similar companies? Are there regulatory barriers? Is the data infrastructure too immature? Each test produces a finding with a confidence impact clamped to &plusmn;0.20. If the hypothesis survives stress-testing, if the tester cannot find strong evidence against it, it gets validated (confidence &ge; 0.5). If confidence drops below 0.2, it gets rejected.
     </p>
     <p>
       Low-confidence hypotheses that are not outright rejected get a <strong>second testing pass</strong> if budget allows. The system does not report the first thing that looks promising. It reports what it could not disprove.
     </p>
+    <p>
+      I chose disconfirmation over confirmation search because confirmation bias is the default failure mode of LLM-based research. If you ask an LLM to find evidence that supports a hypothesis, it will find it. Always. The signal is in what you cannot disprove, not in what you can support. The initial confidence formula (<code>0.3 + evidence_count * 0.08</code>, capped at 0.85) is deliberately conservative. A hypothesis starts skeptical and must earn its confidence through survival, not accumulation.
+    </p>
+  </div>
+
+  <div class="graph-canvas-wrap fade" style="padding:0">
+    <canvas id="hypothesis-canvas" height="480"></canvas>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -284,10 +289,23 @@
 
   <div class="prose fade">
     <p>
-      The critical mechanism is the <strong>promotion gate</strong>. Raw agent outputs are temporary &mdash; they exist in the agent&rsquo;s local scope but are not visible to anyone else. Before evidence enters shared memory, it must pass three checks: schema validation (is it a well-formed evidence item?), relevance threshold (which <strong>tightens at each phase</strong> &mdash; 0.3 during grounding when you cast a wide net, 0.5 during hypothesis testing when precision matters), and contradiction detection against existing evidence. If a new item contradicts something already promoted, the system flags the conflict rather than silently overwriting.
+      The critical mechanism is the <strong>promotion gate</strong>. Raw agent outputs are temporary. They exist in the agent's local scope but are not visible to anyone else. Before evidence enters shared memory, it must pass three checks: schema validation (is it a well-formed evidence item?), phase-aware relevance threshold (0.3 during grounding when you cast a wide net, 0.4 during deep research, 0.5 during hypothesis testing when precision matters), and contradiction detection against existing evidence. If a new item contradicts something already promoted, the system flags the conflict rather than silently overwriting.
     </p>
     <p>
-      Between phases, the <strong>phase synthesizer</strong> compresses what was learned into a constant-size briefing. It does not pass raw evidence forward &mdash; it produces an LLM-generated summary of the key findings, open questions, and implications. This is what downstream agents see in their context. Not a growing pile of search results. A distilled, phase-aware briefing that stays the same size regardless of how much evidence was collected.
+      I chose phase-aware thresholds that tighten over time because early research should cast a wide net and later stages should be precise. During grounding (threshold 0.3), you want breadth. You do not know what matters yet. During hypothesis testing (threshold 0.5), you need precision. Letting low-relevance evidence through at this stage adds noise to the tester's context and wastes budget on irrelevant searches.
+    </p>
+  </div>
+
+  <div class="graph-canvas-wrap fade" style="padding:0">
+    <canvas id="memory-canvas" height="440"></canvas>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      Between phases, the <strong>phase synthesizer</strong> compresses what was learned into a constant-size briefing. It does not pass raw evidence forward. It produces an LLM-generated summary of the key findings, open questions, and implications. This is what downstream agents see in their context. Not a growing pile of search results. A distilled, phase-aware briefing that stays the same size regardless of how much evidence was collected.
+    </p>
+    <p>
+      I chose constant-size synthesis briefings over passing raw evidence forward because LLM context windows are finite and attention degrades with length. If the grounding phase produces 40 evidence items, passing all 40 to the Hypothesis Former gives it a 40-item context where most items are marginally relevant. A phase synthesizer that compresses findings into key themes, open questions, and implications gives the Former a focused, decision-ready briefing regardless of how much raw evidence was collected.
     </p>
     <p>
       Old evidence gets <strong>pruned</strong>. If a phase produced 40 evidence items but only 8 were promoted and only 3 survived into the synthesis, the other 37 are garbage-collected. Memory does not grow unboundedly. It is curated, compressed, and quality-gated at every transition.
@@ -303,13 +321,13 @@
   <div class="sec fade">Chapter 6. Learning from past engagements</div>
   <div class="prose fade">
     <p>
-      Google Search tells you about the company and the industry. But it does not tell you what has worked for <strong>similar</strong> companies in the past. That signal comes from the <strong>Wins Knowledge Base</strong> &mdash; a ChromaDB vector store seeded with past consulting engagements.
+      Google Search tells you about the company and the industry. But it does not tell you what has worked for <strong>similar</strong> companies in the past. That signal comes from the <strong>Wins Knowledge Base</strong>, a ChromaDB vector store seeded with past consulting engagements.
     </p>
     <p>
-      Each engagement is chunked into five semantic units: the problem pattern, the solution approach, preconditions for success, measured outcomes, and ROI drivers. When the Pain Investigator or a Hypothesis Tester queries the KB, it retrieves the most relevant chunks across engagements &mdash; deduplicating by engagement ID to avoid overweighting one case.
+      Each engagement is chunked into seven semantic units: the problem pattern, the solution approach, preconditions for success, measured outcomes, discovery insights, implementation friction, and generalization notes. When the Pain Investigator or a Hypothesis Tester queries the KB, it retrieves the most relevant chunks across engagements, deduplicating by engagement ID to avoid overweighting one case.
     </p>
     <p>
-      This is how the system can recommend "AI-powered compliance review" for a financial services company even if no one told it about compliance. The Wins KB contains a past engagement where an AI copilot reduced compliance review time by 80%. The semantic match surfaces it. The hypothesis tester validates it against the specific company&rsquo;s context.
+      This is how the system can recommend "AI-powered compliance review" for a financial services company even if no one told it about compliance. The Wins KB contains a past engagement where an AI copilot substantially reduced compliance review time. The semantic match surfaces it. The hypothesis tester validates it against the specific company's context.
     </p>
   </div>
 
@@ -319,10 +337,13 @@
   <div class="sec fade">Chapter 7. Hard caps, not soft limits</div>
   <div class="prose fade">
     <p>
-      The system runs on external API calls. Google Search costs money. LLM tokens cost money. Without hard limits, a curious agent can burn through budget in seconds. So the system enforces <strong>hard caps at every tool call</strong>: 25 total search queries, 15 RAG retrievals. If the budget is exhausted, the engine emits a <code>BUDGET_VIOLATION_BLOCKED</code> event and returns gracefully. No failures. No retries. Just: "I&rsquo;m out of budget for this resource."
+      The system runs on external API calls. Google Search costs money. LLM tokens cost money. Without hard limits, a curious agent can burn through budget in seconds. So the system enforces <strong>hard caps at every tool call</strong>: 25 total search queries, 15 RAG retrievals. If the budget is exhausted, the engine emits a <code>BUDGET_VIOLATION_BLOCKED</code> event and returns gracefully. No failures. No retries. Just: "I'm out of budget for this resource."
     </p>
     <p>
-      Two user-facing sliders control behavior at runtime. The <strong>depth slider</strong> (1&ndash;10) scales agent MAX_STEPS &mdash; how many reasoning iterations each agent gets &mdash; and max hypotheses. At depth 1, the profiler gets 2 steps and the former produces 2 hypotheses. At depth 10: 12 steps and 10 hypotheses. The <strong>confidence slider</strong> (0.3&ndash;1.0) sets the validation threshold. Higher confidence means stricter testing &mdash; fewer opportunities make the cut, but each one is more robustly supported.
+      Two user-facing sliders control behavior at runtime. The <strong>depth slider</strong> (1 to 10) maps directly to the reasoning loop's <code>depth_budget</code>, controlling how many iterations each agent gets. At depth 1, the profiler gets 2 steps and the former produces 2 hypotheses. At depth 10: 12 steps and 10 hypotheses. The <strong>confidence slider</strong> (0.1 to 1.0, default 0.7) sets the validation threshold. Higher confidence means stricter testing. Fewer opportunities make the cut, but each one is more robustly supported.
+    </p>
+    <p>
+      I chose hard caps over soft warnings because soft limits depend on the agent choosing to stop. An LLM agent with a "try to stay under 25 queries" instruction will sometimes use 30. A hard cap at the tool execution layer means the 26th query returns a <code>BUDGET_VIOLATION_BLOCKED</code> event instead of a result. The agent gets no choice. This is the only reliable way to guarantee cost containment when the reasoning loop is controlled by an LLM.
     </p>
   </div>
 
@@ -335,7 +356,7 @@
       The report is not a template with blanks filled in. It is an <strong>adaptive structure</strong> that follows the evidence. The executive summary leads with the strongest finding, not boilerplate. Each opportunity includes a narrative explanation, a tier classification (Easy / Medium / Hard), a confidence score, cited evidence IDs, risks, preconditions, and a sequenced implementation roadmap.
     </p>
     <p>
-      There is also a "what we don&rsquo;t know" section. If the system could not determine the company&rsquo;s data infrastructure maturity, it says so. If AI readiness could not be verified, it flags the gap. This section is not optional &mdash; it is always generated. The system is designed to be <strong>honest about its blind spots</strong>, not to project confidence it does not have.
+      There is also a "what we don't know" section. If the system could not determine the company's data infrastructure maturity, it says so. If AI readiness could not be verified, it flags the gap. This section is not optional. It is always generated. The system is designed to be <strong>honest about its blind spots</strong>, not to project confidence it does not have.
     </p>
     <p>
       After generation, the user can refine. Three feedback types: <strong>edit</strong> (re-synthesize one section), <strong>deepen</strong> (re-test specific hypotheses), or <strong>reinvestigate</strong> (backtrack to deep research and re-run the pipeline). The system does not start from scratch on feedback. It builds on what it already knows.
@@ -371,14 +392,14 @@
     <div class="pipe-step">
       <div class="pipe-num">05</div>
       <div class="pipe-title">Eval-driven development</div>
-      <div class="pipe-desc">25 eval bundles across 8 industries. Success criteria: coverage &gt;70%, budget adherence &gt;95%, latency &lt;2min, 3&ndash;5 opportunities. Every sprint validates against these metrics before shipping.</div>
+      <div class="pipe-desc">25 eval bundles across 8 industries. Success criteria: coverage &gt;70%, budget adherence &gt;95%, 3 to 5 opportunities per run. Every sprint validates against these metrics before shipping.</div>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════════
        EVAL RESULTS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Eval results &mdash; 25 companies, 8 industries</div>
+  <div class="sec fade">Evaluation results</div>
 
   <div class="results fade">
     <div class="stat">
@@ -415,7 +436,26 @@
         <div class="dia-box-sub">32 opportunities<br>Strategic transformation</div>
       </div>
     </div>
-    <div class="dia-note">Unseen industries (education, real estate) still produce 3&ndash;4 opportunities via cross-industry template matching, but confidence drops.</div>
+    <div class="dia-note">Unseen industries (education, real estate) still produce 3-4 opportunities via cross-industry template matching, but confidence drops.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 10: WHAT I WOULD CHANGE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 10. What I would change</div>
+  <div class="prose fade">
+    <p>
+      <strong>Structured output for the Hypothesis Former.</strong> The Former currently generates free-form reasoning and I parse hypotheses out of it. This works most of the time, but parse failures happen when the LLM formats its output unexpectedly. JSON schema constraints with a fallback extraction pass would be more reliable. The Former's MAX_STEPS of 5 is also too generous for what is fundamentally a synthesis task, not a research task.
+    </p>
+    <p>
+      <strong>Retrieval-augmented synthesis.</strong> Phase compression is lossy by design. The synthesizer produces a 3 to 5 sentence briefing from potentially dozens of evidence items. When a downstream agent needs the original evidence behind a compressed claim, it cannot retrieve it. Giving agents the ability to pull original evidence by ID when the briefing is insufficient would preserve fidelity without bloating the default context.
+    </p>
+    <p>
+      <strong>Dynamic budget reallocation.</strong> Budget is currently static: 25 search queries, 15 RAG retrievals, allocated at run start. If the grounding phase only uses 12 search queries, the remaining 13 are wasted. They should flow to hypothesis testing, where more search budget means more thorough disconfirmation. A budget pool with per-phase soft targets and a shared overflow would improve hypothesis coverage without increasing total cost.
+    </p>
+    <p>
+      <strong>Recommendation quality evaluation.</strong> The eval suite tests field coverage, budget adherence, and structural completeness. It does not test whether the recommendations are actually good. A human expert baseline, even for 5 of the 25 companies, would let me measure recommendation overlap, missed opportunities, and false positives. Without this, 89.7% coverage means "89.7% of fields are filled," not "89.7% of recommendations are useful."
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -459,6 +499,1154 @@ const obs = new IntersectionObserver(es => {
   });
 }, { threshold: .12 });
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION 1: Orchestration Pipeline (pipeline-canvas)
+   ═══���═══════════════════════════════════════════════════════════ */
+(function(){
+  const canvas=document.getElementById('pipeline-canvas');
+  if(!canvas) return;
+  const wrap=canvas.parentElement;
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const mono='JetBrains Mono, monospace';
+  let ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    w=rect.width; h=440;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  const stages=[
+    {label:'INTAKE',       short:'IN'},
+    {label:'GROUNDING',    short:'GND'},
+    {label:'DEEP RESEARCH',short:'RES'},
+    {label:'HYPOTHESIZE',  short:'HYP'},
+    {label:'TEST',         short:'TST'},
+    {label:'SYNTHESIZE',   short:'SYN'},
+    {label:'REPORT',       short:'RPT'}
+  ];
+
+  const P=[
+    {name:'fadeIn',       dur:60},
+    {name:'intake',       dur:90},
+    {name:'grounding',    dur:180},
+    {name:'groundingDone',dur:60},
+    {name:'deepResearch', dur:150},
+    {name:'hypothesize',  dur:120},
+    {name:'test',         dur:180},
+    {name:'synthesize',   dur:90},
+    {name:'hold',         dur:90},
+    {name:'reset',        dur:60}
+  ];
+  const totalF=P.reduce((s,p)=>s+p.dur,0);
+
+  // Budget state per phase
+  const budgetTimeline=[
+    {s:25,r:15},{s:25,r:15},{s:20,r:15},{s:20,r:15},
+    {s:15,r:12},{s:15,r:12},{s:10,r:8},{s:10,r:8},{s:10,r:8},{s:10,r:8}
+  ];
+
+  // Hypothesis data for phases 5-7
+  const hyps=[
+    {label:'H1',conf:0.54,status:'validated'},
+    {label:'H2',conf:0.46,status:'validated'},
+    {label:'H3',conf:0.62,status:'validated'},
+    {label:'H4',conf:0.38,status:'rejected'},
+    {label:'H5',conf:0.46,status:'conditional'}
+  ];
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    const f=frame%totalF;
+    let phase=0,pf=0,acc=0;
+    for(let i=0;i<P.length;i++){
+      if(f<acc+P[i].dur){phase=i;pf=f-acc;break;}
+      acc+=P[i].dur;
+    }
+    const prog=pf/P[phase].dur;
+
+    // Global alpha
+    let ga=1;
+    if(phase===0) ga=prog;
+    if(phase===9) ga=1-prog;
+    ctx.globalAlpha=ga;
+
+    // Layout
+    const pad=20;
+    const boxW=Math.min(110,(w-pad*2-6*16)/7);
+    const boxH=56;
+    const gap=(w-pad*2-7*boxW)/6;
+    const baseY=h*0.42;
+    const arrowW=gap;
+
+    // Active stage index based on phase
+    const activeIdx=phase<=1?0:phase<=3?1:phase===4?2:phase===5?3:phase===6?4:phase===7?5:6;
+
+    // Draw stage boxes
+    for(let i=0;i<7;i++){
+      const x=pad+i*(boxW+gap);
+      const y=baseY;
+      const isActive=(i===activeIdx && phase>=1 && phase<=7);
+      const isDone=(i<activeIdx && phase>=1)||(phase>=8 && i<=6);
+
+      // Box
+      const bFill=isActive?'rgba(216,140,58,0.08)':inset;
+      const bStroke=isActive?accent:isDone?green:'rgba(255,255,255,0.04)';
+      drawRR(x,y,boxW,boxH,8,bFill,bStroke,isActive?2:1);
+
+      // Label
+      ctx.font='600 10px '+mono;
+      ctx.textAlign='center';
+      ctx.fillStyle=isActive?accent:isDone?green:t3;
+      ctx.fillText(boxW>90?stages[i].label:stages[i].short,x+boxW/2,y+boxH/2-6);
+
+      // Check mark for done
+      if(isDone && phase>=2){
+        ctx.font='500 14px '+mono;
+        ctx.fillStyle=green;
+        ctx.fillText('✓',x+boxW/2,y+boxH/2+12);
+      }
+
+      // Connecting arrows
+      if(i<6){
+        const ax=x+boxW+4;
+        const ay=y+boxH/2;
+        ctx.beginPath();
+        ctx.moveTo(ax,ay);ctx.lineTo(ax+arrowW-8,ay);
+        ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=1;ctx.stroke();
+        // arrowhead
+        ctx.beginPath();
+        ctx.moveTo(ax+arrowW-12,ay-3);ctx.lineTo(ax+arrowW-8,ay);ctx.lineTo(ax+arrowW-12,ay+3);
+        ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.stroke();
+      }
+    }
+
+    // Budget counter
+    const budget=budgetTimeline[Math.min(phase,budgetTimeline.length-1)];
+    let bSearch=budget.s, bRag=budget.r;
+    // Animate budget transitions
+    if(phase===2){bSearch=Math.round(25-(25-20)*prog);bRag=15;}
+    if(phase===4){bSearch=Math.round(20-(20-15)*prog);bRag=Math.round(15-(15-12)*prog);}
+    if(phase===6){bSearch=Math.round(15-(15-10)*prog);bRag=Math.round(12-(12-8)*prog);}
+
+    ctx.font='500 11px '+mono;
+    ctx.textAlign='right';
+    ctx.fillStyle=t3;
+    ctx.fillText('Search: '+bSearch+'/25  RAG: '+bRag+'/15',w-pad,30);
+
+    // Phase label
+    ctx.textAlign='left';
+    ctx.fillStyle=accent;
+    ctx.font='600 11px '+mono;
+    const phaseNames=['INITIALIZING','INTAKE','GROUNDING','GROUNDING','DEEP RESEARCH','HYPOTHESIS FORMATION','HYPOTHESIS TESTING','SYNTHESIS','COMPLETE',''];
+    ctx.fillText(phaseNames[phase],pad,30);
+
+    // Grounding parallel indicator (phase 2-3)
+    if(phase===2||phase===3){
+      const gx=pad+1*(boxW+gap);
+      const gy=baseY+boxH+12;
+      // Two sub-boxes
+      const subW=(boxW-6)/2;
+      const subH=30;
+      const p2=phase===2?prog:1;
+
+      drawRR(gx,gy,subW,subH,5,inset,accent,1);
+      drawRR(gx+subW+6,gy,subW,subH,5,inset,accent,1);
+      ctx.font='500 8px '+mono;
+      ctx.textAlign='center';
+      ctx.fillStyle=t2;
+      ctx.fillText('Profiler',gx+subW/2,gy+13);
+      ctx.fillText('Analyst',gx+subW+6+subW/2,gy+13);
+
+      // Progress bars inside
+      const barY=gy+subH-8;
+      const barW=subW-10;
+      drawRR(gx+5,barY,barW,4,2,inset,null,0);
+      drawRR(gx+5,barY,barW*p2,4,2,accent,null,0);
+      drawRR(gx+subW+11,barY,barW,4,2,inset,null,0);
+      drawRR(gx+subW+11,barY,barW*p2,4,2,accent,null,0);
+
+      // Parallel badge
+      ctx.font='500 9px '+mono;
+      ctx.fillStyle=accent;
+      ctx.textAlign='center';
+      ctx.fillText('⟂ parallel',gx+boxW/2,gy+subH+14);
+    }
+
+    // Hypothesis cards (phase 5-8)
+    if(phase>=5 && phase<=8){
+      const hx=pad+3*(boxW+gap);
+      const hy=baseY+boxH+12;
+      const cardW=Math.min(60,(w-hx-pad)/5-4);
+      const cardH=50;
+      const emergence=phase===5?prog:1;
+      const numShow=Math.ceil(5*emergence);
+
+      for(let i=0;i<numShow;i++){
+        const cx=hx+i*(cardW+4);
+        const cy=hy;
+        const hp=hyps[i];
+        const isTesting=phase>=6;
+        const isDoneH=phase>=7;
+
+        // Confidence for testing phases
+        let conf=hp.conf;
+        if(phase>=6 && hp.status==='rejected') conf=Math.max(0.08,hp.conf*(1-prog*0.8));
+        if(phase>=7 && hp.status==='rejected') conf=0.08;
+
+        // Color by status
+        let cardStroke='rgba(255,255,255,0.04)';
+        if(isDoneH){
+          if(hp.status==='validated') cardStroke=green;
+          else if(hp.status==='rejected') cardStroke=red;
+          else cardStroke=accent;
+        }else if(isTesting) cardStroke=accent;
+
+        drawRR(cx,cy,cardW,cardH,5,inset,cardStroke,1);
+        ctx.font='600 9px '+mono;
+        ctx.textAlign='center';
+        ctx.fillStyle=isDoneH&&hp.status==='rejected'?red:isDoneH&&hp.status==='validated'?green:t2;
+        ctx.fillText(hp.label,cx+cardW/2,cy+14);
+
+        // Confidence bar
+        const barY2=cy+22;
+        const barW2=cardW-10;
+        drawRR(cx+5,barY2,barW2,4,2,'rgba(255,255,255,0.03)',null,0);
+        const barColor=conf<0.3?red:conf<0.5?accent:green;
+        drawRR(cx+5,barY2,barW2*conf,4,2,barColor,null,0);
+
+        // Status badge
+        if(isDoneH){
+          ctx.font='500 7px '+mono;
+          ctx.fillStyle=hp.status==='validated'?green:hp.status==='rejected'?red:accent;
+          const sLabel=hp.status==='validated'?'VALID':hp.status==='rejected'?'REJECT':'COND';
+          ctx.fillText(sLabel,cx+cardW/2,cy+cardH-6);
+        }
+      }
+
+      // Parallel badge for testing
+      if(phase===6){
+        ctx.font='500 9px '+mono;
+        ctx.fillStyle=accent;
+        ctx.textAlign='center';
+        ctx.fillText('⟂ parallel testers',hx+5*(cardW+4)/2,hy+cardH+14);
+      }
+    }
+
+    // Summary (phase 8)
+    if(phase>=8 && phase<9){
+      ctx.font='500 11px '+mono;
+      ctx.textAlign='center';
+      ctx.fillStyle=t2;
+      ctx.fillText('3 validated  · 1 rejected  · 1 conditional',w/2,h-30);
+    }
+
+    ctx.globalAlpha=1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  const cObs1=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting&&!running){running=true;initCanvas();draw();}
+      else if(!entry.isIntersecting&&running){running=false;}
+    });
+  },{threshold:0.15});
+  cObs1.observe(wrap);
+  window.addEventListener('resize',()=>{if(running) initCanvas();});
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION 2: Hypothesis Formation & Disconfirmation (hypothesis-canvas)
+   ══════════════════════���════════════════════════════════���═══════ */
+(function(){
+  const canvas=document.getElementById('hypothesis-canvas');
+  if(!canvas) return;
+  const wrap=canvas.parentElement;
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const mono='JetBrains Mono, monospace';
+  let ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    w=rect.width; h=480;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  const evidence=[
+    'revenue $2B','legacy ERP','manual compliance',
+    '5000 employees','low AI maturity','regulated industry',
+    'competitor automated','high turnover ops'
+  ];
+
+  const hyps=[
+    {label:'H1',text:'AI compliance review',  initConf:0.54,finalConf:0.74,status:'validated'},
+    {label:'H2',text:'Predictive maintenance', initConf:0.46,finalConf:0.56,status:'validated'},
+    {label:'H3',text:'Document processing',    initConf:0.62,finalConf:0.52,status:'validated'},
+    {label:'H4',text:'Customer churn model',   initConf:0.38,finalConf:0.08,status:'rejected'},
+    {label:'H5',text:'Inventory optimization', initConf:0.46,finalConf:0.51,status:'conditional'}
+  ];
+
+  // Test round adjustments
+  const round1=[+0.12,0,   -0.20,-0.20,-0.05];
+  const round2=[+0.08,+0.10,+0.10,-0.10,0    ];
+
+  const P=[
+    {name:'fadeIn',          dur:60},
+    {name:'evidenceFlow',    dur:150},
+    {name:'formerThink',     dur:120},
+    {name:'hypothesesEmerge',dur:150},
+    {name:'testersSpawn',    dur:90},
+    {name:'testRound1',      dur:180},
+    {name:'testRound2',      dur:150},
+    {name:'rejection',       dur:90},
+    {name:'secondPass',      dur:120},
+    {name:'validation',      dur:90},
+    {name:'hold',            dur:120},
+    {name:'reset',           dur:60}
+  ];
+  const totalF=P.reduce((s,p)=>s+p.dur,0);
+
+  function confColor(c){return c<0.3?red:c<0.5?accent:green;}
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    const f=frame%totalF;
+    let phase=0,pf=0,acc=0;
+    for(let i=0;i<P.length;i++){
+      if(f<acc+P[i].dur){phase=i;pf=f-acc;break;}
+      acc+=P[i].dur;
+    }
+    const prog=pf/P[phase].dur;
+
+    let ga=1;
+    if(phase===0) ga=prog;
+    if(phase===11) ga=1-prog;
+    ctx.globalAlpha=ga;
+
+    // Layout
+    const evX=20;
+    const evW=Math.min(130,w*0.18);
+    const formerX=evX+evW+20;
+    const formerW=Math.min(100,w*0.13);
+    const cardStartX=formerX+formerW+30;
+    const cardW=Math.min(w-cardStartX-20, 320);
+    const cardH=60;
+    const cardGap=10;
+    const baseY=40;
+
+    // Draw evidence chips (phases 1+)
+    if(phase>=1){
+      const numEv=phase===1?Math.ceil(evidence.length*prog):evidence.length;
+      for(let i=0;i<numEv;i++){
+        const ey=baseY+i*28;
+        const chipAlpha=phase>=2?(1-Math.min(1,prog)):1;
+        if(phase>=3) continue; // funneled away
+        ctx.globalAlpha=ga*(phase===2?chipAlpha:1);
+        drawRR(evX,ey,evW,22,5,inset,'rgba(216,140,58,0.15)',1);
+        ctx.font='500 9px '+mono;
+        ctx.textAlign='left';
+        ctx.fillStyle=t2;
+        ctx.fillText(evidence[i],evX+8,ey+15);
+        ctx.globalAlpha=ga;
+      }
+    }
+
+    // Former box (phases 2+)
+    if(phase>=2 && phase<=3){
+      const formerY=baseY+40;
+      drawRR(formerX,formerY,formerW,60,8,'rgba(216,140,58,0.06)',accent,2);
+      ctx.font='600 10px '+mono;
+      ctx.textAlign='center';
+      ctx.fillStyle=accent;
+      ctx.fillText('HYPOTHESIS',formerX+formerW/2,formerY+22);
+      ctx.fillText('FORMER',formerX+formerW/2,formerY+36);
+
+      // Thinking dots
+      if(phase===2){
+        for(let d=0;d<3;d++){
+          const dotA=Math.sin((frame*0.1+d*1.2))*0.3+0.7;
+          ctx.globalAlpha=ga*dotA;
+          ctx.beginPath();
+          ctx.arc(formerX+formerW/2-10+d*10,formerY+50,3,0,Math.PI*2);
+          ctx.fillStyle=accent;ctx.fill();
+          ctx.globalAlpha=ga;
+        }
+      }
+    }
+
+    // Hypothesis cards (phases 3+)
+    if(phase>=3){
+      const emergence=phase===3?prog:1;
+      const numShow=phase===3?Math.ceil(5*emergence):5;
+
+      for(let i=0;i<numShow;i++){
+        const hp=hyps[i];
+        const cy=baseY+i*(cardH+cardGap);
+
+        // Calculate current confidence based on phase
+        let conf=hp.initConf;
+        if(phase>=5){
+          // After round 1
+          const r1prog=phase===5?prog:1;
+          conf+=round1[i]*r1prog;
+        }
+        if(phase>=6){
+          // After round 2
+          const r2prog=phase===6?prog:1;
+          conf+=round2[i]*r2prog;
+        }
+        // Second pass for H5
+        if(phase>=8 && i===4){
+          const spProg=phase===8?prog:1;
+          conf+=0.10*spProg;
+        }
+        conf=Math.max(0,Math.min(1,conf));
+
+        // Status
+        let status='PENDING';
+        let statusColor=t3;
+        if(phase>=4 && phase<7){status='TESTING';statusColor=accent;}
+        if(phase>=7 && hp.status==='rejected'){status='REJECTED';statusColor=red;}
+        if(phase>=9 && hp.status==='validated'){status='VALIDATED';statusColor=green;}
+        if(phase>=9 && hp.status==='conditional'){status='CONDITIONAL';statusColor=accent;}
+        if(phase>=8 && i===4 && phase<9){status='2ND PASS';statusColor=accent;}
+
+        // Card border
+        let cardStroke='rgba(255,255,255,0.04)';
+        if(phase>=7 && hp.status==='rejected') cardStroke=red;
+        else if(phase>=9 && hp.status==='validated') cardStroke=green;
+        else if(phase>=9 && hp.status==='conditional') cardStroke=accent;
+        else if(phase>=4) cardStroke='rgba(216,140,58,0.2)';
+
+        // Rejected card shrink
+        let cardScale=1;
+        if(phase>=7 && hp.status==='rejected'){
+          const shrink=phase===7?prog*0.15:0.15;
+          cardScale=1-shrink;
+        }
+
+        ctx.save();
+        if(cardScale<1){
+          ctx.translate(cardStartX+cardW/2,cy+cardH/2);
+          ctx.scale(cardScale,cardScale);
+          ctx.translate(-(cardStartX+cardW/2),-(cy+cardH/2));
+          ctx.globalAlpha=ga*(phase===7&&hp.status==='rejected'?1-prog*0.3:0.7);
+        }
+
+        drawRR(cardStartX,cy,cardW,cardH,8,inset,cardStroke,1);
+
+        // Label + text
+        ctx.font='600 11px '+mono;
+        ctx.textAlign='left';
+        ctx.fillStyle=statusColor===red?red:t1;
+        ctx.fillText(hp.label,cardStartX+10,cy+18);
+
+        ctx.font='400 9px '+mono;
+        ctx.fillStyle=t2;
+        ctx.fillText(hp.text,cardStartX+36,cy+18);
+
+        // Confidence bar
+        const barX=cardStartX+10;
+        const barY=cy+28;
+        const barW=cardW-100;
+        const barH=6;
+        drawRR(barX,barY,barW,barH,3,'rgba(255,255,255,0.03)',null,0);
+        drawRR(barX,barY,barW*conf,barH,3,confColor(conf),null,0);
+
+        // Confidence value
+        ctx.font='600 10px '+mono;
+        ctx.textAlign='left';
+        ctx.fillStyle=confColor(conf);
+        ctx.fillText(conf.toFixed(2),barX+barW+6,barY+6);
+
+        // Status badge
+        ctx.font='600 8px '+mono;
+        ctx.textAlign='right';
+        ctx.fillStyle=statusColor;
+        ctx.fillText(status,cardStartX+cardW-10,cy+cardH-10);
+
+        // Floating adjustment numbers (during test rounds)
+        if(phase===5 && round1[i]!==0){
+          const adjY=cy+28-prog*20;
+          const adjAlpha=1-prog*0.5;
+          ctx.globalAlpha=ga*adjAlpha;
+          ctx.font='600 10px '+mono;
+          ctx.textAlign='center';
+          ctx.fillStyle=round1[i]>0?green:red;
+          ctx.fillText((round1[i]>0?'+':'')+round1[i].toFixed(2),cardStartX+cardW*0.7,adjY);
+          ctx.globalAlpha=ga;
+        }
+        if(phase===6 && round2[i]!==0){
+          const adjY=cy+28-prog*20;
+          const adjAlpha=1-prog*0.5;
+          ctx.globalAlpha=ga*adjAlpha;
+          ctx.font='600 10px '+mono;
+          ctx.textAlign='center';
+          ctx.fillStyle=round2[i]>0?green:red;
+          ctx.fillText((round2[i]>0?'+':'')+round2[i].toFixed(2),cardStartX+cardW*0.7,adjY);
+          ctx.globalAlpha=ga;
+        }
+
+        ctx.restore();
+
+        // Tester box (phases 4-9)
+        if(phase>=4 && phase<10 && !(phase>=7 && hp.status==='rejected')){
+          const tx=cardStartX+cardW+8;
+          const ty=cy+10;
+          const tw=Math.min(40,w-tx-10);
+          if(tw>20){
+            drawRR(tx,ty,tw,cardH-20,5,inset,'rgba(216,140,58,0.1)',1);
+            ctx.font='500 7px '+mono;
+            ctx.textAlign='center';
+            ctx.fillStyle=t3;
+            ctx.fillText('TST',tx+tw/2,ty+(cardH-20)/2+3);
+
+            // Search animation (magnifier pulse)
+            if((phase===5||phase===6||(phase===8&&i===4))){
+              const pulse=Math.sin(frame*0.15+i)*0.3+0.7;
+              ctx.globalAlpha=ga*pulse;
+              ctx.font='500 10px '+mono;
+              ctx.fillStyle=accent;
+              ctx.fillText('⌕',tx+tw/2,ty-4);
+              ctx.globalAlpha=ga;
+            }
+          }
+        }
+      }
+    }
+
+    // Parallel badge (phase 4-6)
+    if(phase>=4 && phase<=6){
+      ctx.font='500 10px '+mono;
+      ctx.fillStyle=accent;
+      ctx.textAlign='left';
+      ctx.fillText('⟂ parallel testers',cardStartX,baseY+5*(cardH+cardGap)+10);
+    }
+
+    // Summary (phase 10)
+    if(phase>=10 && phase<11){
+      ctx.font='500 12px '+mono;
+      ctx.textAlign='center';
+      ctx.fillStyle=t2;
+      ctx.fillText('3 validated  ·  1 rejected  ·  1 conditional',w/2,h-20);
+    }
+
+    ctx.globalAlpha=1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  const cObs2=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting&&!running){running=true;initCanvas();draw();}
+      else if(!entry.isIntersecting&&running){running=false;}
+    });
+  },{threshold:0.15});
+  cObs2.observe(wrap);
+  window.addEventListener('resize',()=>{if(running) initCanvas();});
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION 3: Memory Promotion Gate (memory-canvas)
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+  const canvas=document.getElementById('memory-canvas');
+  if(!canvas) return;
+  const wrap=canvas.parentElement;
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const mono='JetBrains Mono, monospace';
+  let ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    w=rect.width; h=440;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  // Evidence items: 12 total, 2 malformed, 2 low relevance, 1 contradiction
+  const items=[
+    {label:'company profile',    rel:0.78,malformed:false,contradiction:false},
+    {label:'revenue data',       rel:0.65,malformed:false,contradiction:false},
+    {label:'tech stack',         rel:0.72,malformed:false,contradiction:false},
+    {label:'industry trend',     rel:0.58,malformed:false,contradiction:false},
+    {label:'competitor info',    rel:0.45,malformed:false,contradiction:false},
+    {label:'AI adoption',        rel:0.52,malformed:false,contradiction:false},
+    {label:'employee scale',     rel:0.40,malformed:false,contradiction:true},
+    {label:'market share',       rel:0.35,malformed:false,contradiction:false},
+    {label:'org structure',      rel:0.22,malformed:false,contradiction:false},
+    {label:'press release',      rel:0.15,malformed:false,contradiction:false},
+    {label:'[malformed]',        rel:0.50,malformed:true, contradiction:false},
+    {label:'[no source_type]',   rel:0.60,malformed:true, contradiction:false}
+  ];
+
+  const P=[
+    {name:'fadeIn',          dur:60},
+    {name:'rawFlow',         dur:120},
+    {name:'schemaGate',      dur:150},
+    {name:'relevanceGate',   dur:150},
+    {name:'contradictionGate',dur:120},
+    {name:'promoted',        dur:90},
+    {name:'phaseShift',      dur:60},
+    {name:'compression',     dur:180},
+    {name:'hold',            dur:90},
+    {name:'reset',           dur:60}
+  ];
+  const totalF=P.reduce((s,p)=>s+p.dur,0);
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    const f=frame%totalF;
+    let phase=0,pf=0,acc=0;
+    for(let i=0;i<P.length;i++){
+      if(f<acc+P[i].dur){phase=i;pf=f-acc;break;}
+      acc+=P[i].dur;
+    }
+    const prog=pf/P[phase].dur;
+
+    let ga=1;
+    if(phase===0) ga=prog;
+    if(phase===9) ga=1-prog;
+    ctx.globalAlpha=ga;
+
+    // Layout
+    const pad=20;
+    const itemH=24;
+    const itemGap=4;
+    const itemW=Math.min(120,w*0.16);
+    const topY=40;
+
+    // Gate positions (3 vertical lines)
+    const gateX=[w*0.24,w*0.46,w*0.66];
+    const storeX=w*0.78;
+    const storeW=w-storeX-pad;
+
+    // Gate labels
+    const gateLabels=['Schema','Relevance','Contradiction'];
+    for(let g=0;g<3;g++){
+      ctx.beginPath();
+      ctx.moveTo(gateX[g],topY-10);
+      ctx.lineTo(gateX[g],topY+12*(itemH+itemGap)+20);
+      ctx.strokeStyle='rgba(216,140,58,0.12)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+      ctx.stroke();ctx.setLineDash([]);
+
+      ctx.font='600 9px '+mono;
+      ctx.textAlign='center';
+      ctx.fillStyle=accent;
+      ctx.fillText(gateLabels[g],gateX[g],topY-16);
+    }
+
+    // Phase threshold label
+    const threshLabel=phase>=6?'Testing: 0.5':'Grounding: 0.3';
+    ctx.font='500 8px '+mono;
+    ctx.fillStyle=t3;
+    ctx.textAlign='center';
+    ctx.fillText('threshold: '+threshLabel,gateX[1],topY+12*(itemH+itemGap)+36);
+
+    // Draw items
+    for(let i=0;i<items.length;i++){
+      const item=items[i];
+      const iy=topY+i*(itemH+itemGap);
+
+      // Determine item state
+      let blocked=false;
+      let blockedAt=-1;
+      let flagged=false;
+
+      if(item.malformed){blockedAt=0;}
+      else if(item.rel<0.3){blockedAt=1;}
+      if(item.contradiction) flagged=true;
+
+      // Calculate x position based on phase and progress
+      let ix=pad;
+      let itemAlpha=1;
+
+      if(phase===0){
+        ix=pad; itemAlpha=prog;
+      } else if(phase===1){
+        // Flow in from left
+        const entryProg=Math.min(1,prog*(12/(i+1)));
+        ix=pad+entryProg*(gateX[0]-pad-itemW-10);
+      } else if(phase===2){
+        // Schema gate
+        if(blockedAt===0){
+          ix=gateX[0]-itemW-10;
+          itemAlpha=1-prog;
+        } else {
+          ix=gateX[0]-itemW-10+prog*(gateX[1]-gateX[0]);
+        }
+      } else if(phase===3){
+        // Relevance gate
+        if(blockedAt===0){itemAlpha=0; continue;}
+        if(blockedAt===1){
+          ix=gateX[1]-itemW-10;
+          itemAlpha=1-prog;
+        } else {
+          ix=gateX[1]-itemW-10+prog*(gateX[2]-gateX[1]);
+        }
+      } else if(phase===4){
+        // Contradiction gate
+        if(blockedAt>=0){itemAlpha=0; continue;}
+        ix=gateX[2]-itemW-10+prog*(storeX-gateX[2]-10);
+      } else if(phase>=5 && phase<9){
+        if(blockedAt>=0) continue;
+        // In store
+        ix=storeX+5;
+      } else {
+        if(blockedAt>=0) continue;
+        ix=storeX+5;
+      }
+
+      ctx.globalAlpha=ga*itemAlpha;
+      if(itemAlpha<=0) continue;
+
+      // Draw item
+      const bFill=item.malformed?'rgba(154,90,90,0.1)':inset;
+      const bStroke=item.malformed?red:flagged&&phase>=4?accent:'rgba(255,255,255,0.04)';
+      drawRR(ix,iy,itemW,itemH,5,bFill,bStroke,1);
+
+      ctx.font='500 8px '+mono;
+      ctx.textAlign='left';
+      ctx.fillStyle=item.malformed?red:t2;
+      ctx.fillText(item.label,ix+6,iy+10);
+
+      // Relevance score
+      if(!item.malformed){
+        ctx.font='500 8px '+mono;
+        ctx.textAlign='right';
+        ctx.fillStyle=item.rel<0.3?red:t3;
+        ctx.fillText(item.rel.toFixed(2),ix+itemW-6,iy+10);
+      }
+
+      // Conflict tag
+      if(flagged && phase>=4){
+        ctx.font='600 7px '+mono;
+        ctx.fillStyle=accent;
+        ctx.textAlign='left';
+        ctx.fillText('CONFLICT',ix+6,iy+20);
+      }
+
+      ctx.globalAlpha=ga;
+    }
+
+    // Counter text
+    ctx.font='500 10px '+mono;
+    ctx.textAlign='left';
+    ctx.fillStyle=t2;
+    if(phase===2) ctx.fillText('10/12 passed schema',pad,topY+12*(itemH+itemGap)+20);
+    if(phase===3) ctx.fillText('8/10 passed relevance',pad,topY+12*(itemH+itemGap)+20);
+    if(phase===4) ctx.fillText('8/8 passed (1 flagged)',pad,topY+12*(itemH+itemGap)+20);
+    if(phase>=5 && phase<7) ctx.fillText('8 items promoted to evidence store',pad,topY+12*(itemH+itemGap)+20);
+
+    // Store label
+    if(phase>=5){
+      ctx.font='600 9px '+mono;
+      ctx.textAlign='center';
+      ctx.fillStyle=green;
+      ctx.fillText('EVIDENCE STORE',storeX+storeW/2,topY-16);
+    }
+
+    // Compression visualization (phase 7)
+    if(phase===7){
+      const compY=h-80;
+      const segW=(w-pad*2-60)/4;
+
+      // 40 items → synthesizer → 8 promoted → compress → briefing
+      const dots40X=pad;
+      const synthX=pad+segW+10;
+      const dots8X=synthX+segW+10;
+      const briefX=dots8X+segW+10;
+
+      // 40 dots
+      ctx.font='600 10px '+mono;
+      ctx.textAlign='center';
+      ctx.fillStyle=t2;
+      ctx.fillText('40 items',dots40X+segW/2,compY-8);
+
+      const dotCount=Math.round(40*(1-prog*0.6));
+      for(let d=0;d<dotCount;d++){
+        const dx=dots40X+10+(d%10)*10;
+        const dy=compY+5+Math.floor(d/10)*8;
+        ctx.beginPath();ctx.arc(dx,dy,2,0,Math.PI*2);
+        ctx.fillStyle=accent;ctx.globalAlpha=ga*0.5;ctx.fill();
+        ctx.globalAlpha=ga;
+      }
+
+      // Arrow
+      ctx.beginPath();
+      ctx.moveTo(dots40X+segW,compY+16);ctx.lineTo(synthX,compY+16);
+      ctx.strokeStyle='rgba(216,140,58,0.2)';ctx.lineWidth=1;ctx.stroke();
+
+      // Phase Synthesizer box
+      drawRR(synthX,compY-2,segW,36,6,inset,accent,1);
+      ctx.font='500 9px '+mono;ctx.fillStyle=accent;ctx.textAlign='center';
+      ctx.fillText('Phase Synthesizer',synthX+segW/2,compY+18);
+
+      // Arrow
+      ctx.beginPath();
+      ctx.moveTo(synthX+segW,compY+16);ctx.lineTo(dots8X,compY+16);
+      ctx.strokeStyle='rgba(216,140,58,0.2)';ctx.lineWidth=1;ctx.stroke();
+
+      // 8 promoted
+      ctx.fillStyle=t2;
+      ctx.fillText('8 promoted',dots8X+segW/2,compY-8);
+      const pCount=Math.round(8*Math.max(0,1-prog*1.5+0.5));
+      for(let d=0;d<pCount;d++){
+        const dx=dots8X+segW/2-20+d*6;
+        const dy=compY+16;
+        ctx.beginPath();ctx.arc(dx,dy,3,0,Math.PI*2);
+        ctx.fillStyle=green;ctx.globalAlpha=ga*0.6;ctx.fill();
+        ctx.globalAlpha=ga;
+      }
+
+      // Arrow
+      ctx.beginPath();
+      ctx.moveTo(dots8X+segW,compY+16);ctx.lineTo(briefX,compY+16);
+      ctx.strokeStyle='rgba(216,140,58,0.2)';ctx.lineWidth=1;ctx.stroke();
+
+      // Constant-size briefing
+      if(prog>0.5){
+        const bAlpha=(prog-0.5)*2;
+        ctx.globalAlpha=ga*bAlpha;
+        drawRR(briefX+10,compY-2,segW-20,36,6,inset,green,1);
+        ctx.font='500 9px '+mono;ctx.fillStyle=green;ctx.textAlign='center';
+        ctx.fillText('Constant-size',briefX+segW/2,compY+12);
+        ctx.fillText('briefing',briefX+segW/2,compY+24);
+        ctx.globalAlpha=ga;
+      }
+    }
+
+    ctx.globalAlpha=1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  const cObs3=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting&&!running){running=true;initCanvas();draw();}
+      else if(!entry.isIntersecting&&running){running=false;}
+    });
+  },{threshold:0.15});
+  cObs3.observe(wrap);
+  window.addEventListener('resize',()=>{if(running) initCanvas();});
+})();
+
+/* ═══════��═══════════════════════════════���═══════════════════════
+   ANIMATION 4: Agent ReAct Loop (react-canvas)
+   ═════���═════════════════════════════════════════════════════════ */
+(function(){
+  const canvas=document.getElementById('react-canvas');
+  if(!canvas) return;
+  const wrap=canvas.parentElement;
+  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  const mono='JetBrains Mono, monospace';
+  let ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    const dpr=window.devicePixelRatio||1;
+    const rect=wrap.getBoundingClientRect();
+    w=rect.width; h=440;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  const dims=[
+    {label:'what_they_do',     display:'Company overview',   filled:true, step:0},
+    {label:'revenue_model',    display:'Revenue model',      filled:false,step:1},
+    {label:'tech_stack',       display:'Technology stack',    filled:false,step:2},
+    {label:'org_structure',    display:'Org structure',       filled:false,step:3},
+    {label:'competitive',      display:'Competitive position',filled:false,step:-1}
+  ];
+
+  // Three nodes of the loop
+  const nodes=['THINK','ACT','OBSERVE'];
+
+  const P=[
+    {name:'fadeIn',        dur:60},
+    {name:'think1',        dur:120},
+    {name:'act1',          dur:120},
+    {name:'observe1',      dur:90},
+    {name:'think2',        dur:90},
+    {name:'act2',          dur:120},
+    {name:'observe2',      dur:90},
+    {name:'think3',        dur:90},
+    {name:'act3_observe3', dur:120},
+    {name:'stopDecision',  dur:120},
+    {name:'reset',         dur:60}
+  ];
+  const totalF=P.reduce((s,p)=>s+p.dur,0);
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    const f=frame%totalF;
+    let phase=0,pf=0,acc=0;
+    for(let i=0;i<P.length;i++){
+      if(f<acc+P[i].dur){phase=i;pf=f-acc;break;}
+      acc+=P[i].dur;
+    }
+    const prog=pf/P[phase].dur;
+
+    let ga=1;
+    if(phase===0) ga=prog;
+    if(phase===10) ga=1-prog;
+    ctx.globalAlpha=ga;
+
+    // Layout
+    const pad=20;
+    const loopCX=w*0.32;
+    const loopCY=h*0.42;
+    const loopR=Math.min(100,w*0.14);
+
+    // Determine active node: THINK=0, ACT=1, OBSERVE=2
+    let activeNode=-1;
+    if(phase===1||phase===4||phase===7) activeNode=0; // think
+    if(phase===2||phase===5) activeNode=1; // act
+    if(phase===3||phase===6) activeNode=2; // observe
+    if(phase===8){activeNode=prog<0.5?1:2;} // act then observe
+    if(phase===9) activeNode=0; // final think
+
+    // Draw loop circle (3 nodes at 120° intervals)
+    const nodeAngles=[-Math.PI/2, Math.PI/6, Math.PI*5/6]; // THINK top, ACT bottom-right, OBSERVE bottom-left
+    const nodeR=28;
+
+    // Connecting arcs
+    for(let i=0;i<3;i++){
+      const a1=nodeAngles[i]+0.4;
+      const a2=nodeAngles[(i+1)%3]-0.4;
+      ctx.beginPath();
+      ctx.arc(loopCX,loopCY,loopR,a1,a2);
+      ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=1;ctx.stroke();
+
+      // Arrowhead at end
+      const ex=loopCX+Math.cos(a2)*loopR;
+      const ey=loopCY+Math.sin(a2)*loopR;
+      const ax=Math.cos(a2+0.3)*6;
+      const ay=Math.sin(a2+0.3)*6;
+      ctx.beginPath();
+      ctx.moveTo(ex-ax,ey-ay);ctx.lineTo(ex,ey);ctx.lineTo(ex-ay,ey+ax);
+      ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.stroke();
+    }
+
+    // Draw nodes
+    for(let i=0;i<3;i++){
+      const nx=loopCX+Math.cos(nodeAngles[i])*loopR;
+      const ny=loopCY+Math.sin(nodeAngles[i])*loopR;
+      const isActive=(i===activeNode);
+
+      // Glow
+      if(isActive){
+        ctx.beginPath();ctx.arc(nx,ny,nodeR+6,0,Math.PI*2);
+        ctx.fillStyle='rgba(216,140,58,0.06)';ctx.fill();
+      }
+
+      // Circle
+      ctx.beginPath();ctx.arc(nx,ny,nodeR,0,Math.PI*2);
+      ctx.fillStyle=inset;ctx.fill();
+      ctx.strokeStyle=isActive?accent:'rgba(255,255,255,0.06)';
+      ctx.lineWidth=isActive?2:1;ctx.stroke();
+
+      // Label
+      ctx.font=(isActive?'600':'500')+' 10px '+mono;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillStyle=isActive?accent:t3;
+      ctx.fillText(nodes[i],nx,ny);
+      ctx.textBaseline='alphabetic';
+    }
+
+    // Right panel: coverage dimensions
+    const dimX=w*0.58;
+    const dimY=60;
+    const dimH=28;
+    const dimGap=6;
+    const dimW=Math.min(240,w-dimX-pad);
+
+    ctx.font='600 10px '+mono;
+    ctx.textAlign='left';
+    ctx.fillStyle=accent;
+    ctx.fillText('COVERAGE DIMENSIONS',dimX,dimY-10);
+
+    // Determine which dims are filled by this phase
+    const filledSteps=phase<=1?0:phase<=3?1:phase<=6?2:phase<=8?3:3;
+
+    for(let i=0;i<dims.length;i++){
+      const dy=dimY+i*(dimH+dimGap);
+      const isFilled=dims[i].filled||(dims[i].step>=0 && dims[i].step<filledSteps);
+      const isFillingNow=dims[i].step===filledSteps-1 &&
+        ((filledSteps===1&&phase===3)||(filledSteps===2&&phase===6)||(filledSteps===3&&(phase===8&&prog>0.5)));
+
+      drawRR(dimX,dy,dimW,dimH,5,inset,isFilled?green:'rgba(255,255,255,0.04)',1);
+
+      // Check or empty
+      ctx.font='500 12px '+mono;
+      ctx.textAlign='left';
+      ctx.fillStyle=isFilled?green:t3;
+      ctx.fillText(isFilled?'✓':'○',dimX+8,dy+18);
+
+      ctx.font='400 10px '+mono;
+      ctx.fillStyle=isFilled?t1:t3;
+      ctx.fillText(dims[i].display,dimX+26,dy+18);
+
+      // Animate fill
+      if(isFillingNow){
+        ctx.globalAlpha=ga*Math.sin(frame*0.2)*0.3+0.7;
+        drawRR(dimX,dy,dimW,dimH,5,null,accent,2);
+        ctx.globalAlpha=ga;
+      }
+    }
+
+    // MAX_STEPS + budget counters (top right)
+    let steps=8;
+    if(filledSteps>=1) steps=7;
+    if(filledSteps>=2) steps=6;
+    if(filledSteps>=3) steps=5;
+
+    let searchBudget=25;
+    if(filledSteps>=1) searchBudget=24;
+    if(filledSteps>=2) searchBudget=23;
+
+    let ragBudget=15;
+    if(filledSteps>=3) ragBudget=14;
+
+    ctx.font='500 11px '+mono;
+    ctx.textAlign='right';
+    ctx.fillStyle=t3;
+    ctx.fillText('MAX_STEPS: '+steps+'/8',w-pad,30);
+    ctx.fillText('Search: '+searchBudget+'/25  RAG: '+ragBudget+'/15',w-pad,46);
+
+    // Thought bubble text
+    const bubbleX=loopCX;
+    const bubbleY=loopCY+loopR+60;
+
+    if(phase===1){
+      ctx.font='400 9px '+mono;ctx.textAlign='center';ctx.fillStyle=t2;
+      ctx.fillText('Gaps: Revenue, Tech, Org, Competitive',bubbleX,bubbleY);
+    }
+    if(phase===2||phase===5){
+      ctx.font='400 9px '+mono;ctx.textAlign='center';ctx.fillStyle=accent;
+      const query=phase===2?'GROUND: "[Co] revenue model"':'GROUND: "[Co] technology stack"';
+      ctx.fillText(query,bubbleX,bubbleY);
+    }
+    if(phase===3||phase===6){
+      ctx.font='400 9px '+mono;ctx.textAlign='center';ctx.fillStyle=green;
+      const result=phase===3?'Result → Revenue model filled':'Result → Tech stack filled';
+      ctx.fillText(result,bubbleX,bubbleY);
+    }
+    if(phase===4){
+      ctx.font='400 9px '+mono;ctx.textAlign='center';ctx.fillStyle=t2;
+      ctx.fillText('Gaps: Tech, Org, Competitive',bubbleX,bubbleY);
+    }
+    if(phase===7){
+      ctx.font='400 9px '+mono;ctx.textAlign='center';ctx.fillStyle=t2;
+      ctx.fillText('Gaps: Competitive. 6 steps remain.',bubbleX,bubbleY);
+    }
+    if(phase===8){
+      ctx.font='400 9px '+mono;ctx.textAlign='center';ctx.fillStyle=accent;
+      ctx.fillText('RAG: "org structure patterns"',bubbleX,bubbleY);
+      if(prog>0.5){
+        ctx.fillStyle=green;
+        ctx.fillText('Result → Org structure filled',bubbleX,bubbleY+16);
+      }
+    }
+    if(phase===9){
+      ctx.font='400 9px '+mono;ctx.textAlign='center';ctx.fillStyle=t2;
+      ctx.fillText('3/5 covered. Remaining non-critical. STOP.',bubbleX,bubbleY);
+
+      // Final state label
+      ctx.font='500 11px '+mono;
+      ctx.fillStyle=green;
+      ctx.fillText('Agent complete: 3 steps used of 8 budget',bubbleX,bubbleY+20);
+    }
+
+    // Context briefing box (bottom)
+    const briefY=h-70;
+    const briefW=w-pad*2;
+    drawRR(pad,briefY,briefW,50,8,inset,'rgba(255,255,255,0.03)',1);
+    ctx.font='600 9px '+mono;ctx.textAlign='left';ctx.fillStyle=t3;
+    ctx.fillText('CONTEXT BRIEFING',pad+10,briefY+16);
+
+    const lines=[];
+    if(filledSteps>=0) lines.push('Company: [intake data loaded]');
+    if(filledSteps>=1) lines.push('Revenue: subscription SaaS, $2B ARR');
+    if(filledSteps>=2) lines.push('Tech: legacy ERP, custom middleware, AWS');
+    if(filledSteps>=3) lines.push('Org: 5000 employees, 3 divisions');
+
+    ctx.font='400 8px '+mono;ctx.fillStyle=t2;
+    const lineText=lines.join('  ·  ');
+    ctx.fillText(lineText.substring(0,Math.floor(lineText.length*(phase>=1?1:0))),pad+10,briefY+34);
+
+    ctx.globalAlpha=1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  const cObs4=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting&&!running){running=true;initCanvas();draw();}
+      else if(!entry.isIntersecting&&running){running=false;}
+    });
+  },{threshold:0.15});
+  cObs4.observe(wrap);
+  window.addEventListener('resize',()=>{if(running) initCanvas();});
+})();
 </script>
 </body>
 </html>
