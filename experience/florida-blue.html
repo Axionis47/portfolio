@@ -162,13 +162,37 @@
     <p>Separately, 12 binary classifiers run on each call: agent identity verification, disclaimer compliance, issue resolution, sentiment, repeat caller detection, transfer/escalation, grievance filing. These are standalone yes/no workers, not part of the extraction pipeline.</p>
   </div>
 
+  <div class="dia fade">
+    <div class="dia-title">Extraction fields</div>
+    <table class="rtable">
+      <tr><th>Field</th><th>Gate Question</th><th>Extract From</th><th>Method</th></tr>
+      <tr><td>SSN</td><td>"Was an SSN mentioned?"</td><td>Customer only</td><td>Regex + LLM</td></tr>
+      <tr><td>Date of Birth</td><td>"Was a DOB mentioned?"</td><td>Customer only</td><td>Regex + LLM</td></tr>
+      <tr><td>Member Name</td><td>"Was the member's name stated?"</td><td>Both speakers</td><td>LLM</td></tr>
+      <tr><td>Address</td><td>"Was an address discussed?"</td><td>Customer only</td><td>Regex (zip) + LLM</td></tr>
+      <tr><td>Policy/Member ID</td><td>"Was a policy ID referenced?"</td><td>Both speakers</td><td>Regex + LLM</td></tr>
+      <tr><td>Provider Name</td><td>"Was a provider mentioned?"</td><td>Both speakers</td><td>LLM only</td></tr>
+      <tr><td>Claim Number</td><td>"Was a claim number discussed?"</td><td>Both speakers</td><td>Regex + LLM</td></tr>
+      <tr><td>Phone Number</td><td>"Was a callback number provided?"</td><td>Customer only</td><td>Regex + LLM</td></tr>
+      <tr><td>Group Number</td><td>"Was a group number mentioned?"</td><td>Both speakers</td><td>Regex + LLM</td></tr>
+      <tr><td>Call Reason</td><td>Always runs (no gate)</td><td>Full transcript</td><td>LLM classification</td></tr>
+    </table>
+    <div class="dia-note">PII fields (SSN, DOB, address, phone) extract from customer segments only to prevent double-extraction when the agent reads back values for confirmation.</div>
+  </div>
+
   <!-- Animation: Gate-Then-Extract Pipeline -->
   <div class="graph-canvas-wrap fade">
     <canvas id="gate-extract-canvas" style="height:480px"></canvas>
   </div>
 
-  <!-- Chapter 3 -->
-  <div class="sec fade">Chapter 3 -- The resolution problem</div>
+  <!-- Benchmarking -->
+  <div class="sec fade">Chapter 3 -- Benchmarking 3 LLMs</div>
+  <div class="prose fade">
+    <p>I ran the same pipeline (same prompts, same regex, same speaker filtering) through all 3 self-hosted LLM endpoints and compared against a golden set of 50+ manually labeled calls. Built a comparison matrix: per field, per model, with exact match, partial match, and miss rates. The models converged on structured extraction (where regex does the heavy lifting) but diverged on subjective classification tasks like sentiment and issue resolution. No fine-tuning was available, so all optimization was through prompt engineering and pipeline logic.</p>
+  </div>
+
+  <!-- Chapter 4 -->
+  <div class="sec fade">Chapter 4 -- The resolution problem</div>
   <div class="prose fade">
     <p>Most classifiers hit 85-90% accuracy. Issue resolution hit ~70-75%. This was the finding that mattered most to leadership, because resolution tracking was the primary business use case for the pipeline.</p>
     <p>Resolution is a pragmatic inference, not a surface signal. "I'll send that form to you" sounds resolved, but only if the form arrives. Partial resolutions are common (member calls about three things, two get handled). Agent phrasing is designed to sound conclusive even when work is deferred. The self-hosted models could not reliably track this across 15-20 minute transcripts.</p>
@@ -180,6 +204,23 @@
   <div class="prose fade">
     <p>Second evaluation. Claims analysts spend hours translating business questions into SQL. I built a LangChain SQL agent with custom code-resolution tools against a 6-8 table claims schema (claim_header, claim_line, claim_diagnosis, member, provider, plus reference tables for ICD-10, CPT, and denial codes).</p>
     <p>The core challenge is code resolution. "Denied diabetes claims" requires: diabetes maps to ICD-10 codes E08-E13, denied maps to a claim_status filter, and the date field could be service_from_date, paid_date, or received_date depending on who is asking. I built custom lookup tools (<code>lookup_diagnosis_codes()</code>, <code>lookup_procedure_codes()</code>, <code>lookup_denial_reasons()</code>) so the agent resolves codes before writing SQL, and wrote 15-20 hand-written few-shot examples covering temporal disambiguation and claim status workflow quirks.</p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Text-to-SQL agent architecture</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">User Question</div><div class="dia-box-sub">Natural language</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box"><div class="dia-box-title">LangChain SQL Agent</div><div class="dia-box-sub">Reasoning + tool use</div></div>
+    </div>
+    <div class="dia-arrow-down">&darr;</div>
+    <div class="dia-row" style="gap:10px;flex-wrap:wrap">
+      <div class="dia-box"><div class="dia-box-title">lookup_diagnosis_codes()</div><div class="dia-box-sub">ICD-10 reference</div></div>
+      <div class="dia-box"><div class="dia-box-title">lookup_procedure_codes()</div><div class="dia-box-sub">CPT reference</div></div>
+      <div class="dia-box"><div class="dia-box-title">lookup_denial_reasons()</div><div class="dia-box-sub">Denial codes</div></div>
+      <div class="dia-box dia-good"><div class="dia-box-title">query_claims_database()</div><div class="dia-box-sub">Read-only SQL</div></div>
+    </div>
+    <div class="dia-note">Agent resolves medical/denial codes first, then writes SQL with resolved codes in WHERE clauses. 15-20 hand-written few-shot examples cover temporal disambiguation and claim status workflow.</div>
   </div>
 
   <div class="dia fade">
@@ -199,6 +240,15 @@
     <p>The deliverable was not a production system. It was an honest evaluation with clear recommendations. For the call extraction pipeline: structured fields (SSN, DOB, policy ID) are production-viable at 85-90% accuracy. Binary classifiers (compliance checks, sentiment) work well. Issue resolution is not ready and needs either fine-tuning or a composite model before it can drive automated ticket creation.</p>
     <p>For text-to-SQL: simple and medium queries are viable for analyst self-service. Complex queries need either a more capable base model or query decomposition. RBAC on query results is a prerequisite before any user-facing deployment.</p>
     <p>Both systems work within HIPAA constraints (self-hosted LLMs, GCP VPC, read-only access). The architecture is sound. The bottleneck is model quality, which improves with better self-hosted models or, if compliance allows, managed API access with a BAA.</p>
+  </div>
+
+  <!-- Chapter 7 -->
+  <div class="sec fade">What I would change</div>
+  <div class="prose fade">
+    <p><strong>Issue resolution needs a composite model.</strong> Single-prompt classification cannot capture pragmatic resolution. A multi-signal approach combining sentiment trajectory, explicit confirmation markers, agent system actions (ticket creation, claim reprocessing), and call duration patterns would outperform any single classifier.</p>
+    <p><strong>Golden set too small for production confidence.</strong> 50 labeled calls is enough for iterative development. Production validation needs 200+ calls across all call types for reliable per-category accuracy estimates.</p>
+    <p><strong>Text-to-SQL needs query decomposition.</strong> Complex queries fail because the model tries to write one monolithic SQL statement. Breaking "denied diabetes claims by out-of-network providers in Q3" into sub-queries (resolve codes, filter claims, join providers, apply date range) and composing results would improve the 40-50% accuracy tier significantly.</p>
+    <p><strong>Self-hosted model quality was the ceiling.</strong> The architecture is sound. The bottleneck is model capability. The same pipeline with GPT-4 class models would perform better on subjective classification and complex SQL generation. HIPAA required self-hosting, so model quality was a constraint I documented but could not change.</p>
   </div>
 
   <!-- Stack Tags -->
