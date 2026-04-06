@@ -142,7 +142,7 @@
     </div>
     <div class="stat">
       <div class="stat-val">50+</div>
-      <div class="stat-label">Golden set calls labeled</div>
+      <div class="stat-label">Golden set calls verified</div>
     </div>
   </div>
 
@@ -188,7 +188,7 @@
   <!-- Benchmarking -->
   <div class="sec fade">Chapter 3 -- Benchmarking 3 LLMs</div>
   <div class="prose fade">
-    <p>I ran the same pipeline (same prompts, same regex, same speaker filtering) through all 3 self-hosted LLM endpoints and compared against a golden set of 50+ manually labeled calls. Built a comparison matrix: per field, per model, with exact match, partial match, and miss rates. The models converged on structured extraction (where regex does the heavy lifting) but diverged on subjective classification tasks like sentiment and issue resolution. No fine-tuning was available, so all optimization was through prompt engineering and pipeline logic.</p>
+    <p>I ran the same pipeline (same prompts, same regex, same speaker filtering) through all 3 self-hosted LLM endpoints and compared outputs against the transcripts themselves. If the transcript said an SSN, did the pipeline extract it correctly? Built a comparison matrix: per field, per model, with exact match, partial match, and miss rates. Transcription errors from Whisper were upstream and outside my control. The models converged on structured extraction (where regex does the heavy lifting) but diverged on subjective classification tasks like sentiment and issue resolution. No fine-tuning was available, so all optimization was through prompt engineering and pipeline logic.</p>
   </div>
 
   <!-- Chapter 4 -->
@@ -246,7 +246,7 @@
   <div class="sec fade">What I would change</div>
   <div class="prose fade">
     <p><strong>Issue resolution needs a composite model.</strong> Single-prompt classification cannot capture pragmatic resolution. A multi-signal approach combining sentiment trajectory, explicit confirmation markers, agent system actions (ticket creation, claim reprocessing), and call duration patterns would outperform any single classifier.</p>
-    <p><strong>Golden set too small for production confidence.</strong> 50 labeled calls is enough for iterative development. Production validation needs 200+ calls across all call types for reliable per-category accuracy estimates.</p>
+    <p><strong>Golden set too small for production confidence.</strong> 50 verified calls is enough for iterative development. Production validation needs 200+ calls across all call types for reliable per-category accuracy estimates.</p>
     <p><strong>Text-to-SQL needs query decomposition.</strong> Complex queries fail because the model tries to write one monolithic SQL statement. Breaking "denied diabetes claims by out-of-network providers in Q3" into sub-queries (resolve codes, filter claims, join providers, apply date range) and composing results would improve the 40-50% accuracy tier significantly.</p>
     <p><strong>Self-hosted model quality was the ceiling.</strong> The architecture is sound. The bottleneck is model capability. The same pipeline with GPT-4 class models would perform better on subjective classification and complex SQL generation. HIPAA required self-hosting, so model quality was a constraint I documented but could not change.</p>
   </div>
