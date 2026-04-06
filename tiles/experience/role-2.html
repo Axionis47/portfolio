@@ -1,4 +1,4 @@
-<div class="exp-card fade">
+<a href="experience/florida-blue.html" class="exp-card fade" style="text-decoration:none;color:inherit;display:block">
   <div class="exp-header">
     <div class="exp-logo">
       <span class="mono-icon">BC</span>
@@ -6,7 +6,7 @@
     <div class="exp-meta">
       <div class="exp-top">
         <span class="exp-company">Florida Blue (BCBSFL)</span>
-        <span class="exp-date">Aug 2024 &ndash; Dec 2024</span>
+        <span class="exp-date">Aug 2024 - Dec 2024</span>
       </div>
       <div class="exp-role">Applied AI Engineer</div>
       <div class="exp-loc">Jacksonville, FL</div>
@@ -14,15 +14,16 @@
   </div>
   <div class="exp-body">
     <ul class="exp-bullets">
-      <li>Built an ETL pipeline to extract structured information from 300+ service call transcripts using a mix of LLMs and regex &mdash; curated a golden evaluation set for testing LLM accuracy across claims denial analytics.</li>
-      <li>Prototyped a text-to-SQL system on read-only claims databases across 6 data domains using in-house LLMs provided via internal API &mdash; achieved &gt;90% join accuracy in evaluation.</li>
+      <li>Built a call transcription pipeline (Whisper + pyannote diarization + two-stage gate-then-extract) processing 300+ service calls into structured BigQuery rows. 10 extraction fields, 12 binary classifiers, golden set of 50+ labeled calls. Benchmarked 3 self-hosted LLMs.</li>
+      <li>Developed a text-to-SQL system for claims databases using LangChain SQL agent with custom ICD-10/CPT/denial code lookup tools. 85-90% accuracy on simple queries, 60-70% on multi-join queries across a 6-8 table schema.</li>
     </ul>
     <div class="exp-tags">
-      <span class="exp-tag">LLM</span>
-      <span class="exp-tag">Text-to-SQL</span>
-      <span class="exp-tag">ETL</span>
+      <span class="exp-tag">Whisper</span>
+      <span class="exp-tag">pyannote</span>
+      <span class="exp-tag">LangChain</span>
+      <span class="exp-tag">BigQuery</span>
       <span class="exp-tag">Python</span>
-      <span class="exp-tag">AWS</span>
+      <span class="exp-tag">HIPAA</span>
     </div>
   </div>
-</div>
+</a>

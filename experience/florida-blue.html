@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Florida Blue: Call Intelligence Pipeline &amp; Claims Text-to-SQL — Sai Siddharth Yalamanchili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{font-size:18px}
+  :root{
+    --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
+    --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
+    --t1:#e0e0e0;--t2:#ababab;--t3:#787880;
+    --accent:#d88c3a;--green:#5a9a5a;--red:#9a5a5a;
+    --r:14px;
+    --mono:'JetBrains Mono',monospace;
+    --serif:'Source Serif 4',serif;
+    --sans:'DM Sans',sans-serif;
+  }
+  body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
+  a{color:var(--accent);text-decoration:none;transition:color .2s}
+  a:hover{color:#eaa050}
+  nav{display:flex;justify-content:space-between;align-items:center;max-width:1440px;width:100%;margin:0 auto;padding:2.5rem 3rem 1.5rem}
+  nav .logo{font-family:var(--mono);font-weight:600;font-size:1.02rem;color:var(--t1);text-decoration:none}
+  nav .back{font-family:var(--mono);font-size:.86rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  nav .back:hover{color:var(--accent)}
+  main{max-width:1440px;width:100%;margin:0 auto;padding:2rem 3rem 4rem;flex:1}
+  .proj-label{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
+  .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
+  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 34px;margin-bottom:36px}
+  .brief-label{font-family:var(--mono);font-size:.66rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+  .brief-key{font-family:var(--mono);font-size:.78rem;color:var(--t2);text-align:right;white-space:nowrap}
+  .brief-val{font-family:var(--mono);font-size:.84rem;color:var(--t1);line-height:1.7}
+  .prose{margin-bottom:1.8rem}
+  .prose p{font-family:var(--sans);font-size:1.08rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
+  .prose strong{color:var(--t1);font-weight:500}
+  .sec{font-family:var(--mono);font-size:.78rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
+  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 30px;margin:20px 0}
+  .dia-title{font-family:var(--mono);font-size:.72rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+  .dia-group{font-family:var(--mono);font-size:.66rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;margin:16px 0 6px;padding-left:4px}
+  .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
+  .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
+  .dia-box-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:3px}
+  .dia-box-sub{font-family:var(--mono);font-size:.68rem;color:var(--t2);line-height:1.7}
+  .dia-arrow{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;padding:0 12px;flex-shrink:0}
+  .dia-arrow-down{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;text-align:center;padding:8px 0}
+  .dia-note{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
+  .dia-good{border:1px solid rgba(90,154,90,0.2)}
+  .dia-bad{border:1px solid rgba(154,90,90,0.2)}
+  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
+  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:26px 20px;text-align:center;transition:all .3s}
+  .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+  .stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:5px}
+  .stat-label{font-family:var(--mono);font-size:.68rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
+  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
+  .rtable th{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.76rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable tr.best td{color:var(--accent);font-weight:500}
+  .pipeline{position:relative;padding-left:32px;margin:20px 0}
+  .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
+  .pipe-step{position:relative;margin-bottom:24px}
+  .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
+  .pipe-num{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;margin-bottom:3px}
+  .pipe-title{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+  .pipe-desc{font-family:var(--sans);font-size:.96rem;color:var(--t2);line-height:1.95}
+  .pipe-desc strong{color:var(--t1);font-weight:500}
+  .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
+  .stack-tag{font-family:var(--mono);font-size:.66rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  .proj-link{display:inline-block;font-family:var(--mono);font-size:.78rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+  .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+  .graph-canvas-wrap{position:relative;margin:24px 0;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);overflow:hidden}
+  .graph-canvas-wrap canvas{display:block;width:100%}
+  .prose code{font-family:var(--mono);font-size:.82rem;color:var(--accent);background:var(--inset);padding:2px 6px;border-radius:4px}
+  .example-output{background:var(--inset);border-radius:10px;padding:20px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);font-family:var(--mono);font-size:.78rem;color:var(--t2);line-height:2;text-align:left;margin:16px 0}
+  .example-output .eo-header{color:var(--t3);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
+  .example-output .eo-decision{color:var(--red);font-weight:500}
+  .example-output .eo-reason{color:var(--t1)}
+  footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
+  .ft{max-width:1440px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+  .ft-c{font-family:var(--mono);font-size:.72rem;color:var(--t3)}
+  .ft-l{display:flex;gap:18px}
+  .ft-l a{font-family:var(--mono);font-size:.76rem;color:var(--t3);text-decoration:none;transition:color .2s}
+  .ft-l a:hover{color:var(--accent)}
+  @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+  .fade.v{opacity:1;transform:translateY(0)}
+  @media(max-width:768px){
+    main{padding:1rem 1rem 3rem}
+    .results{grid-template-columns:repeat(2,1fr)}
+    .dia-row{flex-direction:column;gap:0}
+    .dia-arrow{transform:rotate(90deg);padding:6px 0}
+    .graph-canvas-wrap canvas{height:320px}
+    .ft{flex-direction:column;gap:10px;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="logo">sai.</a>
+  <a href="../#experience" class="back">&larr; Experience</a>
+</nav>
+
+<main>
+
+  <div class="proj-label fade">Experience</div>
+  <h1 class="proj-title fade">Florida Blue: Evaluating LLMs for Call Intelligence and Claims Querying</h1>
+  <div class="divider"></div>
+
+  <div class="brief fade">
+    <div class="brief-label">Engineering Brief</div>
+    <div class="brief-grid">
+      <span class="brief-key">Role</span>
+      <span class="brief-val">Applied AI Engineer (contract), Aug 2024 - Dec 2024, Jacksonville, FL</span>
+      <span class="brief-key">Problem</span>
+      <span class="brief-val">Thousands of daily call recordings with no structured extraction. Claims analysts queuing hours for routine database queries. Leadership needed to know: can self-hosted LLMs handle these tasks within HIPAA constraints?</span>
+      <span class="brief-key">Approach</span>
+      <span class="brief-val">Built two working systems, benchmarked 3 self-hosted LLMs on each, and presented findings to leadership with clear go/no-go recommendations. (1) Call extraction pipeline: Whisper + pyannote + gate-then-extract. (2) Text-to-SQL: LangChain agent with custom code-resolution tools.</span>
+      <span class="brief-key">Result</span>
+      <span class="brief-val">85-90% accuracy on structured field extraction. 85-90% on simple SQL queries. Identified issue resolution detection (~70-75%) as the key blocker for full automation. Findings drove leadership decisions on next-phase investment.</span>
+      <span class="brief-key">Stack</span>
+      <span class="brief-val">Python, Whisper, pyannote.audio, LangChain, BigQuery, GCP, Self-hosted LLMs</span>
+    </div>
+  </div>
+
+  <div class="results fade">
+    <div class="stat">
+      <div class="stat-val">300+</div>
+      <div class="stat-label">Calls processed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">85-90%</div>
+      <div class="stat-label">Extraction accuracy</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">3</div>
+      <div class="stat-label">LLMs benchmarked</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">50+</div>
+      <div class="stat-label">Golden set calls labeled</div>
+    </div>
+  </div>
+
+  <!-- Chapter 1 -->
+  <div class="sec fade">Chapter 1 -- The evaluation</div>
+  <div class="prose fade">
+    <p>Florida Blue covers approximately 5 million members across Florida. The call center generates thousands of recorded calls daily. Nobody was systematically extracting structured data from them. Leadership wanted to know: can self-hosted LLMs turn raw call audio into queryable structured data? And can they power a natural language interface to the claims database? My job was to build working prototypes, benchmark them honestly, and present findings so leadership could make informed investment decisions.</p>
+    <p>Constraints: read-only access to call audio on GCP. Three self-hosted LLM endpoints (I did not control model selection). All processing within the GCP VPC because the audio contains PHI. No fine-tuning access. Prompt engineering and pipeline architecture were the only levers.</p>
+  </div>
+
+  <!-- Chapter 2 -->
+  <div class="sec fade">Chapter 2 -- Call extraction: gate-then-extract</div>
+  <div class="prose fade">
+    <p>The pipeline has three stages. <strong>Whisper</strong> transcribes the audio, seeded with insurance vocabulary via <code>initial_prompt</code> to handle terms like EOB, ICD-10, and drug names that Whisper mangles by default. <strong>pyannote.audio</strong> separates speakers (agent vs customer), which matters because PII should only be extracted from the customer's speech, not from the agent reading it back for confirmation.</p>
+    <p>Then comes extraction. Each of the 10 fields (SSN, DOB, address, policy ID, provider name, claim number, etc.) follows a <strong>two-stage gate-then-extract</strong> pattern. Stage 1 is a binary gate on the full transcript: "Was an SSN mentioned?" If no, the extraction worker never fires. Stage 2 runs only on yes: for PII fields, the extractor receives customer-only segments. Regex handles clean formats, the LLM handles natural-language variants ("four five six, seven eight, nine zero one two").</p>
+    <p>I chose the two-stage pattern over single-pass extraction because it saves LLM calls and reduces hallucinated values. SSN appears on maybe 40% of calls. If the gate says no, the expensive extraction step is skipped entirely. Across 300+ calls, this cut total LLM API calls significantly.</p>
+    <p>Separately, 12 binary classifiers run on each call: agent identity verification, disclaimer compliance, issue resolution, sentiment, repeat caller detection, transfer/escalation, grievance filing. These are standalone yes/no workers, not part of the extraction pipeline.</p>
+  </div>
+
+  <!-- Animation: Gate-Then-Extract Pipeline -->
+  <div class="graph-canvas-wrap fade">
+    <canvas id="gate-extract-canvas" style="height:480px"></canvas>
+  </div>
+
+  <!-- Chapter 3 -->
+  <div class="sec fade">Chapter 3 -- The resolution problem</div>
+  <div class="prose fade">
+    <p>Most classifiers hit 85-90% accuracy. Issue resolution hit ~70-75%. This was the finding that mattered most to leadership, because resolution tracking was the primary business use case for the pipeline.</p>
+    <p>Resolution is a pragmatic inference, not a surface signal. "I'll send that form to you" sounds resolved, but only if the form arrives. Partial resolutions are common (member calls about three things, two get handled). Agent phrasing is designed to sound conclusive even when work is deferred. The self-hosted models could not reliably track this across 15-20 minute transcripts.</p>
+    <p>My recommendation: this task needs either fine-tuning on labeled resolution data (which I did not have access to) or a composite approach combining sentiment trajectory, confirmation markers, and agent action classification. I presented this gap transparently, with specific examples of where and why the classifier failed, so leadership could scope the next phase of work accurately.</p>
+  </div>
+
+  <!-- Chapter 4 -->
+  <div class="sec fade">Chapter 4 -- Text-to-SQL for claims</div>
+  <div class="prose fade">
+    <p>Second evaluation. Claims analysts spend hours translating business questions into SQL. I built a LangChain SQL agent with custom code-resolution tools against a 6-8 table claims schema (claim_header, claim_line, claim_diagnosis, member, provider, plus reference tables for ICD-10, CPT, and denial codes).</p>
+    <p>The core challenge is code resolution. "Denied diabetes claims" requires: diabetes maps to ICD-10 codes E08-E13, denied maps to a claim_status filter, and the date field could be service_from_date, paid_date, or received_date depending on who is asking. I built custom lookup tools (<code>lookup_diagnosis_codes()</code>, <code>lookup_procedure_codes()</code>, <code>lookup_denial_reasons()</code>) so the agent resolves codes before writing SQL, and wrote 15-20 hand-written few-shot examples covering temporal disambiguation and claim status workflow quirks.</p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Accuracy by query complexity</div>
+    <table class="rtable">
+      <tr><th>Complexity</th><th>Accuracy</th><th>Example</th></tr>
+      <tr class="best"><td>Simple (single table)</td><td>85-90%</td><td>"How many claims denied last month?"</td></tr>
+      <tr><td>Medium (2-3 joins)</td><td>60-70%</td><td>"Denial rate for provider NPI 1234567890"</td></tr>
+      <tr><td>Complex (codes + joins + dates)</td><td>40-50%</td><td>"Denied diabetes claims in Q3 by OON providers"</td></tr>
+    </table>
+    <div class="dia-note">All 3 self-hosted LLMs benchmarked. Converged on simple queries, diverged on complex ones. Self-hosted model quality was the ceiling.</div>
+  </div>
+
+  <!-- Chapter 5 -->
+  <div class="sec fade">Chapter 5 -- What I presented to leadership</div>
+  <div class="prose fade">
+    <p>The deliverable was not a production system. It was an honest evaluation with clear recommendations. For the call extraction pipeline: structured fields (SSN, DOB, policy ID) are production-viable at 85-90% accuracy. Binary classifiers (compliance checks, sentiment) work well. Issue resolution is not ready and needs either fine-tuning or a composite model before it can drive automated ticket creation.</p>
+    <p>For text-to-SQL: simple and medium queries are viable for analyst self-service. Complex queries need either a more capable base model or query decomposition. RBAC on query results is a prerequisite before any user-facing deployment.</p>
+    <p>Both systems work within HIPAA constraints (self-hosted LLMs, GCP VPC, read-only access). The architecture is sound. The bottleneck is model quality, which improves with better self-hosted models or, if compliance allows, managed API access with a BAA.</p>
+  </div>
+
+  <!-- Stack Tags -->
+  <div class="sec fade">Stack</div>
+  <div class="stack fade">
+    <span class="stack-tag">Python</span>
+    <span class="stack-tag">Whisper</span>
+    <span class="stack-tag">pyannote.audio</span>
+    <span class="stack-tag">LangChain</span>
+    <span class="stack-tag">BigQuery</span>
+    <span class="stack-tag">GCP</span>
+    <span class="stack-tag">Self-hosted LLMs</span>
+    <span class="stack-tag">Regex</span>
+    <span class="stack-tag">HIPAA</span>
+  </div>
+
+</main>
+
+<footer>
+  <div class="ft">
+    <div class="ft-c">&copy; 2026 Sai Siddharth Yalamanchili</div>
+    <div class="ft-l">
+      <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
+      <a href="https://www.linkedin.com/in/siddharth-yalamanchili/" target="_blank">LinkedIn</a>
+      <a href="mailto:sy832@scarletmail.rutgers.edu">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+var obs = new IntersectionObserver(function(es){
+  es.forEach(function(e, i){
+    if(e.isIntersecting){ setTimeout(function(){ e.target.classList.add('v'); }, i * 80); obs.unobserve(e.target); }
+  });
+}, { threshold: .12 });
+document.querySelectorAll('.fade').forEach(function(el){ obs.observe(el); });
+
+/* ===================================================================
+   ANIMATION: Gate-Then-Extract Pipeline (gate-extract-canvas)
+   =================================================================== */
+(function(){
+  var canvas = document.getElementById('gate-extract-canvas');
+  if(!canvas) return;
+  var wrap = canvas.parentElement;
+  var accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
+  var blue='#5a7a9a';
+  var mono='JetBrains Mono, monospace';
+  var ctx,w,h,frame=0,running=false;
+
+  function initCanvas(){
+    var dpr=window.devicePixelRatio||1;
+    var rect=wrap.getBoundingClientRect();
+    w=rect.width; h=480;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+
+  function lerp(a,b,t){ return a+(b-a)*Math.min(1,Math.max(0,t)); }
+  function easeOut(t){ return 1-(1-t)*(1-t); }
+
+  // Transcript lines
+  var lines = [
+    {speaker:'AGENT',    text:'Thank you for calling Florida Blue, my name is Sarah.'},
+    {speaker:'CUSTOMER', text:'Hi, I need to check on a claim. My SSN is 456-78-9012.'},
+    {speaker:'AGENT',    text:'Let me verify that. Can you confirm your date of birth?'},
+    {speaker:'CUSTOMER', text:'March 15, 1982.'},
+    {speaker:'AGENT',    text:'I see the claim from Dr. Sarah Chen at Riverside Medical.'},
+    {speaker:'CUSTOMER', text:'Yes, that is the one. What is the status?'},
+    {speaker:'AGENT',    text:'It shows processed. The EOB was mailed last week.'}
+  ];
+
+  // Fields for the animation
+  var fields = [
+    {name:'SSN',          gateResult:'YES', extractResult:'456-78-9012',  extractFrom:'Customer only', method:'Regex hit'},
+    {name:'Provider Name', gateResult:'YES', extractResult:'Dr. Sarah Chen', extractFrom:'Full transcript', method:'LLM extract'},
+    {name:'Group Number',  gateResult:'NO',  extractResult:'Not mentioned', extractFrom:'--',             method:'Skipped'}
+  ];
+
+  // Phase timing
+  var P = [
+    {name:'fadeIn',          dur:60},
+    {name:'transcript',      dur:120},
+    {name:'gate_ssn',        dur:120},
+    {name:'extract_ssn',     dur:120},
+    {name:'gate_provider',   dur:120},
+    {name:'extract_provider',dur:90},
+    {name:'gate_group',      dur:120},
+    {name:'summary',         dur:120},
+    {name:'hold',            dur:90},
+    {name:'reset',           dur:60}
+  ];
+  var totalF = P.reduce(function(s,p){return s+p.dur;},0);
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+    var f = frame % totalF;
+
+    var phase=0, pf=0, acc=0;
+    for(var i=0;i<P.length;i++){
+      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
+      acc+=P[i].dur;
+    }
+    var prog = pf/P[phase].dur;
+
+    var globalAlpha = 1;
+    if(phase === 0) globalAlpha = easeOut(prog);
+    if(phase === 9) globalAlpha = 1 - prog;
+    ctx.globalAlpha = globalAlpha;
+
+    // Layout constants
+    var txW = w * 0.28;
+    var txX = 20;
+    var txY = 30;
+    var txH = h - 60;
+
+    var fieldStartX = txX + txW + 20;
+    var fieldW = w - fieldStartX - 20;
+    var rowH = 100;
+    var rowGap = 16;
+    var fieldY = 40;
+
+    // Draw transcript panel
+    drawRR(txX, txY, txW, txH, 8, inset, 'rgba(255,255,255,0.03)', 1);
+    ctx.font = '500 9px '+mono;
+    ctx.fillStyle = t3;
+    ctx.textAlign = 'left';
+    ctx.fillText('TRANSCRIPT', txX + 12, txY + 20);
+
+    // Show transcript lines based on phase
+    var visibleLines = 0;
+    if(phase === 0) visibleLines = 0;
+    else if(phase === 1) visibleLines = Math.floor(prog * lines.length) + 1;
+    else visibleLines = lines.length;
+    if(visibleLines > lines.length) visibleLines = lines.length;
+
+    var lineY = txY + 38;
+    var lineH = 22;
+    for(var li=0; li<visibleLines; li++){
+      var ln = lines[li];
+      var isAgent = ln.speaker === 'AGENT';
+      ctx.font = '600 8px '+mono;
+      ctx.fillStyle = isAgent ? blue : accent;
+      ctx.textAlign = 'left';
+      ctx.fillText(ln.speaker, txX + 12, lineY + li * (lineH * 2));
+
+      // Wrap text
+      ctx.font = '400 8px '+mono;
+      ctx.fillStyle = t2;
+      var maxW = txW - 24;
+      var words = ln.text.split(' ');
+      var currentLine = '';
+      var subLine = 0;
+      for(var wi=0; wi<words.length; wi++){
+        var test = currentLine + (currentLine ? ' ' : '') + words[wi];
+        if(ctx.measureText(test).width > maxW && currentLine){
+          ctx.fillText(currentLine, txX + 12, lineY + li * (lineH * 2) + 12 + subLine * 11);
+          currentLine = words[wi];
+          subLine++;
+        } else {
+          currentLine = test;
+        }
+      }
+      if(currentLine){
+        ctx.fillText(currentLine, txX + 12, lineY + li * (lineH * 2) + 12 + subLine * 11);
+      }
+    }
+
+    // Draw field rows
+    for(var fi=0; fi<3; fi++){
+      var fy = fieldY + fi * (rowH + rowGap);
+      var fd = fields[fi];
+
+      // Field label
+      ctx.font = '600 10px '+mono;
+      ctx.fillStyle = t1;
+      ctx.textAlign = 'left';
+      ctx.fillText(fd.name, fieldStartX, fy + 12);
+
+      // Gate box
+      var gateX = fieldStartX;
+      var gateY = fy + 22;
+      var gateW = fieldW * 0.25;
+      var gateH = 50;
+
+      // Arrow from gate to extract
+      var arrowX1 = gateX + gateW + 6;
+      var arrowX2 = gateX + gateW + fieldW * 0.08;
+      var extractX = arrowX2 + 6;
+      var extractW = fieldW * 0.25;
+
+      // Result box
+      var resultX = extractX + extractW + fieldW * 0.08 + 12;
+      var resultW = fieldW - (resultX - fieldStartX);
+
+      // Determine which phase this field activates
+      var gatePhase, extractPhase;
+      if(fi === 0){ gatePhase = 2; extractPhase = 3; }
+      else if(fi === 1){ gatePhase = 4; extractPhase = 5; }
+      else { gatePhase = 6; extractPhase = -1; }
+
+      // Gate box rendering
+      var gateActive = phase >= gatePhase;
+      var gateProcessing = phase === gatePhase;
+      var gateBorder = 'rgba(255,255,255,0.04)';
+      if(gateProcessing) gateBorder = accent;
+      else if(gateActive && fd.gateResult === 'YES') gateBorder = green;
+      else if(gateActive && fd.gateResult === 'NO') gateBorder = red;
+
+      drawRR(gateX, gateY, gateW, gateH, 6, inset, gateBorder, gateProcessing ? 2 : 1);
+      ctx.font = '500 9px '+mono;
+      ctx.fillStyle = t3;
+      ctx.textAlign = 'center';
+      ctx.fillText('GATE', gateX + gateW/2, gateY + 18);
+
+      if(gateActive && !gateProcessing){
+        ctx.font = '600 12px '+mono;
+        ctx.fillStyle = fd.gateResult === 'YES' ? green : red;
+        ctx.fillText(fd.gateResult, gateX + gateW/2, gateY + 38);
+      } else if(gateProcessing){
+        // Pulsing dots
+        var dotCount = Math.floor(prog * 3) + 1;
+        ctx.font = '600 12px '+mono;
+        ctx.fillStyle = accent;
+        ctx.fillText('.'.repeat(Math.min(dotCount,3)), gateX + gateW/2, gateY + 38);
+      }
+
+      // Arrow between gate and extract
+      if(gateActive){
+        var arrowMidY = gateY + gateH/2;
+        ctx.beginPath();
+        ctx.moveTo(arrowX1, arrowMidY);
+        ctx.lineTo(arrowX2, arrowMidY);
+        ctx.strokeStyle = fd.gateResult === 'YES' ? green : 'rgba(255,255,255,0.06)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        if(fd.gateResult === 'YES'){
+          ctx.beginPath();
+          ctx.moveTo(arrowX2 - 4, arrowMidY - 3);
+          ctx.lineTo(arrowX2, arrowMidY);
+          ctx.lineTo(arrowX2 - 4, arrowMidY + 3);
+          ctx.strokeStyle = green;
+          ctx.stroke();
+        } else {
+          // X mark on arrow
+          var mx = (arrowX1 + arrowX2)/2;
+          ctx.beginPath();
+          ctx.moveTo(mx - 4, arrowMidY - 4);
+          ctx.lineTo(mx + 4, arrowMidY + 4);
+          ctx.moveTo(mx + 4, arrowMidY - 4);
+          ctx.lineTo(mx - 4, arrowMidY + 4);
+          ctx.strokeStyle = red;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      }
+
+      // Extract box
+      var extractActive = extractPhase > 0 && phase >= extractPhase;
+      var extractProcessing = extractPhase > 0 && phase === extractPhase;
+      var skipExtract = fd.gateResult === 'NO';
+      var extractBorder = 'rgba(255,255,255,0.04)';
+      if(skipExtract && gateActive) extractBorder = 'rgba(255,255,255,0.02)';
+      else if(extractProcessing) extractBorder = accent;
+      else if(extractActive) extractBorder = green;
+
+      var extractAlpha = (skipExtract && gateActive) ? 0.3 : 1;
+      ctx.globalAlpha = globalAlpha * extractAlpha;
+      drawRR(extractX, gateY, extractW, gateH, 6, inset, extractBorder, extractProcessing ? 2 : 1);
+      ctx.font = '500 9px '+mono;
+      ctx.fillStyle = t3;
+      ctx.textAlign = 'center';
+      ctx.fillText('EXTRACT', extractX + extractW/2, gateY + 18);
+
+      if(extractActive && !extractProcessing){
+        ctx.font = '400 8px '+mono;
+        ctx.fillStyle = t2;
+        ctx.fillText(fd.method, extractX + extractW/2, gateY + 36);
+      } else if(extractProcessing){
+        ctx.font = '600 12px '+mono;
+        ctx.fillStyle = accent;
+        var edots = Math.floor(prog * 3) + 1;
+        ctx.fillText('.'.repeat(Math.min(edots,3)), extractX + extractW/2, gateY + 38);
+      } else if(skipExtract && gateActive){
+        ctx.font = '400 9px '+mono;
+        ctx.fillStyle = t3;
+        ctx.fillText('SKIPPED', extractX + extractW/2, gateY + 38);
+      }
+      ctx.globalAlpha = globalAlpha;
+
+      // Result box
+      var showResult = extractActive || (skipExtract && gateActive);
+      if(showResult){
+        var resultBorder = skipExtract ? 'rgba(255,255,255,0.03)' : 'rgba(90,154,90,0.3)';
+        drawRR(resultX, gateY, Math.max(resultW, 80), gateH, 6, inset, resultBorder, 1);
+
+        ctx.font = '500 9px '+mono;
+        ctx.fillStyle = t3;
+        ctx.textAlign = 'center';
+        var rcx = resultX + Math.max(resultW, 80)/2;
+        ctx.fillText('RESULT', rcx, gateY + 18);
+
+        ctx.font = '600 10px '+mono;
+        ctx.fillStyle = skipExtract ? t3 : green;
+        ctx.fillText(fd.extractResult, rcx, gateY + 38);
+
+        if(skipExtract && gateActive){
+          ctx.font = '400 8px '+mono;
+          ctx.fillStyle = accent;
+          ctx.globalAlpha = globalAlpha * 0.7;
+          ctx.fillText('LLM call saved', rcx, gateY + gateH + 14);
+          ctx.globalAlpha = globalAlpha;
+        }
+      }
+
+      // Arrow from extract to result
+      if(showResult && !skipExtract){
+        var a2x1 = extractX + extractW + 6;
+        var a2x2 = resultX - 6;
+        var a2y = gateY + gateH/2;
+        ctx.beginPath();
+        ctx.moveTo(a2x1, a2y);
+        ctx.lineTo(a2x2, a2y);
+        ctx.strokeStyle = green;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(a2x2 - 4, a2y - 3);
+        ctx.lineTo(a2x2, a2y);
+        ctx.lineTo(a2x2 - 4, a2y + 3);
+        ctx.strokeStyle = green;
+        ctx.stroke();
+      }
+    }
+
+    // Summary label
+    if(phase >= 7){
+      var sumAlpha = phase === 7 ? easeOut(prog) : 1;
+      ctx.globalAlpha = globalAlpha * sumAlpha;
+      ctx.font = '500 10px '+mono;
+      ctx.fillStyle = t1;
+      ctx.textAlign = 'center';
+      ctx.fillText('3 gates fired, 2 extractions ran, 1 skipped. Saves ~33% LLM calls on this field.', w/2, h - 30);
+      ctx.globalAlpha = globalAlpha;
+    }
+
+    ctx.globalAlpha = 1;
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  var cObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting && !running){
+        running=true; initCanvas(); draw();
+      } else if(!entry.isIntersecting && running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+  window.addEventListener('resize',function(){ if(running) initCanvas(); });
+})();
+</script>
+
+</body>
+</html>
