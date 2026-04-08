@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Every Tool is a Failure Mode — Sai Siddharth Yalamanchili</title>
+<title>Who Owns the Explanation — Sai Siddharth Yalamanchili</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
@@ -25,183 +25,61 @@
     --sans: 'DM Sans', sans-serif;
   }
 
-  body {
-    background: var(--bg);
-    color: var(--t1);
-    font-family: var(--sans);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 2.5rem 3rem 1.5rem;
-  }
-
-  nav .logo {
-    font-family: var(--mono);
-    font-weight: 600;
-    font-size: 1.02rem;
-    color: var(--t1);
-    text-decoration: none;
-  }
-
-  nav .back {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    color: var(--t3);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  nav .back:hover {
-    color: var(--accent);
-  }
-
-  main {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 2rem 3rem 4rem;
-    flex: 1;
-  }
-
-  .article-number {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    font-weight: 500;
-    color: var(--accent);
-    margin-bottom: 1rem;
-  }
-
-  .article-title {
-    font-family: var(--mono);
-    font-size: 1.4rem;
-    font-weight: 500;
-    color: var(--t1);
-    line-height: 1.4;
-    margin-bottom: 0.5rem;
-  }
-
-  .article-subtitle {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    font-weight: 400;
-    color: var(--t3);
-    margin-bottom: 2rem;
-  }
-
-  .divider {
-    width: 40px;
-    height: 1px;
-    background: var(--accent);
-    margin-bottom: 2.5rem;
-  }
-
-  .article-body p {
-    font-family: var(--sans);
-    font-size: 1.05rem;
-    color: var(--t1);
-    line-height: 1.9;
-    margin-bottom: 1.5rem;
-  }
-
-  .article-body strong {
-    color: var(--accent);
-    font-weight: 500;
-  }
-
-  .article-body .closing {
-    font-family: var(--mono);
-    font-size: 0.98rem;
-    color: var(--accent);
-    font-style: italic;
-    line-height: 1.7;
-    margin-top: 2rem;
-  }
-
-  .article-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0 1.5rem 3rem;
-    gap: 2rem;
-  }
-
-  .article-nav a {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    color: var(--t3);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .article-nav a:hover {
-    color: var(--accent);
-  }
-
-  .article-nav .next {
-    margin-left: auto;
-  }
-
-  .article-nav .prev {
-    margin-right: auto;
-  }
-
-  footer {
-    text-align: center;
-    padding: 2rem 1.5rem;
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    color: var(--t3);
-    border-top: 1px solid var(--shl);
-  }
+  body { background: var(--bg); color: var(--t1); font-family: var(--sans); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+  nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 2.5rem 3rem 1.5rem; }
+  nav .logo { font-family: var(--mono); font-weight: 600; font-size: 1.02rem; color: var(--t1); text-decoration: none; }
+  nav .back { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  nav .back:hover { color: var(--accent); }
+  main { max-width: 1200px; width: 100%; margin: 0 auto; padding: 2rem 3rem 4rem; flex: 1; }
+  .article-number { font-family: var(--mono); font-size: 0.86rem; font-weight: 500; color: var(--accent); margin-bottom: 1rem; }
+  .article-title { font-family: var(--mono); font-size: 1.4rem; font-weight: 500; color: var(--t1); line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-subtitle { font-family: var(--mono); font-size: 0.86rem; font-weight: 400; color: var(--t3); margin-bottom: 2rem; }
+  .divider { width: 40px; height: 1px; background: var(--accent); margin-bottom: 2.5rem; }
+  .article-body p { font-family: var(--sans); font-size: 1.05rem; color: var(--t1); line-height: 1.9; margin-bottom: 1.5rem; }
+  .article-body strong { color: var(--accent); font-weight: 500; }
+  .article-body .closing { font-family: var(--mono); font-size: 0.98rem; color: var(--accent); font-style: italic; line-height: 1.7; margin-top: 2rem; }
+  .article-nav { display: flex; justify-content: flex-end; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 1.5rem 3rem; gap: 2rem; }
+  .article-nav a { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  .article-nav a:hover { color: var(--accent); }
+  .article-nav .next { margin-left: auto; }
+  .article-nav .prev { margin-right: auto; }
+  footer { text-align: center; padding: 2rem 1.5rem; font-family: var(--mono); font-size: 0.78rem; color: var(--t3); border-top: 1px solid var(--shl); }
 </style>
 </head>
 <body>
 
 <nav>
   <a href="../" class="logo">sai.</a>
-  <a href="../" class="back">← Back</a>
+  <a href="../" class="back">&larr; Back</a>
 </nav>
 
 <main>
   <div class="article-number">03</div>
-  <h1 class="article-title">Every Tool is a Failure Mode</h1>
-  <div class="article-subtitle">Action-Surface Theory</div>
+  <h1 class="article-title">Who Owns the Explanation</h1>
+  <div class="article-subtitle">The model predicts. But who generates the reason &mdash; the model or the system?</div>
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>An agent with thirty tools is not more capable. <strong>It is more confused.</strong> Overlapping functions lead to wrong tool calls, malformed arguments, and failures that look like model problems but are actually tool selection problems.</p>
+    <p>There is a difference between a model making a decision and a model explaining a decision. <strong>These should almost never be the same system.</strong> The moment you let a model generate its own justification, you get plausible-sounding rationales that may have nothing to do with what actually drove the prediction.</p>
 
-    <p>The fix is not better prompting. It is <strong>showing the agent fewer tools.</strong> A routing step classifies the problem type first, then exposes only the tools relevant to that class. Retrieval queries never see write tools. Code queries never see email tools.</p>
+    <p>The credit risk engine made this unavoidable. When a loan application is declined, federal law under ECOA requires you to provide specific reason codes &mdash; not "the model thinks you are risky" but <strong>"insufficient credit history" or "high debt-to-income ratio."</strong> I generate those 20 adverse action codes through SHAP feature attributions, not by asking the model to explain itself. The model predicts default probability. SHAP decomposes which features pushed that probability. The explanation is mechanistic, not generative.</p>
 
-    <p>Tools are not capabilities. They are <strong>constraints.</strong> A well-designed tool interface is a contract: this is the only way the agent can touch the world. Precise I/O, typed parameters, schema validation. A mis-formatted query causes the tool to fail fast instead of the agent hallucinating a response.</p>
+    <p>The OSCE grader enforces this from the opposite direction. The model is not allowed to generate assessments from its own medical knowledge. Every score must <strong>cite the exact transcript line</strong> that justifies it. The model is the language parser, not the medical authority. The explanation is the citation, and without it, the score does not exist.</p>
 
-    <p>MCP (Model Context Protocol) makes those contracts explicit and enforceable across agents. It turns informal tool descriptions into real interfaces with real boundaries.</p>
+    <p>In the enterprise RAG system, the model synthesizes an answer from retrieved documents. But the attribution &mdash; which chunk said what &mdash; is tracked by the retrieval pipeline, not generated by the model. If the model claims something, the system can verify whether <strong>any retrieved chunk actually contains that claim.</strong> The model writes the paragraph; the system owns the evidence trail.</p>
 
-    <p>The pattern: <strong>route first, expose second.</strong> Detect the problem class, then provide only the relevant tools. The narrowing step is often more important than the tools themselves.</p>
+    <p>The causal inference agent has a subtler version. The model selects an estimation method and produces a notebook. But the critique loop does not ask the model "why did you pick this method?" It re-examines the dataset independently and checks whether the <strong>method's assumptions hold against the data.</strong> The justification comes from the verification, not from the model's post-hoc reasoning.</p>
 
-    <p class="closing"><em>Simpler action sets mean more predictable behavior. Every time.</em></p>
+    <p class="closing"><em>If you let the model explain itself, you get a story. If you force the system to explain the model, you get evidence.</em></p>
   </div>
 </main>
 
 <div class="article-nav">
-  <a href="context-budget.html" class="prev">← Context is a Budget</a>
-  <a href="recoverability.html" class="next">Design for Recovery, Not Perfection →</a>
+  <a href="context-budget.html" class="prev">&larr; Confidence is Not Calibration</a>
+  <a href="recoverability.html" class="next">Compression Preserves What You Measure &rarr;</a>
 </div>
 
-<footer>© 2026 Sai Siddharth Yalamanchili</footer>
+<footer>&copy; 2026 Sai Siddharth Yalamanchili</footer>
 
 </body>
 </html>

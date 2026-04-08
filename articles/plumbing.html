@@ -3,79 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Plumbing Kills — Sai Siddharth</title>
+<title>Autonomy is a Spectrum — Sai Siddharth Yalamanchili</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
---bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
---shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);
---t1:#e0e0e0;--t2:#ababab;--t3:#787880;
---accent:#d88c3a;
---mono:'JetBrains Mono',monospace;
---serif:'Source Serif 4',serif;
---sans:'DM Sans',sans-serif;
-}
-body{background:var(--bg);color:var(--t2);font-family:var(--serif);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
-a{color:var(--t2);text-decoration:none;transition:color .2s}
-a:hover{color:var(--t1)}
-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;max-width:960px;width:100%;margin:0 auto}
-nav .logo{font-family:var(--mono);font-weight:600;font-size:.95rem;color:var(--t1);letter-spacing:-.02em}
-nav .back{font-family:var(--mono);font-size:.75rem;color:var(--t3);letter-spacing:.02em}
-nav .back:hover{color:var(--accent)}
-.article{max-width:680px;width:100%;margin:0 auto;padding:3rem 2rem 4rem}
-.article-number{font-family:var(--mono);font-size:.75rem;font-weight:500;color:var(--accent);letter-spacing:.06em;margin-bottom:1rem}
-.article-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.4;margin-bottom:.4rem}
-.article-subtitle{font-family:var(--mono);font-size:.75rem;color:var(--t3);letter-spacing:.04em;margin-bottom:1.5rem}
-.divider{width:40px;height:2px;background:var(--accent);margin-bottom:2.5rem}
-.article-body p{font-family:var(--serif);font-size:1rem;color:var(--t2);line-height:1.9;margin-bottom:1.4rem}
-.article-body strong{color:var(--t1);font-weight:400}
-.article-body em{color:var(--accent);font-family:var(--mono);font-style:normal;font-size:.9rem}
-.article-nav{display:flex;justify-content:space-between;align-items:flex-start;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--shl);gap:1rem}
-.article-nav a{font-family:var(--mono);font-size:.75rem;color:var(--t3);line-height:1.6;transition:color .2s}
-.article-nav a:hover{color:var(--accent)}
-.article-nav .next{text-align:right;margin-left:auto}
-footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--t3);letter-spacing:.04em}
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; } html { font-size: 18px; }
+
+  :root {
+    --bg: #101012;
+    --raised: #1a1a1d;
+    --inset: #0a0a0c;
+    --shd: rgba(2,2,4,0.75);
+    --shl: rgba(42,42,46,0.16);
+    --t1: #e0e0e0;
+    --t2: #ababab;
+    --t3: #787880;
+    --accent: #d88c3a;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Source Serif 4', serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  body { background: var(--bg); color: var(--t1); font-family: var(--sans); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+  nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 2.5rem 3rem 1.5rem; }
+  nav .logo { font-family: var(--mono); font-weight: 600; font-size: 1.02rem; color: var(--t1); text-decoration: none; }
+  nav .back { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  nav .back:hover { color: var(--accent); }
+  main { max-width: 1200px; width: 100%; margin: 0 auto; padding: 2rem 3rem 4rem; flex: 1; }
+  .article-number { font-family: var(--mono); font-size: 0.86rem; font-weight: 500; color: var(--accent); margin-bottom: 1rem; }
+  .article-title { font-family: var(--mono); font-size: 1.4rem; font-weight: 500; color: var(--t1); line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-subtitle { font-family: var(--mono); font-size: 0.86rem; font-weight: 400; color: var(--t3); margin-bottom: 2rem; }
+  .divider { width: 40px; height: 1px; background: var(--accent); margin-bottom: 2.5rem; }
+  .article-body p { font-family: var(--sans); font-size: 1.05rem; color: var(--t1); line-height: 1.9; margin-bottom: 1.5rem; }
+  .article-body strong { color: var(--accent); font-weight: 500; }
+  .article-body .closing { font-family: var(--mono); font-size: 0.98rem; color: var(--accent); font-style: italic; line-height: 1.7; margin-top: 2rem; }
+  .article-nav { display: flex; justify-content: flex-end; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 1.5rem 3rem; gap: 2rem; }
+  .article-nav a { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  .article-nav a:hover { color: var(--accent); }
+  .article-nav .next { margin-left: auto; }
+  .article-nav .prev { margin-right: auto; }
+  footer { text-align: center; padding: 2rem 1.5rem; font-family: var(--mono); font-size: 0.78rem; color: var(--t3); border-top: 1px solid var(--shl); }
 </style>
 </head>
 <body>
 
 <nav>
   <a href="../" class="logo">sai.</a>
-  <a href="../" class="back">← Back</a>
+  <a href="../" class="back">&larr; Back</a>
 </nav>
 
-<article class="article">
+<main>
   <div class="article-number">07</div>
-  <h1 class="article-title">Plumbing Kills</h1>
-  <p class="article-subtitle">Runtime Resilience</p>
+  <h1 class="article-title">Autonomy is a Spectrum, Not a Switch</h1>
+  <div class="article-subtitle">Each project sits at a different point. The skill is picking the right level.</div>
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>Most debugging time is never about the model. It is about what happens when <strong>a tool call returns a 500 mid-pipeline,</strong> or an external API sends back malformed JSON, or the model times out at step 3 of 7. The unglamorous infrastructure stuff that nobody writes blog posts about.</p>
+    <p>People talk about AI systems as either "autonomous" or "not autonomous." That framing is useless. <strong>Every system I have built sits at a different point on the autonomy spectrum</strong>, and the engineering decision is choosing the minimum level of autonomy that solves the problem &mdash; then not going one step further.</p>
 
-    <p><strong>Schema validation at every tool boundary.</strong> Retry logic with modified arguments. Checkpointing to resume from the last known good state instead of restarting from scratch. These are not planned features. They are the things that get added after watching a system crash in the same way for the third time.</p>
+    <p>At the bottom of the spectrum: <strong>the GNN recommendation system and the knowledge distillation pipeline.</strong> These are pure learned representations. No runtime decisions. No tool calls. No reasoning. The model takes an input, produces a score, and the system ranks by that score. All the intelligence is in the training loss and the architecture. Autonomy: zero. Verification: straightforward.</p>
 
-    <p>The economics matter more than expected. When to cascade from a large model to a small one. What to cache. How to keep latency honest. These look like optimization problems to solve later, but they are actually <strong>architecture decisions that determine which designs are even viable.</strong></p>
+    <p>One level up: <strong>LaneGuard and the credit risk engine.</strong> The model makes a prediction &mdash; segment these pixels, estimate this default probability &mdash; but the system wraps it in constraints. Conformal prediction sets bound what LaneGuard is allowed to claim. SHAP decomposition and fairness monitoring bound what the credit model's outputs mean. The model has learned judgment. The system has hard limits on how that judgment is used.</p>
 
-    <p>Loop budgets ("max 5 retrieval attempts, then abort") prevent runaway cost and infinite loops. Without them, a confused agent burns tokens in circles. <strong>Context compaction,</strong> periodically summarizing and resetting the window, prevents context pollution in longer-running processes.</p>
+    <p>Higher still: <strong>the enterprise RAG system and the OSCE grader.</strong> The model synthesizes, summarizes, and evaluates. These are generative tasks with real degrees of freedom. But the RAG system locks out access control decisions entirely. The OSCE grader locks out unsupported assertions through citation-gating. The model is free within a cage.</p>
 
-    <p>Graceful degradation matters. If the primary model times out, fall back to a smaller one. If a tool is unavailable, skip it and note the gap rather than failing the entire pipeline. If results come back partial, work with what is available rather than blocking.</p>
+    <p>Near the top: <strong>the causal inference agent.</strong> Thirteen specialist agents that select methods, critique each other, and produce executable notebooks. The model makes genuine analytical decisions &mdash; which DAG algorithm, which estimator, whether the assumptions hold. But the critique loop adds a verification layer. Autonomy is high; it is checked, not unchecked.</p>
 
-    <p>Tracking tool call stats, error rates, retry counts, and iteration counts per session helps. An unusual spike in retries or a climbing iteration count are reliable early signals that something has changed.</p>
+    <p>At the top: <strong>the AI transformation agent.</strong> The model hypothesizes freely about where AI can create value across industries. It forms theories, searches for evidence, synthesizes reports. The autonomy is the highest of any system I have built. But every hypothesis is evidence-traced, and the query budget is capped at 25 to prevent runaway exploration. <strong>Even maximum autonomy has an engineering leash.</strong></p>
 
-    <p class="closing"><em>The unglamorous layer is the load-bearing layer.</em></p>
+    <p class="closing"><em>The right question is never "should the model decide?" It is "how much should the model decide, and what catches it when it is wrong?"</em></p>
   </div>
+</main>
 
-  <div class="article-nav">
-    <a href="memory.html" class="prev">← Memory is a Policy Layer</a>
-    <a href="eval.html" class="next">If You Can't Eval It, You Don't Understand It →</a>
-  </div>
-</article>
+<div class="article-nav">
+  <a href="memory.html" class="prev">&larr; The Verification Surface</a>
+  <a href="eval.html" class="next">Eval Defines the Trust Contract &rarr;</a>
+</div>
 
-<footer>© 2026 Sai Siddharth Yalamanchili</footer>
+<footer>&copy; 2026 Sai Siddharth Yalamanchili</footer>
 
 </body>
 </html>

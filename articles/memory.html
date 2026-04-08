@@ -3,77 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Memory is a Policy Layer — Sai Siddharth</title>
+<title>The Verification Surface — Sai Siddharth Yalamanchili</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
---bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
---shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);
---t1:#e0e0e0;--t2:#ababab;--t3:#787880;
---accent:#d88c3a;
---mono:'JetBrains Mono',monospace;
---serif:'Source Serif 4',serif;
---sans:'DM Sans',sans-serif;
-}
-body{background:var(--bg);color:var(--t2);font-family:var(--serif);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
-a{color:var(--t2);text-decoration:none;transition:color .2s}
-a:hover{color:var(--t1)}
-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;max-width:960px;width:100%;margin:0 auto}
-nav .logo{font-family:var(--mono);font-weight:600;font-size:.95rem;color:var(--t1);letter-spacing:-.02em}
-nav .back{font-family:var(--mono);font-size:.75rem;color:var(--t3);letter-spacing:.02em}
-nav .back:hover{color:var(--accent)}
-.article{max-width:680px;width:100%;margin:0 auto;padding:3rem 2rem 4rem}
-.article-number{font-family:var(--mono);font-size:.75rem;font-weight:500;color:var(--accent);letter-spacing:.06em;margin-bottom:1rem}
-.article-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.4;margin-bottom:.4rem}
-.article-subtitle{font-family:var(--mono);font-size:.75rem;color:var(--t3);letter-spacing:.04em;margin-bottom:1.5rem}
-.divider{width:40px;height:2px;background:var(--accent);margin-bottom:2.5rem}
-.article-body p{font-family:var(--serif);font-size:1rem;color:var(--t2);line-height:1.9;margin-bottom:1.4rem}
-.article-body strong{color:var(--t1);font-weight:400}
-.article-body em{color:var(--accent);font-family:var(--mono);font-style:normal;font-size:.9rem}
-.article-nav{display:flex;justify-content:space-between;align-items:flex-start;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--shl);gap:1rem}
-.article-nav a{font-family:var(--mono);font-size:.75rem;color:var(--t3);line-height:1.6;transition:color .2s}
-.article-nav a:hover{color:var(--accent)}
-.article-nav .next{text-align:right;margin-left:auto}
-footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--t3);letter-spacing:.04em}
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; } html { font-size: 18px; }
+
+  :root {
+    --bg: #101012;
+    --raised: #1a1a1d;
+    --inset: #0a0a0c;
+    --shd: rgba(2,2,4,0.75);
+    --shl: rgba(42,42,46,0.16);
+    --t1: #e0e0e0;
+    --t2: #ababab;
+    --t3: #787880;
+    --accent: #d88c3a;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Source Serif 4', serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  body { background: var(--bg); color: var(--t1); font-family: var(--sans); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+  nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 2.5rem 3rem 1.5rem; }
+  nav .logo { font-family: var(--mono); font-weight: 600; font-size: 1.02rem; color: var(--t1); text-decoration: none; }
+  nav .back { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  nav .back:hover { color: var(--accent); }
+  main { max-width: 1200px; width: 100%; margin: 0 auto; padding: 2rem 3rem 4rem; flex: 1; }
+  .article-number { font-family: var(--mono); font-size: 0.86rem; font-weight: 500; color: var(--accent); margin-bottom: 1rem; }
+  .article-title { font-family: var(--mono); font-size: 1.4rem; font-weight: 500; color: var(--t1); line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-subtitle { font-family: var(--mono); font-size: 0.86rem; font-weight: 400; color: var(--t3); margin-bottom: 2rem; }
+  .divider { width: 40px; height: 1px; background: var(--accent); margin-bottom: 2.5rem; }
+  .article-body p { font-family: var(--sans); font-size: 1.05rem; color: var(--t1); line-height: 1.9; margin-bottom: 1.5rem; }
+  .article-body strong { color: var(--accent); font-weight: 500; }
+  .article-body .closing { font-family: var(--mono); font-size: 0.98rem; color: var(--accent); font-style: italic; line-height: 1.7; margin-top: 2rem; }
+  .article-nav { display: flex; justify-content: flex-end; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 1.5rem 3rem; gap: 2rem; }
+  .article-nav a { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  .article-nav a:hover { color: var(--accent); }
+  .article-nav .next { margin-left: auto; }
+  .article-nav .prev { margin-right: auto; }
+  footer { text-align: center; padding: 2rem 1.5rem; font-family: var(--mono); font-size: 0.78rem; color: var(--t3); border-top: 1px solid var(--shl); }
 </style>
 </head>
 <body>
 
 <nav>
   <a href="../" class="logo">sai.</a>
-  <a href="../" class="back">← Back</a>
+  <a href="../" class="back">&larr; Back</a>
 </nav>
 
-<article class="article">
+<main>
   <div class="article-number">06</div>
-  <h1 class="article-title">Memory is a Policy Layer</h1>
-  <p class="article-subtitle">Governance, Not Storage</p>
+  <h1 class="article-title">The Verification Surface</h1>
+  <div class="article-subtitle">For every decision, ask: how would I catch this if it is wrong?</div>
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>Agent memory looks like a retrieval problem. Embed, store, fetch. That is the easy part. <strong>The hard part is governance.</strong> What gets remembered, what gets expired, and what gets withheld.</p>
+    <p>Every system has decisions you can verify and decisions you have to trust. <strong>The engineering work is maximizing the first category and being honest about the second.</strong> If you cannot describe how you would catch a wrong output, you do not understand your system well enough to ship it.</p>
 
-    <p>When multiple agents share a retrieval layer, <strong>one agent's working memory can leak into another agent's context.</strong> A planner starts seeing raw data it was never designed for. The outputs get worse in ways that are hard to diagnose because the contamination is subtle.</p>
+    <p>The enterprise RAG system has the most complete verification surface I have built. Three layers of ABAC policy &mdash; index-time booleans, retrieval-time attribute checks, post-retrieval PDP filtering &mdash; each independently verifiable. <strong>The answer is either leaked or it is not.</strong> There is no gray area, no "mostly correct." The verification is binary: zero cross-role leakage across every combination of role, document, and query type.</p>
 
-    <p>Freshness is the one that gets ignored the longest. A fact retrieved from memory is a claim that something was true at write time. It may have been renamed, removed, or never merged. Treating stale memory the same as current observation <strong>is building a hallucination machine with extra steps.</strong></p>
+    <p>The causal inference agent's verification is model-against-model. The critique loop takes a method selected by one agent and has another agent <strong>check whether the statistical assumptions hold</strong> against the actual dataset. Up to 3 iterations. This is probabilistic verification, not exhaustive. But it is explicit about what it checks: assumptions, not vibes.</p>
 
-    <p>Memory should be treated the same way as access control in a traditional system. Expiry rules, staleness scoring, source-of-truth hierarchies. Who can read what, under what conditions, with what confidence level. These are <strong>policy decisions, not implementation details.</strong></p>
+    <p>The knowledge distillation pipeline verifies through metric fidelity. The student's nDCG@10 is measured against the teacher's on the same held-out queries. <strong>0.882 vs. 0.910.</strong> That gap is the verification surface &mdash; it tells me exactly how much ranking quality I lost in compression. If the gap were larger, I would know where to look: the loss components, the hard-negative mining stages, the temperature schedule.</p>
 
-    <p>The framework: treat every memory write as a claim with a timestamp and a trust level. Treat every memory read as a hypothesis that needs verification against current state. Before acting on remembered information, check that it still holds.</p>
+    <p>LaneGuard's conformal prediction sets are verification made visible. For each pixel prediction, <strong>the system outputs a set of possible classes with a statistical coverage guarantee.</strong> When the prediction set is large, the model is uncertain. When it contains only one class, the model is confident and calibrated. The size of the set is the verification signal.</p>
 
-    <p class="closing"><em>Bad memory is worse than no memory.</em></p>
+    <p>The GNN recommendation system's ablation studies are retrospective verification. I removed FFN layers and accuracy improved. I changed attention heads and measured the delta. Each ablation answers a specific question: <strong>is this component contributing or parasitic?</strong> Without ablations, I would be shipping architecture I do not understand.</p>
+
+    <p class="closing"><em>A system you cannot verify is a system you do not control.</em></p>
   </div>
+</main>
 
-  <div class="article-nav">
-    <a href="delegation.html" class="prev">← Delegation is a Cost Function</a>
-    <a href="plumbing.html" class="next">Plumbing Kills →</a>
-  </div>
-</article>
+<div class="article-nav">
+  <a href="delegation.html" class="prev">&larr; Deterministic Boundaries</a>
+  <a href="plumbing.html" class="next">Autonomy is a Spectrum &rarr;</a>
+</div>
 
-<footer>© 2026 Sai Siddharth Yalamanchili</footer>
+<footer>&copy; 2026 Sai Siddharth Yalamanchili</footer>
 
 </body>
 </html>

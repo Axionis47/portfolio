@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>One Component, One Decision — Sai Siddharth Yalamanchili</title>
+<title>Parametric vs. Grounded Knowledge — Sai Siddharth Yalamanchili</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
@@ -172,33 +172,35 @@
 
 <nav>
   <a href="../" class="logo">sai.</a>
-  <a href="../" class="back">← Back</a>
+  <a href="../" class="back">&larr; Back</a>
 </nav>
 
 <main>
   <div class="article-number">01</div>
-  <h1 class="article-title">One Component, One Decision</h1>
-  <div class="article-subtitle">Bounded Responsibility</div>
+  <h1 class="article-title">Parametric vs. Grounded Knowledge</h1>
+  <div class="article-subtitle">When to trust what the model knows vs. what you feed it</div>
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>Bugs that are hard to trace usually come from <strong>components doing more than one thing.</strong> A router that also reformats queries. An extractor that also decides what to extract. The diagnostic is simple: if you cannot describe what a component does in one sentence, it needs to be split.</p>
+    <p>Every model carries two kinds of knowledge. <strong>Parametric knowledge</strong> is baked into the weights during training. <strong>Grounded knowledge</strong> is what you feed at runtime through context, retrieval, or tool outputs. The engineering problem is deciding which one to trust for each specific decision.</p>
 
-    <p>This is bounded contexts from domain-driven design applied to agents. <strong>One task, one input contract, one output schema per component.</strong> Each piece can be tested in isolation. When something breaks, there is exactly one place to look.</p>
+    <p>When I built the OSCE grader, the model knew medicine. That was the problem. It could hallucinate plausible-sounding clinical assessments that never appeared in the student transcript. So I <strong>citation-gated every judgment</strong> &mdash; the model could only score what it could quote with a line number. Its parametric medical knowledge was architecturally locked out. That is what won us the hackathon.</p>
 
-    <p>The practical test: can you write a unit test for this component with a handful of examples? If "correct" cannot be defined for a given input, the scope is too wide. It probably needs to be two things, not one.</p>
+    <p>The causal inference agent is the opposite case. I actually <strong>wanted</strong> the model's parametric knowledge &mdash; it genuinely understands when NOTEARS is appropriate vs. PC vs. FCI, and which estimator fits which data shape. But I did not trust it blindly. Every method selection passes through a critique loop that checks assumptions against the actual dataset. Parametric knowledge proposes, grounded verification disposes.</p>
 
-    <p>Clear interfaces matter too. Each component has a defined schema for what comes in and what goes out. No side channels, no implicit dependencies. Most reliability gains come not from better models but from <strong>tighter boundaries around what each piece is allowed to do.</strong></p>
+    <p>The AI transformation agent sits somewhere in between. The model's broad industry knowledge is useful for forming hypotheses about where AI creates value. But every hypothesis must be <strong>evidence-traced</strong> back to retrieved sources. The model is allowed to think freely, but not to assert freely.</p>
 
-    <p class="closing"><em>The unit of reliability is the decision boundary, not the model.</em></p>
+    <p>This is not a binary switch. It is a dial that you set differently for every decision in every system. The skill is knowing where the model's knowledge is an asset and where it is a liability &mdash; then enforcing that boundary in architecture, not in prompts.</p>
+
+    <p class="closing"><em>A model that knows too much for the task at hand is more dangerous than one that knows too little.</em></p>
   </div>
 </main>
 
 <div class="article-nav">
-  <a href="context-budget.html" class="next">Context is a Budget →</a>
+  <a href="context-budget.html" class="next">Confidence is Not Calibration &rarr;</a>
 </div>
 
-<footer>© 2026 Sai Siddharth Yalamanchili</footer>
+<footer>&copy; 2026 Sai Siddharth Yalamanchili</footer>
 
 </body>
 </html>

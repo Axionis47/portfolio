@@ -3,85 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Delegation is a Cost Function — Sai Siddharth</title>
+<title>Deterministic Boundaries Don't Negotiate — Sai Siddharth Yalamanchili</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
---bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
---shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);
---t1:#e0e0e0;--t2:#ababab;--t3:#787880;
---accent:#d88c3a;
---mono:'JetBrains Mono',monospace;
---serif:'Source Serif 4',serif;
---sans:'DM Sans',sans-serif;
-}
-body{background:var(--bg);color:var(--t2);font-family:var(--serif);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
-a{color:var(--t2);text-decoration:none;transition:color .2s}
-a:hover{color:var(--t1)}
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; } html { font-size: 18px; }
 
-/* Nav */
-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;max-width:960px;width:100%;margin:0 auto}
-nav .logo{font-family:var(--mono);font-weight:600;font-size:.95rem;color:var(--t1);letter-spacing:-.02em}
-nav .back{font-family:var(--mono);font-size:.75rem;color:var(--t3);letter-spacing:.02em}
-nav .back:hover{color:var(--accent)}
+  :root {
+    --bg: #101012;
+    --raised: #1a1a1d;
+    --inset: #0a0a0c;
+    --shd: rgba(2,2,4,0.75);
+    --shl: rgba(42,42,46,0.16);
+    --t1: #e0e0e0;
+    --t2: #ababab;
+    --t3: #787880;
+    --accent: #d88c3a;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Source Serif 4', serif;
+    --sans: 'DM Sans', sans-serif;
+  }
 
-/* Article */
-.article{max-width:680px;width:100%;margin:0 auto;padding:3rem 2rem 4rem}
-.article-number{font-family:var(--mono);font-size:.75rem;font-weight:500;color:var(--accent);letter-spacing:.06em;margin-bottom:1rem}
-.article-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.4;margin-bottom:.4rem}
-.article-subtitle{font-family:var(--mono);font-size:.75rem;color:var(--t3);letter-spacing:.04em;margin-bottom:1.5rem}
-.divider{width:40px;height:2px;background:var(--accent);margin-bottom:2.5rem}
-.article-body p{font-family:var(--serif);font-size:1rem;color:var(--t2);line-height:1.9;margin-bottom:1.4rem}
-.article-body strong{color:var(--t1);font-weight:400}
-.article-body em{color:var(--accent);font-family:var(--mono);font-style:normal;font-size:.9rem}
-
-/* Prev/Next */
-.article-nav{display:flex;justify-content:space-between;align-items:flex-start;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--shl);gap:1rem}
-.article-nav a{font-family:var(--mono);font-size:.75rem;color:var(--t3);line-height:1.6;transition:color .2s}
-.article-nav a:hover{color:var(--accent)}
-.article-nav .next{text-align:right;margin-left:auto}
-
-/* Footer */
-footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--t3);letter-spacing:.04em}
+  body { background: var(--bg); color: var(--t1); font-family: var(--sans); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+  nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 2.5rem 3rem 1.5rem; }
+  nav .logo { font-family: var(--mono); font-weight: 600; font-size: 1.02rem; color: var(--t1); text-decoration: none; }
+  nav .back { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  nav .back:hover { color: var(--accent); }
+  main { max-width: 1200px; width: 100%; margin: 0 auto; padding: 2rem 3rem 4rem; flex: 1; }
+  .article-number { font-family: var(--mono); font-size: 0.86rem; font-weight: 500; color: var(--accent); margin-bottom: 1rem; }
+  .article-title { font-family: var(--mono); font-size: 1.4rem; font-weight: 500; color: var(--t1); line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-subtitle { font-family: var(--mono); font-size: 0.86rem; font-weight: 400; color: var(--t3); margin-bottom: 2rem; }
+  .divider { width: 40px; height: 1px; background: var(--accent); margin-bottom: 2.5rem; }
+  .article-body p { font-family: var(--sans); font-size: 1.05rem; color: var(--t1); line-height: 1.9; margin-bottom: 1.5rem; }
+  .article-body strong { color: var(--accent); font-weight: 500; }
+  .article-body .closing { font-family: var(--mono); font-size: 0.98rem; color: var(--accent); font-style: italic; line-height: 1.7; margin-top: 2rem; }
+  .article-nav { display: flex; justify-content: flex-end; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 1.5rem 3rem; gap: 2rem; }
+  .article-nav a { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  .article-nav a:hover { color: var(--accent); }
+  .article-nav .next { margin-left: auto; }
+  .article-nav .prev { margin-right: auto; }
+  footer { text-align: center; padding: 2rem 1.5rem; font-family: var(--mono); font-size: 0.78rem; color: var(--t3); border-top: 1px solid var(--shl); }
 </style>
 </head>
 <body>
 
 <nav>
   <a href="../" class="logo">sai.</a>
-  <a href="../" class="back">← Back</a>
+  <a href="../" class="back">&larr; Back</a>
 </nav>
 
-<article class="article">
+<main>
   <div class="article-number">05</div>
-  <h1 class="article-title">Delegation is a Cost Function</h1>
-  <p class="article-subtitle">Autonomy Calibration</p>
+  <h1 class="article-title">Deterministic Boundaries Don't Negotiate</h1>
+  <div class="article-subtitle">Some decisions should never touch a model. Period.</div>
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>Agent autonomy has four layers. <strong>Tools</strong> are pure functions with zero discretion. <strong>Operators</strong> make one narrow LLM judgment, like a classification or extraction. <strong>Planners</strong> chain multiple steps with bounded loops. <strong>Full agents</strong> run open-ended until a goal is met.</p>
+    <p>There is a category of decisions where the correct answer is not probabilistic, not context-dependent, and not open to interpretation. <strong>Access control. Regulatory compliance. Structural constraints.</strong> These are deterministic. They do not belong anywhere near a model's judgment.</p>
 
-    <p>The instinct is to reach for the highest layer. Let the agent figure it out. But <strong>every degree of freedom given to the model is a degree of unpredictability</strong> that must be monitored, evaluated, and recovered from.</p>
+    <p>The enterprise RAG system has three layers of access control: index-time boolean flags, retrieval-time ABAC policy evaluation, and post-retrieval PDP filtering. <strong>None of these layers involve a model.</strong> The model synthesizes text from whatever chunks survive the filter. But the decision of which chunks it sees is made by YAML policy rules evaluated in 0.004ms. I tested 36 files across 12 ABAC rules and got zero cross-role leakage. If I had let the model decide who sees what &mdash; even with a system prompt saying "do not show HR data to engineers" &mdash; I would be one creative prompt away from a data breach.</p>
 
-    <p>A tool fails in one predictable way. A planner chains five decisions, each with its own failure mode, and the error surface multiplies. The right question: <strong>what is the minimum autonomy that solves this step?</strong> And underneath that: can the verification cost of that autonomy be afforded?</p>
+    <p>The credit risk engine is the same pattern applied to regulation. ECOA requires specific adverse action codes when you decline a loan. The 4/5 rule defines what constitutes disparate impact. These are <strong>not judgment calls.</strong> The model predicts probability of default. But the fairness monitoring &mdash; demographic parity, equalized odds, disparate impact ratios &mdash; is computed deterministically per batch. A model that "thinks" it is being fair is not compliant. A system that measures fairness mathematically is.</p>
 
-    <p>A tightly contracted operator can be verified cheaply with a schema check or a unit test. A loose agent requires human review, trajectory analysis, outcome monitoring. <strong>The cost of verification scales with the freedom granted.</strong></p>
+    <p>The OSCE grader applies this to structure. The 12-section rubric, the scoring criteria, the requirement that every assessment must have a citation &mdash; these are <strong>hard constraints enforced in code</strong>, not suggestions in a prompt. The model works within those boundaries. It cannot decide to skip a section, invent a criterion, or score without evidence. The architecture makes non-compliance structurally impossible.</p>
 
-    <p>Most tasks fit in the operator or planner layers. Simple tasks need zero autonomy, just code. Fuzzy but checkable tasks use operators. Fully open-ended agents are reserved for tasks that genuinely demand unpredictable multi-step reasoning, and even then, clear stop conditions and modest budgets are essential.</p>
+    <p>Even in the BMS firmware at Sirius, the same principle holds at the hardware level. The 21.0V undervoltage cutoff, the 6A overcurrent limit, the 55C thermal threshold &mdash; these are deterministic boundaries in the state machine. The system does not "estimate" whether the battery is safe. It checks a number against a threshold. <strong>Some decisions should be boring.</strong></p>
 
-    <p class="closing"><em>Do not hand out freedom that cannot be verified.</em></p>
+    <p class="closing"><em>The most important engineering decisions are the ones you refuse to let the model make.</em></p>
   </div>
+</main>
 
-  <div class="article-nav">
-    <a href="recoverability.html" class="prev">← Design for Recovery, Not Perfection</a>
-    <a href="memory.html" class="next">Memory is a Policy Layer →</a>
-  </div>
-</article>
+<div class="article-nav">
+  <a href="recoverability.html" class="prev">&larr; Compression Preserves What You Measure</a>
+  <a href="memory.html" class="next">The Verification Surface &rarr;</a>
+</div>
 
-<footer>© 2026 Sai Siddharth Yalamanchili</footer>
+<footer>&copy; 2026 Sai Siddharth Yalamanchili</footer>
 
 </body>
 </html>

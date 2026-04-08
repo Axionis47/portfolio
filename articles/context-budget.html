@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Context is a Budget — Sai Siddharth Yalamanchili</title>
+<title>Confidence is Not Calibration — Sai Siddharth Yalamanchili</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
@@ -25,183 +25,61 @@
     --sans: 'DM Sans', sans-serif;
   }
 
-  body {
-    background: var(--bg);
-    color: var(--t1);
-    font-family: var(--sans);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 2.5rem 3rem 1.5rem;
-  }
-
-  nav .logo {
-    font-family: var(--mono);
-    font-weight: 600;
-    font-size: 1.02rem;
-    color: var(--t1);
-    text-decoration: none;
-  }
-
-  nav .back {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    color: var(--t3);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  nav .back:hover {
-    color: var(--accent);
-  }
-
-  main {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 2rem 3rem 4rem;
-    flex: 1;
-  }
-
-  .article-number {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    font-weight: 500;
-    color: var(--accent);
-    margin-bottom: 1rem;
-  }
-
-  .article-title {
-    font-family: var(--mono);
-    font-size: 1.4rem;
-    font-weight: 500;
-    color: var(--t1);
-    line-height: 1.4;
-    margin-bottom: 0.5rem;
-  }
-
-  .article-subtitle {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    font-weight: 400;
-    color: var(--t3);
-    margin-bottom: 2rem;
-  }
-
-  .divider {
-    width: 40px;
-    height: 1px;
-    background: var(--accent);
-    margin-bottom: 2.5rem;
-  }
-
-  .article-body p {
-    font-family: var(--sans);
-    font-size: 1.05rem;
-    color: var(--t1);
-    line-height: 1.9;
-    margin-bottom: 1.5rem;
-  }
-
-  .article-body strong {
-    color: var(--accent);
-    font-weight: 500;
-  }
-
-  .article-body .closing {
-    font-family: var(--mono);
-    font-size: 0.98rem;
-    color: var(--accent);
-    font-style: italic;
-    line-height: 1.7;
-    margin-top: 2rem;
-  }
-
-  .article-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0 1.5rem 3rem;
-    gap: 2rem;
-  }
-
-  .article-nav a {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    color: var(--t3);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .article-nav a:hover {
-    color: var(--accent);
-  }
-
-  .article-nav .next {
-    margin-left: auto;
-  }
-
-  .article-nav .prev {
-    margin-right: auto;
-  }
-
-  footer {
-    text-align: center;
-    padding: 2rem 1.5rem;
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    color: var(--t3);
-    border-top: 1px solid var(--shl);
-  }
+  body { background: var(--bg); color: var(--t1); font-family: var(--sans); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+  nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 2.5rem 3rem 1.5rem; }
+  nav .logo { font-family: var(--mono); font-weight: 600; font-size: 1.02rem; color: var(--t1); text-decoration: none; }
+  nav .back { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  nav .back:hover { color: var(--accent); }
+  main { max-width: 1200px; width: 100%; margin: 0 auto; padding: 2rem 3rem 4rem; flex: 1; }
+  .article-number { font-family: var(--mono); font-size: 0.86rem; font-weight: 500; color: var(--accent); margin-bottom: 1rem; }
+  .article-title { font-family: var(--mono); font-size: 1.4rem; font-weight: 500; color: var(--t1); line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-subtitle { font-family: var(--mono); font-size: 0.86rem; font-weight: 400; color: var(--t3); margin-bottom: 2rem; }
+  .divider { width: 40px; height: 1px; background: var(--accent); margin-bottom: 2.5rem; }
+  .article-body p { font-family: var(--sans); font-size: 1.05rem; color: var(--t1); line-height: 1.9; margin-bottom: 1.5rem; }
+  .article-body strong { color: var(--accent); font-weight: 500; }
+  .article-body .closing { font-family: var(--mono); font-size: 0.98rem; color: var(--accent); font-style: italic; line-height: 1.7; margin-top: 2rem; }
+  .article-nav { display: flex; justify-content: flex-end; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 1.5rem 3rem; gap: 2rem; }
+  .article-nav a { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  .article-nav a:hover { color: var(--accent); }
+  .article-nav .next { margin-left: auto; }
+  .article-nav .prev { margin-right: auto; }
+  footer { text-align: center; padding: 2rem 1.5rem; font-family: var(--mono); font-size: 0.78rem; color: var(--t3); border-top: 1px solid var(--shl); }
 </style>
 </head>
 <body>
 
 <nav>
   <a href="../" class="logo">sai.</a>
-  <a href="../" class="back">← Back</a>
+  <a href="../" class="back">&larr; Back</a>
 </nav>
 
 <main>
   <div class="article-number">02</div>
-  <h1 class="article-title">Context is a Budget</h1>
-  <div class="article-subtitle">Minimum Sufficient Context</div>
+  <h1 class="article-title">Confidence is Not Calibration</h1>
+  <div class="article-subtitle">The model says it is sure. That means nothing until you verify externally.</div>
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>More context does not make an agent more informed. <strong>It makes it more confused.</strong> More retrieved documents, more chat history, more metadata. The outputs get worse, not better.</p>
+    <p>A model outputs a number. A softmax probability, a logit, a token likelihood. People treat that number as confidence. <strong>It is not.</strong> It is a score that has no obligation to reflect reality unless you force it to.</p>
 
-    <p>The context window is a budget. <strong>Finite slots.</strong> Every slot wasted on irrelevant information is a slot that could have held something useful. A router needs the query and maybe a metadata snippet. Not the full chat history. Not every retrieved document.</p>
+    <p>LaneGuard taught me this the hard way. The SegFormer would output pixel-level segmentation masks with high softmax scores &mdash; 0.95, 0.98 &mdash; on regions that were completely wrong. A shadow on the road, a faded lane marking. The model was <strong>confidently incorrect.</strong> So I wrapped it in conformal prediction: instead of asking "how sure are you?", I asked "given a calibration set, what prediction set guarantees coverage at this error rate?" The model's own confidence became irrelevant. The statistical guarantee replaced it.</p>
 
-    <p>The test: for each piece of context, would removing it change the output? If the answer is no, it should not be there. Adding context "just in case" usually means <strong>the task itself is not well enough defined.</strong></p>
+    <p>The credit risk engine has the same problem at a different scale. A PD model that outputs 0.12 probability of default is useless for Basel III if that 0.12 does not actually mean 12 out of 100 similar borrowers will default. <strong>Calibration is a regulatory requirement</strong>, not a nice-to-have. The ensemble's outputs get calibrated against observed default rates before they touch any ECL calculation.</p>
 
-    <p>Context rot shows up on longer pipelines. As windows get larger, agents lose focus, confuse facts, or latch onto irrelevant details. Bigger windows do not fix it. Discipline about what enters the window does.</p>
+    <p>The GNN recommendation system sidesteps this entirely. I never ask the model how confident it is about a recommendation. I measure <strong>Recall@10 on a held-out set</strong> &mdash; did the user actually interact with what the model ranked highly? The model's internal scores are just a ranking mechanism. The evaluation metric is the only confidence that matters.</p>
 
-    <p><strong>Selective retrieval</strong> works better than bulk loading. Keep an index and fetch relevant pieces on demand. Just-in-time context. Lower token costs, better outputs.</p>
+    <p>In the knowledge distillation pipeline, the student model's scores had to track the teacher's soft distributions via KL divergence. The student could not just be accurate &mdash; its <strong>uncertainty had to match the teacher's uncertainty.</strong> A student that is right with wrong confidence is a broken distillation.</p>
 
-    <p class="closing"><em>Less context, better decisions. That is the pattern every time.</em></p>
+    <p class="closing"><em>Never ask a model how sure it is. Measure it yourself.</em></p>
   </div>
 </main>
 
 <div class="article-nav">
-  <a href="bounded-responsibility.html" class="prev">← One Component, One Decision</a>
-  <a href="action-surface.html" class="next">Every Tool is a Failure Mode →</a>
+  <a href="bounded-responsibility.html" class="prev">&larr; Parametric vs. Grounded</a>
+  <a href="action-surface.html" class="next">Who Owns the Explanation &rarr;</a>
 </div>
 
-<footer>© 2026 Sai Siddharth Yalamanchili</footer>
+<footer>&copy; 2026 Sai Siddharth Yalamanchili</footer>
 
 </body>
 </html>

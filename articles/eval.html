@@ -3,77 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>If You Can't Eval It, You Don't Understand It — Sai Siddharth</title>
+<title>Eval Defines the Trust Contract — Sai Siddharth Yalamanchili</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
---bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
---shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);
---t1:#e0e0e0;--t2:#ababab;--t3:#787880;
---accent:#d88c3a;
---mono:'JetBrains Mono',monospace;
---serif:'Source Serif 4',serif;
---sans:'DM Sans',sans-serif;
-}
-body{background:var(--bg);color:var(--t2);font-family:var(--serif);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
-a{color:var(--t2);text-decoration:none;transition:color .2s}
-a:hover{color:var(--t1)}
-nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;max-width:960px;width:100%;margin:0 auto}
-nav .logo{font-family:var(--mono);font-weight:600;font-size:.95rem;color:var(--t1);letter-spacing:-.02em}
-nav .back{font-family:var(--mono);font-size:.75rem;color:var(--t3);letter-spacing:.02em}
-nav .back:hover{color:var(--accent)}
-.article{max-width:680px;width:100%;margin:0 auto;padding:3rem 2rem 4rem}
-.article-number{font-family:var(--mono);font-size:.75rem;font-weight:500;color:var(--accent);letter-spacing:.06em;margin-bottom:1rem}
-.article-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.4;margin-bottom:.4rem}
-.article-subtitle{font-family:var(--mono);font-size:.75rem;color:var(--t3);letter-spacing:.04em;margin-bottom:1.5rem}
-.divider{width:40px;height:2px;background:var(--accent);margin-bottom:2.5rem}
-.article-body p{font-family:var(--serif);font-size:1rem;color:var(--t2);line-height:1.9;margin-bottom:1.4rem}
-.article-body strong{color:var(--t1);font-weight:400}
-.article-body em{color:var(--accent);font-family:var(--mono);font-style:normal;font-size:.9rem}
-.article-nav{display:flex;justify-content:space-between;align-items:flex-start;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--shl);gap:1rem}
-.article-nav a{font-family:var(--mono);font-size:.75rem;color:var(--t3);line-height:1.6;transition:color .2s}
-.article-nav a:hover{color:var(--accent)}
-.article-nav .next{text-align:right;margin-left:auto}
-footer{margin-top:auto;padding:2rem;text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--t3);letter-spacing:.04em}
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; } html { font-size: 18px; }
+
+  :root {
+    --bg: #101012;
+    --raised: #1a1a1d;
+    --inset: #0a0a0c;
+    --shd: rgba(2,2,4,0.75);
+    --shl: rgba(42,42,46,0.16);
+    --t1: #e0e0e0;
+    --t2: #ababab;
+    --t3: #787880;
+    --accent: #d88c3a;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Source Serif 4', serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  body { background: var(--bg); color: var(--t1); font-family: var(--sans); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+  nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 2.5rem 3rem 1.5rem; }
+  nav .logo { font-family: var(--mono); font-weight: 600; font-size: 1.02rem; color: var(--t1); text-decoration: none; }
+  nav .back { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  nav .back:hover { color: var(--accent); }
+  main { max-width: 1200px; width: 100%; margin: 0 auto; padding: 2rem 3rem 4rem; flex: 1; }
+  .article-number { font-family: var(--mono); font-size: 0.86rem; font-weight: 500; color: var(--accent); margin-bottom: 1rem; }
+  .article-title { font-family: var(--mono); font-size: 1.4rem; font-weight: 500; color: var(--t1); line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-subtitle { font-family: var(--mono); font-size: 0.86rem; font-weight: 400; color: var(--t3); margin-bottom: 2rem; }
+  .divider { width: 40px; height: 1px; background: var(--accent); margin-bottom: 2.5rem; }
+  .article-body p { font-family: var(--sans); font-size: 1.05rem; color: var(--t1); line-height: 1.9; margin-bottom: 1.5rem; }
+  .article-body strong { color: var(--accent); font-weight: 500; }
+  .article-body .closing { font-family: var(--mono); font-size: 0.98rem; color: var(--accent); font-style: italic; line-height: 1.7; margin-top: 2rem; }
+  .article-nav { display: flex; justify-content: flex-end; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 1.5rem 3rem; gap: 2rem; }
+  .article-nav a { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  .article-nav a:hover { color: var(--accent); }
+  .article-nav .next { margin-left: auto; }
+  .article-nav .prev { margin-right: auto; }
+  footer { text-align: center; padding: 2rem 1.5rem; font-family: var(--mono); font-size: 0.78rem; color: var(--t3); border-top: 1px solid var(--shl); }
 </style>
 </head>
 <body>
 
 <nav>
   <a href="../" class="logo">sai.</a>
-  <a href="../" class="back">← Back</a>
+  <a href="../" class="back">&larr; Back</a>
 </nav>
 
-<article class="article">
+<main>
   <div class="article-number">08</div>
-  <h1 class="article-title">If You Can't Eval It, You Don't Understand It</h1>
-  <p class="article-subtitle">Eval-Driven Design</p>
+  <h1 class="article-title">Eval Defines the Trust Contract</h1>
+  <div class="article-subtitle">You can only trust what you can measure. Different systems, different contracts.</div>
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>A component is not done until it can be measured. <strong>Without an eval, there is no way to know if something actually works</strong> or just looks like it does.</p>
+    <p>Every system I have built ships with an implicit contract: <strong>"trust this output because we verified it this way."</strong> The evaluation is the contract. If you change the eval, you change what the system is allowed to claim. If you have no eval, you have no contract &mdash; you are shipping faith.</p>
 
-    <p>Two kinds of graders cover most cases. <strong>Deterministic ones</strong> (exact match, regex, type checks, schema validation) are fast and objective. They catch the obvious failures. <strong>Model-based ones</strong> (rubric scoring, pairwise comparison, semantic similarity) handle the fuzzier questions like whether a summary is faithful or a plan is coherent. Calibrating model-based graders against human judgments is what makes the automated scores meaningful.</p>
+    <p>The contracts look completely different across projects, and they should. <strong>The GNN recommendation system's contract is Recall@10</strong> &mdash; did the user interact with what we ranked highly? It is a behavioral metric. It does not care about the model's internal representations or attention patterns. It cares whether the recommendation was useful. 38.28% on 82K items. That number is the contract.</p>
 
-    <p>The thing that gets missed most often is <strong>measuring the trajectory, not just the outcome.</strong> Did the agent pick the right tool? Did it retrieve the right evidence? Did it skip steps? A correct final answer produced by a broken reasoning chain is a time bomb. It works until it does not, and when it breaks, there is no trail to follow.</p>
+    <p>The knowledge distillation pipeline's contract is <strong>nDCG@10 relative to the teacher.</strong> 0.882 vs. 0.910. The contract is not "is the student good?" but "how much quality did we lose in compression?" A 3% gap is acceptable for 100x speed. A 15% gap would not be. The metric defines the acceptable trade-off.</p>
 
-    <p>Two test suites help. <strong>Capability tests</strong> push the limits with new scenarios and hard cases. They start with low pass rates and measure improvement over time. <strong>Regression tests</strong> guard what already works. They should have near-100% pass rates and catch breakage immediately. Passing capability tests get converted into regression tests as soon as possible.</p>
+    <p>The credit risk engine's contract is multi-dimensional. <strong>AUC for discrimination power. Calibration for regulatory compliance. Fairness ratios for legal compliance.</strong> A model with 0.95 AUC that fails the 4/5 rule is a lawsuit. The eval is not one number &mdash; it is a surface, and every point on that surface is a different contractual obligation.</p>
 
-    <p>In production, continuous monitoring matters. Success rate drops, spikes in retries, unusual tool error rates, climbing latency. These are reliable signals, not noise. Running offline eval suites against production samples regularly catches drift before it becomes a real problem.</p>
+    <p>LaneGuard's contract is <strong>mIoU plus conformal coverage guarantee.</strong> 0.806 mIoU says the segmentation is accurate. The conformal sets say the uncertainty is calibrated. Together they say: the model is right most of the time, and when it might be wrong, it tells you. Neither metric alone is sufficient.</p>
 
-    <p class="closing"><em>If it cannot be evaluated, it is not understood.</em></p>
+    <p>The OSCE grader's contract is <strong>zero hallucinated assessments by design.</strong> Not "low hallucination rate." Zero. The citation-gating mechanism makes it structurally impossible to generate an unsupported assessment. The eval is a design invariant, not a measured probability.</p>
+
+    <p>The AI transformation agent's contract is <strong>coverage and evidence traceability.</strong> 89.7% coverage across 8 industries, with every claim traceable to a retrieved source. The contract does not claim the recommendations are correct &mdash; it claims they are grounded and comprehensive.</p>
+
+    <p>Each of these contracts is honest about what it guarantees and what it does not. <strong>The eval does not prove the system works. It defines the specific, bounded sense in which the system works.</strong></p>
+
+    <p class="closing"><em>Show me your eval, and I will tell you what your system actually promises.</em></p>
   </div>
+</main>
 
-  <div class="article-nav">
-    <a href="plumbing.html" class="prev">← Plumbing Kills</a>
-    <a href="../" class="next">← Back</a>
-  </div>
-</article>
+<div class="article-nav">
+  <a href="plumbing.html" class="prev">&larr; Autonomy is a Spectrum</a>
+</div>
 
-<footer>© 2026 Sai Siddharth Yalamanchili</footer>
+<footer>&copy; 2026 Sai Siddharth Yalamanchili</footer>
 
 </body>
 </html>

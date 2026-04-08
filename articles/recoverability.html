@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Design for Recovery, Not Perfection — Sai Siddharth Yalamanchili</title>
+<title>Compression Preserves What You Measure — Sai Siddharth Yalamanchili</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
@@ -25,182 +25,61 @@
     --sans: 'DM Sans', sans-serif;
   }
 
-  body {
-    background: var(--bg);
-    color: var(--t1);
-    font-family: var(--sans);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 2.5rem 3rem 1.5rem;
-  }
-
-  nav .logo {
-    font-family: var(--mono);
-    font-weight: 600;
-    font-size: 1.02rem;
-    color: var(--t1);
-    text-decoration: none;
-  }
-
-  nav .back {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    color: var(--t3);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  nav .back:hover {
-    color: var(--accent);
-  }
-
-  main {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 2rem 3rem 4rem;
-    flex: 1;
-  }
-
-  .article-number {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    font-weight: 500;
-    color: var(--accent);
-    margin-bottom: 1rem;
-  }
-
-  .article-title {
-    font-family: var(--mono);
-    font-size: 1.4rem;
-    font-weight: 500;
-    color: var(--t1);
-    line-height: 1.4;
-    margin-bottom: 0.5rem;
-  }
-
-  .article-subtitle {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    font-weight: 400;
-    color: var(--t3);
-    margin-bottom: 2rem;
-  }
-
-  .divider {
-    width: 40px;
-    height: 1px;
-    background: var(--accent);
-    margin-bottom: 2.5rem;
-  }
-
-  .article-body p {
-    font-family: var(--sans);
-    font-size: 1.05rem;
-    color: var(--t1);
-    line-height: 1.9;
-    margin-bottom: 1.5rem;
-  }
-
-  .article-body strong {
-    color: var(--accent);
-    font-weight: 500;
-  }
-
-  .article-body .closing {
-    font-family: var(--mono);
-    font-size: 0.98rem;
-    color: var(--accent);
-    font-style: italic;
-    line-height: 1.7;
-    margin-top: 2rem;
-  }
-
-  .article-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0 1.5rem 3rem;
-    gap: 2rem;
-  }
-
-  .article-nav a {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    color: var(--t3);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .article-nav a:hover {
-    color: var(--accent);
-  }
-
-  .article-nav .next {
-    margin-left: auto;
-  }
-
-  .article-nav .prev {
-    margin-right: auto;
-  }
-
-  footer {
-    text-align: center;
-    padding: 2rem 1.5rem;
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    color: var(--t3);
-    border-top: 1px solid var(--shl);
-  }
+  body { background: var(--bg); color: var(--t1); font-family: var(--sans); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+  nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 2.5rem 3rem 1.5rem; }
+  nav .logo { font-family: var(--mono); font-weight: 600; font-size: 1.02rem; color: var(--t1); text-decoration: none; }
+  nav .back { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  nav .back:hover { color: var(--accent); }
+  main { max-width: 1200px; width: 100%; margin: 0 auto; padding: 2rem 3rem 4rem; flex: 1; }
+  .article-number { font-family: var(--mono); font-size: 0.86rem; font-weight: 500; color: var(--accent); margin-bottom: 1rem; }
+  .article-title { font-family: var(--mono); font-size: 1.4rem; font-weight: 500; color: var(--t1); line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-subtitle { font-family: var(--mono); font-size: 0.86rem; font-weight: 400; color: var(--t3); margin-bottom: 2rem; }
+  .divider { width: 40px; height: 1px; background: var(--accent); margin-bottom: 2.5rem; }
+  .article-body p { font-family: var(--sans); font-size: 1.05rem; color: var(--t1); line-height: 1.9; margin-bottom: 1.5rem; }
+  .article-body strong { color: var(--accent); font-weight: 500; }
+  .article-body .closing { font-family: var(--mono); font-size: 0.98rem; color: var(--accent); font-style: italic; line-height: 1.7; margin-top: 2rem; }
+  .article-nav { display: flex; justify-content: flex-end; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 1.5rem 3rem; gap: 2rem; }
+  .article-nav a { font-family: var(--mono); font-size: 0.86rem; color: var(--t3); text-decoration: none; transition: color 0.2s; }
+  .article-nav a:hover { color: var(--accent); }
+  .article-nav .next { margin-left: auto; }
+  .article-nav .prev { margin-right: auto; }
+  footer { text-align: center; padding: 2rem 1.5rem; font-family: var(--mono); font-size: 0.78rem; color: var(--t3); border-top: 1px solid var(--shl); }
 </style>
 </head>
 <body>
 
 <nav>
   <a href="../" class="logo">sai.</a>
-  <a href="../" class="back">← Back</a>
+  <a href="../" class="back">&larr; Back</a>
 </nav>
 
 <main>
   <div class="article-number">04</div>
-  <h1 class="article-title">Design for Recovery, Not Perfection</h1>
-  <div class="article-subtitle">Recoverability</div>
+  <h1 class="article-title">Compression Preserves What You Measure</h1>
+  <div class="article-subtitle">When you shrink a model, only the knowledge you evaluate survives.</div>
   <div class="divider"></div>
 
   <div class="article-body">
-    <p>The systems that work best are not the ones where the model is most accurate. They are the ones <strong>designed assuming every component will fail,</strong> with a safety net under each one.</p>
+    <p>Every form of model compression is a bet. You are betting that the knowledge you care about will survive the squeeze and the knowledge you do not care about will be what gets dropped. <strong>The only way to win that bet is to measure exactly what matters.</strong></p>
 
-    <p>For every component output, two questions: <strong>how can this be automatically checked, and what is the rollback?</strong> If an extractor pulls a date, validate it against the source text. If a tool call fails, catch it and retry with modified arguments. If there is ambiguity, resolve it with a clarification prompt instead of letting the agent guess.</p>
+    <p>The semantic search distillation made this explicit. I compressed a 560M-parameter cross-encoder into a 33M bi-encoder. The 3-component loss &mdash; MarginMSE, KL divergence, and contrastive &mdash; told the student exactly what to preserve: <strong>the teacher's ranking behavior, the teacher's uncertainty distribution, and hard-negative discrimination.</strong> The result was 97% of the teacher's nDCG at 100x the speed. But that 97% is only meaningful because nDCG measures the thing I actually needed: retrieval ranking quality. If I had measured accuracy instead, I might have gotten 99% while silently destroying the ranking.</p>
 
-    <p><strong>Continuous validation loops</strong> catch most of the issues that would otherwise be invisible. The model proposes something. Then code, a schema check, or a second model verifies it before anything gets trusted.</p>
+    <p>LaneGuard's LoRA is compression in a different form. Instead of training all 3.7M parameters, I injected 131K trainable LoRA parameters across 32 attention layers &mdash; <strong>3.4% of the model.</strong> The bet was that road segmentation knowledge could be learned in a low-rank subspace of the pretrained SegFormer's attention weights. It worked: 0.806 mIoU from 200 training images in 3 epochs on a CPU. But I only know it worked because mIoU measures pixel-level segmentation quality. The compression preserved what the metric tracked.</p>
 
-    <p>The hierarchy: <strong>deterministic checks first</strong> (schema, type, format), then semantic checks (does the output make sense given the input?), then human review for high-stakes decisions. Each layer catches what the previous one missed.</p>
+    <p>The GNN recommendation system taught me the most counterintuitive version. During ablation studies, I <strong>removed the FFN layers entirely</strong> and accuracy went up by 1.6% while parameters dropped 2.4x. The "knowledge" in those layers was not helping &mdash; it was noise that the model had memorized. Compression did not just preserve what mattered; it <strong>eliminated what was actively hurting.</strong></p>
 
-    <p>The goal is not preventing all errors. That is not realistic with stochastic models. The goal is making sure <strong>no error goes undetected and no detected error goes uncorrected.</strong></p>
+    <p>The lesson applies beyond model weights. The causal inference agent's pull-based context engineering is compression of a different kind: 70% token savings by only feeding each agent the context it needs. The "knowledge" that got dropped was irrelevant context that was making decisions worse.</p>
 
-    <p class="closing"><em>A perfect model is not required. A system that catches its own mistakes is.</em></p>
+    <p class="closing"><em>You cannot compress what you cannot measure. Define the metric first, then squeeze.</em></p>
   </div>
 </main>
 
 <div class="article-nav">
-  <a href="action-surface.html" class="prev">← Every Tool is a Failure Mode</a>
+  <a href="action-surface.html" class="prev">&larr; Who Owns the Explanation</a>
+  <a href="delegation.html" class="next">Deterministic Boundaries &rarr;</a>
 </div>
 
-<footer>© 2026 Sai Siddharth Yalamanchili</footer>
+<footer>&copy; 2026 Sai Siddharth Yalamanchili</footer>
 
 </body>
 </html>
