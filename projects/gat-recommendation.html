@@ -3,541 +3,445 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Session-Based GNN Recommendations — Sai Siddharth Yalamanchili</title>
+<title>ETP-GT Session Recommender — Sai Siddharth Yalamanchili</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{font-size:18px}
-  :root{
-    --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
-    --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
-    --t1:#e0e0e0;--t2:#ababab;--t3:#787880;
-    --accent:#d88c3a;--green:#5a9a5a;--red:#9a5a5a;
-    --r:14px;
-    --mono:'JetBrains Mono',monospace;
-    --serif:'Source Serif 4',serif;
-    --sans:'DM Sans',sans-serif;
-  }
-  body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
-  a{color:var(--accent);text-decoration:none;transition:color .2s}
-  a:hover{color:#eaa050}
-  nav{display:flex;justify-content:space-between;align-items:center;max-width:1440px;width:100%;margin:0 auto;padding:2.5rem 3rem 1.5rem}
-  nav .logo{font-family:var(--mono);font-weight:600;font-size:1.02rem;color:var(--t1);text-decoration:none}
-  nav .back{font-family:var(--mono);font-size:.86rem;color:var(--t3);text-decoration:none;transition:color .2s}
-  nav .back:hover{color:var(--accent)}
-  main{max-width:1440px;width:100%;margin:0 auto;padding:2rem 3rem 4rem;flex:1}
-  .proj-label{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
-  .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:.4rem}
-  .proj-subtitle{font-family:var(--mono);font-size:.84rem;color:var(--t3);margin-bottom:2.5rem}
-  .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
-  .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 34px;margin-bottom:36px}
-  .brief-label{font-family:var(--mono);font-size:.66rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
-  .brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
-  .brief-key{font-family:var(--mono);font-size:.78rem;color:var(--t2);text-align:right;white-space:nowrap}
-  .brief-val{font-family:var(--mono);font-size:.84rem;color:var(--t1);line-height:1.7}
-  .prose{margin-bottom:1.8rem}
-  .prose p{font-family:var(--sans);font-size:1.08rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
-  .prose strong{color:var(--t1);font-weight:500}
-  .sec{font-family:var(--mono);font-size:.78rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
-  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 30px;margin:20px 0}
-  .dia-title{font-family:var(--mono);font-size:.72rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
-  .dia-group{font-family:var(--mono);font-size:.66rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;margin:16px 0 6px;padding-left:4px}
-  .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
-  .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
-  .dia-box-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:3px}
-  .dia-box-sub{font-family:var(--mono);font-size:.68rem;color:var(--t2);line-height:1.7}
-  .dia-arrow{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;padding:0 12px;flex-shrink:0}
-  .dia-arrow-down{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;text-align:center;padding:8px 0}
-  .dia-note{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
-  .dia-good{border:1px solid rgba(90,154,90,0.2)}
-  .dia-bad{border:1px solid rgba(154,90,90,0.2)}
-  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
-  .stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:26px 20px;text-align:center;transition:all .3s}
-  .stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
-  .stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:5px}
-  .stat-label{font-family:var(--mono);font-size:.68rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
-  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
-  .rtable th{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
-  .rtable td{font-family:var(--mono);font-size:.76rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
-  .rtable tr.best td{color:var(--accent);font-weight:500}
-  .rtable tr.nogo td{color:var(--red);opacity:.7}
-  .pipeline{position:relative;padding-left:32px;margin:20px 0}
-  .pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
-  .pipe-step{position:relative;margin-bottom:24px}
-  .pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
-  .pipe-num{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;margin-bottom:3px}
-  .pipe-title{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--t1);margin-bottom:6px}
-  .pipe-desc{font-family:var(--sans);font-size:.96rem;color:var(--t2);line-height:1.95}
-  .pipe-desc strong{color:var(--t1);font-weight:500}
-  .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
-  .compare-card{background:var(--inset);border-radius:10px;padding:22px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl)}
-  .compare-label{font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
-  .compare-name{font-family:var(--mono);font-size:.84rem;font-weight:500;color:var(--t1);margin-bottom:8px}
-  .compare-spec{font-family:var(--mono);font-size:.72rem;color:var(--t2);line-height:2;margin-top:10px}
-  .stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
-  .stack-tag{font-family:var(--mono);font-size:.66rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
-  .stack-group{margin-bottom:16px}
-  .stack-group-label{font-family:var(--mono);font-size:.66rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
-  .proj-link{display:inline-block;font-family:var(--mono);font-size:.78rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
-  .proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
-
-  /* ─── Graph Animation ─── */
-  .graph-canvas-wrap{position:relative;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);margin:20px 0;overflow:hidden}
-  .graph-canvas-wrap canvas{display:block;width:100%;height:340px}
-  .graph-canvas-label{position:absolute;top:16px;left:20px;font-family:var(--mono);font-size:.62rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase}
-  .graph-canvas-status{position:absolute;bottom:16px;left:20px;font-family:var(--mono);font-size:.6rem;color:var(--t2);transition:opacity .4s}
-  .graph-canvas-btn{position:absolute;bottom:14px;right:20px;font-family:var(--mono);font-size:.6rem;color:var(--accent);background:var(--inset);border:none;padding:5px 14px;border-radius:50px;cursor:pointer;box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl);transition:color .2s}
-  .graph-canvas-btn:hover{color:#eaa050}
-
-  /* ─── Train vs Predict Visual ─── */
-  .dual-graph{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
-  .dual-graph-panel{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);overflow:hidden;position:relative}
-  .dual-graph-panel canvas{display:block;width:100%;height:260px}
-  .dual-graph-label{position:absolute;top:14px;left:18px;font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.04em;text-transform:uppercase}
-  .dual-graph-caption{font-family:var(--mono);font-size:.62rem;color:var(--t2);padding:14px 18px;line-height:1.8;border-top:1px solid rgba(255,255,255,0.03)}
-
-  /* ─── Cascade Diagram ─── */
-  .cascade{position:relative;padding-left:32px;margin:20px 0}
-  .cascade::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
-  .cascade-step{position:relative;margin-bottom:16px}
-  .cascade-step::before{content:'';position:absolute;left:-25px;top:10px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
-  .cascade-fact{font-family:var(--mono);font-size:.72rem;font-weight:500;color:var(--t1);margin-bottom:2px}
-  .cascade-why{font-family:var(--mono);font-size:.62rem;color:var(--t3);line-height:1.7}
-
-  @media(max-width:768px){.dual-graph{grid-template-columns:1fr}}
-
-  footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
-  .ft{max-width:1440px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-  .ft-c{font-family:var(--mono);font-size:.72rem;color:var(--t3)}
-  .ft-l{display:flex;gap:18px}
-  .ft-l a{font-family:var(--mono);font-size:.76rem;color:var(--t3);text-decoration:none;transition:color .2s}
-  .ft-l a:hover{color:var(--accent)}
-  @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-  .fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
-  .fade.v{opacity:1;transform:translateY(0)}
-  @media(max-width:768px){
-    main{padding:1rem 1rem 3rem}
-    .results{grid-template-columns:repeat(2,1fr)}
-    .compare{grid-template-columns:1fr}
-    .dia-row{flex-direction:column;gap:0}
-    .dia-arrow{transform:rotate(90deg);padding:6px 0}
-    .ft{flex-direction:column;gap:10px;text-align:center}
-  }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{font-size:18px}
+:root{
+  --bg:#101012;--raised:#1a1a1d;--inset:#0a0a0c;
+  --shd:rgba(2,2,4,0.75);--shl:rgba(42,42,46,0.16);--glow:rgba(216,140,58,0.04);
+  --t1:#e0e0e0;--t2:#ababab;--t3:#787880;
+  --accent:#d88c3a;--green:#5a9a5a;--red:#9a5a5a;
+  --r:14px;
+  --mono:'JetBrains Mono',monospace;
+  --serif:'Source Serif 4',serif;
+  --sans:'DM Sans',sans-serif;
+}
+body{background:var(--bg);color:var(--t2);font-family:var(--serif);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;line-height:1.7}
+a{color:var(--accent);text-decoration:none;transition:color .2s}
+a:hover{color:#eaa050}
+nav{display:flex;justify-content:space-between;align-items:center;max-width:1440px;width:100%;margin:0 auto;padding:2.5rem 3rem 1.5rem}
+nav .logo{font-family:var(--mono);font-weight:600;font-size:1.02rem;color:var(--t1);text-decoration:none}
+nav .back{font-family:var(--mono);font-size:.86rem;color:var(--t3);text-decoration:none;transition:color .2s}
+nav .back:hover{color:var(--accent)}
+main{max-width:1440px;width:100%;margin:0 auto;padding:2rem 3rem 4rem;flex:1}
+.proj-label{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:.4rem}
+.proj-subtitle{font-family:var(--mono);font-size:.84rem;color:var(--t3);margin-bottom:2.5rem}
+.divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
+.brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 34px;margin-bottom:36px}
+.brief-label{font-family:var(--mono);font-size:.66rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+.brief-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+.brief-key{font-family:var(--mono);font-size:.78rem;color:var(--t2);text-align:right;white-space:nowrap}
+.brief-val{font-family:var(--mono);font-size:.84rem;color:var(--t1);line-height:1.7}
+.results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
+.stat{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:26px 20px;text-align:center;transition:all .3s}
+.stat:hover{transform:translateY(-2px);box-shadow:7px 7px 18px var(--shd),-3px -3px 10px var(--shl),0 0 18px var(--glow)}
+.stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:5px}
+.stat-label{font-family:var(--mono);font-size:.68rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase}
+.sec{font-family:var(--mono);font-size:.78rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
+.prose{margin-bottom:1.8rem}
+.prose p{font-family:var(--sans);font-size:1.08rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
+.prose strong{color:var(--t1);font-weight:500}
+.prose em{color:var(--t1)}
+.prose code{font-family:var(--mono);font-size:.82rem;color:var(--accent);background:var(--inset);padding:2px 6px;border-radius:4px}
+.rtable{width:100%;border-collapse:collapse;margin:16px 0}
+.rtable th{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.rtable td{font-family:var(--mono);font-size:.76rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+.rtable tr.best td{color:var(--accent);font-weight:500}
+.dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 30px;margin:20px 0;overflow-x:auto}
+.dia-title{font-family:var(--mono);font-size:.72rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+.dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
+.dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
+.dia-box-title{font-family:var(--mono);font-size:.76rem;font-weight:500;color:var(--t1);margin-bottom:3px}
+.dia-box-sub{font-family:var(--mono);font-size:.68rem;color:var(--t2);line-height:1.7}
+.dia-arrow{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;padding:0 12px;flex-shrink:0}
+.dia-note{font-family:var(--mono);font-size:.72rem;color:var(--t2);text-align:center;margin-top:12px;line-height:1.7}
+.pipeline{position:relative;padding-left:32px;margin:20px 0}
+.pipeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--accent);opacity:.15}
+.pipe-step{position:relative;margin-bottom:24px}
+.pipe-step::before{content:'';position:absolute;left:-25px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.4;box-shadow:0 0 8px var(--accent)}
+.pipe-num{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;margin-bottom:3px}
+.pipe-title{font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--t1);margin-bottom:6px}
+.pipe-desc{font-family:var(--sans);font-size:.96rem;color:var(--t2);line-height:1.95}
+.pipe-desc strong{color:var(--t1);font-weight:500}
+.pipe-desc code{font-family:var(--mono);font-size:.78rem;color:var(--accent);background:var(--inset);padding:2px 5px;border-radius:4px}
+.example-output{background:var(--inset);border-radius:10px;padding:20px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);font-family:var(--mono);font-size:.78rem;color:var(--t2);line-height:2;text-align:left;margin:16px 0}
+.example-output .eo-header{color:var(--t3);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
+.example-output.eo-good{border-left:2px solid rgba(90,154,90,0.35)}
+.json-block{margin:0;white-space:pre-wrap;word-break:break-word;font-family:var(--mono);font-size:.8rem;line-height:1.9;color:var(--t2)}
+.json-block .jk{color:var(--accent)}
+.json-block .jv{color:var(--t1)}
+.json-block .jp{color:var(--t3)}
+.example-caption{font-family:var(--mono);font-size:.76rem;color:var(--t3);text-align:center;margin-top:14px;line-height:1.7}
+.stack{display:flex;flex-wrap:wrap;gap:7px;margin:20px 0}
+.stack-tag{font-family:var(--mono);font-size:.66rem;color:var(--t2);padding:5px 11px;border-radius:50px;background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+.proj-link{display:inline-block;font-family:var(--mono);font-size:.78rem;color:var(--accent);padding:10px 22px;border-radius:50px;background:var(--inset);box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl);transition:all .2s;margin-top:32px}
+.proj-link:hover{box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl),0 0 14px var(--glow);color:#eaa050}
+.graph-canvas-wrap{position:relative;margin:24px 0;background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);overflow:hidden}
+.graph-canvas-wrap canvas{display:block;width:100%}
+.chart-legend{display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:center;padding:16px 18px 0}
+.chart-legend span{font-family:var(--mono);font-size:.7rem;color:var(--t2);display:inline-flex;align-items:center;gap:7px}
+.chart-legend i{display:inline-block;width:14px;height:3px;border-radius:2px}
+footer{padding:2rem 1.5rem;border-top:1px solid rgba(255,255,255,0.018)}
+.ft{max-width:1440px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.ft-c{font-family:var(--mono);font-size:.72rem;color:var(--t3)}
+.ft-l{display:flex;gap:18px}
+.ft-l a{font-family:var(--mono);font-size:.76rem;color:var(--t3);text-decoration:none;transition:color .2s}
+.ft-l a:hover{color:var(--accent)}
+.fade{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+.fade.v{opacity:1;transform:translateY(0)}
+@media(max-width:768px){
+  main{padding:1rem 1rem 3rem}
+  nav{padding:1.5rem 1rem 1rem}
+  .results{grid-template-columns:repeat(2,1fr)}
+  .dia-row{flex-direction:column}
+  .dia-arrow{transform:rotate(90deg);padding:6px 0}
+  .rtable{min-width:560px}
+  .ft{flex-direction:column;gap:10px}
+}
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="../" class="logo">sai.</a>
-  <a href="../#projects" class="back">&larr; projects</a>
+  <a class="logo" href="../">sai.</a>
+  <a class="back" href="../#projects">&larr; projects</a>
 </nav>
 
 <main>
 
-  <div class="proj-label fade">Project</div>
-  <h1 class="proj-title fade">Session-Based Recommendations with Graph Neural Networks</h1>
-  <div class="proj-subtitle fade">Predicting what anonymous shoppers buy next, on a $300 budget</div>
-  <div class="divider"></div>
+<div class="proj-label fade">Course Project &middot; Princeton CEE/COS/SML 520 &middot; Graph Learning</div>
+<h1 class="proj-title fade">ETP-GT: A Graph Transformer That Recommends to Strangers</h1>
+<div class="proj-subtitle fade">71% of shoppers are one anonymous click. The model trusts the session, a graph built from 172,066 past sessions, and nothing else.</div>
+<div class="divider"></div>
 
-  <div class="brief fade">
-    <div class="brief-label">Engineering Brief</div>
-    <div class="brief-grid">
-      <span class="brief-key">Problem</span>
-      <span class="brief-val">Anonymous e-commerce visitors with no purchase history. Only signal: the last 3 to 10 items they browsed. Traditional recommenders (collaborative filtering) cannot work here.</span>
-      <span class="brief-key">Approach</span>
-      <span class="brief-val">Build a co-occurrence graph (82K items, 738K edges) from 172K sessions. Compare GraphSAGE, GAT, and Graph Transformer architectures. Temporal splits with blackout periods to prevent data leakage. Laplacian positional encoding to solve structural equivalence.</span>
-      <span class="brief-key">Result</span>
-      <span class="brief-val">38.28% Recall@10 (2.6x over baseline). Removed FFN layers from the Graph Transformer: 88x faster training, 90x cheaper ($21 vs $1,880), and 1.6% better accuracy. The cheaper model was the better model.</span>
-      <span class="brief-key">Stack</span>
-      <span class="brief-val">PyTorch, PyTorch Geometric, DVC, FastAPI, ONNX Runtime, GCP Vertex AI, Terraform, Docker, MLflow, Prometheus</span>
-    </div>
+<div class="brief fade">
+  <div class="brief-label">Engineering Brief</div>
+  <div class="brief-grid">
+    <span class="brief-key">Context</span>
+    <span class="brief-val">Course project for CEE/COS/SML 520, Advanced Topics in Network Science: Graph Learning, Princeton, Spring 2025. Compute budget: $300 of GCP credit, shared across every project that semester.</span>
+    <span class="brief-key">Problem</span>
+    <span class="brief-val">Predict what an e-commerce visitor touches next when 71% of visitors appear exactly once, anonymously. There is no user to model. The only signal is the current session: a handful of clicks, median four.</span>
+    <span class="brief-key">Approach</span>
+    <span class="brief-val">Refuse user identity: model sessions and items. Build an item co-occurrence graph from 172,066 sessions (82,173 nodes, 737,716 edges). Rank with a graph transformer that attends over per-session subgraphs, carries Laplacian positional encodings, and drops the feed-forward layers because 3-to-5-node training subgraphs cannot feed 524,288 parameters per layer. Evaluate on a temporal split with a 2-day blackout so the model never sees the future.</span>
+    <span class="brief-key">Result</span>
+    <span class="brief-val">38.28% validation Recall@10 (33.10% on held-out test), 2.6&times; the GraphSAGE baseline. The cut-down transformer beat the full one on both splits while training in fewer epochs. All four models trained end to end on one NVIDIA L4.</span>
+    <span class="brief-key">Why it matters</span>
+    <span class="brief-val">Two disciplines a recommender lives or dies by: capacity sized to the evidence each forward pass actually sees, and evaluation that refuses temporal leakage. Both are enforced here by code, not intention.</span>
+    <span class="brief-key">Stack</span>
+    <span class="brief-val">PyTorch, PyTorch Geometric, SciPy, FastAPI, ONNX Runtime, DVC, MLflow, Terraform, GitHub Actions, GCP Vertex AI</span>
   </div>
+</div>
 
-  <!-- ═══════════════════════════════════════
-       CH 1: THE PROBLEM
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 1. The cold-start problem</div>
-  <div class="prose fade">
-    <p>
-      Most e-commerce visitors never log in. No account, no purchase history, no profile. The only signal is a short browsing session: the last 3 to 10 items they looked at. Traditional recommendation systems like collaborative filtering need user history to work. They are useless for anonymous visitors.
-    </p>
-    <p>
-      I needed a system that could recommend the next item based purely on a short browsing session. No user identity. No metadata about the products. Just "this person looked at A, B, and C, what should they see next?" across a catalogue of 82,000 items.
-    </p>
-    <p>
-      The constraint that shaped everything: I had <strong>$300 in GCP credits</strong>, multiple projects to deliver, and the standard Graph Transformer architecture wanted $1,880 just for training. So the question became: can I make it dramatically cheaper and still get the accuracy?
-    </p>
+<div class="results fade">
+  <div class="stat"><div class="stat-val">172,066</div><div class="stat-label">Sessions Mined</div></div>
+  <div class="stat"><div class="stat-val">82,173</div><div class="stat-label">Item Nodes</div></div>
+  <div class="stat"><div class="stat-val">737,716</div><div class="stat-label">Co-occurrence Edges</div></div>
+  <div class="stat"><div class="stat-val">$300</div><div class="stat-label">Budget, All Projects</div></div>
+</div>
+
+<!-- CH 1: PROBLEM -->
+<div class="sec fade">Chapter 1. The customer does not exist yet</div>
+<div class="prose fade">
+  <p>The RetailRocket dataset is 2.76 million real e-commerce events: views, add-to-carts, purchases. Run the visitor counts and the defining fact falls out immediately: <strong>71% of visitors appear exactly once</strong>. No account, no history, no demographics, and by the next visit, a new anonymous id. The mean visitor produces 1.96 events, ever.</p>
+  <p>Every recommender tutorial starts with a user-item matrix. Here the user axis is a ghost. A model that needs to know who you are has nothing to work with for seven out of ten visitors, which is another way of saying it does not work.</p>
+  <p>So the unit of prediction cannot be the user. It has to be the <strong>session</strong>: the last few clicks, taken on their own terms. The question becomes narrow and honest. Given three views of obscure catalog items, rank all 82,173 candidates for what this stranger touches next.</p>
+</div>
+
+<!-- CH 2: TRUST DECISION -->
+<div class="sec fade">Chapter 2. The trust decision</div>
+<div class="prose fade">
+  <p>Three ways to build this, and the choice is really about what you are willing to trust.</p>
+</div>
+<div class="dia fade">
+  <div class="dia-title">Considered approaches</div>
+  <table class="rtable">
+    <tr><th>Approach</th><th>What it trusts</th><th>Why it fails here</th></tr>
+    <tr><td>User-based collaborative filtering</td><td>Stable user identity and history</td><td>71% of visitors are single anonymous clicks. Most rows of the user-item matrix would have one entry. A user model here is a session model with extra steps.</td></tr>
+    <tr><td>Content-based ranking</td><td>Item descriptions and attributes</td><td>The shipped pipeline models behavior only. Item content never enters: no titles, no categories, no images. Items are opaque integer ids.</td></tr>
+    <tr class="best"><td>Session graph + GNN (chosen)</td><td>Co-occurrence structure across 172,066 past sessions</td><td>Needs no identity and no content. What items appear together in real sessions is the one signal this dataset provides in bulk.</td></tr>
+  </table>
+</div>
+<div class="prose fade">
+  <p>I chose the session graph over user-based filtering because the users are not there to filter on, and over content features because the pipeline never ingests any. That last one is a real cost, and it is on the ledger in Chapter 9. What survives is behavior: if thousands of sessions touch item A and item B together, that co-occurrence is evidence no anonymous id can take away.</p>
+</div>
+
+<!-- CH 3: LOG TO GRAPH -->
+<div class="sec fade">Chapter 3. From 2.76 million clicks to one graph</div>
+<div class="prose fade">
+  <p>The graph is built once, offline, by three deterministic scripts. A 30-minute silence ends a session. Sessions with fewer than three events are dropped as noise. What remains is 172,066 sessions covering 955,778 events and 99,439 distinct items.</p>
+</div>
+<div class="graph-canvas-wrap fade">
+  <canvas id="graph-build-canvas" aria-label="Animation showing click sessions arriving one at a time and accumulating into an item co-occurrence graph, where items that appear in the same session gain edges and repeated co-occurrence thickens the edge."></canvas>
+</div>
+<div class="dia fade">
+  <div class="dia-title">Data pipeline (static view)</div>
+  <div class="dia-row">
+    <div class="dia-box"><div class="dia-box-title">Raw events</div><div class="dia-box-sub">2.76M views, carts,<br>purchases</div></div>
+    <div class="dia-arrow">&rarr;</div>
+    <div class="dia-box"><div class="dia-box-title">Sessionize</div><div class="dia-box-sub">30-min gap rule<br>drop &lt; 3 events</div></div>
+    <div class="dia-arrow">&rarr;</div>
+    <div class="dia-box"><div class="dia-box-title">Temporal split</div><div class="dia-box-sub">70 / 15 / 15 by time<br>2-day blackouts</div></div>
+    <div class="dia-arrow">&rarr;</div>
+    <div class="dia-box"><div class="dia-box-title">Co-occurrence graph</div><div class="dia-box-sub">window 5<br>82,173 nodes &middot; 737,716 edges</div></div>
   </div>
+  <div class="dia-note">17,266 items appear in sessions but never co-occur with anything inside the window. They get no node and can never be recommended.</div>
+</div>
+<div class="prose fade">
+  <p>Two items are connected if they appear within <strong>five positions</strong> of each other in the same session. The window is not a tuned hyperparameter, it is a measurement: the mean session has 5.55 events and the median has 4, so a window of five means the whole typical session counts as context. From the 120,436 training sessions this yields 82,173 nodes and 737,716 edges, average degree 17.96.</p>
+  <p>The edge weights follow the usual brutal power law. Median co-occurrence count: 1. Maximum: 1,424. Most item pairs met once; a few pairs are practically welded together. The graph also quietly documents its own blind spot: 17,266 items had no co-occurrence partner at all and were excluded. A model over this graph is structurally incapable of recommending them.</p>
+</div>
 
-  <!-- ═══════════════════════════════════════
-       CH 2: THE APPROACH
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 2. From event log to product graph</div>
+<!-- CH 4: TEMPORAL SPLIT -->
+<div class="sec fade">Chapter 4. Refusing to see the future</div>
+<div class="prose fade">
+  <p>A random train/test split on session data is a quiet form of cheating. Sessions from the same afternoon land on both sides of the split, so the model trains on Tuesday's fashion and is tested on Tuesday's fashion. Metrics inflate, and nobody can say by how much.</p>
+  <p>This pipeline splits by time: the first 70% of the timeline trains, the next 15% validates, the last 15% tests. Between each pair sits a <strong>2-day blackout</strong>, recorded in <code>split_info.json</code>, where sessions are simply discarded so no session straddles a boundary. That discipline costs 4,361 real sessions (1,984 at the first boundary, 2,377 at the second). They are burned on purpose.</p>
+  <p>The rule is enforced, not hoped for: <code>tests/test_splits.py</code> asserts that every train timestamp precedes every validation timestamp, which precedes every test timestamp. A refactor that reintroduces leakage fails CI before it produces a flattering number.</p>
+</div>
+<div class="dia fade">
+  <div class="dia-title">Split strategies</div>
+  <table class="rtable">
+    <tr><th>Strategy</th><th>What leaks</th><th>Cost</th></tr>
+    <tr><td>Random 70/15/15</td><td>Same-day trends, co-purchases, and item launches leak across the split</td><td>Free, and worth what it costs</td></tr>
+    <tr><td>Temporal 70/15/15</td><td>Boundary sessions still straddle train and test time</td><td>Chronology honored, edges fuzzy</td></tr>
+    <tr class="best"><td>Temporal + 2-day blackout (chosen)</td><td>Nothing found; ordering asserted by tests</td><td>4,361 sessions discarded</td></tr>
+  </table>
+</div>
+<div class="prose fade">
+  <p>I chose the blackout split over plain temporal ordering because a session that starts in train time and ends in validation time is a small leak with a long reach. The numbers this page reports are lower than random-split results on the same dataset would be. They are also real.</p>
+</div>
 
-  <div class="dia fade">
-    <div class="dia-title">Data Pipeline</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Raw Events</div><div class="dia-box-sub">2.76M events<br>RetailRocket dataset</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Sessionize</div><div class="dia-box-sub">30-min gap, drop &lt;3<br>172K sessions</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Co-occurrence Graph</div><div class="dia-box-sub">5-item window<br>82K nodes, 738K edges</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">GNN</div><div class="dia-box-sub">Graph Transformer<br>learns item embeddings</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box dia-good"><div class="dia-box-title">Recommendations</div><div class="dia-box-sub">top-K by cosine<br>similarity</div></div>
-    </div>
-    <div class="dia-note">17,266 items had no co-occurrence signal and are excluded. The graph captures what people actually browse together.</div>
+<!-- CH 5: THE MODEL -->
+<div class="sec fade">Chapter 5. A 533,248-parameter lens on a 119.5-million-parameter table</div>
+<div class="prose fade">
+  <p>Here is the shipped model, counted honestly. Total parameters: 120,050,688. Of those, 119,517,440 live in one place: the item embedding table, 466,865 rows of 256 dimensions. That is <strong>99.6% of the model</strong>. Everything people would call "the transformer", two attention layers, the positional projection, the readout, is the remaining 533,248 parameters: a small lens that decides how gradients flow into the table.</p>
+  <p>This reframes what training even is. The knowledge is the geometry of the embedding table: which items sit near which. The architecture is just the instrument that carves that geometry out of co-occurrence evidence. Chapter 7 shows it happening epoch by epoch.</p>
+</div>
+<div class="dia fade">
+  <div class="dia-title">Forward pass &middot; one session</div>
+  <div class="dia-row">
+    <div class="dia-box"><div class="dia-box-title">Item embeddings</div><div class="dia-box-sub">466,865 &times; 256 table<br>lookup for session items</div></div>
+    <div class="dia-arrow">&rarr;</div>
+    <div class="dia-box"><div class="dia-box-title">+ Laplacian PE</div><div class="dia-box-sub">k=16 eigenvectors<br>projected 16 &rarr; 256, added</div></div>
+    <div class="dia-arrow">&rarr;</div>
+    <div class="dia-box"><div class="dia-box-title">TransformerConv &times; 2</div><div class="dia-box-sub">2 heads, gated residuals<br>attends over session subgraph</div></div>
+    <div class="dia-arrow">&rarr;</div>
+    <div class="dia-box"><div class="dia-box-title">Mean readout</div><div class="dia-box-sub">one session vector<br>256 dims</div></div>
+    <div class="dia-arrow">&rarr;</div>
+    <div class="dia-box"><div class="dia-box-title">Score &amp; rank</div><div class="dia-box-sub">dot product vs catalog<br>top-K unseen items</div></div>
   </div>
+  <div class="dia-note">No feed-forward blocks. Chapter 6 is about why.</div>
+</div>
+<div class="prose fade">
+  <p>Two mechanisms deserve their plain-English gloss. <strong>Laplacian positional encoding</strong> answers a question attention cannot: where does this node sit in the graph's shape? The 16 smallest eigenvectors of the graph Laplacian, a spectral fingerprint of the graph's cluster structure, computed once with <code>scipy eigsh</code> and cached, give every node coordinates in community space. They are projected to 256 dimensions and added to the item embedding before any attention runs. Without them a transformer sees a bag of nodes; with them it sees a neighborhood.</p>
+  <p>And attention never runs over the full graph. The dataloader cuts a <strong>per-session subgraph</strong>: only this session's items, only the edges between them, batched block-diagonal so no session attends to another session's items. Training subgraphs are 3 to 5 nodes. That number is about to matter a great deal.</p>
+  <p>I chose <code>TransformerConv</code> with gated residuals over the GAT baseline's additive attention because dot-product attention with a learned gate (<code>beta=True</code>) lets each node decide how much of its neighbors to absorb, and the residual path keeps the item's own identity from washing out in two rounds of message passing. The two baselines, GraphSAGE (neighbor averaging) and GAT (attention, but no residuals and no positional encoding), exist to price what each ingredient buys. The table in Chapter 7 pays that out.</p>
+  <p>Why attention is the right aggregator for this graph comes down to one fact from Chapter 3: the median edge was seen once and the strongest 1,424 times. Averaging has no way to act on that difference. The comparison below runs the same noisy neighborhood through both aggregators.</p>
+</div>
+<div class="graph-canvas-wrap fade">
+  <canvas id="attn-canvas" aria-label="Animation comparing neighbor averaging with attention on the same session subgraph. Averaging weights all four neighbors equally at 0.25 each, so half the session vector comes from two single-co-occurrence coincidence edges, and the true next item ranks low. Attention weights the neighbor with 1,424 co-occurrences at 0.72 and the two coincidences at 0.05 and 0.04, and the true next item ranks near the top. Illustrative weights; the measured gap is in the Chapter 7 table."></canvas>
+</div>
+<div class="dia fade">
+  <div class="dia-title">Same neighborhood, two aggregators (illustrative weights)</div>
+  <table class="rtable">
+    <tr><th>Neighbor</th><th>Co-occurrence</th><th>Averaging weight</th><th>Attention weight</th></tr>
+    <tr class="best"><td>Item A (welded pair)</td><td>&times;1,424</td><td>0.25</td><td>0.72</td></tr>
+    <tr><td>Item B</td><td>&times;3</td><td>0.25</td><td>0.19</td></tr>
+    <tr><td>Item C (coincidence)</td><td>&times;1</td><td>0.25</td><td>0.05</td></tr>
+    <tr><td>Item D (coincidence)</td><td>&times;1</td><td>0.25</td><td>0.04</td></tr>
+  </table>
+  <div class="dia-note">Both columns sum to 1.00. Averaging spends 0.50 of the session vector on two coincidences; attention spends 0.09. The measured version of this gap is the 11.85% vs 33.10% test Recall@10 in Chapter 7.</div>
+</div>
 
-  <!-- Graph building animation -->
-  <div class="graph-canvas-wrap fade">
-    <div class="graph-canvas-label">Sessions &rarr; Graph</div>
-    <canvas id="graphBuildCanvas"></canvas>
-    <div class="graph-canvas-status" id="graphBuildStatus"></div>
+<!-- CH 6: BUDGET -->
+<div class="sec fade">Chapter 6. The budget writes the architecture</div>
+<div class="prose fade">
+  <p>The course allotted $300 of GCP credit, and that had to cover every project I ran that semester, not just this one. The repo's planning docs estimated the full 3-layer, 4-head, FFN-equipped graph transformer at <strong>$1,880</strong> for 100 epochs on an L4 at $0.47 an hour. A comment in the model code prices the same run at $7,440. The two estimates never agreed with each other, but they agreed on the important part: no. The README describes the situation as being asked to park a yacht in a bicycle rack.</p>
+  <p>Constraints like this are usually where projects apologize. This one got lucky in a way worth understanding, because the luck was structural.</p>
+</div>
+<div class="dia fade">
+  <div class="dia-title">Three cuts, per the repo's ablation notes</div>
+  <table class="rtable">
+    <tr><th>Cut</th><th>Reasoning</th><th>Estimated per-epoch speedup</th></tr>
+    <tr class="best"><td>Remove FFN blocks entirely</td><td>Each FFN adds 2 &times; 256 &times; 1024 = 524,288 parameters per layer. Training subgraphs have 3 to 5 nodes. More parameters than data points per forward pass is not capacity, it is noise storage.</td><td>~29&times;</td></tr>
+    <tr><td>Layers: 3 &rarr; 2</td><td>At average degree 18, two hops already reach ~324 nodes; a third hop reaches ~5,832 and over-smooths tiny subgraphs</td><td>~1.5&times;</td></tr>
+    <tr><td>Heads: 4 &rarr; 2</td><td>256 dims across 2 heads keeps 128 dims per head, still wide enough for distinct relational patterns</td><td>~2&times;</td></tr>
+  </table>
+  <div class="dia-note">Speedups are the repo's engineering estimates, not isolated measurements. What is measured: both variants' full training runs, next chapter.</div>
+</div>
+<div class="prose fade">
+  <p>The FFN cut is the one that matters, and not for the speed. In a text transformer the feed-forward block re-mixes information after attention, and it earns its keep because each forward pass sees hundreds of tokens. Here each forward pass sees a 4-item session. A block with 524,288 parameters per layer digesting 4 data points does not learn. It memorizes noise with extra steps. Removing it is not a compromise; it is the correct size for the evidence.</p>
+  <p>Both variants were trained end to end, and both training histories are in the repo. The full model needed 96 epochs to peak at 36.66% validation Recall@10. The cut model peaked at <strong>38.28% in 57 epochs</strong>. The cheaper model is better, on validation and on test. The yacht lost to the bicycle.</p>
+  <p>For the record of what more budget would have bought: the package is named <code>etpgt</code>, Temporal &amp; Path-Aware Graph Transformer, and the configs for that architecture, temporal attention biases, path encodings, SwiGLU activations, a CLS-token readout, are sitting in the repo with every section headed <code># TODO: Populate</code>. The budget ran out somewhere before Phase 4. The initials stayed.</p>
+</div>
+
+<!-- CH 7: TRAINING CURVES -->
+<div class="sec fade">Chapter 7. Watching 82,173 items learn where they live</div>
+<div class="prose fade">
+  <p>These are the actual validation curves from the four training runs, read straight out of the committed epoch histories. Recall@10 answers a concrete question: in what fraction of validation sessions was the item the shopper actually touched next inside the model's top 10, out of 82,173 candidates.</p>
+</div>
+<div class="graph-canvas-wrap fade">
+  <div class="chart-legend" id="curve-legend"></div>
+  <canvas id="curves-canvas" aria-label="Line chart of validation Recall at 10 by training epoch for four models. The optimized graph transformer starts near 20 percent after one epoch and peaks at 38.28 percent at epoch 57. The standard transformer with feed-forward layers starts near 3 percent and needs 96 epochs to peak at 36.66 percent. GAT peaks at 20.10 percent at epoch 59 and GraphSAGE at 14.79 percent at epoch 34. Full per-model numbers are in the table below."></canvas>
+</div>
+<div class="prose fade">
+  <p>The curves say what the parameter count already hinted: training is the embedding table organizing itself. The early epochs are the big moves, co-occurrence neighborhoods condensing out of random initialization, and they are worth tens of points. The late epochs are refinement inside neighborhoods, worth about a point per twenty. The information arrives coarse to fine: first <em>which region of the catalog is this session in</em>, then <em>which exact item comes next</em>.</p>
+  <p>Now the FFN story, measured instead of argued. After <strong>one epoch</strong>, the cut transformer sits at 19.74%, already above anything GraphSAGE reaches after full convergence. The full-FFN variant starts at 2.87% and needs nine epochs to clear the same bar. Same data, same loss, same embedding table; the difference is half a million per-layer parameters soaking up gradient that should be carving item geometry. The small model is not learning less. It is learning only the thing there is evidence for.</p>
+  <p>Training mechanics, for completeness: BPR loss (rank the true next item above 5 uniformly sampled negatives), early stopping with patience 10, which is why the optimized run stops at epoch 67 after its epoch-57 peak. The fancier listwise-plus-BPR dual loss in <code>losses.py</code> never made it into the runs that produced these checkpoints. Ledger, Chapter 9.</p>
+</div>
+<div class="results fade">
+  <div class="stat"><div class="stat-val">38.28%</div><div class="stat-label">Val Recall@10, Best</div></div>
+  <div class="stat"><div class="stat-val">33.10%</div><div class="stat-label">Test Recall@10</div></div>
+  <div class="stat"><div class="stat-val">2.6&times;</div><div class="stat-label">vs GraphSAGE</div></div>
+  <div class="stat"><div class="stat-val">57 / 67</div><div class="stat-label">Best / Total Epochs</div></div>
+</div>
+<div class="dia fade">
+  <div class="dia-title">All four models &middot; validation best epoch and held-out test</div>
+  <table class="rtable">
+    <tr><th>Model</th><th>Val R@10</th><th>Val NDCG@10</th><th>Test R@10</th><th>Test NDCG@10</th><th>Best epoch</th></tr>
+    <tr><td>GraphSAGE (mean aggregation)</td><td>14.79%</td><td>9.87%</td><td>11.85%</td><td>8.00%</td><td>34 of 44</td></tr>
+    <tr><td>GAT (additive attention)</td><td>20.10%</td><td>13.64%</td><td>16.60%</td><td>11.17%</td><td>59 of 69</td></tr>
+    <tr><td>Graph Transformer (FFN, 3L &middot; 4H)</td><td>36.66%</td><td>29.75%</td><td>31.55%</td><td>26.22%</td><td>86 of 96</td></tr>
+    <tr class="best"><td>Graph Transformer (no FFN, 2L &middot; 2H)</td><td>38.28%</td><td>30.65%</td><td>33.10%</td><td>26.14%</td><td>57 of 67</td></tr>
+  </table>
+  <div class="dia-note">Test sits uniformly below validation, as it should on a strict temporal split. On test NDCG@10 the two transformers are a wash: 26.14 vs 26.22. The FFN cut wins on recall and ties on ranking quality, at a fraction of the training compute.</div>
+</div>
+<div class="prose fade">
+  <p>The gap between 38.28 and 33.10 is not a bug to hide, it is the honest price of the blackout split: the test window is the furthest future, where the catalog has drifted most. The real story of the table is that structure pays at every step. Averaging neighbors gets 11.85 on test. Attending to them gets 16.60. The reason attention wins on this particular graph is edge noise: the median edge was seen exactly once, the strongest 1,424 times, and neighbor averaging treats both as equal evidence. Attention learns to lean on the welded pairs and discount the coincidences. Add positional structure and residuals on top and the score reaches 33.10. Each ingredient roughly pays for itself, and the baselines exist so that claim has receipts.</p>
+</div>
+
+<!-- CH 8: WORKED EXAMPLE -->
+<div class="sec fade">Chapter 8. The life of one session</div>
+<div class="prose fade">
+  <p>Session <code>sess_1</code> is the first row of the held-out test split. Visitor 0, September 11, 2015, three views over five and a half minutes: item <code>285930</code>, then <code>357564</code>, then <code>67045</code>. The output below is not illustrative. It is the actual top 10 produced by the epoch-57 checkpoint running the full forward pass on this session.</p>
+</div>
+<div class="pipeline fade">
+  <div class="pipe-step">
+    <div class="pipe-num">01</div>
+    <div class="pipe-title">The gate, before any model code</div>
+    <div class="pipe-desc">A framework-free validation layer type-checks every id (booleans are rejected, a real Python foot-gun since <code>True == 1</code>), drops out-of-catalog ids while reporting them back, and truncates anything over 50 items to the last 50, the training-time limit. Garbage fails before it can become a tensor.</div>
   </div>
-
-  <div class="prose fade">
-    <p>
-      The insight is that the data is not a table of user preferences. It is a <strong>network of item relationships</strong>. If two items appear in the same session, they are connected. The more sessions they co-appear in, the stronger the edge. A keyboard is connected to mice, monitors, and desk mats because that is what people browse together. No product metadata needed.
-    </p>
-    <p>
-      The graph has 82,173 nodes and 737,716 edges. Average degree of 18 (each item connects to about 18 others). Edge weights follow a power law: median weight of 1, max of 1,424. The model needs to treat a co-occurrence of 1,424 very differently from a co-occurrence of 1.
-    </p>
-    <p>
-      I chose a co-occurrence window of 5 because the median session length is 4 items. A window of 5 captures all item pairs within a typical session as a fully-connected subgraph. Larger windows would connect items browsed far apart, diluting the co-occurrence signal. Smaller windows would miss pairs at opposite ends of short sessions.
-    </p>
+  <div class="pipe-step">
+    <div class="pipe-num">02</div>
+    <div class="pipe-title">Cut the session subgraph</div>
+    <div class="pipe-desc">The three items become nodes; the global edge table is filtered to edges among them. Laplacian coordinates come from the cache. This is the same subgraph shape the model trained on, 3 to 5 nodes, by design.</div>
   </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 3: THREE DECISIONS
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 3. Three decisions that shaped the architecture</div>
-
-  <div class="pipeline fade">
-    <div class="pipe-step">
-      <div class="pipe-num">01</div>
-      <div class="pipe-title">Temporal splits with blackout periods</div>
-      <div class="pipe-desc">The data is split 70/15/15 by time, not randomly. A <strong>2-day blackout period</strong> between each split prevents information leakage. Without the blackout, a session spanning the split boundary could leak future browsing behavior into training data. This is a detail that most academic implementations skip, but it is the difference between honest and dishonest evaluation.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">02</div>
-      <div class="pipe-title">Laplacian positional encoding</div>
-      <div class="pipe-desc">Two items can have identical neighborhoods but sit in completely different parts of the graph. A gaming keyboard connected to RGB mice and a office keyboard connected to ergonomic wrist rests both have 18 neighbors. Without positional information, the GNN treats them identically. <strong>Laplacian PE</strong> computes 16 eigenvectors of the graph's Laplacian matrix, giving each item a structural fingerprint. Low-frequency eigenvectors capture community structure (gaming vs office clusters). High-frequency ones capture local differences.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">03</div>
-      <div class="pipe-title">Removed FFN layers (the 88x speedup)</div>
-      <div class="pipe-desc">Standard Graph Transformers include feed-forward network layers after each attention layer. In language models, FFN layers store factual knowledge. But graph recommendations have no "facts" to memorize, only relationships. I removed the FFN layers entirely. The result: <strong>88x faster training, 90x cheaper, and 1.6% better accuracy</strong>. The FFN layers were adding parameters that caused slight overfitting (112K vs 46K params). Removing them acted as implicit regularization.</div>
-    </div>
+  <div class="pipe-step">
+    <div class="pipe-num">03</div>
+    <div class="pipe-title">One forward pass, then rank everything</div>
+    <div class="pipe-desc">Two attention layers, mean readout, one 256-dim session vector, dot product against the full embedding table. Items already in the session are excluded: the serving tests assert the model never recommends what you just clicked.</div>
   </div>
-
-  <div class="prose fade">
-    <p>
-      I chose to remove FFN layers from the Graph Transformer because training subgraphs are tiny (3 to 5 nodes per session). The FFN adds 524K parameters per layer but only processes a handful of nodes, causing severe overfitting. Removing it acts as structural regularization: 88x faster training, 90x cheaper ($21 vs $1,880), and 1.6% better Recall@10. The cheaper model was the better model.
-    </p>
+</div>
+<div class="dia fade">
+  <div class="dia-title">Actual output &middot; epoch-57 checkpoint &middot; session sess_1</div>
+  <div class="example-output eo-good">
+    <div class="eo-header">POST /recommend &middot; k=10 &middot; graph_transformer_optimized &middot; val R@10 0.3828</div>
+    <pre class="json-block">{
+  <span class="jk">"session_items"</span><span class="jp">:</span> <span class="jp">[</span><span class="jv">285930, 357564, 67045</span><span class="jp">]</span><span class="jp">,</span>
+  <span class="jk">"recommendations"</span><span class="jp">:</span> <span class="jp">[</span>
+    <span class="jp">{</span><span class="jk">"item"</span><span class="jp">:</span> <span class="jv">365673</span><span class="jp">,</span> <span class="jk">"score"</span><span class="jp">:</span> <span class="jv">31.08</span><span class="jp">},</span>
+    <span class="jp">{</span><span class="jk">"item"</span><span class="jp">:</span> <span class="jv">247578</span><span class="jp">,</span> <span class="jk">"score"</span><span class="jp">:</span> <span class="jv">29.29</span><span class="jp">},</span>
+    <span class="jp">{</span><span class="jk">"item"</span><span class="jp">:</span> <span class="jv">422425</span><span class="jp">,</span> <span class="jk">"score"</span><span class="jp">:</span> <span class="jv">27.76</span><span class="jp">},</span>
+    <span class="jp">{</span><span class="jk">"item"</span><span class="jp">:</span> <span class="jv">257070</span><span class="jp">,</span> <span class="jk">"score"</span><span class="jp">:</span> <span class="jv">27.68</span><span class="jp">},</span>
+    <span class="jp">{</span><span class="jk">"item"</span><span class="jp">:</span> <span class="jv">406529</span><span class="jp">,</span> <span class="jk">"score"</span><span class="jp">:</span> <span class="jv">27.59</span><span class="jp">},</span>
+    <span class="jp">{</span><span class="jk">"item"</span><span class="jp">:</span> <span class="jv">159095</span><span class="jp">,</span> <span class="jk">"score"</span><span class="jp">:</span> <span class="jv">27.15</span><span class="jp">},</span>
+    <span class="jp">{</span><span class="jk">"item"</span><span class="jp">:</span> <span class="jv">343104</span><span class="jp">,</span> <span class="jk">"score"</span><span class="jp">:</span> <span class="jv">25.72</span><span class="jp">},</span>
+    <span class="jp">{</span><span class="jk">"item"</span><span class="jp">:</span> <span class="jv">116490</span><span class="jp">,</span> <span class="jk">"score"</span><span class="jp">:</span> <span class="jv">25.53</span><span class="jp">},</span>
+    <span class="jp">{</span><span class="jk">"item"</span><span class="jp">:</span> <span class="jv">310816</span><span class="jp">,</span> <span class="jk">"score"</span><span class="jp">:</span> <span class="jv">25.53</span><span class="jp">},</span>
+    <span class="jp">{</span><span class="jk">"item"</span><span class="jp">:</span> <span class="jv">106785</span><span class="jp">,</span> <span class="jk">"score"</span><span class="jp">:</span> <span class="jv">25.15</span><span class="jp">}</span>
+  <span class="jp">]</span>
+}</pre>
   </div>
+  <div class="example-caption">Scores are raw dot products, not probabilities; the ranking is what matters. None of the ten is an item already in the session.</div>
+</div>
 
-  <!-- ═══════════════════════════════════════
-       CH 3.5: TRAIN BIG, PREDICT SMALL
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 4. Train on the big graph, predict on tiny subgraphs</div>
+<!-- CH 9: LEDGER -->
+<div class="sec fade">Chapter 9. The ledger: what is real, what is scripted, what it costs</div>
+<div class="prose fade">
+  <p>A course project that claims a production MLOps story deserves an audit, so here is one, run against this repo's own artifacts. The rule: a thing is real if a committed artifact or a run history proves it happened; otherwise it is scripted, meaning the code exists and has never been exercised against live infrastructure.</p>
+</div>
+<div class="dia fade">
+  <div class="dia-title">Reality audit</div>
+  <table class="rtable">
+    <tr><th>Claim</th><th>Status</th><th>Evidence</th></tr>
+    <tr><td>Four models trained end to end</td><td>Real</td><td>Per-epoch histories and checkpoints for all four, including the "too expensive" FFN variant</td></tr>
+    <tr><td>Held-out test evaluation</td><td>Real</td><td><code>evaluation_results.json</code>: full-catalog ranking, all four models, lower than validation as expected</td></tr>
+    <tr><td>ONNX export with parity check</td><td>Real, with a caveat</td><td>Export metadata exists; PyTorch and ONNX outputs match within 1e-5. But only the scoring layer is exported. The GNN itself does not survive the trip to ONNX; dynamic graph shapes are the stated reason</td></tr>
+    <tr><td>CI: lint, mypy, tests on 3 Python versions, 60% coverage gate, SAST, dependency and container scans</td><td>Real</td><td>Green runs on GitHub Actions going back to the first infrastructure commit; container scans configured non-blocking</td></tr>
+    <tr><td>Vertex AI training and canary deployment</td><td>Scripted</td><td>Both workflows exist and have zero runs in the Actions history. The A/B analysis script, Mann-Whitney test included, has never seen a live endpoint</td></tr>
+    <tr><td>Terraform-provisioned GCP infrastructure</td><td>Scripted</td><td>Bucket, Artifact Registry, service account, and IAM bindings are declared; no state file exists, so it was never applied</td></tr>
+  </table>
+</div>
+<div class="prose fade">
+  <p>And the design costs, stated with the same bluntness. Items are opaque ids, so a brand-new item is invisible until it co-occurs with something. The graph is static: edges carry no timestamps into the model, and the rich per-edge data the pipeline computes, co-occurrence counts and view-to-cart transition histograms, is written to disk and then ignored by every model. Negative sampling is uniform, so the loss spends most of its effort teaching the model that obscure items are not the answer, which it mostly knew. The embedding table is indexed by raw item id: 466,865 rows to serve 82,173 live items, a 5.7&times; memory tax paid to skip id-remapping bookkeeping. And the checkpoints, histories, and evaluation results behind this page are gitignored: a fresh clone contains the code and none of the evidence.</p>
+  <p>One more honesty note, because this page quotes dollar figures: the repo's cost story does not fully reconcile. The README says $1,880 was avoided; the model docstring says $7,440; the training histories suggest the original estimates were pessimistic. The decision those estimates forced, sizing the model to its 4-node inputs, was correct on the merits, and Chapter 7 proves it with measurements instead of estimates.</p>
+</div>
 
-  <div class="prose fade">
-    <p>
-      This is the part that trips people up. The GNN trains on the full 82K-node graph, learning embeddings for every item by absorbing neighborhood structure. But at prediction time, it works with a tiny subgraph: just the 3 to 5 items from the current session.
-    </p>
+<!-- CH 10: RETROSPECTIVE -->
+<div class="sec fade">Chapter 10. What I would change</div>
+<div class="prose fade">
+  <p>Knowing exactly where this system is thin is the point of having built it. In rough order of expected value per engineering hour:</p>
+</div>
+<div class="pipeline fade">
+  <div class="pipe-step">
+    <div class="pipe-num">01</div>
+    <div class="pipe-title">Use the edge data already sitting on disk</div>
+    <div class="pipe-desc">The graph builder computes per-edge co-occurrence counts and event-type transitions (view&rarr;cart, cart&rarr;purchase), and no model reads any of it. Edge-weighted attention is the cheapest untried upgrade in the repo: the features are already computed.</div>
   </div>
-
-  <div class="dual-graph fade">
-    <div class="dual-graph-panel">
-      <div class="dual-graph-label">Training: Full Graph</div>
-      <canvas id="trainGraphCanvas"></canvas>
-      <div class="dual-graph-caption">82K nodes, 738K edges. The GNN runs message passing across the entire graph, learning embeddings that encode each item's neighborhood.</div>
-    </div>
-    <div class="dual-graph-panel">
-      <div class="dual-graph-label">Prediction: Live Sessions</div>
-      <canvas id="predictGraphCanvas"></canvas>
-      <div class="dual-graph-caption" id="predictCaption">Sessions cycle through the trained model. Watch items arrive, pool into a session vector, and produce ranked recommendations.</div>
-    </div>
+  <div class="pipe-step">
+    <div class="pipe-num">02</div>
+    <div class="pipe-title">Ship the letters T and P</div>
+    <div class="pipe-desc">The package name promises Temporal and Path-Aware. The temporal attention biases and path encodings live in config stubs headed <code># TODO: Populate</code>. With real budget, this is the architecture the name already claims.</div>
   </div>
-
-  <div class="prose fade">
-    <p>
-      The session is the query: "these 3 items are what the user cares about." The graph is the knowledge base: "here is what 120,436 sessions tell us about how items relate." Each item's embedding is not just its own, it has been enriched by 324 neighbors through 2 layers of message passing. So even a 3-item session carries the signal of thousands of prior sessions.
-    </p>
-    <p>
-      This has a direct consequence for model capacity. Training subgraphs are 3 to 5 nodes with 3 to 10 edges. The FFN layer has more parameters (524K) than data points per forward pass. It memorizes rather than generalizes. <strong>Removing FFN is not a cost optimization. It is the correct architectural choice for tiny subgraphs.</strong>
-    </p>
-    <p>
-      I chose temporal splits with 2-day blackout periods because random splits leak future information into training. A session that starts at time T can have events through T plus its duration. Without blackout, a training session ending near the split boundary overlaps with validation. The blackout forces clean temporal separation at the cost of approximately 4,300 discarded sessions.
-    </p>
+  <div class="pipe-step">
+    <div class="pipe-num">03</div>
+    <div class="pipe-title">Wire in the loss that was built for this</div>
+    <div class="pipe-desc">The dual listwise-plus-BPR loss exists in <code>losses.py</code>, tested, with a factory default. The training script that produced the checkpoints fell back to plain BPR because it never passed a loss function. One argument, potentially a better ranker.</div>
   </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 5: THE DESIGN CASCADE
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 5. Why every parameter traces back to one fact</div>
-
-  <div class="prose fade">
-    <p>
-      Sessions are short. Average 5.55 items, median 4. This single data characteristic cascades into every architectural decision. None of the parameters are arbitrary. They are consequences.
-    </p>
-    <p>
-      I chose Laplacian positional encoding (k=16 eigenvectors) because the co-occurrence graph is dense (average degree 17.96). Without PE, items with identical local neighborhoods get identical embeddings regardless of global position. The 16 smallest eigenvectors give each node a unique structural fingerprint that distinguishes structurally equivalent but globally different items.
-    </p>
-    <p>
-      I chose 256-dimensional embeddings because 82K items need enough representational capacity to be distinguishable, but not so much that the model overfits on short sessions. 256 dimensions with 2 attention heads (128 per head) is sufficient for the similarity-based ranking task. Residual connections work cleanly when embedding and hidden dimensions match.
-    </p>
+  <div class="pipe-step">
+    <div class="pipe-num">04</div>
+    <div class="pipe-title">Index embeddings by catalog, not by raw id</div>
+    <div class="pipe-desc">Remapping ids would shrink the embedding table from 466,865 rows to 82,173, cutting the model from 120M parameters to roughly 21M at zero accuracy cost. The 5.7&times; tax buys nothing at serving time.</div>
   </div>
-
-  <div class="dia fade">
-    <div class="dia-title">The Design Cascade</div>
-    <div class="cascade">
-      <div class="cascade-step">
-        <div class="cascade-fact">Sessions are short (median 4 items)</div>
-        <div class="cascade-why">Most visitors browse 3 to 6 items and leave</div>
-      </div>
-      <div class="cascade-step">
-        <div class="cascade-fact">Co-occurrence window = 5</div>
-        <div class="cascade-why">Window &ge; median session length, so most sessions become fully connected subgraphs</div>
-      </div>
-      <div class="cascade-step">
-        <div class="cascade-fact">Graph is dense (avg degree 18)</div>
-        <div class="cascade-why">Full-coverage window on short sessions creates many overlapping edges</div>
-      </div>
-      <div class="cascade-step">
-        <div class="cascade-fact">2 GNN layers (not 3, not 4)</div>
-        <div class="cascade-why">Degree 18, so 2 hops = 324 nodes (enough context). 3 hops = 5,832 (over-smoothing)</div>
-      </div>
-      <div class="cascade-step">
-        <div class="cascade-fact">Training subgraphs are tiny (3-5 nodes)</div>
-        <div class="cascade-why">Short sessions extract small subgraphs from the global graph</div>
-      </div>
-      <div class="cascade-step">
-        <div class="cascade-fact">FFN removed (88x speedup, better accuracy)</div>
-        <div class="cascade-why">524K FFN parameters overfitting on 3-5 node subgraphs. Removal = implicit regularization</div>
-      </div>
-      <div class="cascade-step">
-        <div class="cascade-fact">Laplacian PE is critical</div>
-        <div class="cascade-why">Dense graph means similar neighborhoods. PE gives each item a unique structural fingerprint</div>
-      </div>
-    </div>
-    <div class="dia-note">Change the session length, and most of these parameters should change with it. The numbers are consequences, not choices.</div>
+  <div class="pipe-step">
+    <div class="pipe-num">05</div>
+    <div class="pipe-title">Make one cloud workflow run for real</div>
+    <div class="pipe-desc">The Vertex training and canary-deploy workflows have zero runs. One end-to-end execution, even a small one, moves the whole scripted tier of the reality audit into the real tier, and would replace the deployment docs' "expected" latencies with measured ones.</div>
   </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Parameter Table (with reasoning chain)</div>
-    <table class="rtable">
-      <tr><th>Parameter</th><th>Value</th><th>Why</th></tr>
-      <tr><td>co_event_window</td><td>5</td><td>Window &ge; median session (4) for full coverage</td></tr>
-      <tr><td>num_layers</td><td>2</td><td>Degree 18: 2 hops = 324 nodes. 3 = over-smoothing</td></tr>
-      <tr><td>num_heads</td><td>2</td><td>2 attention patterns (same-category vs complementary)</td></tr>
-      <tr><td>use_ffn</td><td>False</td><td>Tiny subgraphs cannot support 524K extra params</td></tr>
-      <tr><td>laplacian_k</td><td>16</td><td>16 eigenvectors capture global structure in dense graph</td></tr>
-      <tr><td>embedding_dim</td><td>256</td><td>82K items need room to be distinguishable</td></tr>
-      <tr><td>dropout</td><td>0.1</td><td>Light regularization on top of implicit (no FFN)</td></tr>
-      <tr><td>neg_samples</td><td>5</td><td>Sufficient contrast for BPR pairwise ranking</td></tr>
-    </table>
+  <div class="pipe-step">
+    <div class="pipe-num">06</div>
+    <div class="pipe-title">Commit the evidence</div>
+    <div class="pipe-desc">Histories, evaluation results, and export metadata are small JSON files currently swept up by broad gitignore rules. The claims on this page should be checkable from a fresh clone, not from my laptop.</div>
   </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 6: THE RESULTS TABLE
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 6. The results</div>
-
-  <div class="results fade">
-    <div class="stat">
-      <div class="stat-val">38.28%</div>
-      <div class="stat-label">Recall@10</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">2.6x</div>
-      <div class="stat-label">vs Baseline</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">88x</div>
-      <div class="stat-label">Training Speedup</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">$21</div>
-      <div class="stat-label">Training Cost</div>
-    </div>
+  <div class="pipe-step">
+    <div class="pipe-num">07</div>
+    <div class="pipe-title">Reconcile the cost narrative</div>
+    <div class="pipe-desc">One number for the estimate, one for the measured reality, in one place. A good decision reached through inconsistent arithmetic is still a good decision, but the docs should not make the reader do forensics.</div>
   </div>
+</div>
 
-  <div class="dia fade">
-    <div class="dia-title">Model comparison</div>
-    <table class="rtable">
-      <thead>
-        <tr><th>Model</th><th>Recall@10</th><th>NDCG@10</th><th>Params</th><th>Cost (100 epochs)</th><th>Trained?</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>GraphSAGE</td><td>14.79%</td><td>9.87%</td><td>29K</td><td>~$22</td><td>Yes</td></tr>
-        <tr><td>GAT</td><td>20.10%</td><td>13.64%</td><td>29K</td><td>~$30</td><td>Yes</td></tr>
-        <tr class="nogo"><td>Graph Transformer (with FFN)</td><td>36.66%</td><td>29.75%</td><td>112K</td><td>~$1,880</td><td>No</td></tr>
-        <tr class="best"><td>Graph Transformer (optimized)</td><td>38.28%</td><td>30.65%</td><td>46K</td><td>~$21</td><td>Yes</td></tr>
-      </tbody>
-    </table>
-    <div class="dia-note">Recall@10: correct next item in top 10 of 82K candidates. Cost estimated on GCP L4 GPU at $0.47/hour.</div>
-  </div>
+<div class="sec fade">Stack</div>
+<div class="stack fade">
+  <span class="stack-tag">PyTorch</span>
+  <span class="stack-tag">PyTorch Geometric</span>
+  <span class="stack-tag">TransformerConv</span>
+  <span class="stack-tag">Laplacian PE</span>
+  <span class="stack-tag">SciPy</span>
+  <span class="stack-tag">BPR</span>
+  <span class="stack-tag">FastAPI</span>
+  <span class="stack-tag">ONNX Runtime</span>
+  <span class="stack-tag">DVC</span>
+  <span class="stack-tag">MLflow</span>
+  <span class="stack-tag">Terraform</span>
+  <span class="stack-tag">GitHub Actions</span>
+  <span class="stack-tag">GCP Vertex AI</span>
+</div>
 
-  <div class="dia fade">
-    <div class="dia-title">The FFN removal</div>
-    <div class="compare" style="margin:0">
-      <div class="compare-card">
-        <div class="compare-label">With FFN (standard architecture)</div>
-        <div class="compare-name">36.66% Recall@10</div>
-        <div class="compare-spec">
-          112K parameters<br>
-          40+ hours per epoch<br>
-          ~$1,880 for 100 epochs<br>
-          Could not afford to train
-        </div>
-      </div>
-      <div class="compare-card dia-good">
-        <div class="compare-label">Without FFN (my optimization)</div>
-        <div class="compare-name">38.28% Recall@10</div>
-        <div class="compare-spec">
-          46K parameters (2.4x smaller)<br>
-          27 minutes per epoch (88x faster)<br>
-          ~$21 for 100 epochs<br>
-          Trained to convergence at epoch 57
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      Recall@10 means: out of 82,000 possible items, the correct next item appeared in my top 10 recommendations 38% of the time. The optimized model is not just cheaper. It is more accurate. The smaller parameter count (46K vs 112K) acts as a regularizer, preventing the overfitting that the full architecture was prone to.
-    </p>
-    <p>
-      The Graph Transformer with FFN was estimated at $1,880 for training. I could not afford to run it. The optimized version trained for $21. The budget constraint forced an architectural decision that turned out to be the better engineering choice.
-    </p>
-    <p>
-      I chose BPR (Bayesian Personalized Ranking) loss over cross-entropy because the task is ranking, not classification. BPR directly optimizes the pairwise ordering between the target item and 5 random negatives per positive. Cross-entropy treats all negatives equally. BPR focuses on getting the positive above each negative, which is what Recall@K measures.
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 5: MODEL ARCHITECTURE
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 7. How the model works</div>
-
-  <div class="dia fade">
-    <div class="dia-title">Graph Transformer (Optimized) Architecture</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Item Embedding</div><div class="dia-box-sub">82K items &times; 256 dims</div></div>
-      <div class="dia-arrow">+</div>
-      <div class="dia-box"><div class="dia-box-title">Laplacian PE</div><div class="dia-box-sub">k=16 eigenvectors<br>&rarr; 256 dims</div></div>
-    </div>
-    <div class="dia-arrow-down">&darr;</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">TransformerConv &times; 2</div><div class="dia-box-sub">2 attention heads, 128 dims/head<br>BatchNorm + Residual + Dropout 0.1<br>No FFN layers</div></div>
-    </div>
-    <div class="dia-arrow-down">&darr;</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Session Readout</div><div class="dia-box-sub">Mean pool session items<br>&rarr; [batch, 256]</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Cosine Ranking</div><div class="dia-box-sub">Score against all 82K items<br>BPR loss, 5 negatives</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box dia-good"><div class="dia-box-title">Top-K</div><div class="dia-box-sub">Recommendations</div></div>
-    </div>
-    <div class="dia-note">2 GNN layers is the sweet spot. Avg degree 18, so 2 hops covers ~324 items. 3+ layers cause over-smoothing.</div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      Each item starts with a learned 256-dim embedding plus a Laplacian positional encoding (16 eigenvectors projected to 256 dims). Two layers of TransformerConv with multi-head attention let each item update its embedding based on its graph neighborhood. At inference, a session's item embeddings are averaged into a single session vector, then ranked against all 82K items by cosine similarity.
-    </p>
-    <p>
-      Training uses <strong>BPR (Bayesian Personalized Ranking)</strong> loss: given items [A, B, C] in a session, score the correct next item higher than 5 randomly sampled negatives. AdamW optimizer, learning rate 1e-3, batch size 32. Early stopping with patience of 10 epochs. The model converged at epoch 57 of 67.
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 6: ENGINEERING STACK
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 8. The engineering stack</div>
-
-  <div class="pipeline fade">
-    <div class="pipe-step">
-      <div class="pipe-num">01</div>
-      <div class="pipe-title">ML Engineering</div>
-      <div class="pipe-desc"><strong>PyTorch + PyTorch Geometric</strong> for model training. <strong>DVC pipeline</strong> (5 stages: sessionize, split, build_graph, validate, train) for reproducibility. Ablation studies across FFN vs no-FFN, number of layers, negative sampling count, and positional encoding variants.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">02</div>
-      <div class="pipe-title">Production Serving</div>
-      <div class="pipe-desc"><strong>FastAPI</strong> with POST /recommend (single session) and POST /recommend/batch. Item embeddings exported to <strong>ONNX Runtime</strong> for inference. The ONNX model does pure dot-product ranking at serving time, no GNN forward pass needed. <strong>Docker</strong> images for both training and serving.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">03</div>
-      <div class="pipe-title">Cloud Infrastructure</div>
-      <div class="pipe-desc"><strong>GCP Vertex AI</strong> for training on NVIDIA L4 GPU (24GB VRAM). <strong>Terraform</strong> for infrastructure-as-code: Artifact Registry, GCS buckets with lifecycle rules, service accounts with scoped IAM roles. <strong>Cloud Build</strong> pipelines for CI/CD. <strong>Prometheus</strong> for monitoring.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">04</div>
-      <div class="pipe-title">Code Quality</div>
-      <div class="pipe-desc"><strong>pytest</strong> test suite, <strong>mypy</strong> type checking, <strong>ruff</strong> linting, <strong>black</strong> formatting. <strong>MLflow</strong> for experiment tracking. Full C4 architecture documentation (context, containers, components, code-level walkthroughs).</div>
-    </div>
-  </div>
-
-  <div class="sec fade">What I would change</div>
-  <div class="prose fade">
-    <p>
-      <strong>No item features.</strong> The model uses only co-occurrence structure. New items with no browsing history cannot be embedded because they have no edges. Adding item features (category, price range, image embeddings) would provide a cold-start signal and improve recommendations for tail items.
-    </p>
-    <p>
-      <strong>Static graph, no temporal decay.</strong> All edges are weighted equally regardless of when the co-occurrence happened. A browsing pattern from 6 months ago has the same weight as one from yesterday. Exponential temporal decay on edge weights would bias toward recent trends without discarding older structure entirely.
-    </p>
-    <p>
-      <strong>Session-based only.</strong> The system cannot learn cross-session user patterns because it has no user identity. A returning visitor who browsed cameras last week and lenses today gets no benefit from the earlier session. A user-level graph layer on top of the session model would capture these multi-session journeys.
-    </p>
-    <p>
-      <strong>Offline metrics only.</strong> 38.28% Recall@10 is measured on a held-out test set with temporal split. It tells you ranking quality but not business impact. Online A/B testing (click-through rate, add-to-cart rate) would measure whether better ranking actually translates to engagement.
-    </p>
-    <p>
-      <strong>ONNX export is partial.</strong> Only the scoring layer (dot product of session embedding against all item embeddings) is exported to ONNX. The GNN itself runs in PyTorch because dynamic graph structure is not ONNX-friendly. A full production system would need to pre-compute and cache session embeddings, adding an inference pipeline step.
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       STACK
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Stack</div>
-  <div class="stack-group">
-    <div class="stack-group-label">ML Engineering</div>
-    <div class="stack">
-      <span class="stack-tag">PyTorch</span>
-      <span class="stack-tag">PyTorch Geometric</span>
-      <span class="stack-tag">SciPy</span>
-      <span class="stack-tag">DVC</span>
-      <span class="stack-tag">MLflow</span>
-    </div>
-  </div>
-  <div class="stack-group">
-    <div class="stack-group-label">Production Serving</div>
-    <div class="stack">
-      <span class="stack-tag">FastAPI</span>
-      <span class="stack-tag">ONNX Runtime</span>
-      <span class="stack-tag">Docker</span>
-      <span class="stack-tag">Uvicorn</span>
-    </div>
-  </div>
-  <div class="stack-group">
-    <div class="stack-group-label">Cloud &amp; Infra</div>
-    <div class="stack">
-      <span class="stack-tag">GCP Vertex AI</span>
-      <span class="stack-tag">Terraform</span>
-      <span class="stack-tag">Cloud Build</span>
-      <span class="stack-tag">Prometheus</span>
-      <span class="stack-tag">NVIDIA L4 GPU</span>
-    </div>
-  </div>
-
-  <a href="https://github.com/Axionis47/GAT-Recommendation" target="_blank" class="proj-link fade">View on GitHub &rsaquo;</a>
+<a href="https://github.com/Axionis47/GAT-Recommendation" target="_blank" class="proj-link fade">View on GitHub &rsaquo;</a>
 
 </main>
 
@@ -553,500 +457,650 @@
 </footer>
 
 <script>
-/* ─── Fade-in observer ─── */
 const obs = new IntersectionObserver(es => {
   es.forEach((e, i) => {
     if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
   });
 }, { threshold: .12 });
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
-
-/* ─── Shared helpers ─── */
-const accent = '#d88c3a';
-const t1 = '#e0e0e0';
-const t2 = '#ababab';
-const t3 = '#787880';
-const bg = '#101012';
-const raised = '#1a1a1d';
-const inset = '#0a0a0c';
-
-function initCanvas(id){
-  const c = document.getElementById(id);
-  if(!c) return null;
-  const dpr = window.devicePixelRatio || 1;
-  const rect = c.getBoundingClientRect();
-  c.width = rect.width * dpr;
-  c.height = rect.height * dpr;
-  const ctx = c.getContext('2d');
-  ctx.scale(dpr, dpr);
-  return { c, ctx, w: rect.width, h: rect.height };
-}
-
-function drawNode(ctx, x, y, r, color, alpha, label){
-  ctx.globalAlpha = alpha;
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI*2);
-  ctx.fillStyle = color;
-  ctx.fill();
-  ctx.globalAlpha = alpha * 0.3;
-  ctx.beginPath();
-  ctx.arc(x, y, r + 4, 0, Math.PI*2);
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1;
-  ctx.stroke();
-  if(label){
-    ctx.globalAlpha = alpha * 0.8;
-    ctx.font = '10px JetBrains Mono';
-    ctx.fillStyle = t2;
-    ctx.textAlign = 'center';
-    ctx.fillText(label, x, y + r + 14);
-  }
-  ctx.globalAlpha = 1;
-}
-
-function drawEdge(ctx, x1, y1, x2, y2, alpha, weight){
-  ctx.globalAlpha = alpha * Math.min(weight / 4, 1);
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.strokeStyle = accent;
-  ctx.lineWidth = Math.min(weight, 3);
-  ctx.stroke();
-  ctx.globalAlpha = 1;
-}
-
-/* ─── Animation 1: Session to Graph (auto-loop) ─── */
-let graphBuildAnim = null;
-let graphBuildInited = false;
-
-function startGraphBuild(){
-  if(graphBuildInited) return;
-  graphBuildInited = true;
-
-  const cv = initCanvas('graphBuildCanvas');
-  if(!cv) return;
-  const {ctx, w, h} = cv;
-
-  const items = [
-    {id:'Keyboard', x:0, y:0}, {id:'Mouse', x:0, y:0}, {id:'Monitor', x:0, y:0},
-    {id:'USB Hub', x:0, y:0}, {id:'Desk Mat', x:0, y:0}, {id:'Webcam', x:0, y:0},
-    {id:'Headset', x:0, y:0}, {id:'Lamp', x:0, y:0}, {id:'Chair', x:0, y:0},
-    {id:'Stand', x:0, y:0}, {id:'Cable', x:0, y:0}, {id:'Mousepad', x:0, y:0}
-  ];
-
-  const cxPos = w * 0.6, cyPos = h * 0.5, radius = Math.min(w, h) * 0.32;
-  items.forEach((item, i) => {
-    const a = (i / items.length) * Math.PI * 2 - Math.PI / 2;
-    item.x = cxPos + Math.cos(a) * radius;
-    item.y = cyPos + Math.sin(a) * radius;
-  });
-
-  const sessions = [
-    {items: [0, 1, 2], label: 'Session 1: Keyboard, Mouse, Monitor'},
-    {items: [0, 4, 3], label: 'Session 2: Keyboard, Desk Mat, USB Hub'},
-    {items: [5, 6, 1], label: 'Session 3: Webcam, Headset, Mouse'},
-    {items: [7, 8, 9], label: 'Session 4: Lamp, Chair, Stand'},
-    {items: [1, 11, 4], label: 'Session 5: Mouse, Mousepad, Desk Mat'},
-    {items: [2, 10, 3], label: 'Session 6: Monitor, Cable, USB Hub'},
-    {items: [6, 5, 10], label: 'Session 7: Headset, Webcam, Cable'},
-    {items: [8, 7, 2], label: 'Session 8: Chair, Lamp, Monitor'}
-  ];
-
-  const sessionDuration = 70;
-  const pauseDuration = 25;
-  const holdFrames = 90; // pause on completed graph before restarting
-  const cycleLength = sessions.length * (sessionDuration + pauseDuration) + holdFrames;
-  let frame = 0;
-
-  const status = document.getElementById('graphBuildStatus');
-
-  function animate(){
-    ctx.clearRect(0, 0, w, h);
-    frame++;
-    const loopFrame = frame % cycleLength;
-
-    // Determine current session from loopFrame
-    let f = loopFrame;
-    let sessIdx = 0;
-    while(sessIdx < sessions.length && f > sessionDuration + pauseDuration){
-      f -= sessionDuration + pauseDuration;
-      sessIdx++;
-    }
-    let currentSession, sessionProgress;
-    if(sessIdx < sessions.length){
-      currentSession = sessIdx;
-      sessionProgress = Math.min(f / sessionDuration, 1);
-    } else {
-      currentSession = sessions.length;
-      sessionProgress = 1;
-    }
-
-    // Build active edges up to current session
-    const visibleEdges = {};
-    for(let s=0; s<Math.min(currentSession + 1, sessions.length); s++){
-      const sess = sessions[s];
-      const prog = s < currentSession ? 1 : sessionProgress;
-      for(let i=0;i<sess.items.length;i++){
-        for(let j=i+1;j<sess.items.length;j++){
-          const a = Math.min(sess.items[i], sess.items[j]);
-          const b = Math.max(sess.items[i], sess.items[j]);
-          const key = a+'-'+b;
-          if(!visibleEdges[key]) visibleEdges[key] = {a,b,w:0,alpha:0};
-          if(s < currentSession){ visibleEdges[key].w++; visibleEdges[key].alpha = 1; }
-          else { visibleEdges[key].w++; visibleEdges[key].alpha = prog; }
-        }
-      }
-    }
-
-    // Light up session nodes
-    const nodeAlpha = items.map(() => 0.2);
-    if(currentSession < sessions.length){
-      sessions[currentSession].items.forEach(i => nodeAlpha[i] = 0.5 + sessionProgress * 0.5);
-    }
-    for(let s=0;s<currentSession;s++){
-      sessions[s].items.forEach(i => { if(nodeAlpha[i] < 0.6) nodeAlpha[i] = 0.6; });
-    }
-
-    // Draw session list on the left
-    ctx.fillStyle = raised;
-    ctx.fillRect(0, 0, w * 0.28, h);
-    ctx.font = '10px JetBrains Mono';
-    ctx.textAlign = 'left';
-    for(let s=0;s<sessions.length;s++){
-      const yy = 50 + s * 34;
-      const isActive = s === currentSession;
-      const isPast = s < currentSession;
-      ctx.globalAlpha = isActive ? 1 : isPast ? 0.5 : 0.15;
-      ctx.fillStyle = isActive ? accent : t2;
-      ctx.fillText(sessions[s].label, 16, yy);
-      if(isActive){
-        ctx.fillStyle = accent;
-        ctx.globalAlpha = 0.3;
-        ctx.fillRect(10, yy - 12, w * 0.26, 20);
-      }
-    }
-    ctx.globalAlpha = 1;
-
-    // Draw edges
-    Object.values(visibleEdges).forEach(e => {
-      drawEdge(ctx, items[e.a].x, items[e.a].y, items[e.b].x, items[e.b].y, e.alpha, e.w);
-    });
-
-    // Draw nodes
-    items.forEach((item, i) => {
-      drawNode(ctx, item.x, item.y, 6, nodeAlpha[i] > 0.5 ? accent : t3, nodeAlpha[i], item.id);
-    });
-
-    // Status text
-    if(currentSession < sessions.length){
-      status.textContent = 'Processing ' + sessions[currentSession].label + '...';
-    } else {
-      const edgeCount = Object.keys(visibleEdges).length;
-      status.textContent = items.length + ' nodes, ' + edgeCount + ' edges from ' + sessions.length + ' sessions';
-    }
-
-    graphBuildAnim = requestAnimationFrame(animate);
-  }
-  animate();
-}
-
-/* ─── Animation 2: Train vs Predict side-by-side ─── */
-function initDualGraphs(){
-  // Training graph (big, many nodes)
-  const cv1 = initCanvas('trainGraphCanvas');
-  const cv2 = initCanvas('predictGraphCanvas');
-  if(!cv1 || !cv2) return;
-
-  // --- Training graph: ~40 nodes in clusters ---
-  const nodes1 = [];
-  const edges1 = [];
-  const clusters = [
-    {cx: 0.3, cy: 0.35, n: 8, label: 'Electronics'},
-    {cx: 0.7, cy: 0.35, n: 7, label: 'Office'},
-    {cx: 0.5, cy: 0.75, n: 8, label: 'Gaming'},
-    {cx: 0.15, cy: 0.7, n: 5, label: ''},
-    {cx: 0.85, cy: 0.7, n: 5, label: ''},
-    {cx: 0.5, cy: 0.2, n: 4, label: ''}
-  ];
-
-  clusters.forEach(cl => {
-    const start = nodes1.length;
-    for(let i=0;i<cl.n;i++){
-      const a = (i / cl.n) * Math.PI * 2;
-      const r = 30 + Math.random() * 25;
-      nodes1.push({
-        x: cl.cx * cv1.w + Math.cos(a) * r,
-        y: cl.cy * cv1.h + Math.sin(a) * r,
-        cluster: clusters.indexOf(cl)
-      });
-    }
-    // Intra-cluster edges
-    for(let i=start;i<nodes1.length;i++){
-      for(let j=i+1;j<nodes1.length;j++){
-        if(Math.random() < 0.5) edges1.push({a:i, b:j});
-      }
-    }
-  });
-  // Inter-cluster edges (sparse)
-  for(let i=0;i<nodes1.length;i++){
-    for(let j=i+1;j<nodes1.length;j++){
-      if(nodes1[i].cluster !== nodes1[j].cluster && Math.random() < 0.03){
-        edges1.push({a:i, b:j});
-      }
-    }
-  }
-
-  // Animate training graph with pulsing message passing
-  let frame = 0;
-  function drawTraining(){
-    const {ctx, w, h} = cv1;
-    ctx.clearRect(0, 0, w, h);
-    frame++;
-    const pulse = 0.5 + 0.2 * Math.sin(frame * 0.03);
-
-    // Draw edges
-    edges1.forEach(e => {
-      const wave = 0.15 + 0.1 * Math.sin(frame * 0.02 + e.a * 0.5);
-      ctx.globalAlpha = wave;
-      ctx.beginPath();
-      ctx.moveTo(nodes1[e.a].x, nodes1[e.a].y);
-      ctx.lineTo(nodes1[e.b].x, nodes1[e.b].y);
-      ctx.strokeStyle = accent;
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    });
-
-    // Message passing particles
-    edges1.forEach((e, idx) => {
-      if(idx % 4 !== Math.floor(frame / 20) % 4) return;
-      const t = (frame % 40) / 40;
-      const px = nodes1[e.a].x + (nodes1[e.b].x - nodes1[e.a].x) * t;
-      const py = nodes1[e.a].y + (nodes1[e.b].y - nodes1[e.a].y) * t;
-      ctx.globalAlpha = 0.7;
-      ctx.beginPath();
-      ctx.arc(px, py, 2, 0, Math.PI*2);
-      ctx.fillStyle = accent;
-      ctx.fill();
-    });
-
-    // Draw nodes
-    nodes1.forEach((n, i) => {
-      const glow = i % 7 === Math.floor(frame / 15) % 7 ? 0.9 : pulse;
-      drawNode(ctx, n.x, n.y, 4, accent, glow, null);
-    });
-
-    ctx.globalAlpha = 1;
-    requestAnimationFrame(drawTraining);
-  }
-
-  // --- Prediction: cycling live sessions ---
-  const predSessions = [
-    { items: ['Keyboard','Mouse','Monitor'], target: 'USB Hub', recs: ['USB Hub','Desk Mat','Webcam'], hit: true },
-    { items: ['Running Shoes','Socks'], target: 'Water Bottle', recs: ['Shorts','Water Bottle','Headband'], hit: true },
-    { items: ['Laptop','Charger','Sleeve'], target: 'Mouse', recs: ['Mouse','Stand','USB-C Hub'], hit: true },
-    { items: ['Shampoo','Conditioner'], target: 'Towel', recs: ['Body Wash','Hair Dryer','Comb'], hit: false },
-    { items: ['Camera','Lens','Tripod'], target: 'SD Card', recs: ['SD Card','Bag','Filter'], hit: true },
-    { items: ['Guitar','Strings','Pick'], target: 'Tuner', recs: ['Capo','Tuner','Strap'], hit: true },
-  ];
-
-  // Phases per session (in frames)
-  const P_ARRIVE = 40;    // items appear one by one
-  const P_EDGES = 30;     // edges connect them
-  const P_POOL = 35;      // converge to center
-  const P_RANK = 45;      // recommendations fan out
-  const P_HOLD = 50;      // show result
-  const P_FADE = 20;      // fade out
-  const CYCLE = P_ARRIVE + P_EDGES + P_POOL + P_RANK + P_HOLD + P_FADE;
-
-  let pFrame = 0;
-  const caption = document.getElementById('predictCaption');
-
-  function drawPredict(){
-    const {ctx, w, h} = cv2;
-    ctx.clearRect(0, 0, w, h);
-    pFrame++;
-
-    const sessIdx = Math.floor(pFrame / CYCLE) % predSessions.length;
-    const sess = predSessions[sessIdx];
-    const localFrame = pFrame % CYCLE;
-
-    // Phase boundaries
-    const arriveEnd = P_ARRIVE;
-    const edgesEnd = arriveEnd + P_EDGES;
-    const poolEnd = edgesEnd + P_POOL;
-    const rankEnd = poolEnd + P_RANK;
-    const holdEnd = rankEnd + P_HOLD;
-
-    // Global fade for transitions
-    let globalFade = 1;
-    if(localFrame > holdEnd) globalFade = 1 - (localFrame - holdEnd) / P_FADE;
-    if(localFrame < 10) globalFade = localFrame / 10;
-
-    // Item positions (left cluster)
-    const itemPositions = sess.items.map((_, i) => ({
-      x: w * 0.15 + (i / (sess.items.length - 1 || 1)) * w * 0.25,
-      y: h * 0.35 + Math.sin(i * 1.8) * 25
-    }));
-
-    // Pool center
-    const poolX = w * 0.52, poolY = h * 0.38;
-
-    // Rec positions (right side)
-    const recPositions = sess.recs.map((_, i) => ({
-      x: w * 0.82,
-      y: h * 0.2 + i * (h * 0.25)
-    }));
-
-    // --- PHASE: Items arrive ---
-    const arriveProgress = Math.min(localFrame / arriveEnd, 1);
-    sess.items.forEach((item, i) => {
-      const itemProg = Math.max(0, Math.min((arriveProgress * sess.items.length - i), 1));
-      if(itemProg <= 0) return;
-      const alpha = itemProg * globalFade;
-      drawNode(ctx, itemPositions[i].x, itemPositions[i].y, 6, accent, alpha, item);
-    });
-
-    // --- PHASE: Edges connect ---
-    if(localFrame > arriveEnd){
-      const edgeProg = Math.min((localFrame - arriveEnd) / P_EDGES, 1);
-      for(let i=0;i<sess.items.length;i++){
-        for(let j=i+1;j<sess.items.length;j++){
-          const ep = Math.max(0, Math.min(edgeProg * 2 - (i+j) * 0.15, 1));
-          drawEdge(ctx, itemPositions[i].x, itemPositions[i].y, itemPositions[j].x, itemPositions[j].y, ep * globalFade, 1.5);
-        }
-      }
-    }
-
-    // --- PHASE: Mean pool ---
-    if(localFrame > edgesEnd){
-      const poolProg = Math.min((localFrame - edgesEnd) / P_POOL, 1);
-
-      // Draw converging lines from items to pool center
-      sess.items.forEach((_, i) => {
-        const lp = Math.min(poolProg * 1.5, 1);
-        ctx.globalAlpha = lp * 0.4 * globalFade;
-        ctx.beginPath();
-        ctx.setLineDash([3, 3]);
-        ctx.moveTo(itemPositions[i].x, itemPositions[i].y);
-        const tx = itemPositions[i].x + (poolX - itemPositions[i].x) * lp;
-        const ty = itemPositions[i].y + (poolY - itemPositions[i].y) * lp;
-        ctx.lineTo(tx, ty);
-        ctx.strokeStyle = accent;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.setLineDash([]);
-      });
-
-      // Pool node appears
-      if(poolProg > 0.3){
-        const nodeAlpha = Math.min((poolProg - 0.3) / 0.4, 1) * globalFade;
-        ctx.globalAlpha = nodeAlpha * 0.15;
-        ctx.beginPath();
-        ctx.arc(poolX, poolY, 18, 0, Math.PI*2);
-        ctx.fillStyle = accent;
-        ctx.fill();
-        drawNode(ctx, poolX, poolY, 8, accent, nodeAlpha, 'session vector');
-
-        // Label
-        ctx.globalAlpha = nodeAlpha * 0.5;
-        ctx.font = '9px JetBrains Mono';
-        ctx.fillStyle = t3;
-        ctx.textAlign = 'center';
-        ctx.fillText('mean pool', poolX, poolY - 22);
-      }
-    }
-
-    // --- PHASE: Rank & show recs ---
-    if(localFrame > poolEnd){
-      const rankProg = Math.min((localFrame - poolEnd) / P_RANK, 1);
-
-      // Arrow from pool to rec area
-      ctx.globalAlpha = rankProg * 0.3 * globalFade;
-      ctx.beginPath();
-      ctx.setLineDash([4, 4]);
-      ctx.moveTo(poolX + 12, poolY);
-      ctx.lineTo(w * 0.72, poolY);
-      ctx.strokeStyle = accent;
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Cosine similarity label
-      ctx.globalAlpha = rankProg * 0.5 * globalFade;
-      ctx.font = '8px JetBrains Mono';
-      ctx.fillStyle = t3;
-      ctx.textAlign = 'center';
-      ctx.fillText('cosine sim', w * 0.67, poolY - 6);
-
-      // Recommendation nodes appear one by one
-      sess.recs.forEach((rec, i) => {
-        const rp = Math.max(0, Math.min(rankProg * 3 - i * 0.6, 1));
-        if(rp <= 0) return;
-        const isHit = rec === sess.recs[sess.recs.indexOf(sess.target)] && sess.hit;
-        const isTarget = rec === sess.target;
-        const color = isTarget && sess.hit ? '#5a9a5a' : t3;
-        const alpha = rp * globalFade;
-
-        // Rank number
-        ctx.globalAlpha = alpha * 0.5;
-        ctx.font = '9px JetBrains Mono';
-        ctx.fillStyle = t3;
-        ctx.textAlign = 'right';
-        ctx.fillText('#' + (i+1), recPositions[i].x - 14, recPositions[i].y + 3);
-
-        drawNode(ctx, recPositions[i].x, recPositions[i].y, 6, color, alpha, rec);
-
-        // Hit indicator
-        if(isTarget && sess.hit && rp > 0.8){
-          ctx.globalAlpha = alpha;
-          ctx.font = '10px JetBrains Mono';
-          ctx.fillStyle = '#5a9a5a';
-          ctx.textAlign = 'left';
-          ctx.fillText('✓ hit', recPositions[i].x + 10, recPositions[i].y - 18);
-        }
-      });
-
-      // Miss indicator
-      if(rankProg > 0.9 && !sess.hit){
-        ctx.globalAlpha = globalFade * 0.7;
-        ctx.font = '9px JetBrains Mono';
-        ctx.fillStyle = '#9a5a5a';
-        ctx.textAlign = 'center';
-        ctx.fillText('target: ' + sess.target + ' (not in top 3)', w * 0.82, h * 0.88);
-      }
-    }
-
-    // Session label at top right
-    ctx.globalAlpha = globalFade * 0.6;
-    ctx.font = '9px JetBrains Mono';
-    ctx.fillStyle = t2;
-    ctx.textAlign = 'right';
-    ctx.fillText('session ' + (sessIdx+1) + '/' + predSessions.length, w - 16, 30);
-
-    ctx.globalAlpha = 1;
-    requestAnimationFrame(drawPredict);
-  }
-
-  drawTraining();
-  drawPredict();
-}
-
-// Auto-init animations when they scroll into view
-const graphBuildObs = new IntersectionObserver(es => {
-  es.forEach(e => {
-    if(e.isIntersecting){ startGraphBuild(); graphBuildObs.disconnect(); }
-  });
-}, { threshold: .2 });
-const gbEl = document.querySelector('.graph-canvas-wrap');
-if(gbEl) graphBuildObs.observe(gbEl);
-
-const dualObs = new IntersectionObserver(es => {
-  es.forEach(e => {
-    if(e.isIntersecting){ initDualGraphs(); dualObs.disconnect(); }
-  });
-}, { threshold: .2 });
-const dualEl = document.querySelector('.dual-graph');
-if(dualEl) dualObs.observe(dualEl);
 </script>
+
+<script>
+/* ===================================================================
+   ANIMATION 1: Sessions accreting into a co-occurrence graph
+   =================================================================== */
+(function(){
+  var canvas = document.getElementById('graph-build-canvas');
+  if(!canvas) return;
+  var wrap = canvas.parentElement;
+
+  var accent='#d88c3a',t1='#e0e0e0',t2='#ababab',t3='#787880',raised='#1a1a1d',inset='#0a0a0c';
+  var mono='JetBrains Mono, monospace';
+  var ctx,w,h,frame=0,running=false,loopEnabled=true;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function initCanvas(){
+    var dpr=window.devicePixelRatio||1;
+    var rect=wrap.getBoundingClientRect();
+    w=rect.width;
+    h = (window.matchMedia && window.matchMedia('(max-width:768px)').matches) ? 340 : 400;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+  function easeInOut(t){ return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2; }
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+
+  /* 5 illustrative sessions over 9 items; edges = within-session pairs */
+  var sessions = [
+    {label:'session 1', items:[0,1,2]},
+    {label:'session 2', items:[1,2,3]},
+    {label:'session 3', items:[4,5,6]},
+    {label:'session 4', items:[0,2,5]},
+    {label:'session 5', items:[6,7,8]}
+  ];
+  /* node layout fractions inside the graph zone */
+  var nodePos = [
+    [0.22,0.20],[0.52,0.10],[0.42,0.44],[0.76,0.26],
+    [0.14,0.66],[0.46,0.74],[0.74,0.58],[0.90,0.82],[0.58,0.92]
+  ];
+  var edgeAppear = [];
+  sessions.forEach(function(s,si){
+    for(var i=0;i<s.items.length;i++)
+      for(var j=i+1;j<s.items.length;j++)
+        edgeAppear.push({a:s.items[i], b:s.items[j], s:si});
+  });
+
+  var P = [
+    {name:'intro', dur:40},
+    {name:'s0', dur:70},{name:'s1', dur:70},{name:'s2', dur:70},{name:'s3', dur:70},{name:'s4', dur:70},
+    {name:'hold', dur:110},
+    {name:'fadeout', dur:40}
+  ];
+  var totalF = P.reduce(function(a,p){return a+p.dur;},0);
+  var STATIC_FRAME = (function(){var a=0;for(var i=0;i<6;i++)a+=P[i].dur;return a+40;})();
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+
+    var f = frame % totalF;
+    var phase=0, pf=0, acc=0;
+    for(var i=0;i<P.length;i++){ if(f<acc+P[i].dur){phase=i;pf=f-acc;break;} acc+=P[i].dur; }
+    var prog = pf/P[phase].dur;
+    var ep = easeInOut(prog);
+
+    var globalAlpha = 1;
+    if(phase===0) globalAlpha = ep;
+    if(phase===7) globalAlpha = 1-ep;
+    ctx.globalAlpha = globalAlpha;
+
+    /* layout: fractions of w with caps; verified at 343/375/600/900/1344 */
+    var marginX = clamp(w*0.04, 12, 40);
+    var listW = clamp(w*0.30, 116, 240);
+    var listX = marginX;
+    var listY = clamp(h*0.12, 40, 52);
+    var gZoneX = listX + listW + clamp(w*0.05, 14, 56);
+    var gZoneW = Math.max(120, w - gZoneX - marginX - 14);
+    var gZoneY = 52, gZoneH = h - 104;
+
+    var doneSessions = 0, partial = 0, activeS = -1;
+    if(phase>=1 && phase<=5){ doneSessions = phase-1; activeS = phase-1; partial = ep; }
+    else if(phase>5){ doneSessions = 5; }
+
+    ctx.textAlign='left';
+    ctx.font='600 10px '+mono; ctx.fillStyle=accent;
+    ctx.fillText('CLICK SESSIONS', listX, 28);
+    ctx.fillText('ITEM CO-OCCURRENCE GRAPH', gZoneX, 28);
+
+    /* session list */
+    var rowH = clamp(h*0.145, 44, 58);
+    for(var si=0; si<sessions.length; si++){
+      var sy = listY + si*rowH;
+      var isActive = si===activeS;
+      var absorbed = si<doneSessions || (isActive && partial>0.8);
+      var alpha = absorbed ? 0.35 : 1;
+      ctx.save(); ctx.globalAlpha = alpha*globalAlpha;
+      drawRR(listX, sy, listW, rowH-10, 7, inset, isActive?accent:'rgba(255,255,255,0.05)', isActive?1.4:1);
+      ctx.font='8px '+mono; ctx.fillStyle=t3;
+      ctx.fillText(sessions[si].label, listX+10, sy+14);
+      var chipW = clamp((listW-20)/3-6, 22, 44);
+      for(var ci=0; ci<sessions[si].items.length; ci++){
+        var cx = listX+10+ci*(chipW+6);
+        drawRR(cx, sy+20, chipW, rowH-36, 4, raised, null, 0);
+        ctx.font='8px '+mono; ctx.fillStyle=isActive?t1:t2; ctx.textAlign='center';
+        ctx.fillText('i'+sessions[si].items[ci], cx+chipW/2, sy+20+(rowH-36)/2+3);
+        ctx.textAlign='left';
+      }
+      ctx.restore();
+    }
+
+    /* node visibility */
+    var nodeAlpha = [];
+    for(var n=0;n<nodePos.length;n++) nodeAlpha[n]=0;
+    for(var si2=0; si2<sessions.length; si2++){
+      var sAmt = si2<doneSessions ? 1 : (si2===activeS ? clamp(partial*1.6,0,1) : 0);
+      if(sAmt<=0) continue;
+      sessions[si2].items.forEach(function(it){ nodeAlpha[it] = Math.max(nodeAlpha[it], sAmt); });
+    }
+
+    /* accumulated edges */
+    var eKey = {}, eList = [];
+    edgeAppear.forEach(function(e){
+      var amt = e.s<doneSessions ? 1 : (e.s===activeS ? clamp((partial-0.35)*2,0,1) : 0);
+      if(amt<=0) return;
+      var k = Math.min(e.a,e.b)+'-'+Math.max(e.a,e.b);
+      if(!eKey[k]){ eKey[k]={a:e.a,b:e.b,wt:0,alpha:0}; eList.push(eKey[k]); }
+      eKey[k].wt += amt; eKey[k].alpha = Math.max(eKey[k].alpha, amt);
+    });
+
+    function nx(n){ return gZoneX + nodePos[n][0]*gZoneW; }
+    function ny(n){ return gZoneY + nodePos[n][1]*gZoneH; }
+
+    eList.forEach(function(e){
+      ctx.save();
+      ctx.globalAlpha = 0.55*e.alpha*globalAlpha;
+      ctx.strokeStyle = e.wt>1 ? accent : t3;
+      ctx.lineWidth = e.wt>1 ? 2.2 : 1.1;
+      ctx.beginPath(); ctx.moveTo(nx(e.a),ny(e.a)); ctx.lineTo(nx(e.b),ny(e.b)); ctx.stroke();
+      if(e.wt>1.5){
+        var mx=(nx(e.a)+nx(e.b))/2, my=(ny(e.a)+ny(e.b))/2;
+        ctx.globalAlpha = 0.9*e.alpha*globalAlpha;
+        ctx.font='8px '+mono; ctx.fillStyle=accent; ctx.textAlign='center';
+        ctx.fillText('×'+Math.round(e.wt), mx, my-5);
+        ctx.textAlign='left';
+      }
+      ctx.restore();
+    });
+
+    for(var n2=0;n2<nodePos.length;n2++){
+      if(nodeAlpha[n2]<=0) continue;
+      ctx.save(); ctx.globalAlpha = nodeAlpha[n2]*globalAlpha;
+      ctx.beginPath(); ctx.arc(nx(n2),ny(n2),9,0,Math.PI*2);
+      ctx.fillStyle=inset; ctx.fill();
+      ctx.strokeStyle=accent; ctx.lineWidth=1.3; ctx.stroke();
+      ctx.font='8px '+mono; ctx.fillStyle=t1; ctx.textAlign='center';
+      ctx.fillText('i'+n2, nx(n2), ny(n2)+3);
+      ctx.textAlign='left';
+      ctx.restore();
+    }
+
+    /* caption */
+    var capAlpha = phase>=6 ? 1 : (phase===5 ? clamp((ep-0.6)/0.4,0,1) : 0);
+    if(capAlpha>0){
+      ctx.save(); ctx.globalAlpha = capAlpha*globalAlpha;
+      ctx.font='italic 10px '+mono; ctx.fillStyle=t2; ctx.textAlign='center';
+      var cap = w<560 ? 'full scale: 82,173 nodes · 737,716 edges'
+                      : 'at full scale: 172,066 sessions → 82,173 nodes · 737,716 edges · median weight 1, max 1,424';
+      ctx.fillText(cap, w/2, h-16);
+      ctx.textAlign='left';
+      ctx.restore();
+    }
+
+    ctx.globalAlpha=1;
+    if(loopEnabled){ frame++; requestAnimationFrame(draw); }
+  }
+
+  var cObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting && !running){
+        initCanvas();
+        if(reduceMotion){ frame=STATIC_FRAME; loopEnabled=false; running=true; draw(); }
+        else { frame=0; loopEnabled=true; running=true; draw(); }
+      } else if(!entry.isIntersecting && running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+
+  window.addEventListener('resize', function(){
+    if(!running) return;
+    initCanvas();
+    if(!loopEnabled) draw();
+  });
+})();
+</script>
+
+<script>
+/* ===================================================================
+   ANIMATION 2: Training curves — val Recall@10 by epoch, 4 models
+   Data: checkpoints/*_history.json, verbatim to 2dp
+   =================================================================== */
+(function(){
+  var canvas = document.getElementById('curves-canvas');
+  if(!canvas) return;
+  var wrap = canvas.parentElement;
+  var legendEl = document.getElementById('curve-legend');
+
+  var t1='#e0e0e0',t2='#ababab',t3='#787880',inset='#0a0a0c';
+  var mono='JetBrains Mono, monospace';
+
+  /* categorical palette validated against dark surface #1a1a1d (six checks pass) */
+  var SERIES = [
+    {key:'opt',  name:'Transformer (no FFN, 2L·2H)', endLabel:'Transformer (no FFN)', color:'#c9802f', best:{ep:57,val:38.28},
+     data:[19.74,23.02,24.2,26.26,26.68,27.7,27.8,28.74,29.93,30.55,31.26,31.06,31.68,32.22,32.53,32.17,32.68,32.87,32.96,33.24,33.17,33.68,33.84,33.99,34.5,34.82,35.08,35.36,35.42,35.31,35.89,35.85,35.69,35.6,36.51,36.51,36.27,35.89,36.17,35.73,36.16,36.34,36.52,36.28,36.49,36.47,36.28,36.5,36.93,36.53,36.73,37.45,37.19,37.17,37.66,37.85,38.28,37.27,37.14,37.1,37.26,37.18,37.42,37.34,37.47,37.63,38.03]},
+    {key:'std',  name:'Transformer (FFN, 3L·4H)', endLabel:'Transformer (FFN)', color:'#4f86c6', best:{ep:86,val:36.66},
+     data:[2.87,6.68,8.43,9.86,9.83,11.97,14.53,14.51,18.48,20.87,21.99,22.21,23.12,24.94,25.15,24.77,26.09,25.98,26.22,26.85,28.26,28.18,26.89,27.45,29.5,29.28,29.21,30.21,28.57,30.12,28.91,31.01,29.59,30.39,31.51,30.77,31.52,31.68,32.74,32.27,32.58,33.13,33.1,33.49,32.86,33.7,33.46,33.86,33.18,34.23,33.26,33.36,34.63,34.34,33.49,34.46,33.59,34.31,34.94,34.41,34.81,34.85,35.46,35.1,35.36,35.53,35.08,35.24,34.18,35.07,35.95,35.02,35.61,35.32,33.92,35.41,34.18,34.35,35.98,35.61,33.79,36.49,35.57,36.24,35.38,36.66,36.43,35.01,36.42,35.72,35.42,36.46,35.84,36.32,36.03,36.25]},
+    {key:'gat',  name:'GAT', endLabel:'GAT', color:'#589858', best:{ep:59,val:20.10},
+     data:[5.48,8.98,10.38,11.89,13.03,12.3,13.29,13.72,14.38,14.71,15.33,14.81,15.54,15.96,16.34,16.65,17.23,16.85,17.07,16.93,17.35,17.07,17.15,17.32,17.91,17.72,17.3,17.82,18.17,18.0,17.81,18.13,17.9,17.62,18.17,18.94,18.41,18.42,18.79,18.4,18.6,18.91,18.92,18.98,18.53,18.59,19.11,18.58,18.99,18.05,19.0,18.93,19.66,19.22,18.96,19.62,19.6,19.57,20.1,19.76,19.56,19.24,18.93,19.5,18.87,19.17,19.18,19.78,19.57]},
+    {key:'sage', name:'GraphSAGE', endLabel:'GraphSAGE', color:'#a86a9e', best:{ep:34,val:14.79},
+     data:[2.5,4.0,5.09,5.87,6.66,7.27,8.35,8.78,9.18,9.56,9.89,10.08,10.77,11.09,11.29,11.96,12.37,12.43,12.78,13.03,13.04,13.13,13.29,13.14,13.6,13.54,13.78,13.87,13.76,14.22,14.12,14.36,14.35,14.79,14.56,14.45,14.73,14.68,14.45,14.56,14.47,14.6,14.52,14.14]}
+  ];
+  var MAX_EP = 96, Y_MAX = 42;
+
+  /* HTML legend: identity in text ink, swatch carries the hue */
+  if(legendEl && !legendEl.childElementCount){
+    SERIES.forEach(function(s){
+      var sp=document.createElement('span');
+      var i=document.createElement('i'); i.style.background=s.color;
+      sp.appendChild(i); sp.appendChild(document.createTextNode(s.name));
+      legendEl.appendChild(sp);
+    });
+  }
+
+  var ctx,w,h,running=false,done=false,frame=0;
+  var DRAW_F = 140;
+  var hoverEp = -1;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function initCanvas(){
+    var dpr=window.devicePixelRatio||1;
+    var rect=wrap.getBoundingClientRect();
+    w=rect.width;
+    h = (window.matchMedia && window.matchMedia('(max-width:768px)').matches) ? 300 : 380;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+  function easeInOut(t){ return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2; }
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+
+  function layout(){
+    var small = w < 560;
+    return {
+      padL: clamp(w*0.09, 44, 58),
+      padR: small ? 18 : clamp(w*0.16, 130, 185),
+      padT: 20,
+      padB: 42,
+      small: small
+    };
+  }
+  function px(L, epc){ return L.padL + (epc-1)/(MAX_EP-1) * (w-L.padL-L.padR); }
+  function py(L, v){ return L.padT + (1 - v/Y_MAX) * (h-L.padT-L.padB); }
+
+  function drawChart(revealFrac){
+    ctx.clearRect(0,0,w,h);
+    var L = layout();
+
+    /* recessive grid + y labels */
+    ctx.font='9px '+mono; ctx.textAlign='right';
+    for(var gv=0; gv<=40; gv+=10){
+      var gy = py(L, gv);
+      ctx.strokeStyle='rgba(255,255,255,0.045)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(L.padL, gy); ctx.lineTo(w-L.padR, gy); ctx.stroke();
+      ctx.fillStyle=t3; ctx.fillText(gv+'%', L.padL-8, gy+3);
+    }
+    ctx.textAlign='center';
+    [1,20,40,60,80,96].forEach(function(ex){
+      ctx.fillStyle=t3; ctx.fillText(String(ex), px(L,ex), h-L.padB+16);
+    });
+    ctx.fillStyle=t3;
+    ctx.fillText('epoch', (L.padL + (w-L.padR))/2, h-8);
+    ctx.save(); ctx.translate(12, (L.padT+h-L.padB)/2); ctx.rotate(-Math.PI/2);
+    ctx.textAlign='center'; ctx.fillText('val Recall@10', 0, 0); ctx.restore();
+
+    /* series lines, 2px, draw-in left to right */
+    SERIES.forEach(function(s){
+      var nPts = s.data.length;
+      var upto = Math.max(2, Math.ceil(nPts * revealFrac));
+      ctx.strokeStyle=s.color; ctx.lineWidth=2; ctx.lineJoin='round';
+      ctx.beginPath();
+      for(var i=0;i<Math.min(upto,nPts);i++){
+        var X=px(L,i+1), Y=py(L,s.data[i]);
+        if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y);
+      }
+      ctx.stroke();
+
+      if(revealFrac>=1){
+        var bx=px(L,s.best.ep), by=py(L,s.data[s.best.ep-1]);
+        ctx.beginPath(); ctx.arc(bx,by,4,0,Math.PI*2);
+        ctx.fillStyle=s.color; ctx.fill();
+        ctx.strokeStyle=inset; ctx.lineWidth=2; ctx.stroke();
+        if(!L.small){
+          var lx=px(L,nPts)+8, ly=py(L,s.data[nPts-1]);
+          if(s.key==='opt') ly-=8;
+          if(s.key==='std') ly+=10;
+          ctx.font='500 9px '+mono; ctx.textAlign='left';
+          ctx.fillStyle=t2;
+          ctx.fillText(s.endLabel, lx, ly-6);
+          ctx.fillStyle=t3;
+          ctx.fillText('best '+s.best.val.toFixed(2)+'% @ '+s.best.ep, lx, ly+7);
+        }
+      }
+    });
+
+    /* epoch-1 annotation */
+    if(revealFrac>=1 && !L.small){
+      var ax=px(L,1), ay=py(L,19.74);
+      ctx.strokeStyle='rgba(224,224,224,0.25)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(ax+3, ay-6); ctx.lineTo(ax+28, ay-30); ctx.stroke();
+      ctx.font='italic 9px '+mono; ctx.textAlign='left'; ctx.fillStyle=t2;
+      ctx.fillText('epoch 1: already above GraphSAGE, converged', ax+32, ay-34);
+    }
+
+    /* hover crosshair + tooltip */
+    if(revealFrac>=1 && hoverEp>=1){
+      var hx = px(L,hoverEp);
+      ctx.strokeStyle='rgba(224,224,224,0.18)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(hx, L.padT); ctx.lineTo(hx, h-L.padB); ctx.stroke();
+
+      var rows=[];
+      SERIES.forEach(function(s){
+        if(hoverEp<=s.data.length) rows.push({c:s.color, v:s.data[hoverEp-1]});
+      });
+      if(rows.length){
+        rows.sort(function(a,b){return b.v-a.v;});
+        var tw=112, th=18+rows.length*15;
+        var tx = hx+10; if(tx+tw > w-4) tx = hx-10-tw;
+        var ty = clamp(py(L,rows[0].v)-10, L.padT+4, h-L.padB-th-4);
+        ctx.fillStyle='rgba(10,10,12,0.94)';
+        ctx.fillRect(tx,ty,tw,th);
+        ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1;
+        ctx.strokeRect(tx,ty,tw,th);
+        ctx.font='600 9px '+mono; ctx.textAlign='left'; ctx.fillStyle=t1;
+        ctx.fillText('epoch '+hoverEp, tx+9, ty+13);
+        rows.forEach(function(r,i){
+          ctx.fillStyle=r.c; ctx.fillRect(tx+9, ty+22+i*15-4, 8, 3);
+          ctx.fillStyle=t2; ctx.font='9px '+mono;
+          ctx.fillText(r.v.toFixed(2)+'%', tx+23, ty+22+i*15);
+        });
+        SERIES.forEach(function(s){
+          if(hoverEp<=s.data.length){
+            var cy=py(L,s.data[hoverEp-1]);
+            ctx.beginPath(); ctx.arc(hx,cy,3.4,0,Math.PI*2);
+            ctx.fillStyle=s.color; ctx.fill();
+            ctx.strokeStyle=inset; ctx.lineWidth=1.6; ctx.stroke();
+          }
+        });
+      }
+    }
+  }
+
+  function tick(){
+    if(!running) return;
+    if(frame<=DRAW_F){
+      drawChart(easeInOut(frame/DRAW_F));
+      frame++;
+      requestAnimationFrame(tick);
+    } else {
+      done=true;
+      drawChart(1);
+    }
+  }
+
+  function epFromEvent(ev){
+    var rect=canvas.getBoundingClientRect();
+    var x=(ev.touches?ev.touches[0].clientX:ev.clientX)-rect.left;
+    var L=layout();
+    if(x<L.padL-6 || x>w-L.padR+6) return -1;
+    return clamp(Math.round(1 + (x-L.padL)/(w-L.padL-L.padR)*(MAX_EP-1)), 1, MAX_EP);
+  }
+  canvas.addEventListener('pointermove', function(ev){
+    if(!done) return;
+    var e=epFromEvent(ev);
+    if(e!==hoverEp){ hoverEp=e; drawChart(1); }
+  });
+  canvas.addEventListener('pointerleave', function(){
+    if(!done) return;
+    hoverEp=-1; drawChart(1);
+  });
+
+  var cObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting && !running){
+        initCanvas();
+        running=true;
+        if(reduceMotion){ frame=DRAW_F+1; done=true; drawChart(1); }
+        else if(done){ drawChart(1); }
+        else { frame=0; tick(); }
+      } else if(!entry.isIntersecting && running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+
+  window.addEventListener('resize', function(){
+    initCanvas();
+    if(done) drawChart(1);
+  });
+})();
+</script>
+
+<script>
+/* ===================================================================
+   ANIMATION 3: Averaging vs attention on the same noisy neighborhood
+   Illustrative weights (each panel sums to 1.00); measured gap in Ch 7
+   =================================================================== */
+(function(){
+  var canvas = document.getElementById('attn-canvas');
+  if(!canvas) return;
+  var wrap = canvas.parentElement;
+
+  var accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',inset='#0a0a0c';
+  var mono='JetBrains Mono, monospace';
+  var ctx,w,h,frame=0,running=false,loopEnabled=true,stacked=false;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function initCanvas(){
+    var dpr=window.devicePixelRatio||1;
+    var rect=wrap.getBoundingClientRect();
+    w=rect.width;
+    stacked = w < 620;
+    h = stacked ? 660 : 420;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+  }
+  function easeInOut(t){ return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2; }
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+
+  /* neighbors: fraction positions inside a panel zone; weights sum to 1.00 per panel */
+  var NB = [
+    {id:'A', co:'×1,424', avg:0.25, attn:0.72, fx:0.16, fy:0.16},
+    {id:'B', co:'×3',     avg:0.25, attn:0.19, fx:0.84, fy:0.18},
+    {id:'C', co:'×1',     avg:0.25, attn:0.05, fx:0.14, fy:0.80},
+    {id:'D', co:'×1',     avg:0.25, attn:0.04, fx:0.86, fy:0.78}
+  ];
+  var CENTER = {fx:0.5, fy:0.5};
+
+  var P = [
+    {name:'intro', dur:50},
+    {name:'weigh', dur:80},
+    {name:'pool',  dur:90},
+    {name:'rank',  dur:60},
+    {name:'hold',  dur:120},
+    {name:'fadeout', dur:40}
+  ];
+  var totalF = P.reduce(function(a,p){return a+p.dur;},0);
+  var STATIC_FRAME = (function(){var a=0;for(var i=0;i<4;i++)a+=P[i].dur;return a+40;})();
+
+  function drawPanel(zx, zy, zw, zh, mode, phase, ep){
+    var title = mode==='avg' ? 'AVERAGING (GraphSAGE)' : 'ATTENTION (this model)';
+    var titleCol = mode==='avg' ? t3 : accent;
+    ctx.textAlign='center';
+    ctx.font='600 10px '+mono; ctx.fillStyle=titleCol;
+    ctx.fillText(title, zx+zw/2, zy+14);
+
+    var gx = zx+14, gy = zy+26, gw = zw-28, gh = zh-92;
+    var cx = gx+CENTER.fx*gw, cy = gy+CENTER.fy*gh;
+
+    var weighP = phase===1? ep : (phase>1? 1 : 0);
+    var poolP  = phase===2? ep : (phase>2? 1 : 0);
+    var rankP  = phase===3? ep : (phase>3? 1 : 0);
+
+    NB.forEach(function(n){
+      var nx = gx+n.fx*gw, ny = gy+n.fy*gh;
+      var wt = mode==='avg'? n.avg : n.attn;
+      var lw = lerp(1.2, 1 + wt*7, weighP);
+      var alpha = lerp(0.55, mode==='avg'? 0.55 : clamp(0.25+wt,0.3,1), weighP);
+
+      ctx.save(); ctx.globalAlpha = alpha * ctx.globalAlpha;
+      ctx.strokeStyle = (mode==='attn' && n.id==='A' && weighP>0.5) ? accent : t3;
+      ctx.lineWidth = lw;
+      ctx.beginPath(); ctx.moveTo(nx,ny); ctx.lineTo(cx,cy); ctx.stroke();
+      ctx.restore();
+
+      /* pooling pulse: a dot travels neighbor -> center, size follows weight */
+      if(phase===2){
+        var pp = clamp(ep*1.15,0,1);
+        var dx = lerp(nx,cx,pp), dy = lerp(ny,cy,pp);
+        ctx.beginPath(); ctx.arc(dx,dy, 2+wt*7, 0, Math.PI*2);
+        ctx.fillStyle = (mode==='attn' && n.id==='A') ? accent : t3;
+        ctx.fill();
+      }
+
+      /* neighbor node */
+      ctx.beginPath(); ctx.arc(nx,ny,11,0,Math.PI*2);
+      ctx.fillStyle=inset; ctx.fill();
+      ctx.strokeStyle = (mode==='attn' && n.id==='A') ? accent : 'rgba(255,255,255,0.16)';
+      ctx.lineWidth=1.2; ctx.stroke();
+      ctx.font='600 9px '+mono; ctx.fillStyle=t1; ctx.textAlign='center';
+      ctx.fillText(n.id, nx, ny+3);
+
+      /* co-occurrence count, placed away from center */
+      ctx.font='8px '+mono; ctx.fillStyle=t3;
+      ctx.fillText(n.co, nx, ny + (n.fy<0.5? -17 : 24));
+
+      /* weight label at edge midpoint */
+      if(weighP>0.15){
+        var mx=(nx+cx)/2, my=(ny+cy)/2;
+        ctx.save(); ctx.globalAlpha = clamp((weighP-0.15)/0.5,0,1) * ctx.globalAlpha;
+        drawRR(mx-15,my-8,30,15,4,inset,null,0);
+        ctx.font='600 8px '+mono;
+        ctx.fillStyle = (mode==='attn' && n.id==='A') ? accent : t2;
+        ctx.fillText(wt.toFixed(2), mx, my+3);
+        ctx.restore();
+      }
+    });
+
+    /* center node: identity tint strengthens with pooling */
+    ctx.beginPath(); ctx.arc(cx,cy,14,0,Math.PI*2);
+    ctx.fillStyle=inset; ctx.fill();
+    if(poolP>0){
+      ctx.save(); ctx.globalAlpha = poolP * (mode==='attn'? 0.75 : 0.4) * ctx.globalAlpha;
+      ctx.beginPath(); ctx.arc(cx,cy,14,0,Math.PI*2);
+      ctx.fillStyle = mode==='attn'? accent : t3;
+      ctx.fill(); ctx.restore();
+    }
+    ctx.strokeStyle='rgba(255,255,255,0.22)'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.arc(cx,cy,14,0,Math.PI*2); ctx.stroke();
+    ctx.font='600 9px '+mono; ctx.fillStyle=t1; ctx.textAlign='center';
+    ctx.fillText('S', cx, cy+3);
+    ctx.font='8px '+mono; ctx.fillStyle=t3;
+    ctx.fillText('session item', cx, cy+30);
+
+    /* rank chip */
+    if(rankP>0){
+      var chipW = clamp(zw*0.72, 150, 230), chipH = 26;
+      var chx = zx+zw/2-chipW/2, chy = zy+zh-46;
+      var col = mode==='attn'? green : red;
+      ctx.save(); ctx.globalAlpha = rankP * ctx.globalAlpha;
+      drawRR(chx,chy,chipW,chipH,7,inset,col,1.2);
+      ctx.font='600 9px '+mono; ctx.fillStyle = col; ctx.textAlign='center';
+      ctx.fillText(mode==='attn'? 'true next item: rank #2' : 'true next item: rank #23', zx+zw/2, chy+16);
+      ctx.restore();
+    }
+    ctx.textAlign='left';
+  }
+
+  function draw(){
+    if(!running) return;
+    ctx.clearRect(0,0,w,h);
+
+    var f = frame % totalF;
+    var phase=0, pf=0, acc=0;
+    for(var i=0;i<P.length;i++){ if(f<acc+P[i].dur){phase=i;pf=f-acc;break;} acc+=P[i].dur; }
+    var prog = pf/P[phase].dur;
+    var ep = easeInOut(prog);
+
+    var globalAlpha = 1;
+    if(phase===0) globalAlpha = ep;
+    if(phase===5) globalAlpha = 1-ep;
+    ctx.globalAlpha = globalAlpha;
+
+    /* layout: two panels side by side, stacked under 620px; verified 343/375/600/900/1344 */
+    var margin = clamp(w*0.03, 10, 28);
+    var capH = 34;
+    if(!stacked){
+      var pw = (w - margin*3)/2, ph = h - 18 - capH;
+      drawPanel(margin, 12, pw, ph, 'avg', phase, ep);
+      drawPanel(margin*2+pw, 12, pw, ph, 'attn', phase, ep);
+    } else {
+      var ph2 = (h - 26 - capH)/2;
+      drawPanel(margin, 10, w-margin*2, ph2, 'avg', phase, ep);
+      drawPanel(margin, 16+ph2, w-margin*2, ph2, 'attn', phase, ep);
+    }
+
+    /* caption */
+    var capAlpha = phase>=4 ? 1 : (phase===3 ? clamp((ep-0.5)/0.5,0,1) : 0);
+    if(capAlpha>0){
+      ctx.save(); ctx.globalAlpha = capAlpha*globalAlpha;
+      ctx.font='italic 10px '+mono; ctx.fillStyle=t2; ctx.textAlign='center';
+      var cap = w<560 ? 'same graph, same evidence; attention decides what counts'
+                      : 'same graph, same evidence; attention decides how much each neighbor counts (illustrative weights, each panel sums to 1.00)';
+      ctx.fillText(cap, w/2, h-14);
+      ctx.textAlign='left';
+      ctx.restore();
+    }
+
+    ctx.globalAlpha=1;
+    if(loopEnabled){ frame++; requestAnimationFrame(draw); }
+  }
+
+  var cObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting && !running){
+        initCanvas();
+        if(reduceMotion){ frame=STATIC_FRAME; loopEnabled=false; running=true; draw(); }
+        else { frame=0; loopEnabled=true; running=true; draw(); }
+      } else if(!entry.isIntersecting && running){
+        running=false;
+      }
+    });
+  },{threshold:0.15});
+  cObs.observe(wrap);
+
+  window.addEventListener('resize', function(){
+    if(!running) return;
+    initCanvas();
+    if(!loopEnabled) draw();
+  });
+})();
+</script>
+
 </body>
 </html>

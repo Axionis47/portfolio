@@ -1,0 +1,139 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION: work — a plain list of projects.
+     Name-led, category-labelled (so the classical-ML / LLM range is
+     visible), factual descriptions. No hooks, no selling.
+     ═══════════════════════════════════════════════════════════════ -->
+<style>
+  #work{max-width:var(--maxw);margin:0 auto;padding:clamp(70px,10vh,120px) var(--gutter)}
+  #work .work-head{margin-bottom:48px}
+  #work .work-eyebrow{
+    font-family:var(--mono);font-size:var(--fs-meta);font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);opacity:.85;margin-bottom:16px;
+  }
+  #work .work-h{
+    font-family:var(--sans);font-size:var(--fs-h2);font-weight:500;letter-spacing:-.02em;
+    color:var(--t1);line-height:1.2;max-width:24ch;
+  }
+
+  #work .rows{display:flex;flex-direction:column;gap:14px}
+  #work .row{
+    position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:flex-start;
+    padding:28px 30px;text-decoration:none;color:inherit;
+    background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,.02);
+    border-left:2px solid var(--accent-line);
+    box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);
+    transition:transform var(--dur-fast) var(--ease-out),box-shadow var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out);
+  }
+  #work .row:hover{transform:translateY(-3px);border-left-color:var(--accent);
+    box-shadow:7px 7px 20px var(--shd),-3px -3px 10px var(--shl),0 0 22px var(--glow)}
+  #work .idx{font-family:var(--mono);font-size:.72rem;color:var(--accent);opacity:.6;padding-top:5px}
+  #work .main{min-width:0}
+  #work .rcat{font-family:var(--mono);font-size:.66rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+  #work .rname{font-family:var(--sans);font-size:clamp(1.1rem,1.7vw,1.32rem);font-weight:500;color:var(--t1);line-height:1.3;letter-spacing:-.01em;margin-bottom:10px}
+  #work .rdesc{font-family:var(--sans);font-size:.94rem;color:var(--t2);line-height:1.7;margin-bottom:14px;max-width:66ch}
+  #work .tags{display:flex;gap:6px;flex-wrap:wrap}
+  #work .tag{font-family:var(--mono);font-size:.62rem;color:var(--t3);padding:3px 9px;border-radius:var(--r-pill);
+    background:var(--inset);box-shadow:inset 1px 1px 3px var(--shd),inset -1px -1px 2px var(--shl)}
+  #work .go{font-family:var(--mono);font-size:1rem;color:var(--t3);transition:transform var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out);padding-top:4px}
+  #work .row:hover .go{transform:translateX(4px);color:var(--accent)}
+
+  #work .badge{
+    position:absolute;top:-9px;left:30px;font-family:var(--mono);font-size:.58rem;font-weight:600;
+    letter-spacing:.06em;text-transform:uppercase;color:#0d0d0f;background:var(--accent);
+    padding:3px 10px;border-radius:5px;box-shadow:0 2px 10px rgba(216,140,58,.35);
+  }
+
+  @media(max-width:620px){
+    #work .row{grid-template-columns:auto 1fr;gap:16px;padding:24px 22px}
+    #work .go{display:none}
+  }
+</style>
+
+<section id="work">
+  <div class="work-head">
+    <div class="work-eyebrow" data-reveal>Other work</div>
+    <h2 class="work-h" data-reveal>A few other things I&rsquo;ve built.</h2>
+  </div>
+
+  <div class="rows">
+
+    <a class="row" href="projects/credit-risk-engine.html" data-reveal>
+      <span class="idx">01</span>
+      <div class="main">
+        <div class="rcat">Classical ML</div>
+        <p class="rname">Credit Risk Scoring Engine</p>
+        <p class="rdesc">A Basel III credit-risk model: a four-model ensemble estimating probability of default, with SHAP-based adverse-action codes so a declined applicant gets a specific reason rather than a black-box no. 0.879 AUC across 63 features, with fairness and drift monitoring.</p>
+        <div class="tags"><span class="tag">XGBoost</span><span class="tag">LightGBM</span><span class="tag">SHAP</span><span class="tag">ECOA</span><span class="tag">MLflow</span></div>
+      </div>
+      <span class="go">&rarr;</span>
+    </a>
+
+    <a class="row" href="projects/ai-transformation-agent.html" data-reveal>
+      <span class="idx">02</span>
+      <div class="main">
+        <div class="rcat">Multi-agent LLM system</div>
+        <p class="rname">AI Transformation Agent</p>
+        <p class="rdesc">A research system for AI consulting. Six agents form hypotheses about a business and try to disconfirm them before writing anything down, so the report is evidence-traced rather than confident guesswork. Budget-capped at 25 queries; about 90% coverage across eight industries.</p>
+        <div class="tags"><span class="tag">Multi-Agent</span><span class="tag">RAG</span><span class="tag">Gemini</span><span class="tag">Cloud Run</span></div>
+      </div>
+      <span class="go">&rarr;</span>
+    </a>
+
+    <a class="row" href="projects/laneguard-adas.html" data-reveal>
+      <span class="idx">03</span>
+      <div class="main">
+        <div class="rcat">Computer vision</div>
+        <p class="rname">LaneGuard &middot; Drivable-Area Segmentation</p>
+        <p class="rdesc">Drivable-area segmentation for driver assistance. SegFormer-B0 fine-tuned with a custom LoRA injection (3.4% of parameters), 0.806 mIoU, trained in under five minutes on CPU. I added conformal prediction because a model&rsquo;s confidence isn&rsquo;t the same as its accuracy.</p>
+        <div class="tags"><span class="tag">SegFormer</span><span class="tag">LoRA</span><span class="tag">Conformal</span><span class="tag">BEV</span></div>
+      </div>
+      <span class="go">&rarr;</span>
+    </a>
+
+    <a class="row" href="projects/gat-recommendation.html" data-reveal>
+      <span class="idx">04</span>
+      <div class="main">
+        <div class="rcat">Graph neural networks</div>
+        <p class="rname">Session-Based GNN Recommendations</p>
+        <p class="rdesc">A graph recommender for shoppers with no history: it trusts the session, a co-occurrence graph of 172,066 past sessions, and nothing else. Cutting the feed-forward layers to fit a $300 course budget made the transformer faster to train and more accurate &mdash; 38.28% validation Recall@10 across 82,173 items, 2.6&times; the GraphSAGE baseline.</p>
+        <div class="tags"><span class="tag">Graph Transformer</span><span class="tag">Laplacian PE</span><span class="tag">PyTorch Geometric</span><span class="tag">ONNX</span></div>
+      </div>
+      <span class="go">&rarr;</span>
+    </a>
+
+    <a class="row" href="projects/abac-rag.html" data-reveal>
+      <span class="idx">05</span>
+      <div class="main">
+        <div class="rcat">Retrieval + access control</div>
+        <p class="rname">Enterprise RAG &middot; ABAC</p>
+        <p class="rdesc">A RAG chatbot where access control lives outside the model. A 12-rule policy engine &mdash; not the LLM &mdash; decides what each user is allowed to retrieve, with hybrid dense/sparse retrieval and policy-fingerprinted caching. No cross-role leakage across 437 tests.</p>
+        <div class="tags"><span class="tag">RAG</span><span class="tag">ABAC</span><span class="tag">ChromaDB</span><span class="tag">K8s</span></div>
+      </div>
+      <span class="go">&rarr;</span>
+    </a>
+
+    <a class="row" href="projects/semantic-search-kd.html" data-reveal>
+      <span class="idx">06</span>
+      <div class="main">
+        <div class="rcat">Model distillation</div>
+        <p class="rname">Semantic Search via Knowledge Distillation</p>
+        <p class="rdesc">Semantic search on a small budget. Distilled a 560M cross-encoder into a 33M bi-encoder using KL-divergence and three stages of hard-negative mining: about 97% of the teacher&rsquo;s quality, 100&times; faster, roughly $4 to train.</p>
+        <div class="tags"><span class="tag">KL Divergence</span><span class="tag">FAISS</span><span class="tag">FastAPI</span><span class="tag">MS MARCO</span></div>
+      </div>
+      <span class="go">&rarr;</span>
+    </a>
+
+    <a class="row" href="projects/hackathon-osce-grader.html" data-reveal>
+      <span class="badge">Won RU Health Hack</span>
+      <span class="idx">07</span>
+      <div class="main">
+        <div class="rcat">LLM application</div>
+        <p class="rname">OSCE Grader</p>
+        <p class="rdesc">The model handles language, never clinical judgment. Each section is graded in one call at temperature 0.0, every judgment must cite a verbatim transcript line, and the harness verifies the quote in code before it reaches the report. Eighteen model calls per evaluation, down from 150.</p>
+        <div class="tags"><span class="tag">Gemini 2.5</span><span class="tag">asyncio</span><span class="tag">Citation gate</span><span class="tag">FastAPI</span></div>
+      </div>
+      <span class="go">&rarr;</span>
+    </a>
+
+  </div>
+</section>
