@@ -40,7 +40,7 @@
   .prose p{font-family:var(--sans);font-size:1.08rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
   .prose strong{color:var(--t1);font-weight:500}
   .sec{font-family:var(--mono);font-size:.78rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
-  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 30px;margin:20px 0}
+  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 30px;margin:20px 0;overflow-x:auto}
   .dia-title{font-family:var(--mono);font-size:.72rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
   .dia-group{font-family:var(--mono);font-size:.66rem;color:var(--t3);letter-spacing:.04em;text-transform:uppercase;margin:16px 0 6px;padding-left:4px}
   .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
@@ -100,6 +100,7 @@
     .compare{grid-template-columns:1fr}
     .dia-row{flex-direction:column;gap:0}
     .dia-arrow{transform:rotate(90deg);padding:6px 0}
+    .rtable{min-width:560px}
     .ft{flex-direction:column;gap:10px;text-align:center}
   }
 </style>
@@ -115,20 +116,22 @@
 
   <div class="proj-label fade">Project</div>
   <h1 class="proj-title fade">Semantic Search via Knowledge Distillation</h1>
-  <div class="proj-subtitle fade">Transferring cross-encoder judgment into a bi-encoder that runs 100x faster</div>
+  <div class="proj-subtitle fade">A 560M cross-encoder's judgment, compressed into a 33M student. The code is real. This page audits which numbers are.</div>
   <div class="divider"></div>
 
   <div class="brief fade">
     <div class="brief-label">Engineering Brief</div>
     <div class="brief-grid">
       <span class="brief-key">Problem</span>
-      <span class="brief-val">Cross-encoders understand relevance deeply but can only rerank small candidate sets. Bi-encoders search the full corpus instantly but miss nuance. The gap between them is 0.719 vs 0.910 nDCG@10.</span>
+      <span class="brief-val">Cross-encoders understand relevance deeply but must re-read every candidate for every query. Bi-encoders search a full corpus in milliseconds but miss nuance, because they never see query and document together. Distillation is the attempt to move the first model's judgment into the second model's architecture.</span>
       <span class="brief-key">Approach</span>
-      <span class="brief-val">Knowledge distillation with 3-component loss (MarginMSE + KL divergence + contrastive), 3-stage hard negative mining curriculum (BM25 + teacher-graded + ANCE self-mining), and temperature annealing from T=4.0 to T=2.0.</span>
+      <span class="brief-val">Knowledge distillation with a 3-component loss (MarginMSE + KL divergence + contrastive, weighted 0.6/0.2/0.2), a 3-stage hard-negative mining curriculum (BM25, teacher-scored, ANCE self-mining), and temperature annealed linearly from T=4.0 to T=2.0. All of that is committed, tested code.</span>
       <span class="brief-key">Result</span>
-      <span class="brief-val">Student reaches 0.882 nDCG@10, 97% of teacher quality. 100x faster (1ms vs 100ms/pair). 17x smaller (33M vs 560M params). $4 to train. $40/month to serve.</span>
+      <span class="brief-val">Audited, not asserted. Verifiable in the repo: the loss and mining implementations, a FastAPI serving layer with real rate limiting, 177 test functions, and 8 architecture decision records. Reported in the repo's docs but backed by no artifact: 0.882 nDCG@10, 97% of teacher quality, $4 to train. This page labels every number as one or the other. Chapter 6 is the audit.</span>
+      <span class="brief-key">Why it matters</span>
+      <span class="brief-val">Distillation is a trust transfer: the student is only worth deploying to the extent it reproduces the teacher's judgment, measured. The same standard applies to the project itself, so claims without artifacts are labeled as targets, not results.</span>
       <span class="brief-key">Stack</span>
-      <span class="brief-val">PyTorch, Sentence-Transformers, FAISS HNSW, FastAPI, Docker, GCP Cloud Run, Prometheus, MS MARCO</span>
+      <span class="brief-val">PyTorch, Sentence-Transformers, FAISS HNSW, BM25, MS MARCO, FastAPI, Docker, GitHub Actions, pytest, mypy, ruff</span>
     </div>
   </div>
 
@@ -144,7 +147,7 @@
       <strong>Cross-encoders</strong> read the query and document together, word by word. They catch that "Python" in the context of "exceptions" means the programming language. They see that "exception management" is the same concept as "handle exceptions" even though the words differ. But they cannot pre-compute anything. Every new query means re-reading every candidate document. They work as rerankers for small candidate sets, not as first-stage retrievers.
     </p>
     <p>
-      The accuracy gap is real: 0.719 vs 0.910 nDCG@10. The question I wanted to answer: <strong>can I transfer the cross-encoder's ranking judgment into the bi-encoder, so it gets the quality without needing the architecture?</strong>
+      The project's docs put the gap at 0.719 vs 0.910 nDCG@10 for the two models involved, a number this page treats as reported rather than proven, and audits in Chapter 6. The question stands regardless of the exact figure: <strong>can the cross-encoder's ranking judgment be transferred into the bi-encoder, so it gets the quality without paying for the architecture?</strong>
     </p>
   </div>
 
@@ -158,32 +161,33 @@
       <div class="compare-label">Teacher (cross-encoder)</div>
       <div class="compare-name">BAAI/bge-reranker-large</div>
       <div class="compare-spec">
-        XLM-RoBERTa-large, 560M params<br>
+        XLM-RoBERTa-large, 560M params (published size)<br>
         Reads query + document together<br>
-        Scores: [-10, +10], well-calibrated<br>
-        ~100ms per (query, doc) pair<br>
-        nDCG@10: 0.910
+        Scores: [-10, +10], wide margins<br>
+        Docs report: ~100ms per (query, doc) pair<br>
+        Docs report: nDCG@10 0.910
       </div>
     </div>
     <div class="compare-card dia-good">
       <div class="compare-label">Student (bi-encoder, distilled)</div>
       <div class="compare-name">intfloat/e5-small-v2</div>
       <div class="compare-spec">
-        MiniLM, 33M params, 384-dim output<br>
+        MiniLM, 33M params (published size), 384-dim output<br>
         Encodes query and docs independently<br>
         Native "query:" and "passage:" prefixes<br>
-        ~1ms per query on CPU<br>
-        nDCG@10: 0.719 &rarr; <strong>0.882 after KD</strong>
+        Docs report: ~1ms per query on CPU<br>
+        Docs report: nDCG@10 0.719 &rarr; <strong>0.882 after KD</strong>
       </div>
     </div>
   </div>
+  <div class="dia-note fade" style="margin:-8px 0 16px">Parameter counts are the models' published sizes (one repo doc contradicts them; audited in Chapter 6). Latency and nDCG figures are the repo docs' reported values, with no artifact behind them.</div>
 
   <div class="prose fade">
     <p>
       I chose bge-reranker-large as teacher because its scores are well-calibrated (the difference between 9.2 and 7.1 is meaningful, not just ordinal). I chose e5-small-v2 as student because it has native asymmetric prefix support ("query:" vs "passage:"), which matters for retrieval quality, and it has a proven track record with knowledge distillation.
     </p>
     <p>
-      I chose bge-reranker-large as teacher also because its output range (approximately -10 to +10) has clear margins between relevance levels. This matters for MarginMSE loss, which learns from score differences, not absolute values. A teacher with compressed scores (everything between 0.8 and 1.0) would give the student almost no pairwise signal to learn from.
+      The teacher's score range matters for a second reason. Its outputs spread across roughly -10 to +10, with clear margins between relevance levels, and MarginMSE learns from score differences, not absolute values. ADR-002 rejected a smaller cross-encoder on exactly this ground: a teacher with compressed scores, everything between 0.8 and 1.0, would give the student almost no pairwise signal to learn from. The GPU savings were not worth the flattened signal.
     </p>
   </div>
 
@@ -197,7 +201,7 @@
       The core of knowledge distillation is not matching the teacher's top-1 prediction. It is matching the teacher's <strong>entire probability distribution</strong> over documents. When the teacher says "70% Doc A, 20% Doc B, 10% Doc C," that 20% on Doc B contains information. The student needs to learn that B is a plausible answer, just not the best one. Three loss functions capture three different aspects of this signal.
     </p>
     <p>
-      I chose a 60/20/20 weighted combination of MarginMSE, KL divergence, and contrastive loss because each teaches something different. MarginMSE (60%) transfers pairwise ranking preferences, the dominant training signal. KL divergence (20%) transfers the full score distribution shape, preserving dark knowledge about non-obvious candidates. Contrastive loss (20%) regularizes embedding geometry so similar items cluster together in vector space. Single-loss training capped at 93% teacher quality. The combination reached 97%.
+      I chose a 60/20/20 weighted combination of MarginMSE, KL divergence, and contrastive loss because each teaches something different. MarginMSE (60%) transfers pairwise ranking preferences, the dominant training signal. KL divergence (20%) transfers the full score distribution shape, preserving dark knowledge about non-obvious candidates. Contrastive loss (20%) regularizes embedding geometry so similar items cluster together in vector space. The weights are real: <code>CombinedKDLoss</code> in <code>src/kd/losses.py</code> ships them as defaults, matched by <code>configs/kd.yaml</code> and exercised by the test suite. ADR-004 records single-loss runs plateauing several points below the combination; those ablation figures have no artifact behind them, so read them as the design record, not measurements.
     </p>
   </div>
 
@@ -227,7 +231,7 @@
 
   <!-- 3-panel animation -->
   <div class="anim-wrap fade" style="height:auto">
-    <div class="anim-label">Three losses operating on the same query</div>
+    <div class="anim-label">Three losses operating on the same query (illustrative values, computed live)</div>
     <canvas id="lossCanvas" style="height:360px"></canvas>
     <div class="anim-status" id="lossStatus"></div>
   </div>
@@ -241,10 +245,10 @@
       Temperature controls the sharpness of the probability distribution. At T=4.0, the softmax output is smooth: the teacher says "A is slightly better than B, and B is slightly better than C." The student learns the big picture, the overall ranking structure. At T=2.0, the distribution sharpens: "A is clearly the best, and everything else is distant." The student learns fine-grained top-rank precision.
     </p>
     <p>
-      I anneal linearly from T=4.0 to T=2.0 over the course of training. High temperature early prevents over-specialization on hard examples. Low temperature late focuses on the top results that nDCG@10 weights most heavily. This added 1-2% nDCG@10 over a fixed temperature of 2.0.
+      The schedule is code, not aspiration: <code>temperature_start=4.0</code> and <code>temperature_end=2.0</code> are the shipped defaults, interpolated linearly by training progress. One honest detail the code settles: the annealed temperature is shared by both teacher-matching losses, MarginMSE and Listwise-KD, while ADR-005 claims only the listwise term anneals. The code wins that argument, and the audit notes the drift.
     </p>
     <p>
-      I chose linear annealing from T=4.0 to T=2.0 because high temperature early exposes the student to broad ranking signal across all candidates (the "dark knowledge" in low-ranked results), while low temperature late sharpens focus on the top results that matter for retrieval. Cosine annealing showed less than 0.3% difference and added complexity without benefit. Fixed T=1.0 loses dark knowledge entirely. The contrastive loss temperature stays fixed at 0.05 throughout, which is standard for InfoNCE.
+      I chose linear annealing from T=4.0 to T=2.0 because high temperature early exposes the student to broad ranking signal across all candidates (the "dark knowledge" in low-ranked results), while low temperature late sharpens focus on the top results that matter for retrieval. ADR-005 records annealing as worth 1-2% nDCG@10 over fixed T=2.0 and cosine as within 0.3% of linear; both figures are the ADR's own, without artifacts. The contrastive loss temperature stays fixed at 0.05 throughout, which is standard for InfoNCE and confirmed in code.
     </p>
   </div>
 
@@ -278,97 +282,102 @@
   <div class="sec fade">Chapter 5. Three-stage hard negative mining</div>
   <div class="prose fade">
     <p>
-      The quality of training examples matters more than the training algorithm. Naive distillation with random negatives gets you to about 85% of teacher quality. The last 12% comes from showing the student progressively harder examples. I used a 3-stage curriculum that increases difficulty.
+      The quality of training examples matters more than the training algorithm. A negative that shares no words with the query teaches the student nothing it did not already know. The negatives that teach are the ones that <em>almost</em> fool it. The repo implements a 3-stage curriculum, in <code>src/mining/miners.py</code>, that makes the almosts progressively harder.
     </p>
     <p>
-      I chose a 3-stage curriculum (BM25, then teacher-graded, then ANCE self-mining) because each stage targets different failure modes. BM25 negatives teach basic lexical discrimination. Teacher-graded negatives (confidence threshold 0.6, selecting from the top 100 BM25 candidates) teach semantic distinctions the student cannot yet make. ANCE negatives (margin=0.1, refreshed every 500 steps) target the student's specific blind spots: passages it currently ranks too high. Two-stage training capped at 93%. Three-stage reached 97%.
+      I chose a 3-stage curriculum (BM25, then teacher-scored, then ANCE self-mining) because each stage targets a different failure mode. BM25 negatives teach lexical discrimination: keyword overlap is not relevance. Teacher-scored negatives are the most plausible wrong answers: the miner keeps the candidates the teacher scores highest above a 0.6 confidence floor, the ones closest to fooling everyone. ANCE negatives target the student's own blind spots: passages the current student ranks confidently that the teacher rejects (margin 0.1). ADR-003 records the progression as roughly 85% of teacher quality from BM25 alone, 93% adding teacher-scored, 97% adding ANCE; no artifact backs those percentages, so the table below is labeled for what it is.
     </p>
   </div>
 
   <!-- Mining curriculum animation -->
   <div class="anim-wrap fade">
-    <div class="anim-label">3-Stage Mining Curriculum</div>
+    <div class="anim-label">3-Stage Mining Curriculum &middot; percentages are ADR-003 design targets</div>
     <canvas id="miningCanvas"></canvas>
     <div class="anim-status" id="miningStatus"></div>
   </div>
 
   <div class="pipeline fade">
     <div class="pipe-step">
-      <div class="pipe-num">Stage A (1 epoch, 7 negatives/query)</div>
-      <div class="pipe-title">BM25 lexical mining</div>
-      <div class="pipe-desc">Retrieve top-100 BM25 results per query. These share keywords but are semantically irrelevant. "Python snake" for "Python exceptions." The student learns: <strong>keyword overlap is not relevance</strong>. Gets to ~85% of teacher quality.</div>
+      <div class="pipe-num">Stage 1 &middot; BM25Miner</div>
+      <div class="pipe-title">Lexical mining</div>
+      <div class="pipe-desc">Retrieve the top-100 BM25 results per query. These share keywords but are semantically irrelevant: "Python snake" for "Python exceptions." The student learns that <strong>keyword overlap is not relevance</strong>.</div>
     </div>
     <div class="pipe-step">
-      <div class="pipe-num">Stage B (1 epoch, 4 negatives/query)</div>
-      <div class="pipe-title">Teacher-graded semantic mining</div>
-      <div class="pipe-desc">Score BM25 candidates with the teacher cross-encoder. Keep only those where BM25 says relevant but teacher says irrelevant (score &lt;0.7). Drop documents with &gt;0.8 text overlap (near-duplicates). These are <strong>semantically deceptive</strong> negatives. Gets to ~93%.</div>
+      <div class="pipe-num">Stage 2 &middot; BM25 + TeacherMiner</div>
+      <div class="pipe-title">Teacher-scored mining</div>
+      <div class="pipe-desc">The teacher cross-encoder scores the BM25 candidates; the miner keeps the top 10 non-positives above a 0.6 confidence floor. These are the <strong>most plausible wrong answers</strong>: negatives that score almost like positives, where the real semantic boundary lives.</div>
     </div>
     <div class="pipe-step">
-      <div class="pipe-num">Stage C (1 epoch, 4 negatives/query)</div>
-      <div class="pipe-title">ANCE self-mining</div>
-      <div class="pipe-desc">Every 500 steps, encode the corpus with the current student. Retrieve the student's top-50 results per query. The teacher checks them. Documents the <strong>student is most confident about but the teacher rejects</strong> become the next training batch. The student mines its own blind spots. Gets to <strong>97%</strong>.</div>
+      <div class="pipe-num">Stage 3 &middot; + ANCEMiner</div>
+      <div class="pipe-title">Self-mining the blind spots</div>
+      <div class="pipe-desc">Encode the corpus with the current student and retrieve its own top results. Any passage the <strong>student scores within 0.1 of its best positive</strong> but that is not relevant becomes a training negative. The student is interrogated with its own mistakes, refreshed as it improves.</div>
     </div>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">Quality progression by stage</div>
+    <div class="dia-title">Quality progression as recorded in ADR-003 (design targets, no artifact)</div>
     <table class="rtable">
-      <tr><th>Stage</th><th>Strategy</th><th>Teacher Quality Recovery</th><th>What it teaches</th></tr>
-      <tr><td>Random negatives</td><td>Random sampling</td><td>~75%</td><td>Basic relevance</td></tr>
-      <tr><td>A: BM25</td><td>Keyword overlap</td><td>~85%</td><td>Keywords are not relevance</td></tr>
-      <tr><td>B: Teacher-graded</td><td>Semantic deception</td><td>~93%</td><td>Plausible but wrong</td></tr>
-      <tr class="best"><td>C: ANCE</td><td>Student's blind spots</td><td>~97%</td><td>Model-specific errors</td></tr>
+      <tr><th>Stage</th><th>Strategy</th><th>ADR-003 target</th><th>What it teaches</th></tr>
+      <tr><td>1: BM25</td><td>Keyword overlap</td><td>~85% of teacher</td><td>Keywords are not relevance</td></tr>
+      <tr><td>2: Teacher-scored</td><td>Plausible wrong answers</td><td>~93%</td><td>Semantic deception</td></tr>
+      <tr class="best"><td>3: ANCE</td><td>Student's blind spots</td><td>~97%</td><td>Model-specific errors</td></tr>
     </table>
+    <div class="dia-note">The percentages are the ADR's recorded reasoning for a three-stage design. The repo contains no eval artifact that measures them.</div>
   </div>
 
   <!-- ═══════════════════════════════════════
        CH 6: RESULTS
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 6. Results</div>
+  <div class="sec fade">Chapter 6. The audit: which numbers are real</div>
+
+  <div class="prose fade">
+    <p>
+      This project's docs report results that its repo cannot currently reproduce. The honest move is not to delete the numbers or to repeat them louder; it is to say exactly which claims have evidence and which are design targets. So this chapter is an audit, run against the repo's own artifacts. The rule is the one used everywhere on this site: a number is real if code, a config, or a committed artifact backs it; otherwise it is labeled as reported.
+    </p>
+  </div>
 
   <div class="results fade">
     <div class="stat">
-      <div class="stat-val">0.882</div>
-      <div class="stat-label">nDCG@10</div>
+      <div class="stat-val">0.6/0.2/0.2</div>
+      <div class="stat-label">Loss Weights, In Code</div>
     </div>
     <div class="stat">
-      <div class="stat-val">97%</div>
-      <div class="stat-label">Teacher Quality</div>
+      <div class="stat-val">4.0 &rarr; 2.0</div>
+      <div class="stat-label">Temperature, In Code</div>
     </div>
     <div class="stat">
-      <div class="stat-val">100x</div>
-      <div class="stat-label">Faster</div>
+      <div class="stat-val">177</div>
+      <div class="stat-label">Test Functions</div>
     </div>
     <div class="stat">
-      <div class="stat-val">$4</div>
-      <div class="stat-label">Training Cost</div>
+      <div class="stat-val">8</div>
+      <div class="stat-label">Decision Records</div>
     </div>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">Full comparison</div>
+    <div class="dia-title">Claim-by-claim audit</div>
     <table class="rtable">
-      <tr><th>Model</th><th>nDCG@10</th><th>MRR@10</th><th>Params</th><th>Latency</th></tr>
-      <tr><td>Vanilla bi-encoder (pre-KD)</td><td>0.719</td><td>0.685</td><td>33M</td><td>~1ms</td></tr>
-      <tr class="best"><td>KD student (ours)</td><td>0.882</td><td>0.854</td><td>33M</td><td>~1ms</td></tr>
-      <tr><td>Teacher cross-encoder</td><td>0.910</td><td>0.891</td><td>560M</td><td>~100ms/pair</td></tr>
+      <tr><th>Claim</th><th>Where it lives</th><th>Audit</th></tr>
+      <tr><td>3-loss KD objective, 0.6/0.2/0.2, KL via F.kl_div</td><td>src/kd/losses.py + configs + tests</td><td>Code-backed</td></tr>
+      <tr><td>Temperature annealing 4.0 &rarr; 2.0, linear</td><td>src/config.py, src/kd/losses.py</td><td>Code-backed (anneals both teacher-matching losses; ADR-005 says only one)</td></tr>
+      <tr><td>3-stage mining: BM25, teacher-scored, ANCE</td><td>src/mining/miners.py</td><td>Code-backed structure; stage percentages are ADR targets</td></tr>
+      <tr><td>Rate limiting: 100 req/min, burst 20</td><td>src/serve/middleware.py</td><td>Code-backed (ADR-008 says 10/s; the code ships ~1.7/s)</td></tr>
+      <tr><td>560M teacher / 33M student</td><td>README, ADR-001/002</td><td>Match the public model cards; one repo doc says 110M/22M for the same models</td></tr>
+      <tr><td>nDCG@10 0.719 / 0.882 / 0.910, "97% of teacher"</td><td>docs, from a 200-query eval</td><td>Reported only. No eval artifact exists, committed or local</td></tr>
+      <tr><td>MRR@10 for the same three models</td><td>two overview docs</td><td>Contradicted: 0.632/0.775/0.80 in one doc, 0.685/0.854/0.891 in the other</td></tr>
+      <tr><td>"100x faster", ~1ms vs ~100ms; "$4 to train"</td><td>README, results doc</td><td>Reported only. No benchmark or billing artifact</td></tr>
+      <tr><td>Per-epoch loss table with T = 4.0 / 3.0 / 2.0</td><td>results doc</td><td>Contradicted: the code's schedule yields 3.33 / 2.67 / 2.0 for a 3-epoch run</td></tr>
+      <tr><td>Prometheus metrics, "calibrated ONNX" serving</td><td>GitHub description, ops docs</td><td>Contradicted: no instrumentation code; ADR-007 chose PyTorch over ONNX</td></tr>
     </table>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Training loss progression (3 epochs)</div>
-    <table class="rtable">
-      <tr><th>Epoch</th><th>Total Loss</th><th>MarginMSE</th><th>ListwiseKD</th><th>Contrastive</th><th>Temperature</th></tr>
-      <tr><td>1</td><td>0.3035</td><td>0.2412</td><td>0.1856</td><td>0.5294</td><td>4.0</td></tr>
-      <tr><td>2</td><td>0.2340</td><td>0.1788</td><td>0.1423</td><td>0.4650</td><td>3.0</td></tr>
-      <tr class="best"><td>3</td><td>0.1942</td><td>0.1401</td><td>0.1105</td><td>0.4118</td><td>2.0</td></tr>
-    </table>
-    <div class="dia-note">36% total loss reduction. MarginMSE improved 42%. Monotonic improvement, no early stopping triggered.</div>
   </div>
 
   <div class="prose fade">
     <p>
-      I report 0.882 nDCG@10 measured on 200 held-out MS MARCO queries, which is 96.9% of the teacher's 0.910. The remaining 3% gap can be closed with an optional reranking pass using the teacher on the top-100 candidates, bringing total latency to approximately 111ms, still far faster than teacher-only scoring of the full corpus.
+      Then there is the finding that explains the others. Every training, evaluation, and serving entry point imports <code>src.models</code>: the <code>StudentModel</code> and <code>TeacherModel</code> wrappers and the ONNX exporter. That package exists in no commit and is not on disk. The cause is one line: <code>.gitignore</code> contains <code>models/</code> without a leading slash, a rule written to exclude trained weights that also matches <code>src/models/</code> and silently swallowed it. A fresh clone of this repo cannot train, evaluate, or serve. The 177 tests are real and well-built, and the suite cannot even finish collecting, because the imports fail first. The one recorded run of the ML pipeline in CI died at the first stage.
+    </p>
+    <p>
+      The reported numbers may well be honest; the training scripts target a GCP VM where the missing package presumably lived, and the figures are internally plausible. But a repo is a chain of custody, and this one is broken at the first link. That is the lesson of the audit: the difference between a result and a claim is an artifact someone else can check, from your repo, without asking you.
     </p>
   </div>
 
@@ -382,41 +391,41 @@
     <div class="dia-row">
       <div class="dia-box"><div class="dia-box-title">Query</div><div class="dia-box-sub">"query: " prefix<br>user text</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Student Encoder</div><div class="dia-box-sub">33M params<br>384-dim vector, ~1ms</div></div>
+      <div class="dia-box"><div class="dia-box-title">Student Encoder</div><div class="dia-box-sub">33M params<br>384-dim vector</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">FAISS HNSW</div><div class="dia-box-sub">M=32, efSearch=64<br>~10ms, 97%+ recall</div></div>
+      <div class="dia-box"><div class="dia-box-title">FAISS HNSW</div><div class="dia-box-sub">M=32, efSearch=64<br>cosine via inner product</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box dia-good"><div class="dia-box-title">Top-K Results</div><div class="dia-box-sub">~11ms total<br>optional rerank +100ms</div></div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Top-K Results</div><div class="dia-box-sub">scores + doc ids<br>optional teacher rerank</div></div>
     </div>
-    <div class="dia-note">Documents encoded once, stored in HNSW index. ~1.75GB for 1M docs at 384-dim. Fits in a 2GB Cloud Run container.</div>
+    <div class="dia-note">Documents encoded once, stored in the HNSW index: 1M docs &times; 384 dims &times; float32 &asymp; 1.5GB. The docs' latency figures for this path are reported, not benchmarked; see the audit.</div>
   </div>
 
   <div class="pipeline fade">
     <div class="pipe-step">
       <div class="pipe-num">01</div>
       <div class="pipe-title">FastAPI with security middleware</div>
-      <div class="pipe-desc">POST /search and POST /encode endpoints. Token-bucket rate limiting (100 req/min, 20-burst), API key auth (SHA-256 hashed), security headers (HSTS, CSP, X-Frame-Options), CORS. Prometheus metrics for latency and throughput.</div>
+      <div class="pipe-desc">POST /search and POST /encode endpoints. Token-bucket rate limiting at <strong>100 requests/minute with a burst of 20</strong>, implemented and tested in <code>src/serve/middleware.py</code> (ADR-008's prose says 10/sec; the code is the truth). API-key auth, security headers, CORS, request IDs. Prometheus appears in the dependency list and the ops docs, and nowhere in the code; the audit counts that as a claim, not a feature.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">02</div>
       <div class="pipe-title">FAISS HNSW index</div>
-      <div class="pipe-desc">Hierarchical Navigable Small World graph. M=32 connections per node, efConstruction=200, efSearch=64. Inner product metric on L2-normalized vectors (equivalent to cosine similarity). <strong>97%+ recall vs brute-force exact search</strong>. Sub-15ms at 1M documents on CPU. Chose HNSW over IVF-PQ for recall quality at current scale, with a documented migration path to IVF-PQ if corpus grows beyond 10M.</div>
+      <div class="pipe-desc">Hierarchical Navigable Small World graph. <strong>M=32 connections per node, efConstruction=200, efSearch=64</strong>, straight from <code>configs/index.yaml</code>. Inner product on L2-normalized vectors, which is cosine similarity. ADR-006 chose HNSW over IVF-PQ for recall at this scale and keeps <code>efSearch</code> tunable at query time, with a recorded migration path to IVF-PQ if the corpus grows by an order of magnitude.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">03</div>
       <div class="pipe-title">Optional teacher reranking</div>
-      <div class="pipe-desc">For high-stakes queries, the teacher cross-encoder re-reads the top 10 results with the query. Adds ~100ms but pushes accuracy from 0.882 to 0.910. Confidence threshold at 0.6 with a 5-second timeout circuit breaker. The system degrades gracefully if the reranker times out.</div>
+      <div class="pipe-desc">The design keeps the teacher available at serving time: for high-stakes queries it re-reads the top candidates and re-orders them, behind a timeout so the system degrades to student-only ranking instead of failing. The docs price this at roughly +100ms per query; a reported figure, like the rest of the latency story.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">04</div>
       <div class="pipe-title">Docker + Cloud Run deployment</div>
-      <div class="pipe-desc">Multi-stage Docker build with non-root user. GCS model download at startup. <strong>Cloud Run</strong>: 8 vCPU, 32GB memory, 0-100 instances, 80 concurrency. CI/CD: ruff + mypy + pytest + Docker build + Cloud Run deploy. ~$40/month for moderate traffic.</div>
+      <div class="pipe-desc">Multi-stage Docker build with a non-root user, docker-compose for local orchestration. CI is configured to gate on ruff, mypy, and pytest with a 75% coverage floor; with <code>src.models</code> missing, test collection cannot pass, so the gate currently gates everything. The ops docs specify a Cloud Run deployment at ~$40/month; the deploy stage has never executed, so that lives on the reported side of the ledger.</div>
     </div>
   </div>
 
   <div class="prose fade">
     <p>
-      I chose HNSW (M=32, efConstruction=200) over IVF-PQ because at 1M documents, HNSW gives 97%+ recall versus 90-93% for IVF-PQ without aggressive tuning. The 33M student model plus the 1.5GB FAISS index fits in a 2GB Cloud Run container. <code>efSearch</code> is adjustable at query time without rebuilding the index, so latency and recall can be tuned per use case. When the corpus grows past 50M documents, the migration path to IVF-PQ exists.
+      I chose HNSW over IVF-PQ because, per ADR-006's analysis, graph search holds high recall at the 1M-document scale where product quantization starts trading recall for memory, and because <code>efSearch</code> can be tuned per query without rebuilding the index. The arithmetic that is checkable holds: 1M documents at 384 float32 dims is about 1.5GB of vectors, small enough to serve from memory in a modest container. The recall percentages the ADR cites for each index type are its recorded reasoning, not benchmarks run in this repo.
     </p>
   </div>
 
@@ -425,42 +434,41 @@
        ═══════════════════════════════════════ -->
   <div class="sec fade">Chapter 8. What I would change</div>
 
+  <div class="prose fade">
+    <p>Listing these is the point of the audit. In order of expected value per engineering hour:</p>
+  </div>
+
   <div class="pipeline fade">
     <div class="pipe-step">
       <div class="pipe-num">01</div>
-      <div class="pipe-title">The evaluation dataset is small</div>
-      <div class="pipe-desc">The 0.882 nDCG@10 is measured on 200 held-out queries. MS MARCO's full dev set has 6,980 queries. A larger evaluation would give more confidence in the number, especially for tail queries where the student might struggle. I would run the full dev set evaluation.</div>
+      <div class="pipe-title">Restore the missing package</div>
+      <div class="pipe-desc">Recreate <code>src/models/</code> (the StudentModel and TeacherModel wrappers, the ONNX exporter) and change one line of <code>.gitignore</code>: <code>models/</code> to <code>/models/</code>. Until then the repo is a car with no engine block and excellent documentation.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">02</div>
-      <div class="pipe-title">ANCE refresh is expensive</div>
-      <div class="pipe-desc">Re-encoding the entire corpus every 500 steps takes 20-30 minutes per refresh on a single GPU. For large corpora, this becomes the training bottleneck. I would explore <strong>approximate ANCE</strong> with partial corpus refresh (re-encode only documents that the student's confidence changed significantly on).</div>
+      <div class="pipe-title">Run it once, commit the evidence</div>
+      <div class="pipe-desc">One end-to-end run with the eval JSONs, latency benchmark, and training history committed. Every "reported" row in the Chapter 6 audit either becomes "measured" or gets corrected. This single step converts the page's weakest chapter into its strongest.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">03</div>
-      <div class="pipe-title">No domain adaptation</div>
-      <div class="pipe-desc">The system is trained on MS MARCO (general web queries). Performance would likely degrade on specialized domains (medical, legal, financial) where the vocabulary and relevance patterns differ substantially. Domain-specific fine-tuning or continued KD on in-domain data would help.</div>
+      <div class="pipe-title">Reconcile the docs with the code and each other</div>
+      <div class="pipe-desc">One set of parameter counts (560M/33M, matching the model cards), one MRR table, an annealing table that matches the implemented schedule, chunking defaults that match <code>src/utils/chunk.py</code>, and ADR cross-links that point at the right ADRs. Every one of these currently has two versions.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">04</div>
-      <div class="pipe-title">Loss weights are hand-tuned</div>
-      <div class="pipe-desc">The 60/20/20 split between MarginMSE, ListwiseKD, and Contrastive was determined experimentally. A proper ablation study varying these weights systematically would identify the optimal ratio, or suggest that the ratio should change across training stages.</div>
+      <div class="pipe-title">Implement what is declared, or undeclare it</div>
+      <div class="pipe-desc">Prometheus instrumentation exists in the dependency list, the ops docs, and the GitHub description, and not in the code. Either register the /metrics route with real counters and histograms, or remove the claims. Same choice for the ONNX serving story that ADR-007 already rejected.</div>
     </div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      <strong>Fixed loss weights.</strong> The 60/20/20 split was determined by grid search on current data. Adaptive weighting methods like GradNorm could auto-tune these during training, potentially finding better ratios as the student's weaknesses shift across epochs.
-    </p>
-    <p>
-      <strong>Fixed ANCE refresh cadence.</strong> Self-mining refreshes every 500 steps regardless of whether the student has improved enough to make the old negatives stale. An adaptive trigger based on validation loss plateau would refresh only when beneficial, saving compute on the expensive corpus re-encoding step.
-    </p>
-    <p>
-      <strong>No post-training quantization.</strong> The student is served at full float32 precision. INT8 quantization would roughly halve the model size and improve inference speed with minimal accuracy loss, making edge deployment more feasible.
-    </p>
-    <p>
-      <strong>HNSW does not support deletion.</strong> Any change to the document corpus requires a full index rebuild. A blacklist-at-query-time approach could handle deletions without rebuild, but is not implemented. For frequently updated corpora, an incremental index like ScaNN or Vamana might be more practical.
-    </p>
+    <div class="pipe-step">
+      <div class="pipe-num">05</div>
+      <div class="pipe-title">Evaluate at full scale</div>
+      <div class="pipe-desc">The docs' own eval basis is 200 held-out queries. MS MARCO's dev set has 6,980. Whatever the true numbers are, they deserve the full set, and tail queries are where a distilled student is most likely to give back its gains.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">06</div>
+      <div class="pipe-title">Fix the GitHub description</div>
+      <div class="pipe-desc">"Help desk ticket triage" appears nowhere in the repo; the corpus is MS MARCO web passages. "Calibrated ONNX" contradicts ADR-007. The one-line description is the repo's most-read sentence, and currently its least accurate.</div>
+    </div>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -482,9 +490,7 @@
     <div class="stack">
       <span class="stack-tag">FastAPI</span>
       <span class="stack-tag">Docker</span>
-      <span class="stack-tag">GCP Cloud Run</span>
-      <span class="stack-tag">Prometheus</span>
-      <span class="stack-tag">Terraform</span>
+      <span class="stack-tag">GitHub Actions</span>
     </div>
   </div>
   <div class="stack-group">
@@ -493,7 +499,6 @@
       <span class="stack-tag">pytest</span>
       <span class="stack-tag">mypy</span>
       <span class="stack-tag">ruff</span>
-      <span class="stack-tag">Poetry</span>
     </div>
   </div>
 
@@ -833,7 +838,6 @@ function initMiningAnim(){
   const status=document.getElementById('miningStatus');
 
   const stages=[
-    {name:'Random',quality:75,color:t3,examples:['recipe for pasta','history of Rome','cat videos']},
     {name:'BM25',quality:85,color:t2,examples:['"Python snake" for "Python exceptions"','"Java island" for "Java memory"','"Apple fruit" for "Apple stock"']},
     {name:'Teacher',quality:93,color:accent,examples:['Semantically close but irrelevant','Passes keyword test, fails understanding','Plausible but wrong domain']},
     {name:'ANCE',quality:97,color:green,examples:["Student's confident mistake #1","Student's blind spot on edge case","Model-specific false positive"]},
@@ -939,7 +943,7 @@ function initMiningAnim(){
       ctx.font='500 9px JetBrains Mono';
       ctx.fillStyle=isActive?stage.color:t3;
       ctx.globalAlpha=isActive?0.7:isPast?0.4:0.15;
-      ctx.fillText(stage.quality+'% quality',cardX+14,cy+34);
+      ctx.fillText(stage.quality+'% target (ADR-003)',cardX+14,cy+34);
 
       // Cycling example negative
       if(isActive && stageProgress>0.3){
@@ -952,7 +956,7 @@ function initMiningAnim(){
       }
     });
 
-    status.textContent='Stage: '+stages[stageIdx].name+'  \u00b7  Quality: '+Math.round(currentQuality)+'% of teacher';
+    status.textContent='Stage: '+stages[stageIdx].name+'  \u00b7  ADR-003 target: '+Math.round(currentQuality)+'% of teacher (unverified)';
 
     ctx.globalAlpha=1;
     requestAnimationFrame(animate);

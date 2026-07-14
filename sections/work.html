@@ -117,7 +117,7 @@
       <div class="main">
         <div class="rcat">Model distillation</div>
         <p class="rname">Semantic Search via Knowledge Distillation</p>
-        <p class="rdesc">Semantic search on a small budget. Distilled a 560M cross-encoder into a 33M bi-encoder using KL-divergence and three stages of hard-negative mining: about 97% of the teacher&rsquo;s quality, 100&times; faster, roughly $4 to train.</p>
+        <p class="rdesc">Compressing a 560M cross-encoder&rsquo;s ranking judgment into a 33M bi-encoder: a three-loss KD objective (MarginMSE + KL + contrastive, 0.6/0.2/0.2), temperature annealed 4.0&rarr;2.0, and a three-stage hard-negative curriculum. The page audits the repo&rsquo;s own claims &mdash; code-backed facts kept, unbacked numbers labeled as targets.</p>
         <div class="tags"><span class="tag">KL Divergence</span><span class="tag">FAISS</span><span class="tag">FastAPI</span><span class="tag">MS MARCO</span></div>
       </div>
       <span class="go">&rarr;</span>
