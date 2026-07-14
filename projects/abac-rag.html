@@ -32,6 +32,7 @@
 
   .proj-label{font-family:var(--mono);font-size:.68rem;color:var(--accent);opacity:.7;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
   .proj-title{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--t1);line-height:1.35;margin-bottom:2.5rem}
+  .proj-subtitle{font-family:var(--mono);font-size:.84rem;color:var(--t3);margin-bottom:2.5rem;line-height:1.8}
   .divider{width:40px;height:1px;background:var(--accent);margin-bottom:2.5rem}
 
   .brief{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.03);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 34px;margin-bottom:36px}
@@ -43,11 +44,12 @@
   .prose{margin-bottom:1.8rem}
   .prose p{font-family:var(--sans);font-size:1.08rem;font-weight:400;color:var(--t2);line-height:2;margin-bottom:1.4rem}
   .prose strong{color:var(--t1);font-weight:500}
-  .prose code{font-family:var(--mono);font-size:.82rem;color:var(--accent);background:var(--inset);padding:2px 6px;border-radius:4px}
+  .prose code{font-family:var(--mono);font-size:.82rem;color:var(--accent);background:var(--inset);padding:2px 6px;border-radius:4px;overflow-wrap:anywhere}
+  .pipe-desc code,.brief-val code{overflow-wrap:anywhere}
 
   .sec{font-family:var(--mono);font-size:.78rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;margin-top:56px}
 
-  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 30px;margin:20px 0}
+  .dia{background:var(--raised);border-radius:var(--r);border:1px solid rgba(255,255,255,0.02);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:34px 30px;margin:20px 0;overflow-x:auto}
   .dia-title{font-family:var(--mono);font-size:.72rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
   .dia-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:12px 0}
   .dia-box{background:var(--inset);border-radius:10px;padding:14px 16px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:100px;transition:all .3s}
@@ -67,7 +69,7 @@
 
   .rtable{width:100%;border-collapse:collapse;margin:16px 0}
   .rtable th{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
-  .rtable td{font-family:var(--mono);font-size:.76rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .rtable td{font-family:var(--mono);font-size:.76rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02);vertical-align:top;line-height:1.8}
   .rtable tr.best td{color:var(--accent);font-weight:500}
 
   .pipeline{position:relative;padding-left:32px;margin:20px 0}
@@ -103,7 +105,7 @@
     .results{grid-template-columns:repeat(2,1fr)}
     .dia-row{flex-direction:column;gap:0}
     .dia-arrow{transform:rotate(90deg);padding:6px 0}
-    .graph-canvas-wrap canvas{height:320px}
+    .rtable{min-width:520px}
     .ft{flex-direction:column;gap:10px;text-align:center}
   }
 </style>
@@ -116,237 +118,283 @@
 </nav>
 
 <main>
-
   <div class="proj-label fade">Project</div>
-  <h1 class="proj-title fade">Enterprise RAG with ABAC: Zero-Leakage Retrieval</h1>
-  <div class="divider"></div>
+  <h1 class="proj-title fade">Enterprise RAG with ABAC: Access Control Outside the Model</h1>
+  <div class="proj-subtitle fade">The model never decides who sees what. Policy is enforced in code at four points before generation, and again inside the answer cache.</div>
+  <div class="divider fade"></div>
 
-  <!-- Engineering Brief -->
-  <div class="brief fade">
-    <div class="brief-label">Engineering Brief</div>
-    <div class="brief-grid">
-      <span class="brief-key">Problem</span>
-      <span class="brief-val">Employees need one chat interface to query a company knowledge base. But HR salary data must never reach a marketing user. Not through search results, not through cached LLM answers, not through embedding similarity.</span>
-      <span class="brief-key">Approach</span>
-      <span class="brief-val">Three-layer defense-in-depth: index-time role booleans, retrieval-time server-side filtering + ABAC PDP evaluation, and post-retrieval policy enforcement. Hybrid dense/sparse search with RRF fusion. Policy-fingerprinted caching with epoch-based invalidation. Multi-hop query decomposition with per-sub-query ABAC gating. Circuit breaker and singleflight reliability layers.</span>
-      <span class="brief-key">Result</span>
-      <span class="brief-val">100% access control accuracy, zero cross-role leakage across 36 test files, ~0.004ms cached policy decisions, ~0.04ms cached LLM lookups via PolicyFingerprint isolation. 5 LLM backends, 4 embedding backends, all swappable by env var.</span>
-      <span class="brief-key">Why it matters</span>
-      <span class="brief-val">Most RAG systems bolt access control onto the UI layer. The data still leaks through cached answers, reranked results, and embedding similarity. This system enforces policy at three independent layers. If any one fails, the other two still block the leak.</span>
-      <span class="brief-key">Stack</span>
-      <span class="brief-val">FastAPI, ChromaDB, OpenAI/Claude/Gemini/vLLM/Ollama, BM25, RRF, Kubernetes, Redis, Prometheus, YAML policy-as-code</span>
+<div class="brief fade">
+  <div class="brief-label">Engineering Brief</div>
+  <div class="brief-grid">
+    <span class="brief-key">Problem</span>
+    <span class="brief-val">A single RAG chat endpoint serves six roles across five departments. HR salary rows, confidential engineering docs, and finance figures all live in the same corpus and the same vector index. A model that decides what to reveal, by prompt instruction alone, is not an access-control system.</span>
+    <span class="brief-key">Approach</span>
+    <span class="brief-val">A 12-rule ABAC policy engine (PDP), evaluated first-match-wins, gates access at four independent points: ingest-time role tiers, ChromaDB server-side <code>where</code> filtering plus a BM25 role prefilter, a full PDP re-evaluation of every fused candidate before reranking, and direct <code>authorize()</code> checks on every REST route. Cached decisions and cached LLM answers are keyed by a SHA-256 PolicyFingerprint over role, tenant, policy epoch, entitlement epoch, and runtime flags.</span>
+    <span class="brief-key">Result</span>
+    <span class="brief-val">Zero mismatches across a 7,200-combination access-control matrix checked against a reference implementation written blind from the policy YAML, and zero cross-role leakage in an end-to-end probe of the real corpus. 494 offline tests across 35 files. Answers are cached per PolicyFingerprint in physically separate SQLite and FAISS files, one pair per role and policy state.</span>
+    <span class="brief-key">Why it matters</span>
+    <span class="brief-val">Most RAG systems put access control in the prompt or the UI. Both are advisory: a model can be talked past, and a UI filter runs after the answer already exists. Here the model only ever sees snippets a policy engine has already permitted, and the cache is partitioned by that same policy state, so a stale or shared cache entry cannot become a leak either.</span>
+    <span class="brief-key">Stack</span>
+    <span class="brief-val">FastAPI, ChromaDB, Vertex AI, Gemini, GPTCache, FAISS, BM25, RRF, Redis, Kubernetes, Cloud Run, Prometheus, Streamlit, Docker, Pydantic</span>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════
+     CH 1: WHERE THE TRUST BOUNDARY SITS
+     ═══════════════════════════════════════ -->
+<div class="sec fade">Chapter 1. Where the trust boundary sits</div>
+<div class="prose fade">
+  <p>
+    The model never participates in an access decision. Policy runs in code before retrieval, after fusion, and inside the cache; the model is the last consumer of context that has already been filtered. Nothing in the pipeline asks the model to judge whether a piece of text is appropriate for the requester, because by the time the model sees a prompt, that judgment has already been made, layer by layer, by code that has no notion of fluency, persuasion, or plausible-sounding refusal, only rules that either match or don't.
+  </p>
+  <p>
+    A role check placed only at the UI layer, the kind that hides a button or greys out a page, misses two leaks on the retrieval side alone. Embedding similarity puts a finance chunk next to a marketing query in the same vector space: cosine distance has no concept of who is asking, so a semantically close chunk from another department scores well regardless of role, and a query embedding drifts toward whatever content is nearest in that space, authorized or not. A reranker that scores candidates before filtering has already read text the user was never entitled to: scoring relevance requires reading content first, and reading is where the leak happens, well before any authorization check runs on the list the reranker was handed.
+  </p>
+  <p>
+    Two more leaks sit on the serving side. A cached answer generated from one role's context can be served to another role if the cache key ignores policy: the same query string from two different roles collides on the same cache entry unless the key itself encodes who was permitted to see what when the entry was written. And an answer synthesized from one unauthorized chunk carries that chunk's content even if the citation naming it is stripped afterward: deleting a footnote does not undo the fact that a sentence in the answer was generated from text the requester should never have read.
+  </p>
+  <p>
+    This design answers each of those four paths by making authorization a property enforced independently at four points: ingest time, when a chunk is tagged with the access tiers it belongs to; retrieval time, when the vector store and the keyword index each filter candidates by role before scoring; post-fusion, when every merged candidate is re-evaluated by the policy engine a second time, before a reranker ever touches it; and the REST layer, where an endpoint refuses to load a row it isn't authorized to return. Later chapters detail each of these in turn. The end state is structural, not probabilistic: if the policy engine removes every retrieved candidate, there is no context left to build a prompt from, and the model is never called at all.
+  </p>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CH 2: POLICY AS CODE
+     ═══════════════════════════════════════ -->
+<div class="sec fade">Chapter 2. Policy as code</div>
+<div class="prose fade">
+  <p>
+    The policy decision point (PDP) is twelve named rules in a YAML file, evaluated top to bottom, first match wins. The first rule whose condition holds decides the request; every rule below it is never inspected. If nothing matches, the default effect is deny: an unrecognized combination of role, resource, and action is refused rather than passed through by accident. Every condition is built from exactly four operators, <code>eq</code>, <code>ne</code>, <code>in</code>, <code>not_in</code>; anything else evaluates false instead of throwing, so a malformed rule fails closed. A condition dictionary carries exactly one key, and the only grouping available is <code>all</code>, an AND: a rule cannot express OR logic directly, which keeps each rule readable as a single conjunction of checks rather than a nested boolean tree.
+  </p>
+  <p>
+    Every condition reads from one of four attribute families: <code>subject</code> (the requester's role), <code>resource</code> (owner_dept, doc_type, sensitivity), <code>action</code> (retrieve_chunk, view_source, view_row, view_masked_row, aggregate_query), and <code>flags</code> (the two runtime toggles). Six roles exist: finance, marketing, hr, engineering, c_level, employee. Resources carry five owner_dept values, four sensitivity levels, and three doc_types.
+  </p>
+  <p>
+    The two runtime flags, <code>hr_masked_rows_mode</code> and <code>hr_aggregate_mode</code>, are not read once at startup and held in memory. Wherever a flag-gated rule can fire, they are read from live settings at evaluation time, and the same flag values are folded into the policy fingerprint that keys the decision cache. Flipping a toggle does two things at once: every decision made from that point forward reflects the new value, and every cached decision made under the old value becomes unreachable, because its fingerprint no longer matches. There is no separate invalidation step to remember; the flag is part of the key.
+  </p>
+  <p>
+    HR data uses a three-tier progressive disclosure model rather than a single yes/no gate. Full rows, unredacted, go only to hr and c_level. Masked rows, with PII fields replaced, go to other roles only if <code>hr_masked_rows_mode</code> is enabled, and always to hr and c_level regardless of the flag. Aggregates, no individual rows at all, go to other roles only if <code>hr_aggregate_mode</code> is enabled, again with hr and c_level exempt from the gate. Which tier a chunk qualifies for in the first place is decided earlier, at ingest: <code>contains_sensitive_content()</code> scans text against a fixed list of 30 sensitive keywords (salary, ssn, termination, performance review, disciplinary, severance, bank account, date of birth, among others) and tightens the chunk's access tier whenever one appears, before the chunk is ever indexed.
+  </p>
+</div>
+
+<div class="dia fade">
+  <div class="dia-title">PDP rule table, in evaluation order</div>
+  <div style="overflow-x:auto">
+  <table class="rtable">
+    <tr><th>Rule</th><th>Condition</th><th>Effect</th></tr>
+    <tr><td><code>c_level_full_access</code></td><td>role equals c_level, any resource</td><td>Permit</td></tr>
+    <tr><td><code>general_docs_any_role</code></td><td>resource owner_dept equals general, any role</td><td>Permit</td></tr>
+    <tr><td><code>same_department_internal_docs</code></td><td>md doc, sensitivity general or internal, role equals owner_dept</td><td>Permit</td></tr>
+    <tr><td><code>employee_non_general_deny</code></td><td>role is employee, resource not general</td><td>Deny</td></tr>
+    <tr><td><code>cross_department_deny</code></td><td>md doc, role not c_level, role differs from owner_dept, dept not general</td><td>Deny</td></tr>
+    <tr><td><code>hr_rows_hr_and_c_level_only</code></td><td>HR csv, view_row, role hr or c_level</td><td>Permit</td></tr>
+    <tr><td><code>non_hr_hr_rows_deny</code></td><td>HR csv, view_row, role not hr or c_level</td><td>Deny</td></tr>
+    <tr><td><code>hr_masked_rows_non_hr_if_enabled</code></td><td>HR csv, view_masked_row, flag enabled, role not hr or c_level</td><td>Permit</td></tr>
+    <tr><td><code>hr_masked_rows_hr_and_c_level</code></td><td>HR csv, view_masked_row, role hr or c_level</td><td>Permit</td></tr>
+    <tr><td><code>hr_aggregates_non_hr_if_enabled</code></td><td>HR aggregate, flag enabled, role not hr or c_level</td><td>Permit</td></tr>
+    <tr><td><code>hr_aggregates_hr_and_c_level</code></td><td>HR aggregate, role hr or c_level</td><td>Permit</td></tr>
+    <tr><td><code>high_sensitivity_md_deny_by_default</code></td><td>md doc, confidential or restricted, role not c_level</td><td>Deny</td></tr>
+  </table>
+  </div>
+</div>
+
+<div class="dia fade">
+  <div class="dia-title">HR three-tier progressive disclosure</div>
+  <div class="dia-row" style="gap:14px">
+    <div class="dia-box dia-good" style="flex:1;min-width:160px">
+      <div class="dia-box-title">Full rows</div>
+      <div class="dia-box-sub">hr + c_level only<br>unredacted</div>
+    </div>
+    <div class="dia-box" style="flex:1;min-width:160px">
+      <div class="dia-box-title">Masked rows</div>
+      <div class="dia-box-sub">flag-gated for other roles<br>PII replaced</div>
+    </div>
+    <div class="dia-box" style="flex:1;min-width:160px">
+      <div class="dia-box-title">Aggregates</div>
+      <div class="dia-box-sub">flag-gated<br>no individual data</div>
     </div>
   </div>
+  <div class="dia-note"><code>hr_masked_rows_mode</code> and <code>hr_aggregate_mode</code> both default to disabled.</div>
+</div>
 
-  <!-- ═══════════════════════════════════════
-       CH 1: THE PROBLEM
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 1. The leakage paths nobody checks</div>
+<div class="graph-canvas-wrap fade"><canvas id="pdp-canvas" role="img" aria-label="Animated diagram of the policy decision point evaluating twelve named rules in order against two example requests. First, a marketing role requesting a finance internal markdown document passes rules one through four with no match, is denied by rule five, cross_department_deny, and rules six through twelve are never evaluated. Second, the same marketing role requesting a marketing internal markdown document passes rules one and two with no match and is permitted by rule three, same_department_internal_docs, leaving the rules below unevaluated. A closing card states that if none of the twelve rules match, the default effect is deny."></canvas></div>
+
+<div class="prose fade">
+  <p>
+    I chose first-match-wins over a combining algorithm, weighing every matched rule against every other and merging their effects, because first-match-wins keeps a decision explainable: whoever needs to know why a request was permitted or denied points at the single rule that fired, not at a blend of several. That property matters more here than the extra expressiveness a combining algorithm would add.
+  </p>
+</div>
+<!-- ═══════════════════════════════════════
+     CH 3: FOUR ENFORCEMENT POINTS
+     ═══════════════════════════════════════ -->
+<div class="sec fade">Chapter 3. Four enforcement points for one fact</div>
+
+<div class="prose fade">
+  <p>One fact makes the layers concrete: a salary figure sitting in an HR CSV row, headed for a role that should never see it. That fact has to get past four places, in order, before it can reach an answer: ingest, the database, the post-fusion policy check, and the REST endpoint itself. Missing any one of the four is not automatically a leak, because the other three are still standing.</p>
+</div>
+
+<div class="pipeline fade">
+  <div class="pipe-step">
+    <div class="pipe-num">01</div>
+    <div class="pipe-title">Ingest</div>
+    <div class="pipe-desc"><code>compute_chunk_allowed_roles()</code> computes three access tiers per chunk (full, masked, aggregate) from department, document type, and a scan for sensitive keywords, then denormalizes the result onto the chunk's vector metadata. For the HR CSV, the searchable text is built from five non-PII fields only (<code>full_name</code>, <code>role</code>, <code>department</code>, <code>location</code>, <code>date_of_joining</code>); the nine PII fields (<code>email</code>, <code>salary</code>, <code>date_of_birth</code>, <code>manager_id</code>, <code>leave_balance</code>, <code>leaves_taken</code>, <code>attendance_pct</code>, <code>performance_rating</code>, <code>last_review_date</code>) never enter the text that gets indexed or searched.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">02</div>
+    <div class="pipe-title">Database</div>
+    <div class="pipe-desc">ChromaDB applies a server-side <code>where</code> filter on the role boolean flags at the ANN query itself, before dense results are scored and returned. The sparse path mirrors this: <code>prefilter_by_allowed_roles()</code> strips chunks the requesting role has no tier for before BM25 ever scores them.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">03</div>
+    <div class="pipe-title">Post-fusion</div>
+    <div class="pipe-desc">Every fused candidate is re-evaluated by the real Policy Decision Point before reranking, with decisions cached per policy fingerprint. The inline comment at the pipeline call site states the reason plainly: the PDP filter runs before rerank "so reranker never sees unauthorized chunks", and both search routes repeat the same rule in their own comments.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">04</div>
+    <div class="pipe-title">REST</div>
+    <div class="pipe-desc">The <code>/hr</code> endpoints call <code>authorize()</code> against the PDP before loading any data at all, independent of the retrieval path. A row is denied at the door regardless of what the retrieval pipeline would have done with it.</div>
+  </div>
+</div>
+
+<div class="prose fade">
+  <p>Four layers check the same fact for a reason: a bug in any single layer is not, by itself, a leak. If the ingest-time tier computation gets a keyword scan wrong, the database filter still holds. If the database filter were somehow bypassed, the post-fusion PDP re-evaluation catches the candidate before the reranker sees it. If the retrieval path is skipped entirely and an endpoint is hit directly, that endpoint calls <code>authorize()</code> before touching any data.</p>
+  <p>The reranker can only narrow the candidate list, never widen it. All three rerank backends, a BM25 re-score, a cosine-similarity pass, and an LLM-based JSON ranking, operate exclusively on the list the PDP has already filtered. The LLM reranker parses a JSON response to produce its ordering; on any parse error it falls back to the input order rather than guessing, so a malformed rerank response cannot smuggle in a chunk that was never in the permitted list.</p>
+</div>
+
+<div class="graph-canvas-wrap fade"><canvas id="filter-canvas" role="img" aria-label="Animated diagram of the enforcement funnel for a marketing-role query at the default of five results. Each lane scores twenty-five candidates, dense through ChromaDB's server-side role filter and sparse through BM25 over a role-prefiltered index, and each returns only its top five. Reciprocal rank fusion with k equal to sixty merges and deduplicates the two fives down to the top five. The policy decision point re-checks each survivor and denies one confidential chunk under the rule high_sensitivity_md_deny_by_default, leaving four. A rerank stage reorders the four without dropping or adding any, and they enter the context that feeds generation."></canvas></div>
+
+<div class="results fade">
+  <div class="stat">
+    <div class="stat-val">7,200</div>
+    <div class="stat-label">Policy checks</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">0</div>
+    <div class="stat-label">Mismatches</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">494</div>
+    <div class="stat-label">Tests</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">12</div>
+    <div class="stat-label">ABAC rules</div>
+  </div>
+</div>
+
+<div class="prose fade">
+  <p>I chose to re-evaluate the PDP per candidate after fusion even though the database already filtered, because index-time metadata goes stale and flags change at runtime; the marginal cost is one cached dictionary lookup per candidate, not a full policy re-evaluation from scratch.</p>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CH 4: DENSE, SPARSE, FUSED
+     ═══════════════════════════════════════ -->
+<div class="sec fade">Chapter 4. Retrieval: dense, sparse, fused</div>
+
+<div class="prose fade">
+  <p>Dense retrieval (cosine similarity over embeddings) misses exact identifiers: a query for a specific quarter can drift toward a semantically similar but wrong one. Sparse retrieval (term matching) misses meaning: it cannot tell that "compensation" and "salary" refer to the same idea. Both run on every query, and Reciprocal Rank Fusion (RRF) merges the two ranked lists into one. Each candidate's score is the sum of <code>1/(k+rank)</code> across the lists it appears in, with <code>k=60</code>, and candidates are identified by <code>source_path#section_path</code> so the same section surfaced by both paths merges into one candidate instead of two.</p>
+  <p>The sparse path is BM25, written from scratch in 61 lines (<code>k1=1.5</code>, <code>b=0.75</code>) rather than adding a search-engine dependency for one scoring function. Both paths over-fetch internally, scoring five times <code>top_k</code> candidates, and each hands at most its top <code>top_k</code> to the fusion step. A temporal filter (regex matching quarters and years) runs alongside this, not instead of the PDP: it fails open on relevance, if filtering by date would leave zero results it returns the original list unfiltered, but it never fails open on authorization. Relevance and permission are two different questions, and only one of them is allowed to guess.</p>
+</div>
+
+<div class="prose fade">
+  <p>Before a chunk is embedded, <code>create_contextual_embedding_text()</code> prepends a line of metadata tags to the text. Identical prose filed under two different departments therefore produces two different vectors: the model embeds the tags along with the content, and the tags are not identical.</p>
+</div>
+
+<div class="dia fade">
+  <div class="dia-title">Contextual prefix, real output</div>
+  <div class="dia-row">
+    <div class="dia-box" style="min-width:100%;text-align:left">
+      <div class="dia-box-sub">[DEPARTMENT: FINANCE] [SENSITIVITY: INTERNAL] [TYPE: MD] [QUARTER: Q4] [YEAR: 2024] [DOCUMENT: quarterly report]<br>&lt;chunk text, unchanged&gt;</div>
+    </div>
+  </div>
+</div>
+
+<div class="prose fade">
+  <p>The tag values are uppercased and the filename is cleaned (underscores stripped, extension dropped) before insertion, so <code>quarterly_report.md</code> becomes <code>quarterly report</code> in the tag. Embedding itself is done by <code>text-embedding-005</code> on Vertex AI, 768 dimensions.</p>
+</div>
+
+<div class="dia fade">
+  <div class="dia-title">Retrieval pipeline, end to end</div>
+  <div class="dia-row">
+    <div class="dia-box"><div class="dia-box-title">Embed Query</div><div class="dia-box-sub">text-embedding-005<br>768-dim</div></div>
+    <div class="dia-arrow">&rarr;</div>
+    <div class="dia-box"><div class="dia-box-title">Dense + Sparse</div><div class="dia-box-sub">Chroma where filter<br>+ BM25 prefilter</div></div>
+    <div class="dia-arrow">&rarr;</div>
+    <div class="dia-box"><div class="dia-box-title">RRF Fusion</div><div class="dia-box-sub">k = 60</div></div>
+  </div>
+  <div class="dia-arrow-down">&darr;</div>
+  <div class="dia-row">
+    <div class="dia-box dia-good"><div class="dia-box-title">PDP Filter</div><div class="dia-box-sub">12 rules<br>per candidate</div></div>
+    <div class="dia-arrow">&rarr;</div>
+    <div class="dia-box"><div class="dia-box-title">Rerank</div><div class="dia-box-sub">reorder only</div></div>
+    <div class="dia-arrow">&rarr;</div>
+    <div class="dia-box"><div class="dia-box-title">Generate</div><div class="dia-box-sub">gemini-2.0-flash-001<br>temp 0.2</div></div>
+  </div>
+  <div class="dia-note">The reranker and the model only ever see permitted chunks.</div>
+</div>
+
+<div class="graph-canvas-wrap fade"><canvas id="embed-canvas" role="img" aria-label="Animation of a vector space holding five department clusters: engineering, finance, marketing, hr, and general. First, one finance chunk and one marketing chunk with nearly identical prose sit almost on top of each other near the center. Then a department metadata tag attaches to each chunk and the two ease apart into their own department clusters: same text, different vectors. Finally a marketing query point lands, the role filter dims every cluster except marketing and general, and nearest-neighbor lines connect the query only to points inside the two permitted clusters."></canvas></div>
+
+<div class="prose fade">
+  <p>I chose RRF over a learned fusion model because RRF needs no training data and tolerates the different score distributions of cosine similarity and BM25 without a calibration step.</p>
+  <p>Prefix injection won out over separate per-department collections for one reason: <code>c_level</code> searches every department in one query, and a single collection with role-filtered metadata keeps it one query instead of a fan-out across five.</p>
+</div>
+<!-- ═══════════════════════════════════════
+     CH 5: THE CACHE IS INSIDE THE SECURITY BOUNDARY
+     ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 5. The cache is inside the security boundary</div>
   <div class="prose fade">
     <p>
-      You build a RAG chatbot for your company. Employees can ask questions about company documents: engineering specs, marketing plans, HR policies, financial reports. You add a role check: marketing users only see marketing docs. Finance users only see finance docs. Done, right?
+      The failure mode is mechanical, not hypothetical: an answer generated from one role's permitted context gets cached under a policy-blind key, one that encodes nothing about who was allowed to see that context, and is served verbatim to a different role. No filter runs on a cache hit, because a hit means retrieval and generation never execute at all. The cache has to enforce policy by construction, or nothing downstream will catch the leak.
     </p>
     <p>
-      Wrong. There are <strong>four leakage paths</strong> that a UI-layer filter does not catch.
+      The mechanism is <strong>PolicyFingerprint</strong>: canonical JSON of role, tenant, policy epoch, entitlement epoch, and feature flags, hashed with SHA-256, truncated to the first 16 hex characters. Two requests differing in any of those fields, a different role above all, produce different keys by construction. There is no code path where a marketing fingerprint and an HR fingerprint collide.
     </p>
     <p>
-      <strong>Path 1: Embedding similarity.</strong> You embed all documents into the same vector space. A marketing user asks about "Q2 revenue." The embedding is nearly identical to a finance document about Q2 revenue. The vector search returns the finance doc as a top match. The UI filter might catch this, but the embedding itself has leaked the existence and relevance of a restricted document.
+      The decision cache stores PDP (policy decision point) verdicts under <code>decision:{pf}:{resource_hash}:{action}</code>, where <code>pf</code> is the PolicyFingerprint hash and <code>resource_hash</code> is a truncated hash over the resource's department, document type, sensitivity, and aggregate type. Concurrent requests for the same key are coordinated by a singleflight guard: one request becomes the leader and computes the decision, the rest wait and reuse its result instead of each re-evaluating the PDP. The wait has a 30-second timeout; past that, a waiter falls back to computing the decision directly rather than blocking indefinitely.
     </p>
     <p>
-      <strong>Path 2: Cached LLM answers.</strong> An HR user asks "what is the average salary?" The LLM generates an answer using HR salary data. That answer gets cached. A marketing user asks the same question. The cache returns the same answer. The marketing user just read HR salary data, and no filter was ever evaluated.
+      Invalidation is a key change, not a delete. Each epoch is a single environment-variable integer. Bumping one changes every PolicyFingerprint hash that depends on it, which makes every entry keyed to the old epoch unreachable without scanning a single key; nothing has to be found and removed. Decision-cache entries then expire by TTL on their own schedule. The per-fingerprint answer-cache files do not: they stay on disk, orphaned, until someone deletes them. Stated plainly: a Redis pub/sub epoch broadcaster is fully built in the code, but no route in the app ever calls it. Today, an operator changes the environment variable by hand.
     </p>
     <p>
-      <strong>Path 3: Reranked results.</strong> The reranker sees all retrieved candidates and scores them by relevance. If an unauthorized document makes it past the initial retrieval (because the filter was applied too late), the reranker has already read it. Even if you filter after reranking, the reranker's scoring was influenced by content the user should not have seen.
+      The semantic answer cache, built on GPTCache, goes one step further. Each PolicyFingerprint gets its own SQLite file and its own FAISS index file, <code>pf_{hash}.db</code> and <code>pf_{hash}.index</code>. Isolation here is a property of the file system layout, not a per-request permission check: a marketing role and an HR role physically cannot open each other's database file. Inside one partition, a hit still requires the stored context hash to match the current request's permitted context exactly. Similarity search tolerates a paraphrased question. It never tolerates different grounding.
     </p>
     <p>
-      <strong>Path 4: LLM answer synthesis.</strong> The LLM generates an answer from multiple context chunks. If one unauthorized chunk slipped through, the LLM might reference it in the answer, even if the chunk itself is stripped from the citations. The information has already been absorbed into the generated text.
+      GPTCache's own defaults, <code>max_distance</code> 4.0 and similarity threshold 0.8, quietly degraded the cache to near-exact-match. A genuine paraphrase pair with cosine similarity 0.96 measured a raw L2 distance of 4.43, past the 0.8 cutoff: the cache would have missed it and re-generated the answer from scratch. Recalibrated to <code>max_distance</code> 2.0, the true bound for unit-normalized vectors, and threshold 0.525, giving an effective raw-distance cutoff of 0.95. That cutoff was set against measured distances, not guessed: real paraphrase pairs measured 0.176 to 0.691, unrelated pairs measured 1.274 to 1.478. The cutoff sits in the gap between them.
     </p>
-    <p>
-      The only solution: enforce access control at <strong>every layer independently</strong>. Before embedding, before retrieval, before reranking, before generation. If any one layer fails, the others catch it.
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 2: THREE LAYERS
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 2. Defense in depth: three layers</div>
-
-  <div class="pipeline fade">
-    <div class="pipe-step">
-      <div class="pipe-num">Layer 1: Index Time</div>
-      <div class="pipe-title">Pre-computed role booleans</div>
-      <div class="pipe-desc">When a document is ingested, <code>compute_allowed_roles()</code> determines which roles can access it and stores boolean flags (<strong>role_finance=true, role_marketing=false</strong>) as chunk metadata in ChromaDB. The <code>where</code> clause filters on these booleans before results leave the database. Unauthorized chunks never enter the scoring pipeline.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">Layer 2: Retrieval Time</div>
-      <div class="pipe-title">Server-side filtering + BM25 prefilter</div>
-      <div class="pipe-desc">ChromaDB's <code>where</code> filter handles dense retrieval. For the sparse path, <code>prefilter_by_allowed_roles()</code> filters the BM25 index in-memory before scoring. Only items where the user's role appears in <code>allowed_roles</code> survive. Both retrieval paths are policy-gated before any ranking happens.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">Layer 3: Post-Retrieval</div>
-      <div class="pipe-title">Full PDP evaluation per chunk</div>
-      <div class="pipe-desc">After RRF fusion but <strong>before</strong> reranking, every fused candidate is evaluated by the full <strong>Policy Decision Point</strong>: 12 YAML-defined ABAC rules considering role, department, sensitivity, document type, and runtime feature flags. First match wins. Default: <strong>DENY</strong>. This catches edge cases where index-time booleans are stale or flags have changed since ingestion.</div>
-    </div>
-  </div>
-
-  <div class="graph-canvas-wrap fade" style="padding:0">
-    <canvas id="filter-canvas"></canvas>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">The retrieval pipeline end-to-end</div>
-    <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Embed Query</div><div class="dia-box-sub">1536-dim<br>text-embedding-3-small</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Dense + Sparse</div><div class="dia-box-sub">ChromaDB cosine<br>+ BM25 tokens</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">RRF Fusion</div><div class="dia-box-sub">k = 60<br>rank-weighted merge</div></div>
+    <div class="dia-title">Found by running the code</div>
+    <div style="overflow-x:auto">
+    <table class="rtable">
+      <tr><th>What broke</th><th>How it surfaced</th><th>Resolution</th></tr>
+      <tr>
+        <td>GPTCache's default session-hit check is inverted for access control: built to avoid chat repetition, it serves cached entries to sessions that never wrote them.</td>
+        <td>Caught while verifying the session-check semantics during integration: the default is built to avoid chat repetition, not to isolate roles.</td>
+        <td>Overridden with a strict pin: only the session that wrote an entry can hit it.</td>
+      </tr>
+      <tr>
+        <td><code>VectorBase('faiss')</code> reads the kwarg <code>index_path</code>; the code passed <code>index_file_path</code> instead, silently ignored, so every fingerprint would fall back to one shared <code>faiss.index</code> file.</td>
+        <td>A FAISS dimension-mismatch crash from a leftover cross-run index file.</td>
+        <td>Kwarg name corrected to <code>index_path</code>.</td>
+      </tr>
+      <tr>
+        <td>faiss-cpu bundles its own OpenMP runtime alongside PyTorch's, in the same process.</td>
+        <td>A second concurrent vector search SIGSEGVs the interpreter.</td>
+        <td><code>OMP_NUM_THREADS=1</code> (KMP_DUPLICATE_LIB_OK alone did not stop it).</td>
+      </tr>
+      <tr>
+        <td>GPTCache's Redis storage backend: three real bugs under test, a constructor kwarg mismatch, an AttributeError in eviction bookkeeping, a broken <code>batch_insert</code> return value.</td>
+        <td>All three surfaced while exercising the Redis backend directly, before it reached production.</td>
+        <td>SQLite chosen instead, same one-file-per-fingerprint isolation.</td>
+      </tr>
+    </table>
     </div>
-    <div class="dia-arrow-down">&darr;</div>
-    <div class="dia-row">
-      <div class="dia-box dia-good"><div class="dia-box-title">ABAC Filter</div><div class="dia-box-sub">12 rules, PDP eval<br>per chunk</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">Rerank</div><div class="dia-box-sub">BM25 / cosine<br>/ LLM reranker</div></div>
-      <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">LLM Generate</div><div class="dia-box-sub">gpt-4o-mini<br>temp 0.2</div></div>
-    </div>
-    <div class="dia-note">The reranker never sees unauthorized content. The LLM never sees unauthorized content. Every path is policy-gated.</div>
   </div>
+
+  <div class="graph-canvas-wrap fade"><canvas id="fingerprint-canvas" role="img" aria-label="Diagram animating two requests, one from an HR role and one from a marketing role, each hashing to a different SHA-256 PolicyFingerprint and landing in its own isolated SQLite and FAISS cache partition, so a cached answer built from one role's permitted context can never be served as a hit to the other role."></canvas></div>
 
   <div class="results fade">
-    <div class="stat">
-      <div class="stat-val">100%</div>
-      <div class="stat-label">Access accuracy</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">0</div>
-      <div class="stat-label">Cross-role leaks</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">36</div>
-      <div class="stat-label">Test files</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">12</div>
-      <div class="stat-label">ABAC rules</div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 3: CONTEXT-AWARE EMBEDDINGS
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 3. Embeddings that know who owns them</div>
-  <div class="prose fade">
-    <p>
-      Standard RAG systems embed raw text. This creates a problem. "Q2 revenue grew 15%" from a finance document and "Q2 revenue discussions" from a marketing document produce <strong>nearly identical vectors</strong>. A marketing user searching for "Q2 revenue" gets the finance document as a top match. The filter might catch it downstream, but the vector search has already revealed that a relevant finance document exists.
-    </p>
-    <p>
-      The fix: <strong>contextual embedding prefixes</strong>. Before computing the embedding, <code>create_contextual_embedding_text()</code> prepends a structured metadata tag to each chunk:
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">Contextual prefix before embedding</div>
-    <div class="dia-row" style="gap:14px">
-      <div class="dia-box" style="flex:1;min-width:280px">
-        <div class="dia-box-sub" style="text-align:left;font-family:var(--mono);font-size:.62rem;line-height:2">
-          [DEPARTMENT: finance] [SENSITIVITY: internal]<br>
-          [TYPE: md] [QUARTER: Q4] [YEAR: 2024]<br>
-          [DOCUMENT: quarterly_report.md]<br><br>
-          Q2 revenue grew 15% driven by enterprise...
-        </div>
-      </div>
-    </div>
-    <div class="dia-note">Two chunks with identical text but different security labels now produce different embedding vectors. The vector space naturally separates content by ownership.</div>
-  </div>
-
-  <div class="prose fade">
-    <p>
-      Now the finance "Q2 revenue" chunk and the marketing "Q2 revenue" chunk live in different regions of the vector space. A search from a marketing user will naturally prefer marketing-department vectors over finance-department ones, even before any filter is applied. This is <strong>security-aware retrieval</strong>, not security-as-afterthought.
-    </p>
-    <p>
-      I chose prefix injection over post-hoc filtering because filtering after embedding still leaks information through the vector similarity scores. The prefix changes the embedding itself, so the unauthorized document is never a top candidate in the first place. The alternative was separate vector collections per department, but that would break cross-department search for users with multi-department access (like C-level).
-    </p>
-  </div>
-
-  <div class="graph-canvas-wrap fade" style="padding:0">
-    <canvas id="embed-canvas"></canvas>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 4: THE POLICY ENGINE
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 4. Policy as code</div>
-  <div class="prose fade">
-    <p>
-      I chose first-match-wins evaluation over XACML-style combining algorithms for one reason: auditability. When a policy decision needs explaining, you point to the single rule that fired. No combining, no weighting, no ambiguity. The PDP evaluates 12 rules top-to-bottom with four operators (<code>eq</code>, <code>ne</code>, <code>in</code>, <code>not_in</code>), stops at the first match, and returns the decision. If nothing matches, the default is <strong>DENY</strong>. Each rule considers four attribute categories: <strong>subject</strong> (the user's role), <strong>resource</strong> (the document's department, type, sensitivity), <strong>action</strong> (retrieve, view source, view row, aggregate), and <strong>environment</strong> (runtime feature flags). The intentional minimalism makes the policy auditable by someone who has never read the code.
-    </p>
-    <p>
-      Six roles: employee, engineering, marketing, finance, HR, C-level. C-level gets unrestricted access (rule 0, short-circuits all other checks). Employees see only general documents. Department users see their own department's internal docs. Cross-department access is denied by default. Confidential and restricted documents are denied to everyone except C-level.
-    </p>
-    <p>
-      HR data gets special treatment: <strong>three-tier progressive disclosure</strong>. Full employee records (with PII) are visible only to HR and C-level. PII-masked records (with [REDACTED] fields) can be enabled for other roles via a runtime feature flag. Pre-computed aggregates (headcount, salary averages, location distribution) can be independently enabled. This means you can give a department head salary statistics without giving them individual records.
-    </p>
-    <p>
-      Beyond document-level policy, the system detects sensitive content at the chunk level. Nineteen keywords (<code>salary</code>, <code>ssn</code>, <code>termination</code>, <code>performance_review</code>, <code>disciplinary</code>, and others) trigger automatic access tightening via <code>contains_sensitive_content()</code>. A chunk from a general-access document that happens to mention salary figures gets reclassified to HR-only. This prevents the failure mode where meeting notes discuss compensation and leak through general access.
-    </p>
-  </div>
-
-  <div class="dia fade">
-    <div class="dia-title">HR data progressive disclosure</div>
-    <div class="dia-row" style="gap:14px">
-      <div class="dia-box dia-good" style="flex:1;min-width:160px">
-        <div class="dia-box-title">Full Records</div>
-        <div class="dia-box-sub">HR + C-level only<br>All PII visible</div>
-      </div>
-      <div class="dia-box" style="flex:1;min-width:160px">
-        <div class="dia-box-title">Masked Records</div>
-        <div class="dia-box-sub">Feature-flag gated<br>SSN, salary, DOB<br>all [REDACTED]</div>
-      </div>
-      <div class="dia-box" style="flex:1;min-width:160px">
-        <div class="dia-box-title">Aggregates Only</div>
-        <div class="dia-box-sub">Feature-flag gated<br>Headcount, averages<br>no individual data</div>
-      </div>
-    </div>
-    <div class="dia-note">Each tier is independently toggleable via runtime flags. Default: both disabled (principle of least privilege). I chose feature flags over code-level access because compliance requirements change faster than deploy cycles.</div>
-  </div>
-
-  <div class="graph-canvas-wrap fade" style="padding:0">
-    <canvas id="pdp-canvas"></canvas>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 5: POLICY-FINGERPRINTED CACHING
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 5. Caching without leaking</div>
-  <div class="prose fade">
-    <p>
-      Caching is the silent leakage vector. An HR user asks a question, the LLM generates an answer using HR data, the answer gets cached. A marketing user asks the same question. A naive cache returns the same answer. Zero access control was evaluated. The marketing user just read HR data.
-    </p>
-    <p>
-      The solution: <strong>PolicyFingerprint</strong>. Every cache key for sensitive data (LLM answers, allowed-set computations, policy decisions) includes a SHA-256 hash of the user's complete access profile: role, tenant ID, policy epoch, entitlement epoch, and feature flags. The hash is truncated to 16 hex characters. An HR user and a marketing user asking the exact same question produce <strong>different cache keys</strong>. The HR answer is fundamentally unreachable from a marketing session.
-    </p>
-    <p>
-      When policies change, you bump the epoch integer in an environment variable. This changes every fingerprint hash. Every old cache entry becomes unreachable without scanning or deleting a single key. I chose epoch-based invalidation over scan-and-delete because scanning 10,000 cache entries to find ones affected by a policy change is slow and error-prone. With epochs, you change one integer and every stale entry becomes unreachable instantly. The data expires via TTL on its own schedule.
-    </p>
-    <p>
-      The benchmark suite measures cache hit latency at approximately 0.004ms for policy decisions and 0.04ms for LLM responses. I report absolute cache-hit times rather than multipliers against simulated baselines, because the actual speedup depends on your backend latency.
-    </p>
-  </div>
-
-  <div class="graph-canvas-wrap fade" style="padding:0">
-    <canvas id="fingerprint-canvas"></canvas>
-  </div>
-
-  <div class="results fade">
-    <div class="stat">
-      <div class="stat-val">~0.004ms</div>
-      <div class="stat-label">Cached PDP lookup</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">~0.04ms</div>
-      <div class="stat-label">Cached LLM lookup</div>
-    </div>
     <div class="stat">
       <div class="stat-val">SHA-256</div>
       <div class="stat-label">Fingerprint hash</div>
@@ -355,162 +403,221 @@
       <div class="stat-val">16 hex</div>
       <div class="stat-label">Key truncation</div>
     </div>
+    <div class="stat">
+      <div class="stat-val">1 pair</div>
+      <div class="stat-label">SQLite + FAISS per fingerprint</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">0.95</div>
+      <div class="stat-label">Raw-distance cutoff</div>
+    </div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      I chose SQLite over Redis for the semantic cache because the Redis backend failed under test and the file-per-fingerprint layout gives the same isolation with fewer moving parts. No cache latency numbers appear here: no benchmark result is committed to the repo.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
-       CH 6: HYBRID RETRIEVAL
+       CH 6: MULTI-HOP UNDER THE SAME LAW
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 6. Dense + sparse: neither alone is enough</div>
+  <div class="sec fade">Chapter 6. Multi-hop under the same law</div>
   <div class="prose fade">
     <p>
-      Dense retrieval (embedding similarity) captures semantic meaning. "Compensation package" matches "salary structure." But it misses exact terms: an employee name, a specific policy number, a financial figure. Sparse retrieval (BM25) catches exact keyword matches but misses semantic relationships.
+      Comparison questions need chunks that no single retrieval query surfaces together: a query written toward one department's vocabulary starves the other. A heuristic decides which queries need multi-hop treatment: 21 indicator patterns (<code>compare</code>, <code>contrast</code>, <code>difference between</code>, <code>versus</code>, <code>trend</code>, and others), plus more than one question mark in the query, plus a long conjunction, an "and" joining a query longer than ten words. Any of those flags a query as complex.
     </p>
     <p>
-      The system runs both in parallel and fuses results via <strong>Reciprocal Rank Fusion</strong> (k=60, the standard value from the Cormack paper). I chose RRF over learned fusion because it requires no training data and is robust to score distribution differences between the dense and sparse paths. Each item's score is <code>1/(k + rank)</code> in each list. Items appearing in both lists get a natural boost. I implemented BM25 from scratch (<code>k1=1.5</code>, <code>b=0.75</code>, regex tokenizer) to avoid adding a search engine dependency for what amounts to 60 lines of code.
+      A flagged query goes to the LLM for decomposition into sub-queries. The prompt carries an explicit synonym table so the sub-queries don't miss chunks written in different vocabulary: <code>vacation</code> expands toward <code>leave</code>, <code>PTO</code>, <code>time off</code>; <code>salary</code> expands toward <code>pay</code>, <code>wages</code>, <code>payroll</code>. Decomposition is capped at three sub-queries. If decomposition fails for any reason, the system falls back to the original query, untouched, rather than guessing at a partial breakdown.
     </p>
     <p>
-      Both retrieval paths apply role-based pre-filtering <strong>before</strong> scoring. The BM25 index pre-filters by allowed roles via <code>prefilter_by_allowed_roles()</code>. ChromaDB uses server-side <code>where</code> filtering on role boolean metadata. Unauthorized documents are excluded at the database layer, not post-hoc.
-    </p>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 7: MULTI-HOP RAG
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 7. Multi-hop RAG</div>
-  <div class="prose fade">
-    <p>
-      Some questions require information from multiple documents. "What is the engineering team's budget compared to marketing?" needs data from both departments. A single retrieval pass will find the closest match but miss the comparison. The multi-hop module detects complex queries using keyword heuristics ("compare", "versus", "trend") and decomposes them into 2-4 sub-queries using the LLM.
+      The recall gain is secondary. What matters is where policy gets enforced. Each sub-query runs the full pipeline independently: the database filter, the prefilter, the PDP. Sub-queries execute concurrently, at most three workers at a time, and each one is gated by policy on its own terms. Policy is enforced per hop, not once at the end over a merged list.
     </p>
     <p>
-      Each sub-query goes through the <strong>full ABAC pipeline independently</strong>. A marketing user asking that comparison question gets their own department's budget (permitted) but gets nothing from engineering finance docs (denied at Layer 1). The system does not reveal that engineering data exists. Sub-queries run in parallel via <code>ThreadPoolExecutor</code> with max 3 workers. Results are deduplicated by <code>source_path + section_path</code> and merged before reranking. Complex queries return up to 10 context chunks versus 5 for simple queries.
+      Results across hops are deduplicated by <code>source_path#section_path</code>, so the same section surfaced by two sub-queries counts once. Each hop is capped at <code>top_k</code> results, and the merged total across all hops is capped at twice <code>top_k</code>, 10 versus 5 at the default. A degenerate decomposition, one that returns only the original query, reverts to single-hop.
     </p>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">Multi-hop query decomposition</div>
+    <div class="dia-title">Multi-hop decomposition, gated per sub-query</div>
     <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Complex Query</div><div class="dia-box-sub">"Compare eng vs mkt<br>budget allocation"</div></div>
+      <div class="dia-box"><div class="dia-box-title">Complex query</div><div class="dia-box-sub">flagged by heuristic</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">LLM Decomposer</div><div class="dia-box-sub">Detect complexity<br>Split into sub-queries</div></div>
+      <div class="dia-box"><div class="dia-box-title">LLM decomposer</div><div class="dia-box-sub">up to 3 sub-queries</div></div>
     </div>
     <div class="dia-arrow-down">&darr;</div>
     <div class="dia-row" style="gap:14px">
-      <div class="dia-box dia-good" style="flex:1;min-width:140px"><div class="dia-box-title">Sub-Q 1</div><div class="dia-box-sub">"marketing budget"<br>ABAC: PERMIT</div></div>
-      <div class="dia-box dia-bad" style="flex:1;min-width:140px"><div class="dia-box-title">Sub-Q 2</div><div class="dia-box-sub">"engineering budget"<br>ABAC: DENY</div></div>
+      <div class="dia-box dia-good" style="flex:1;min-width:150px"><div class="dia-box-title">Sub-query 1</div><div class="dia-box-sub">"marketing budget"<br>full pipeline: PERMIT</div></div>
+      <div class="dia-box dia-bad" style="flex:1;min-width:150px"><div class="dia-box-title">Sub-query 2</div><div class="dia-box-sub">"engineering budget"<br>full pipeline: DENY</div></div>
     </div>
     <div class="dia-arrow-down">&darr;</div>
     <div class="dia-row">
-      <div class="dia-box"><div class="dia-box-title">Merge + Rerank</div><div class="dia-box-sub">Dedup by source_path<br>Top 10 chunks</div></div>
+      <div class="dia-box"><div class="dia-box-title">Dedup + merge</div><div class="dia-box-sub">source#section<br>cap 2&times; top_k</div></div>
       <div class="dia-arrow">&rarr;</div>
-      <div class="dia-box"><div class="dia-box-title">LLM Generate</div><div class="dia-box-sub">Answer from<br>permitted chunks only</div></div>
+      <div class="dia-box"><div class="dia-box-title">Generate</div><div class="dia-box-sub">from permitted<br>chunks only</div></div>
     </div>
-    <div class="dia-note">Each sub-query runs the full three-layer pipeline. Cross-department data is blocked per sub-query, not just at the final answer.</div>
+    <div class="dia-note">The denied hop returns nothing. The answer does not reveal that engineering data exists.</div>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       CH 8: RELIABILITY
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 8. Reliability layers</div>
-
-  <div class="pipeline fade">
-    <div class="pipe-step">
-      <div class="pipe-num">01</div>
-      <div class="pipe-title">Circuit breaker</div>
-      <div class="pipe-desc">A full state machine protects external API calls. <strong>CLOSED</strong> state allows calls through normally. After <strong>5 consecutive failures</strong>, the breaker transitions to <strong>OPEN</strong> and all calls fail fast without hitting the backend. After a 30-second recovery timeout, it transitions to <strong>HALF_OPEN</strong> and allows one probe call. Two consecutive successes return it to CLOSED. One failure sends it back to OPEN. This prevents cascading failures when an LLM backend goes down.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">02</div>
-      <div class="pipe-title">Singleflight deduplication</div>
-      <div class="pipe-desc">When multiple users with the same role submit the same query concurrently, only one computation runs. The rest wait on a <code>threading.Event</code> with a 30-second timeout. One compute, N waiters. If the wait times out, the caller falls back to direct execution. The system tracks <strong>dedup_count</strong> and <strong>timeout_count</strong> for observability. This eliminates cache stampede on cold starts and reduces redundant LLM calls under concurrent load.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">03</div>
-      <div class="pipe-title">Audit trail with correlation IDs</div>
-      <div class="pipe-desc">Every request gets a UUID correlation ID returned in the <code>X-Correlation-ID</code> header. Structured JSONL logs with daily rotation trace the full path: authentication, retrieval, policy evaluation, generation. Each log entry includes the correlation ID and the first 8 characters of the PolicyFingerprint hash, making it possible to reconstruct the complete request lifecycle and verify that access control was evaluated at every step.</div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 9: PLUGGABLE BACKENDS
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 9. Five LLMs, four embedding models, zero code changes</div>
   <div class="prose fade">
     <p>
-      I needed to move between local development (Ollama, free), staging (vLLM on GPU, fixed cost), and production (Vertex AI, per-token cost) without changing code. So I built a provider pattern: five LLM backends (OpenAI GPT-4o-mini, Anthropic Claude, Google Vertex AI Gemini, vLLM with Llama 3.1 8B AWQ, and Ollama) and four embedding backends (OpenAI, Sentence Transformers, HuggingFace TEI, Vertex AI). Switching requires changing one environment variable: <code>LLM_BACKEND</code> or <code>EMBEDDING_BACKEND</code>. Factory functions with <code>@lru_cache(maxsize=1)</code> handle singleton initialization. The ABAC layer is provider-agnostic. It does not care which LLM generated the answer. It cares whether the user was authorized to see the context that produced it.
+      I chose to run every sub-query through the full pipeline rather than filter once after merging because a merged context list has no memory of which hop fetched what.
     </p>
   </div>
-
   <!-- ═══════════════════════════════════════
-       CH 10: PRODUCTION
+       CH 7: WHAT THE MODEL IS ALLOWED TO SAY
        ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 10. Production infrastructure</div>
-
-  <div class="pipeline fade">
-    <div class="pipe-step">
-      <div class="pipe-num">01</div>
-      <div class="pipe-title">36 test files with cross-role leakage coverage</div>
-      <div class="pipe-desc">Unit tests (PDP logic, chunker, BM25), integration tests (cache + fingerprints, HR tiers), <strong>security tests</strong> (cross-role access via <code>TestCrossRoleDeptBoundary</code>, response sanitization that strips <code>allowed_roles</code> and <code>full_row</code> from API responses), edge cases (unicode, missing metadata, type mismatches), and end-to-end RAG pipeline tests. CI enforces <code>--cov-fail-under=70</code>.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">02</div>
-      <div class="pipe-title">Kubernetes-ready</div>
-      <div class="pipe-desc">8 K8s manifests: 3 replicas, <strong>HPA scaling 2-10 pods</strong> at 70% CPU / 80% memory with 300-second scale-down stabilization. Security-hardened pods (<code>runAsNonRoot</code>, <code>readOnlyRootFilesystem</code>, drop ALL capabilities). NGINX ingress with TLS termination, rate limiting, and security headers. Cloud Run config: 0-10 instances, 2 vCPU / 2GB each.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">03</div>
-      <div class="pipe-title">Observability</div>
-      <div class="pipe-desc"><strong>Prometheus</strong> metrics (cache hit rates, latencies, index sizes). JSONL audit logs with correlation IDs tracing requests from auth through retrieval, policy evaluation, and generation. Every API response includes timing breakdowns.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">04</div>
-      <div class="pipe-title">Security hardening</div>
-      <div class="pipe-desc">Input sanitization (HTML stripping, path traversal prevention, 10K char limit). Response sanitization strips internal fields (allowed_roles, full_row, access tier metadata). 403 responses say only "Access denied" with no rule names leaked. 401 responses do not reveal whether a username exists. Graceful shutdown with 30-second drain.</div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       CH 11: EVAL RESULTS
-       ═══════════════════════════════════════ -->
-  <div class="sec fade">Chapter 11. Evaluation results</div>
-
+  <div class="sec fade">Chapter 7. What the model is allowed to say</div>
   <div class="prose fade">
     <p>
-      The system includes a built-in evaluation pipeline using RAGAS metrics: context precision, context recall, faithfulness, and answer relevance. These validate that access control does not degrade retrieval quality for authorized users. If the RAGAS library is not installed, the evaluator falls back to simple heuristic metrics. The table below shows access control accuracy by role across the security test suite.
+      The system prompt is a contract, not a suggestion. It instructs the model to answer only from the snippets that survived every upstream filter, to phrase the answer extractively rather than paraphrase freely, to cite each claim inline back to a source snippet, and to return one fixed string, <code>"I don't know based on the available context."</code>, whenever the context does not contain the answer. Nothing in the prompt invites the model to fill a gap from its own training data.
+    </p>
+    <p>
+      That contract is backed by two mechanisms that do not simply trust the model to follow it. If the PDP (Policy Decision Point) leaves zero permitted snippets after filtering, the refusal is returned directly from a code branch, reason <code>no_context</code>, before a prompt is even built. The model is never called. A user entitled to nothing gets a refusal that no generation step could have overridden, because no generation step ran.
+    </p>
+    <p>
+      If snippets do survive filtering, the model still runs, but its output is checked after the fact. A grounding check computes content-word overlap between the generated answer and the permitted snippets; if the overlap ratio falls below <code>GROUNDING_MIN_OVERLAP</code> (default 0.1), the answer is discarded and replaced with the same refusal string, reason <code>low_grounding</code>. This catches an answer that technically obeys the prompt on paper but has drifted from the text it was supposed to quote.
+    </p>
+    <p>
+      Even the failure path is constrained. When the LLM call itself fails, the fallback does not synthesize anything: it quotes <code>snippets[0]</code>, the single highest-ranked snippet, which already passed PDP filtering before the fallback ever runs. There is no code path, including the outage path, where an answer can reach the user without having been permitted first.
     </p>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">Access control by role</div>
-    <table class="rtable">
-      <tr><th>Role</th><th>Tests</th><th>Access Accuracy</th><th>Entitlement Accuracy</th></tr>
-      <tr class="best"><td>Engineering</td><td>3</td><td>100%</td><td>66.7%</td></tr>
-      <tr class="best"><td>Marketing</td><td>3</td><td>100%</td><td>66.7%</td></tr>
-      <tr class="best"><td>Finance</td><td>3</td><td>100%</td><td>100%</td></tr>
-      <tr class="best"><td>HR</td><td>3</td><td>100%</td><td>66.7%</td></tr>
-    </table>
-    <div class="dia-note">100% access accuracy across all roles. Zero cross-role data leakage. Entitlement failures are over-permissive retrieval of general docs, not security violations.</div>
+    <div class="dia-title">Two triggers, one refusal</div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Zero candidates</div><div class="dia-box-sub">PDP permits nothing<br>reason: no_context</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Refused in code</div><div class="dia-box-sub">LLM never called</div></div>
+    </div>
+    <div class="dia-row">
+      <div class="dia-box"><div class="dia-box-title">Weak grounding</div><div class="dia-box-sub">overlap &lt; 0.1<br>reason: low_grounding</div></div>
+      <div class="dia-arrow">&rarr;</div>
+      <div class="dia-box dia-good"><div class="dia-box-title">Answer discarded</div><div class="dia-box-sub">refusal string returned</div></div>
+    </div>
+    <div class="dia-note">Same fixed string both times: "I don't know based on the available context."</div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      The same discipline extends downstream of generation. Search responses whitelist exactly 7 public fields (<code>text</code>, <code>source_path</code>, <code>section_path</code>, <code>owner_dept</code>, <code>doc_type</code>, <code>sensitivity</code>, <code>access_level</code>); internal fields are stripped before the response is serialized. A 403 returns only the string "Access denied", never the rule name that fired. A 401 does not reveal whether the attempted username exists at all, so a failed login cannot be used to enumerate valid accounts.
+    </p>
+    <p>
+      The audit log applies the same restraint to itself. Any payload key named <code>api_key</code>, <code>authorization</code>, <code>token</code>, <code>secret</code>, <code>password</code>, or <code>credentials</code> is redacted before the entry is written. Free-text fields are masked and truncated at 200 characters. Every entry carries a correlation ID, so a request can be traced across the log without carrying its content. One line I drew and held: the 8-character PolicyFingerprint prefix appears only in Prometheus metric labels, for aggregate monitoring. It never appears in an audit log entry. An audit log is retained and read by people, and a fingerprint prefix sitting next to a request is one correlation away from becoming an identifier.
+    </p>
+    <p>
+      I chose to convert weakly grounded answers into refusals rather than ship them with a warning because in an access-control system an unsupported answer is a liability, not a partial success.
+    </p>
   </div>
 
   <!-- ═══════════════════════════════════════
-       STACK & LINK
+       CH 8: THE EVIDENCE
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 8. The evidence</div>
+  <div class="prose fade">
+    <p>
+      494 tests collected across 35 files, all of them offline. <code>conftest.py</code> forces <code>LLM_BACKEND=fake</code> and <code>EMBEDDING_BACKEND=fake</code> before any application import runs, so the suite needs no credentials and makes no network call, in CI or locally.
+    </p>
+    <p>
+      The fake LLM backend is not a generic stub that returns a canned string. It echoes the tail of the prompt back as its output, so the response shares vocabulary with the injected, already-filtered context and passes the grounding check. A stub that always returned fixed text would silently skip the real refusal path. This one keeps that path exercised on every offline run.
+    </p>
+    <p>
+      Two artifacts in the suite carry the most weight.
+    </p>
+    <p>
+      <strong>The access-control matrix test.</strong> <code>tests/unit/test_access_control_matrix.py</code> enumerates 7,200 combinations (6 roles &times; 5 departments &times; 3 document types &times; 4 sensitivities &times; 5 actions &times; 2 &times; 2 flag states) and checks every PDP verdict against a reference implementation written blind from <code>policy.yaml</code>, a second transcription of the policy kept independent of the code under test. Zero mismatches across all 7,200. The same review surfaced a finding about the policy itself, not the engine: the <code>employee_non_general_deny</code> rule fires unconditionally for role <code>employee</code> before the flag-gated HR exception rules ever get evaluated, so <code>hr_masked_rows_mode</code> and <code>hr_aggregate_mode</code> can help finance, marketing, or engineering but can never help employee. The finding lives in the test docstring rather than being fixed silently, because reordering a policy rule is a policy decision, not a code fix.
+    </p>
+    <p>
+      <strong>The end-to-end zero-leakage test.</strong> <code>tests/e2e/test_zero_leakage.py</code> runs the real retrieval-to-PDP-to-generation pipeline over the real corpus, nothing stubbed except the fake AI backends, against one probe query engineered to tempt every department at once. It asserts that literal marker strings, a finance figure ("$2.1 billion") and an HR employee name ("Aadhya Patel"), never appear in another role's search results or generated answer. A positive control sits next to those negative assertions: the c_level role must see at least two departments in its own results, which is what proves the zeros for every other role come from filtering, not from an empty index that has nothing to show anyone.
+    </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Test suite by layer</div>
+    <div style="overflow-x:auto">
+      <table class="rtable">
+        <tr><th>Layer</th><th>Tests</th><th>What it proves</th></tr>
+        <tr><td>unit</td><td>389</td><td>PDP, chunker, BM25, caches, fingerprints</td></tr>
+        <tr><td>api</td><td>84</td><td>auth, routes, response sanitization</td></tr>
+        <tr><td>e2e</td><td>21</td><td>real corpus, zero leakage, cache integration</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="prose fade">
+    <p>
+      Measured honestly, not all of this is closed. Coverage sits at 77% against a 70% floor set in <code>pyproject.toml</code>, and the floor is live: pytest-cov reads it from that config and fails any coverage run that lands below it, no extra CI flag required. CI also runs a real load test on every push to main, <code>scripts/simple_load_test.py</code> booting the actual FastAPI server for 30 seconds against 5 concurrent users. An evaluation harness exists too, with a 22-question ground truth set, and it re-checks every citation in an answer by re-running it through the PDP to catch unauthorized citations directly. But no evaluation report is committed; the reports directory is gitignored. This page states mechanisms, not scores, because no score has been produced and kept.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 9: WHAT IS PROVEN, WHAT IS OPEN
+       ═══════════════════════════════════════ -->
+  <div class="sec fade">Chapter 9. What is proven, what is open</div>
+  <div class="prose fade">
+    <p>
+      The access-control matrix and the zero-leakage test prove the boundary holds under exhaustive and adversarial conditions. They do not prove the system is finished. Listing what is still open is part of the engineering record, not an apology attached to it.
+    </p>
+  </div>
+
+  <div class="pipeline fade">
+    <div class="pipe-step">
+      <div class="pipe-num">Open item 1</div>
+      <div class="pipe-title">Commit an eval report</div>
+      <div class="pipe-desc">The evaluation harness and its 22-question ground truth set run and produce results, but no run has been committed, and neither has a benchmark run. Until one is committed, any accuracy or latency figure would be a claim nobody could check.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">Open item 2</div>
+      <div class="pipe-title">Reclaim orphaned cache partitions</div>
+      <div class="pipe-desc">An epoch bump makes old policy fingerprints unreachable, but the SQLite and FAISS file pairs keyed by them stay on disk; nothing in the code deletes them. Repeated bumps accumulate orphaned files until an operator removes them by hand.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">Open item 3</div>
+      <div class="pipe-title">Fix the port drift</div>
+      <div class="pipe-desc">The Dockerfile and Cloud Run both listen on 8080. The Kubernetes manifests and docker-compose still target 8000. Deploying the current image against the current k8s manifests would point the probes and the Service at the wrong port.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">Open item 4</div>
+      <div class="pipe-title">Replace demo auth</div>
+      <div class="pipe-desc">Authentication is HTTP Basic against 7 hardcoded users held in memory with plaintext passwords. A SHA256-plus-salt hashing helper exists in the same file but is unreachable dead code for this user store. It was built for a demo and has never been asked to be anything else.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">Open item 5</div>
+      <div class="pipe-title">Wire epoch bumps to policy changes</div>
+      <div class="pipe-desc"><code>EpochManager</code> and its Redis pub/sub channel for propagating epoch bumps are fully built, but no route in the application calls it. Epochs are bumped by an operator editing an environment variable, not by any in-app event tied to an actual policy change.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">Open item 6</div>
+      <div class="pipe-title">Decide the employee-role asymmetry</div>
+      <div class="pipe-desc">The employee role has zero users today, so the documented rule-ordering asymmetry has not caused a real incident. It still needs a decision: reorder <code>employee_non_general_deny</code> below the flag-gated HR exceptions, or declare the current behavior intended and document why.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">Open item 7</div>
+      <div class="pipe-title">Apply the per-route rate limits</div>
+      <div class="pipe-desc">Named rate-limit constants for chat, search, and admin routes are defined but no route decorator applies them. Only the app-wide default and the explicit <code>/login</code> and <code>/test</code> decorators are active today.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       STACK
        ═══════════════════════════════════════ -->
   <div class="sec fade">Stack</div>
   <div class="stack fade">
     <span class="stack-tag">FastAPI</span>
     <span class="stack-tag">ChromaDB</span>
-    <span class="stack-tag">OpenAI</span>
-    <span class="stack-tag">Claude</span>
+    <span class="stack-tag">Vertex AI</span>
     <span class="stack-tag">Gemini</span>
-    <span class="stack-tag">vLLM</span>
-    <span class="stack-tag">Ollama</span>
+    <span class="stack-tag">GPTCache</span>
+    <span class="stack-tag">FAISS</span>
     <span class="stack-tag">BM25</span>
     <span class="stack-tag">RRF</span>
-    <span class="stack-tag">ABAC</span>
-    <span class="stack-tag">Kubernetes</span>
     <span class="stack-tag">Redis</span>
-    <span class="stack-tag">Prometheus</span>
-    <span class="stack-tag">Docker</span>
+    <span class="stack-tag">Kubernetes</span>
     <span class="stack-tag">Cloud Run</span>
+    <span class="stack-tag">Prometheus</span>
+    <span class="stack-tag">Streamlit</span>
+    <span class="stack-tag">Docker</span>
+    <span class="stack-tag">Pydantic</span>
   </div>
 
   <a href="https://github.com/Axionis47/finsolve-abac-rag" target="_blank" class="proj-link fade">View on GitHub &rsaquo;</a>
@@ -529,32 +636,52 @@
 </footer>
 
 <script>
-const obs = new IntersectionObserver(es => {
-  es.forEach((e, i) => {
-    if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
-  });
-}, { threshold: .12 });
-document.querySelectorAll('.fade').forEach(el => obs.observe(el));
-
-/* ═══════════════════════════════════════════════════════════════
-   ANIMATION 1: Three-Layer Defense Filter (filter-canvas)
-   ═══════════════════════════════════════════════════════════════ */
+if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.querySelectorAll('.fade').forEach(el => el.classList.add('v'));
+} else {
+  const obs = new IntersectionObserver(es => {
+    es.forEach((e, i) => {
+      if(e.isIntersecting){ setTimeout(() => e.target.classList.add('v'), i * 80); obs.unobserve(e.target); }
+    });
+  }, { threshold: .12 });
+  document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+}
+</script>
+<script>
+/* ===================================================================
+   ANIMATION: First match wins (pdp-canvas)
+   Two request walks down the 12 named PDP rules, top to bottom.
+   Scenario A: role marketing, resource finance/md/internal -> rules
+   1-4 pass with no match, rule 5 (cross_department_deny) matches,
+   DENY; rules 6-12 never run.
+   Scenario B: same role, resource marketing/md/internal -> rules 1-2
+   pass, rule 3 (same_department_internal_docs) matches, PERMIT; rules
+   4-12 never run.
+   Closing card: if none of the 12 match, the PDP's default effect is
+   deny.
+   Self-contained IIFE. Pair with .graph-canvas-wrap markup that holds
+   <canvas id="pdp-canvas" role="img" aria-label="...">.
+   No inline height anywhere -- this script owns canvas height.
+   =================================================================== */
 (function(){
-  const canvas = document.getElementById('filter-canvas');
+  var canvas = document.getElementById('pdp-canvas');
   if(!canvas) return;
-  const wrap = canvas.parentElement;
-  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
-  const blue='#5a7a9a';
-  const mono='JetBrains Mono, monospace';
-  let ctx,w,h,frame=0,running=false;
+  var wrap = canvas.parentElement;
+
+  var accent='#d88c3a', green='#5a9a5a', red='#9a5a5a';
+  var t1='#e0e0e0', t2='#ababab', t3='#787880', raised='#1a1a1d', inset='#0a0a0c';
+  var mono='JetBrains Mono, monospace';
+  var ctx, w, h, frame=0, running=false, loopEnabled=true;
+  var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   function initCanvas(){
-    const dpr=window.devicePixelRatio||1;
-    const rect=wrap.getBoundingClientRect();
-    w=rect.width; h=440;
-    canvas.width=w*dpr; canvas.height=h*dpr;
-    canvas.style.width=w+'px'; canvas.style.height=h+'px';
-    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+    var dpr = window.devicePixelRatio || 1;
+    var rect = wrap.getBoundingClientRect();
+    w = rect.width;
+    h = (window.matchMedia && window.matchMedia('(max-width:768px)').matches) ? 460 : 520;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr);
   }
 
   function drawRR(x,y,rw,rh,r,fill,stroke,lw){
@@ -564,298 +691,355 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
     ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
     ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
     ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
-    if(fill){ctx.fillStyle=fill;ctx.fill();}
-    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+    if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+    if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=lw||1; ctx.stroke(); }
   }
 
-  const chunks = [
-    {label:'HR-salary',   color:red,    blockedAt:0},
-    {label:'HR-review',   color:red,    blockedAt:0},
-    {label:'FIN-q2',      color:blue,   blockedAt:0},
-    {label:'FIN-budget',  color:blue,   blockedAt:0},
-    {label:'ENG-conf',    color:green,  blockedAt:1},
-    {label:'MKT-plan',    color:accent, blockedAt:-1},
-    {label:'MKT-brief',   color:accent, blockedAt:-1},
-    {label:'GEN-policy',  color:t3,     blockedAt:-1},
+  function easeInOut(t){ return t<0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+  // rises a->b, holds to c, falls to d (a<=b<=c<=d)
+  function trapezoid(x,a,b,c,d){
+    if(x<=a || x>=d) return 0;
+    if(x<b) return (x-a)/(b-a);
+    if(x<=c) return 1;
+    return 1-(x-c)/(d-c);
+  }
+  function riseOnly(x,a,b){ return clamp((x-a)/(b-a),0,1); }
+  function fitText(text,maxW){
+    if(ctx.measureText(text).width<=maxW) return text;
+    var s=text;
+    while(s.length>1 && ctx.measureText(s+'…').width>maxW){ s=s.slice(0,-1); }
+    return s+'…';
+  }
+
+  var P = [
+    {name:'arrive',         dur:60},
+    {name:'a_rule1',        dur:42},
+    {name:'a_rule2',        dur:42},
+    {name:'a_rule3',        dur:42},
+    {name:'a_rule4',        dur:42},
+    {name:'a_rule5_match',  dur:75},
+    {name:'a_hold',         dur:95},
+    {name:'a_fade',         dur:32},
+    {name:'b_swap',         dur:50},
+    {name:'b_rule1',        dur:42},
+    {name:'b_rule2',        dur:42},
+    {name:'b_rule3_match',  dur:75},
+    {name:'b_hold',         dur:95},
+    {name:'b_fade',         dur:32},
+    {name:'end_card',       dur:85},
+    {name:'end_hold',       dur:45},
+    {name:'end_fade',       dur:32}
+  ];
+  var totalF = P.reduce(function(s,p){ return s+p.dur; }, 0);
+  var CUM = (function(){ var arr=[], acc=0; for(var i=0;i<P.length;i++){ arr.push(acc); acc+=P[i].dur; } return arr; })();
+  // static frame for prefers-reduced-motion: deep in a_hold (phase 6), one
+  // frame before it ends, so the deny decision is fully settled.
+  var STATIC_FRAME = CUM[6] + P[6].dur - 1;
+
+  // 12 rules from docs/policy.yaml, evaluated top to bottom, first match
+  // wins, default effect deny.
+  var RULES = [
+    'c_level_full_access',
+    'general_docs_any_role',
+    'same_department_internal_docs',
+    'employee_non_general_deny',
+    'cross_department_deny',
+    'hr_rows_hr_and_c_level_only',
+    'non_hr_hr_rows_deny',
+    'hr_masked_rows_non_hr_if_enabled',
+    'hr_masked_rows_hr_and_c_level',
+    'hr_aggregates_non_hr_if_enabled',
+    'hr_aggregates_hr_and_c_level',
+    'high_sensitivity_md_deny_by_default'
   ];
 
-  const barriers = [
-    {label:'Layer 1: ChromaDB where'},
-    {label:'Layer 2: BM25 prefilter'},
-    {label:'Layer 3: PDP evaluate'},
-  ];
+  var SCN_A = { role:'marketing', resource:'finance / md / internal', action:'retrieve_chunk', matchIdx:4, label:'DENY', color:red };
+  var SCN_B = { role:'marketing', resource:'marketing / md / internal', action:'retrieve_chunk', matchIdx:2, label:'PERMIT', color:green };
 
-  // Phase timing (frames at 60fps)
-  const P = [
-    {name:'init',    dur:60},   // 0
-    {name:'moveL1',  dur:120},  // 1
-    {name:'filterL1',dur:180},  // 2
-    {name:'moveL2',  dur:120},  // 3
-    {name:'filterL2',dur:120},  // 4
-    {name:'moveL3',  dur:120},  // 5
-    {name:'filterL3',dur:120},  // 6
-    {name:'arrive',  dur:120},  // 7
-    {name:'hold',    dur:120},  // 8
-    {name:'reset',   dur:120},  // 9
-  ];
-  const totalF = P.reduce((s,p)=>s+p.dur,0);
+  function captionFor(scn){
+    var evaluated = scn.matchIdx+1;
+    var neverStart = scn.matchIdx+2;
+    return evaluated+' of 12 rules evaluated · rules '+neverStart+'–12 never run';
+  }
 
-  function draw(){
-    if(!running) return;
+  /* renderFrame draws one frame for an arbitrary frame index f, so the
+     same function serves the running rAF loop and the single static
+     frame drawn for prefers-reduced-motion. */
+  function renderFrame(fIn){
     ctx.clearRect(0,0,w,h);
-    const f = frame % totalF;
 
-    // Find current phase
-    let phase=0, pf=0, acc=0;
-    for(let i=0;i<P.length;i++){
+    var f = fIn % totalF;
+    var phase=0, pf=0, acc=0;
+    for(var i=0;i<P.length;i++){
       if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
-      acc+=P[i].dur;
+      acc += P[i].dur;
     }
-    const prog = pf/P[phase].dur;
+    var prog = pf/P[phase].dur;
+    var ep = easeInOut(prog);
 
-    // Layout constants
-    const startX = 40;
-    const chunkW = 90, chunkH = 34, chunkGap = 8;
-    const totalChunkH = chunks.length*(chunkH+chunkGap)-chunkGap;
-    const chunkStartY = (h - totalChunkH)/2;
-
-    // Barrier x positions (evenly spaced)
-    const bx = [w*0.28, w*0.50, w*0.72];
-    // Destination
-    const destX = w*0.85, destW = 100, destH = 50;
-    const destY = h/2 - destH/2;
-
-    // Global fade for reset phase
-    let globalAlpha = 1;
-    if(phase === 9) globalAlpha = 1 - prog;
-    if(phase === 0) globalAlpha = prog;
+    var globalAlpha = 1;
+    if(phase === 0) globalAlpha = ep;
+    if(phase === P.length-1) globalAlpha = 1-ep;
     ctx.globalAlpha = globalAlpha;
 
-    // Draw user badge
-    const badgeX = w - 180, badgeY = 20;
-    drawRR(badgeX, badgeY, 160, 30, 6, inset, accent, 1);
-    ctx.font = '600 11px '+mono;
-    ctx.fillStyle = accent;
-    ctx.textAlign = 'center';
-    ctx.fillText('ROLE: MARKETING', badgeX+80, badgeY+19);
+    /* ---- responsive layout: every position derives from w/h, with
+       floors/caps. Verified against clipping at w = 343, 375, 390, 500,
+       600, 768, 900, 1344. ---- */
+    var fontScale = w<400 ? 0.8 : (w<600 ? 0.9 : 1);
+    function fpx(n){ return Math.max(7, Math.round(n*fontScale)); }
 
-    // Draw barriers
-    for(let i=0;i<3;i++){
-      const bActive = phase >= (i*2+2);
-      ctx.save();
-      ctx.setLineDash([4,4]);
-      ctx.strokeStyle = bActive ? (i<2?red:green) : 'rgba(255,255,255,0.06)';
-      ctx.lineWidth = bActive ? 1.5 : 1;
-      ctx.globalAlpha = globalAlpha * (bActive ? 0.6 : 0.3);
-      ctx.beginPath();
-      ctx.moveTo(bx[i], 60);
-      ctx.lineTo(bx[i], h-40);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
+    var padX = clamp(w*0.035, 12, 22);
+    var chipY = 20, chipH = 54;
+    var chipW = w - padX*2;
 
-      // Barrier label
-      ctx.save();
-      ctx.globalAlpha = globalAlpha * 0.7;
-      ctx.font = '500 9px '+mono;
-      ctx.fillStyle = bActive ? t1 : t3;
-      ctx.textAlign = 'center';
-      ctx.fillText(barriers[i].label, bx[i], 55);
+    var labelY = chipY + chipH + 20;
+    var listY = labelY + 12;
+    var capReserve = 30;
+    var listBottom = h - capReserve - 8;
+    var listH = listBottom - listY;
+    var rowGap = clamp(h*0.006, 2, 4);
+    var rowH = (listH - rowGap*11) / 12;
+    var listW = chipW;
+
+    function rowTop(i){ return listY + i*(rowH+rowGap); }
+
+    // ---- which scenario (if any) is active this phase, and how far
+    // its walk has progressed, purely as a function of phase index ----
+    var scn = null, testRow = -1, matchActive = false, settleAll = false;
+    var contentAlpha = 1, showChip = true, showCaption = false;
+    var listAllDim = false, endCardProg = 0;
+
+    if(phase===0){ scn=SCN_A; }
+    else if(phase>=1 && phase<=4){ scn=SCN_A; testRow=phase-1; }
+    else if(phase===5){ scn=SCN_A; testRow=4; matchActive=true; }
+    else if(phase===6){ scn=SCN_A; settleAll=true; showCaption=true; }
+    else if(phase===7){ scn=SCN_A; settleAll=true; showCaption=true; contentAlpha=1-ep; }
+    else if(phase===8){ scn=SCN_B; contentAlpha=ep; }
+    else if(phase>=9 && phase<=10){ scn=SCN_B; testRow=phase-9; }
+    else if(phase===11){ scn=SCN_B; testRow=2; matchActive=true; }
+    else if(phase===12){ scn=SCN_B; settleAll=true; showCaption=true; }
+    else if(phase===13){ scn=SCN_B; settleAll=true; showCaption=true; contentAlpha=1-ep; }
+    else if(phase===14){ showChip=false; listAllDim=true; endCardProg=riseOnly(ep,0.15,0.9); }
+    else if(phase===15){ showChip=false; listAllDim=true; endCardProg=1; }
+    else if(phase===16){ showChip=false; listAllDim=true; endCardProg=1; }
+
+    var ga = globalAlpha*contentAlpha;
+
+    // ===== small orientation label above the list =====
+    ctx.save(); ctx.globalAlpha = globalAlpha; ctx.textAlign='left';
+    ctx.font = '600 '+fpx(10)+'px '+mono; ctx.fillStyle = accent;
+    ctx.fillText(fitText('RULES · TOP TO BOTTOM, FIRST MATCH WINS', listW), padX, labelY);
+    ctx.restore();
+
+    // ===== request chip =====
+    if(showChip && scn){
+      ctx.save(); ctx.globalAlpha = ga; ctx.textAlign='left';
+      drawRR(padX, chipY, chipW, chipH, 8, raised, 'rgba(255,255,255,0.03)', 1);
+      ctx.font = '600 '+fpx(9)+'px '+mono; ctx.fillStyle = accent;
+      ctx.fillText('REQUEST', padX+12, chipY+15);
+
+      var cols = [
+        {k:'role', v:scn.role},
+        {k:'resource', v:scn.resource},
+        {k:'action', v:scn.action}
+      ];
+      var colW = (chipW-24)/3;
+      for(var c=0;c<cols.length;c++){
+        var cx = padX+12+c*colW;
+        ctx.font = fpx(7)+'px '+mono; ctx.fillStyle = t3;
+        ctx.fillText(cols[c].k.toUpperCase(), cx, chipY+29);
+        ctx.font = fpx(9)+'px '+mono; ctx.fillStyle = t1;
+        ctx.fillText(fitText(cols[c].v, colW-10), cx, chipY+44);
+      }
       ctx.restore();
     }
 
-    // Draw destination box
-    if(phase >= 7){
-      const dp = phase===7 ? prog : 1;
-      ctx.save();
-      ctx.globalAlpha = globalAlpha * dp;
-      const pulse = 1 + 0.015*Math.sin(frame*0.08);
-      drawRR(destX-destW/2, destY, destW, destH, 8, inset, green, 1.5*pulse);
-      ctx.font = '600 11px '+mono;
-      ctx.fillStyle = green;
-      ctx.textAlign = 'center';
-      ctx.fillText('Reranker', destX, destY+20);
-      ctx.font = '500 9px '+mono;
-      ctx.fillText('LLM', destX, destY+36);
-      ctx.restore();
-    }
+    // ===== 12-rule list =====
+    for(var i=0;i<12;i++){
+      var ry = rowTop(i);
+      var numLabel = (i+1<10?'0':'')+(i+1);
+      var name = RULES[i];
 
-    // Compute chunk positions
-    for(let i=0;i<chunks.length;i++){
-      const c = chunks[i];
-      const baseY = chunkStartY + i*(chunkH+chunkGap);
-      let cx = startX, cy = baseY;
-      let alpha = 1;
-      let blocked = false;
-      let passed = false;
-
-      // Determine which barrier this chunk needs to reach before being blocked
-      const targetBarrier = c.blockedAt; // 0,1, or -1 (passes all)
-
-      // Phase-based position
-      if(phase === 0){
-        // Init: fade in at start
-        alpha = prog;
-      } else if(phase === 1){
-        // Move all toward barrier 0
-        cx = startX + (bx[0] - chunkW - 10 - startX) * prog;
-      } else if(phase === 2){
-        // At barrier 0
-        cx = bx[0] - chunkW - 10;
-        if(targetBarrier === 0){
-          // Blocked here: slide down and fade
-          blocked = true;
-          cy = baseY + 40 * prog;
-          alpha = 1 - prog*0.8;
-        }
-      } else if(phase === 3){
-        // Move survivors toward barrier 1
-        if(targetBarrier === 0){ alpha=0; }
-        else{
-          const fromX = bx[0] - chunkW - 10;
-          const toX = bx[1] - chunkW - 10;
-          cx = fromX + (toX - fromX) * prog;
-        }
-      } else if(phase === 4){
-        // At barrier 1
-        if(targetBarrier === 0){ alpha=0; }
-        else{
-          cx = bx[1] - chunkW - 10;
-          if(targetBarrier === 1){
-            blocked = true;
-            cy = baseY + 40 * prog;
-            alpha = 1 - prog*0.8;
-          }
-        }
-      } else if(phase === 5){
-        // Move survivors toward barrier 2
-        if(targetBarrier >= 0 && targetBarrier <= 1){ alpha=0; }
-        else{
-          const fromX = bx[1] - chunkW - 10;
-          const toX = bx[2] - chunkW - 10;
-          cx = fromX + (toX - fromX) * prog;
-        }
-      } else if(phase === 6){
-        // At barrier 2 - all remaining pass
-        if(targetBarrier >= 0 && targetBarrier <= 1){ alpha=0; }
-        else{
-          cx = bx[2] - chunkW - 10;
-          passed = true;
-        }
-      } else if(phase >= 7){
-        // Move to destination
-        if(targetBarrier >= 0 && targetBarrier <= 1){ alpha=0; }
-        else{
-          const fromX = bx[2] - chunkW - 10;
-          const toX = destX - destW/2 - chunkW - 20;
-          const mp = phase===7 ? prog : 1;
-          cx = fromX + (toX - fromX) * mp;
-          passed = true;
-        }
+      var mode = 'dim';
+      if(!listAllDim && scn){
+        var passUntil = settleAll ? scn.matchIdx : (testRow>=0 ? testRow : 0);
+        if(testRow===i){ mode = matchActive ? 'match' : 'testing'; }
+        else if(settleAll && i===scn.matchIdx){ mode = 'match'; }
+        else if(i<passUntil){ mode = 'pass'; }
       }
 
-      if(alpha <= 0) continue;
-
+      var reveal = phase===0 ? clamp(ep*12-i,0,1) : 1;
       ctx.save();
-      ctx.globalAlpha = globalAlpha * alpha;
-
-      // Draw chunk box
-      const borderColor = blocked ? red : (passed ? green : c.color);
-      drawRR(cx, cy, chunkW, chunkH, 6, inset, null);
-
-      // Left color bar
-      ctx.fillStyle = borderColor;
-      ctx.beginPath();
-      ctx.moveTo(cx+6, cy);
-      ctx.lineTo(cx+6, cy);
-      ctx.quadraticCurveTo(cx, cy, cx, cy+6);
-      ctx.lineTo(cx, cy+chunkH-6);
-      ctx.quadraticCurveTo(cx, cy+chunkH, cx+6, cy+chunkH);
-      ctx.lineTo(cx+4, cy+chunkH);
-      ctx.lineTo(cx+4, cy);
-      ctx.closePath();
-      ctx.fill();
-
-      // Label
-      ctx.font = '500 9px '+mono;
-      ctx.fillStyle = blocked ? red : t1;
+      ctx.globalAlpha = reveal*ga;
       ctx.textAlign = 'left';
-      ctx.fillText(c.label, cx+10, cy+chunkH/2+3);
 
-      // Check or X mark
-      if(blocked){
-        ctx.font = '600 12px '+mono;
-        ctx.fillStyle = red;
+      var numW = fpx(9)*2.6;
+      var badgeReserve = clamp(w*0.13, 52, 78);
+
+      if(mode==='dim'){
+        ctx.globalAlpha = 0.26*reveal*ga;
+        drawRR(padX, ry, listW, rowH, 6, inset, 'rgba(255,255,255,0.02)', 1);
+        ctx.font = fpx(9)+'px '+mono; ctx.fillStyle = t3;
+        ctx.fillText(numLabel, padX+9, ry+rowH/2+3);
+        ctx.fillText(fitText(name, listW-numW-16), padX+9+numW, ry+rowH/2+3);
+      } else if(mode==='pass'){
+        drawRR(padX, ry, listW, rowH, 6, inset, 'rgba(255,255,255,0.05)', 1);
+        ctx.font = fpx(9)+'px '+mono; ctx.fillStyle = t3;
+        ctx.fillText(numLabel, padX+9, ry+rowH/2+3);
+        ctx.fillStyle = t2;
+        ctx.fillText(fitText(name, listW-numW-56), padX+9+numW, ry+rowH/2+3);
+        ctx.fillStyle = green; ctx.globalAlpha = 0.55*reveal*ga;
         ctx.textAlign = 'right';
-        ctx.fillText('✕', cx+chunkW-6, cy+chunkH/2+4);
-      } else if(passed){
-        ctx.font = '600 12px '+mono;
-        ctx.fillStyle = green;
-        ctx.textAlign = 'right';
-        ctx.fillText('✓', cx+chunkW-6, cy+chunkH/2+4);
+        ctx.fillText('✓ no match', padX+listW-9, ry+rowH/2+3);
+        ctx.textAlign = 'left';
+      } else if(mode==='testing'){
+        var tGlow = trapezoid(ep,0,0.15,0.6,0.9);
+        drawRR(padX, ry, listW, rowH, 6, accent+'12', accent+'55', 1);
+        if(tGlow>0){
+          ctx.save(); ctx.globalAlpha = tGlow*reveal*ga;
+          ctx.shadowColor = accent; ctx.shadowBlur = 10;
+          drawRR(padX, ry, listW, rowH, 6, null, accent, 1.4);
+          ctx.restore();
+        }
+        ctx.font = '500 '+fpx(9)+'px '+mono; ctx.fillStyle = accent;
+        ctx.fillText(numLabel, padX+9, ry+rowH/2+3);
+        ctx.fillStyle = t1;
+        ctx.fillText(fitText(name, listW-numW-56), padX+9+numW, ry+rowH/2+3);
+        var checkAlpha = riseOnly(ep,0.55,0.95);
+        if(checkAlpha>0){
+          ctx.save(); ctx.globalAlpha = checkAlpha*0.6*reveal*ga;
+          ctx.fillStyle = green; ctx.textAlign='right';
+          ctx.fillText('✓ no match', padX+listW-9, ry+rowH/2+3);
+          ctx.textAlign='left';
+          ctx.restore();
+        }
+      } else if(mode==='match'){
+        var mColor = scn.color;
+        var mGlow = matchActive ? trapezoid(ep,0,0.12,0.55,0.85) : 0.32;
+        drawRR(padX, ry, listW, rowH, 6, mColor+'16', mColor+'66', 1);
+        if(mGlow>0){
+          ctx.save(); ctx.globalAlpha = mGlow*reveal*ga;
+          ctx.shadowColor = mColor; ctx.shadowBlur = 12;
+          drawRR(padX, ry, listW, rowH, 6, null, mColor, 1.6);
+          ctx.restore();
+        }
+        ctx.font = '600 '+fpx(9)+'px '+mono; ctx.fillStyle = mColor;
+        ctx.fillText(numLabel, padX+9, ry+rowH/2+3);
+        ctx.fillStyle = t1;
+        ctx.fillText(fitText(name, listW-numW-badgeReserve), padX+9+numW, ry+rowH/2+3);
+
+        var badgeAlpha = matchActive ? riseOnly(ep,0.45,0.9) : 1;
+        if(badgeAlpha>0){
+          ctx.save(); ctx.globalAlpha = badgeAlpha*reveal*ga;
+          ctx.font = '700 '+fpx(9)+'px '+mono;
+          var bText = scn.label;
+          var bw = Math.min(badgeReserve-8, ctx.measureText(bText).width+14);
+          var bx = padX+listW-bw-8, by = ry+rowH/2-11;
+          drawRR(bx, by, bw, 22, 5, mColor+'22', mColor+'88', 1);
+          ctx.fillStyle = mColor; ctx.textAlign='center';
+          ctx.fillText(bText, bx+bw/2, by+15);
+          ctx.textAlign='left';
+          ctx.restore();
+        }
       }
-
       ctx.restore();
     }
 
-    // Counter at bottom
-    let blockedCount = 0;
-    if(phase >= 2) blockedCount = 4; // L1
-    if(phase >= 4) blockedCount = 5; // L2
-    if(phase >= 2 && phase < 4 && prog > 0.3) blockedCount = 4;
+    // ===== caption under the list =====
+    if(showCaption && scn){
+      ctx.save(); ctx.globalAlpha = ga; ctx.textAlign='center';
+      ctx.font = 'italic '+fpx(9)+'px '+mono; ctx.fillStyle = t2;
+      ctx.fillText(fitText(captionFor(scn), w-padX*2), w/2, listBottom+20);
+      ctx.textAlign='left';
+      ctx.restore();
+    }
 
-    if(phase >= 2){
-      ctx.save();
-      ctx.globalAlpha = globalAlpha;
-      ctx.font = '600 12px '+mono;
-      ctx.textAlign = 'center';
-      const counterY = h - 25;
-      ctx.fillStyle = red;
-      ctx.fillText(blockedCount + ' blocked', w/2 - 60, counterY);
-      if(phase >= 6){
-        ctx.fillStyle = green;
-        ctx.fillText('0 leaked', w/2 + 60, counterY);
-      }
+    // ===== closing card: default effect is deny =====
+    if(endCardProg>0){
+      ctx.save(); ctx.globalAlpha = endCardProg*globalAlpha;
+      var boxW = clamp(w*0.62, 220, 360);
+      var boxH = 96;
+      var boxX = (w-boxW)/2;
+      var boxY = listY + (listH-boxH)/2;
+      drawRR(boxX, boxY, boxW, boxH, 10, raised, red+'55', 1.4);
+      ctx.textAlign='center';
+      ctx.font = '600 '+fpx(9)+'px '+mono; ctx.fillStyle = t3;
+      ctx.fillText('IF NONE OF THE 12 MATCH', boxX+boxW/2, boxY+22);
+      ctx.font = '700 '+fpx(13)+'px '+mono; ctx.fillStyle = red;
+      ctx.fillText('DEFAULT: DENY', boxX+boxW/2, boxY+50);
+      ctx.font = fpx(9)+'px '+mono; ctx.fillStyle = t2;
+      ctx.fillText(fitText('policy.yaml default effect, evaluated last', boxW-24), boxX+boxW/2, boxY+72);
+      ctx.textAlign='left';
       ctx.restore();
     }
 
     ctx.globalAlpha = 1;
-    frame++;
-    requestAnimationFrame(draw);
   }
 
-  const cObs = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting && !running){
-        running=true; initCanvas(); draw();
-      } else if(!entry.isIntersecting && running){
-        running=false;
-      }
-    });
-  },{threshold:0.15});
-  cObs.observe(wrap);
-  window.addEventListener('resize',()=>{ if(running) initCanvas(); });
-})();
+  function draw(){
+    if(!running) return;
+    renderFrame(frame);
+    if(loopEnabled){ frame++; requestAnimationFrame(draw); }
+  }
 
-/* ═══════════════════════════════════════════════════════════════
-   ANIMATION 2: PolicyFingerprint Cache Isolation (fingerprint-canvas)
-   ═══════════════════════════════════════════════════════════════ */
+  function renderStatic(){
+    initCanvas();
+    renderFrame(STATIC_FRAME);
+  }
+
+  if(reduceMotion){
+    renderStatic();
+    window.addEventListener('resize', renderStatic);
+  } else {
+    initCanvas(); // size the canvas at load; the 300x150 intrinsic ratio would otherwise hold until first scroll-in
+    var cObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting && !running){
+          running = true; loopEnabled = true; frame = 0; initCanvas(); draw();
+        } else if(!entry.isIntersecting && running){
+          running = false;
+        }
+      });
+    }, {threshold:0.15});
+    cObs.observe(wrap);
+    window.addEventListener('resize', function(){ if(running) initCanvas(); });
+  }
+})();
+</script>
+<script>
+/* ===================================================================
+   ANIMATION: The Enforcement Funnel, Marketing User (filter-canvas)
+   Storyboard (default top_k=5, matching the code): each lane scores
+   25 candidates internally under a role_marketing filter and returns
+   only its top 5. RRF fusion (k=60) merges and dedups the two fives
+   down to the top 5. The PDP gate re-checks each survivor and denies
+   one confidential chip by rule name, leaving 4. Rerank reorders the
+   4 without dropping any; they enter context and reach generation.
+   Self-contained IIFE. Pairs with .graph-canvas-wrap markup holding
+   <canvas id="filter-canvas">. No inline height anywhere -- this
+   script owns canvas height.
+   =================================================================== */
 (function(){
-  const canvas = document.getElementById('fingerprint-canvas');
+  var canvas = document.getElementById('filter-canvas');
   if(!canvas) return;
-  const wrap = canvas.parentElement;
-  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
-  const hrColor='#9a5a5a', mktColor='#d88c3a';
-  const mono='JetBrains Mono, monospace';
-  let ctx,w,h,frame=0,running=false;
+  var wrap = canvas.parentElement;
+
+  var accent='#d88c3a', green='#5a9a5a', red='#9a5a5a';
+  var t1='#e0e0e0', t2='#ababab', t3='#787880', raised='#1a1a1d', inset='#0a0a0c';
+  var mono='JetBrains Mono, monospace';
+  var ctx, w, h, frame=0, running=false;
+  var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   function initCanvas(){
-    const dpr=window.devicePixelRatio||1;
-    const rect=wrap.getBoundingClientRect();
-    w=rect.width; h=480;
-    canvas.width=w*dpr; canvas.height=h*dpr;
-    canvas.style.width=w+'px'; canvas.style.height=h+'px';
-    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+    var dpr = window.devicePixelRatio || 1;
+    var rect = wrap.getBoundingClientRect();
+    w = rect.width;
+    h = (window.matchMedia && window.matchMedia('(max-width:768px)').matches) ? 400 : 480;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr);
   }
 
   function drawRR(x,y,rw,rh,r,fill,stroke,lw){
@@ -865,541 +1049,428 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
     ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
     ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
     ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
-    if(fill){ctx.fillStyle=fill;ctx.fill();}
-    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+    if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+    if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=lw||1; ctx.stroke(); }
   }
 
-  const hrHash = 'a3f7c201e8b94d12';
-  const mktHash = '7e2b0f9a4c61d8e5';
-  const hrHash2 = 'd91a4b7f3c08e652';
-  const mktHash2 = '02c8e5f1a97b3d46';
+  function easeInOut(t){ return t<0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
 
-  // Phases
-  const P = [
-    {name:'users',     dur:90},   // 0
-    {name:'query',     dur:60},   // 1
-    {name:'hash',      dur:180},  // 2
-    {name:'lookup',    dur:120},  // 3
-    {name:'results',   dur:120},  // 4
-    {name:'hold',      dur:60},   // 5
-    {name:'epoch',     dur:150},  // 6
-    {name:'reset',     dur:120},  // 7
-  ];
-  const totalF = P.reduce((s,p)=>s+p.dur,0);
-
-  function draw(){
-    if(!running) return;
-    ctx.clearRect(0,0,w,h);
-    const f = frame % totalF;
-
-    let phase=0, pf=0, acc=0;
-    for(let i=0;i<P.length;i++){
-      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
-      acc+=P[i].dur;
-    }
-    const prog = pf/P[phase].dur;
-
-    // Global fade
-    let ga = 1;
-    if(phase === 7) ga = 1 - prog;
-    ctx.globalAlpha = ga;
-
-    // Layout
-    const midX = w/2;
-    const colW = Math.min(220, w*0.3);
-    const gap = 30;
-    const lx = midX - gap - colW; // left column x
-    const rx = midX + gap;        // right column x
-    const cardW = colW, cardH = 80;
-
-    // ===== ROW 1: User cards =====
-    if(phase >= 0){
-      const a = phase===0 ? prog : 1;
-      ctx.save(); ctx.globalAlpha = ga*a;
-
-      // HR user card
-      drawRR(lx, 20, cardW, cardH, 8, inset, hrColor, 1.5);
-      ctx.font = '600 12px '+mono;
-      ctx.fillStyle = hrColor;
-      ctx.textAlign = 'center';
-      ctx.fillText('HR User', lx+cardW/2, 44);
-      ctx.font = '400 9px '+mono;
-      ctx.fillStyle = t3;
-      ctx.fillText('role: "hr"', lx+cardW/2, 60);
-      ctx.fillText('epoch: 7, flags: [view_pii]', lx+cardW/2, 74);
-
-      // MKT user card
-      drawRR(rx, 20, cardW, cardH, 8, inset, mktColor, 1.5);
-      ctx.font = '600 12px '+mono;
-      ctx.fillStyle = mktColor;
-      ctx.textAlign = 'center';
-      ctx.fillText('Marketing User', rx+cardW/2, 44);
-      ctx.font = '400 9px '+mono;
-      ctx.fillStyle = t3;
-      ctx.fillText('role: "marketing"', rx+cardW/2, 60);
-      ctx.fillText('epoch: 7, flags: []', rx+cardW/2, 74);
-
-      ctx.restore();
-    }
-
-    // ===== ROW 2: Query text =====
-    if(phase >= 1){
-      const a = phase===1 ? prog : 1;
-      ctx.save(); ctx.globalAlpha = ga*a;
-      ctx.font = '500 11px '+mono;
-      ctx.fillStyle = t1;
-      ctx.textAlign = 'center';
-      ctx.fillText('"average salary by department"', midX, 128);
-      ctx.font = '400 9px '+mono;
-      ctx.fillStyle = t3;
-      ctx.fillText('same query', midX, 143);
-      ctx.restore();
-    }
-
-    // ===== ROW 3: SHA-256 hash boxes =====
-    const hashY = 160;
-    const hashH = 55;
-    if(phase >= 2){
-      const useNewHash = phase >= 6 && prog > 0.5;
-      const epochFlash = phase === 6 && prog > 0.2 && prog < 0.5;
-
-      // Draw arrows from users to hash boxes
-      if(phase === 2){
-        const ap = Math.min(prog*3, 1);
-        ctx.save();
-        ctx.globalAlpha = ga*0.5*ap;
-        ctx.strokeStyle = t3;
-        ctx.setLineDash([3,3]);
-        ctx.lineWidth = 1;
-        // Left arrow
-        ctx.beginPath();
-        ctx.moveTo(lx+cardW/2, 20+cardH);
-        ctx.lineTo(lx+cardW/2, hashY);
-        ctx.stroke();
-        // Right arrow
-        ctx.beginPath();
-        ctx.moveTo(rx+cardW/2, 20+cardH);
-        ctx.lineTo(rx+cardW/2, hashY);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.restore();
-      }
-
-      const ha = phase===2 ? Math.min(prog*2, 1) : 1;
-      ctx.save();
-      ctx.globalAlpha = ga*ha;
-
-      if(epochFlash){
-        ctx.globalAlpha = ga * (0.3 + 0.7*Math.abs(Math.sin(pf*0.15)));
-      }
-
-      // HR hash box
-      const hrBorderC = useNewHash ? green : (epochFlash ? red : hrColor);
-      drawRR(lx, hashY, cardW, hashH, 6, inset, hrBorderC, 1);
-      ctx.font = '600 9px '+mono;
-      ctx.fillStyle = t3;
-      ctx.textAlign = 'center';
-      ctx.fillText('SHA-256', lx+cardW/2, hashY+16);
-
-      // Type out hash
-      const hashToShow = useNewHash ? hrHash2 : hrHash;
-      let charsToShow = 16;
-      if(phase === 2) charsToShow = Math.floor(Math.max(0, (prog-0.3)/0.7) * 16);
-      if(phase === 6 && prog > 0.5) charsToShow = Math.floor((prog-0.5)/0.5 * 16);
-      ctx.font = '600 11px '+mono;
-      ctx.fillStyle = useNewHash ? green : hrColor;
-      ctx.fillText(hashToShow.substring(0, charsToShow), lx+cardW/2, hashY+36);
-
-      // MKT hash box
-      const mktBorderC = useNewHash ? green : (epochFlash ? red : mktColor);
-      drawRR(rx, hashY, cardW, hashH, 6, inset, mktBorderC, 1);
-      ctx.font = '600 9px '+mono;
-      ctx.fillStyle = t3;
-      ctx.textAlign = 'center';
-      ctx.fillText('SHA-256', rx+cardW/2, hashY+16);
-
-      const mktHashToShow = useNewHash ? mktHash2 : mktHash;
-      ctx.font = '600 11px '+mono;
-      ctx.fillStyle = useNewHash ? green : mktColor;
-      ctx.fillText(mktHashToShow.substring(0, charsToShow), rx+cardW/2, hashY+36);
-
-      ctx.restore();
-    }
-
-    // ===== ROW 4: Cache results =====
-    const resY = 240;
-    const resH = 70;
-    if(phase >= 3 && phase < 6){
-      const a = phase===3 ? prog : 1;
-      ctx.save(); ctx.globalAlpha = ga*a;
-
-      // Arrows from hash to result
-      if(phase === 3){
-        ctx.globalAlpha = ga*0.4*prog;
-        ctx.strokeStyle = t3;
-        ctx.setLineDash([3,3]);
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(lx+cardW/2, hashY+hashH);
-        ctx.lineTo(lx+cardW/2, resY);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(rx+cardW/2, hashY+hashH);
-        ctx.lineTo(rx+cardW/2, resY);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.globalAlpha = ga*a;
-      }
-
-      // HR result: cache HIT with data
-      drawRR(lx, resY, cardW, resH, 6, inset, green, 1);
-      ctx.font = '600 10px '+mono;
-      ctx.fillStyle = green;
-      ctx.textAlign = 'center';
-      ctx.fillText('CACHE HIT', lx+cardW/2, resY+18);
-      ctx.font = '400 9px '+mono;
-      ctx.fillStyle = t2;
-      ctx.fillText('Salary by dept:', lx+cardW/2, resY+36);
-      ctx.fillText('Eng $145K, Mkt $128K', lx+cardW/2, resY+50);
-      ctx.fillText('Fin $152K, HR $118K', lx+cardW/2, resY+62);
-
-      // MKT result: cache MISS, no HR data
-      drawRR(rx, resY, cardW, resH, 6, inset, red, 1);
-      ctx.font = '600 10px '+mono;
-      ctx.fillStyle = red;
-      ctx.textAlign = 'center';
-      ctx.fillText('DIFFERENT KEY', rx+cardW/2, resY+18);
-      ctx.font = '400 9px '+mono;
-      ctx.fillStyle = t2;
-      ctx.fillText('No HR documents in', rx+cardW/2, resY+40);
-      ctx.fillText('marketing-scoped results', rx+cardW/2, resY+54);
-
-      ctx.restore();
-    }
-
-    // ===== ROW 5: Isolation label =====
-    if(phase >= 4 && phase < 6){
-      const a = phase===4 ? prog : 1;
-      ctx.save(); ctx.globalAlpha = ga*a*0.8;
-      ctx.font = '600 10px '+mono;
-      ctx.fillStyle = accent;
-      ctx.textAlign = 'center';
-      ctx.fillText('Same query, different fingerprint, different results', midX, resY+resH+24);
-      ctx.restore();
-    }
-
-    // ===== ROW 5b: Epoch bump =====
-    if(phase >= 6 && phase < 7){
-      ctx.save();
-      const a = Math.min(prog*3, 1);
-      ctx.globalAlpha = ga*a;
-      ctx.font = '600 12px '+mono;
-      ctx.fillStyle = accent;
-      ctx.textAlign = 'center';
-      ctx.fillText('POLICY UPDATE: epoch 7 → 8', midX, resY+20);
-
-      if(prog > 0.3){
-        ctx.font = '500 10px '+mono;
-        ctx.fillStyle = t2;
-        ctx.fillText('All old cache keys unreachable', midX, resY+42);
-      }
-      if(prog > 0.5){
-        ctx.font = '500 10px '+mono;
-        ctx.fillStyle = green;
-        ctx.fillText('New fingerprints generated', midX, resY+60);
-      }
-      ctx.restore();
-    }
-
-    // Legend at very bottom
+  function drawArrow(x1,y1,x2,y2,col,alpha){
     ctx.save();
-    ctx.globalAlpha = ga * 0.5;
-    ctx.font = '400 9px '+mono;
-    ctx.textAlign = 'center';
-    ctx.fillStyle = t3;
-    ctx.fillText('cache_key = f"llm:{pf_hash}:{query_hash}:{context_hash}:{model}"', midX, h-16);
+    ctx.globalAlpha = alpha||1;
+    ctx.strokeStyle = col; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    var a = Math.atan2(y2-y1, x2-x1);
+    ctx.fillStyle = col; ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-7*Math.cos(a-0.4), y2-7*Math.sin(a-0.4));
+    ctx.lineTo(x2-7*Math.cos(a+0.4), y2-7*Math.sin(a+0.4));
+    ctx.fill();
     ctx.restore();
-
-    ctx.globalAlpha = 1;
-    frame++;
-    requestAnimationFrame(draw);
   }
 
-  const cObs = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting && !running){
-        running=true; initCanvas(); draw();
-      } else if(!entry.isIntersecting && running){
-        running=false;
-      }
-    });
-  },{threshold:0.15});
-  cObs.observe(wrap);
-  window.addEventListener('resize',()=>{ if(running) initCanvas(); });
-})();
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+  function lerp(a,b,t){ return a+(b-a)*t; }
 
-/* ═══════════════════════════════════════════════════════════════
-   ANIMATION 3: Embedding Space Separation (embed-canvas)
-   Shows how contextual prefixes push same-text chunks into
-   different regions of vector space by department.
-   ═══════════════════════════════════════════════════════════════ */
-(function(){
-  const canvas = document.getElementById('embed-canvas');
-  if(!canvas) return;
-  const wrap = canvas.parentElement;
-  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
-  const blue='#5a7a9a';
-  const mono='JetBrains Mono, monospace';
-  let ctx,w,h,frame=0,running=false;
-
-  function initCanvas(){
-    const dpr=window.devicePixelRatio||1;
-    const rect=wrap.getBoundingClientRect();
-    w=rect.width; h=400;
-    canvas.width=w*dpr; canvas.height=h*dpr;
-    canvas.style.width=w+'px'; canvas.style.height=h+'px';
-    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  // Truncates text to fit maxW, appending an ellipsis. ctx.font must
+  // already be set by the caller before this runs.
+  function fitText(text, maxW){
+    if(ctx.measureText(text).width <= maxW) return text;
+    var s = text;
+    while(s.length > 1 && ctx.measureText(s+'…').width > maxW){ s = s.slice(0,-1); }
+    return s+'…';
   }
 
-  // Document dots per department cluster
-  const clusters = [
-    {label:'Finance',   color:blue,   cx:0.25, cy:0.35, docs:6},
-    {label:'Marketing', color:accent, cx:0.55, cy:0.65, docs:5},
-    {label:'HR',        color:red,    cx:0.75, cy:0.30, docs:4},
-    {label:'Engineering',color:green, cx:0.40, cy:0.45, docs:5},
-    {label:'General',   color:t3,     cx:0.50, cy:0.50, docs:3},
+  var fontScale = 1;
+  function fpx(n){ return Math.max(6, Math.round(n*fontScale)); }
+
+  var P = [
+    {name:'arrive',  dur:50},
+    {name:'lanes',   dur:170},   // dense + sparse: 25 scored, top 5 returned per lane
+    {name:'fuse',    dur:130},   // RRF, k=60: 5+5 -> dedup -> top 5
+    {name:'pdp',     dur:150},   // PDP re-check: 5 -> 4, one confidential denied by rule
+    {name:'rerank',  dur:140},   // reorder only: 4 -> 4
+    {name:'context', dur:120},   // 4 chunks -> context -> generate
+    {name:'hold',    dur:150},
+    {name:'fade',    dur:40}
   ];
+  var totalF = P.reduce(function(s,p){ return s+p.dur; }, 0);
 
-  // Generate stable random positions using seed
-  function seededRandom(seed){ return ((Math.sin(seed*127.1+311.7)*43758.5453)%1+1)%1; }
-  const dots = [];
-  clusters.forEach((cl,ci)=>{
-    for(let d=0;d<cl.docs;d++){
-      const seed = ci*100+d;
-      const ang = seededRandom(seed)*Math.PI*2;
-      const dist = seededRandom(seed+50)*0.08+0.02;
-      dots.push({
-        // "without prefix" positions: all clustered near center
-        nx: 0.5 + (seededRandom(seed+10)-0.5)*0.15,
-        ny: 0.5 + (seededRandom(seed+20)-0.5)*0.15,
-        // "with prefix" positions: separated by department
-        px: cl.cx + Math.cos(ang)*dist,
-        py: cl.cy + Math.sin(ang)*dist,
-        color: cl.color,
-        cluster: ci
-      });
+  var DENIED_RULE = 'high_sensitivity_md_deny_by_default';
+
+  // Chip i (0..24) makes the lane's returned top 5 or not. Each path
+  // scores top_k*5 = 25 internally and returns only its top top_k = 5
+  // (chroma_store.query out[:top_k]; bm25_search idxs[:top_k]).
+  function denseSurvives(i){ return i%5===2; }   // exactly 5
+  function sparseSurvives(i){ return i<5; }      // first 5: exactly 5
+
+  function computeSlots(n, survivesFn){
+    var slots = new Array(n), rank = 0;
+    for(var i=0;i<n;i++){
+      if(survivesFn(i)){ slots[i]=rank; rank++; } else { slots[i]=-1; }
     }
-  });
+    return slots;
+  }
+  var DENSE_SLOTS = computeSlots(25, denseSurvives);
+  var SPARSE_SLOTS = computeSlots(25, sparseSurvives);
 
-  // Query dot (marketing user searching "Q2 revenue")
-  const queryNx = 0.48, queryNy = 0.47; // near center (ambiguous)
-  const queryPx = 0.53, queryPy = 0.63; // near marketing cluster
+  // Rerank shuffles the four survivors' placeholder slots; the
+  // true count (4 -> 4) is carried by the text label, not this glyph.
+  var FINAL_SLOT = [1,3,0,2];
 
-  const P = [
-    {name:'without',  dur:180}, // 0: show "without prefix" - all mixed
-    {name:'label1',   dur:60},  // 1: label appears
-    {name:'transition',dur:120},// 2: dots separate to clusters
-    {name:'with',     dur:180}, // 3: show "with prefix" - separated
-    {name:'query',    dur:150}, // 4: query appears, nearest neighbor line
-    {name:'hold',     dur:90},  // 5: hold
-    {name:'reset',    dur:60},  // 6: fade
-  ];
-  const totalF = P.reduce((s,p)=>s+p.dur,0);
+  function drawLane(x,y,cw,ch,title,subtitle,survivesFn,slots,phase,ep){
+    drawRR(x,y,cw,ch,7,raised,'rgba(255,255,255,0.03)',1);
+    ctx.textAlign='left';
+    ctx.font='600 '+fpx(9)+'px '+mono; ctx.fillStyle=accent;
+    ctx.fillText(fitText(title, cw-12), x+6, y+13);
+    ctx.font=fpx(7)+'px '+mono; ctx.fillStyle=t3;
+    ctx.fillText(fitText(subtitle, cw-12), x+6, y+23);
 
-  function draw(){
-    if(!running) return;
-    ctx.clearRect(0,0,w,h);
-    const f = frame % totalF;
+    var gridTop = y+29, gridBot = y+ch-13;
+    var gridH = Math.max(10, gridBot-gridTop);
+    var gateX = x + cw*0.60;
+    var penX = x+6, penR = gateX-4, penW = Math.max(10, penR-penX);
+    var rightX = gateX+4, rightR = x+cw-6, rightW = Math.max(10, rightR-rightX);
 
-    let phase=0, pf=0, acc=0;
-    for(let i=0;i<P.length;i++){
-      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
-      acc+=P[i].dur;
-    }
-    const prog = pf/P[phase].dur;
-
-    let ga = 1;
-    if(phase===6) ga = 1-prog;
-    ctx.globalAlpha = ga;
-
-    // Compute blend factor (0 = no prefix, 1 = with prefix)
-    let blend = 0;
-    if(phase < 2) blend = 0;
-    else if(phase === 2) blend = prog;
-    else blend = 1;
-
-    // Draw axes hint
     ctx.save();
-    ctx.globalAlpha = ga*0.15;
-    ctx.strokeStyle = t3;
-    ctx.lineWidth = 1;
-    ctx.setLineDash([2,4]);
-    // horizontal axis
-    ctx.beginPath(); ctx.moveTo(40, h*0.5); ctx.lineTo(w-40, h*0.5); ctx.stroke();
-    // vertical axis
-    ctx.beginPath(); ctx.moveTo(w*0.5, 30); ctx.lineTo(w*0.5, h-50); ctx.stroke();
+    ctx.strokeStyle=t3; ctx.globalAlpha=0.45; ctx.lineWidth=1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(gateX,gridTop); ctx.lineTo(gateX,gridBot); ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
 
-    // Draw dots
-    dots.forEach(d=>{
-      const x = 40 + (d.nx + (d.px - d.nx)*blend) * (w-80);
-      const y = 30 + (d.ny + (d.py - d.ny)*blend) * (h-80);
+    var pc=5, pr=5, pcw=penW/pc, pch=gridH/pr;
+    var psize = Math.max(1.5, Math.min(pcw,pch)*0.5);
+    var rc=3, rr=4, rcw=rightW/rc, rch=gridH/rr;
+    var rsize = Math.max(1.5, Math.min(rcw,rch)*0.5);
+
+    for(var i=0;i<25;i++){
+      var survives = survivesFn(i);
+      var reveal = (phase>1) ? 1 : clamp(ep*25-i, 0, 1);
+      if(reveal<=0) continue;
+      var resolved = (phase>1) || reveal>=0.999;
+
+      var pcol=i%pc, prow=Math.floor(i/pc);
+      var pcx = penX+pcol*pcw+pcw/2, pcy = gridTop+prow*pch+pch/2;
       ctx.save();
-      ctx.globalAlpha = ga*0.7;
-      ctx.beginPath();
-      ctx.arc(x, y, 5, 0, Math.PI*2);
-      ctx.fillStyle = d.color;
-      ctx.fill();
-      // Glow
-      ctx.shadowColor = d.color;
-      ctx.shadowBlur = 8;
-      ctx.beginPath();
-      ctx.arc(x, y, 3, 0, Math.PI*2);
-      ctx.fill();
-      ctx.restore();
-    });
-
-    // Cluster labels (only when separated)
-    if(blend > 0.5){
-      const la = Math.min((blend-0.5)*2, 1);
-      ctx.save();
-      ctx.globalAlpha = ga*la*0.6;
-      ctx.font = '500 9px '+mono;
-      ctx.textAlign = 'center';
-      clusters.forEach(cl=>{
-        ctx.fillStyle = cl.color;
-        const lx = 40 + cl.cx*(w-80);
-        const ly = 30 + cl.cy*(h-80) - 18 - cl.docs*2;
-        ctx.fillText(cl.label, lx, ly);
-      });
-      ctx.restore();
-    }
-
-    // Query vector (phase 4+)
-    if(phase >= 4){
-      const qa = phase===4 ? Math.min(prog*2, 1) : 1;
-      const qx = 40 + (queryNx + (queryPx - queryNx)*blend) * (w-80);
-      const qy = 30 + (queryNy + (queryPy - queryNy)*blend) * (h-80);
-
-      ctx.save();
-      ctx.globalAlpha = ga*qa;
-
-      // Query dot (diamond shape)
-      ctx.fillStyle = t1;
-      ctx.beginPath();
-      ctx.moveTo(qx, qy-7); ctx.lineTo(qx+7, qy);
-      ctx.lineTo(qx, qy+7); ctx.lineTo(qx-7, qy);
-      ctx.closePath();
-      ctx.fill();
-
-      // Label
-      ctx.font = '600 9px '+mono;
-      ctx.fillStyle = t1;
-      ctx.textAlign = 'left';
-      ctx.fillText('QUERY: "Q2 revenue"', qx+12, qy+3);
-
-      // Draw line to nearest marketing dot (with prefix) or nearest finance dot (without)
-      if(phase >= 4 && prog > 0.3){
-        const lineA = Math.min((prog-0.3)/0.4, 1);
-        // Find nearest dot
-        let nearest = null, nearDist = Infinity;
-        dots.forEach(d=>{
-          const dx = 40 + (d.nx + (d.px - d.nx)*blend) * (w-80);
-          const dy = 30 + (d.ny + (d.py - d.ny)*blend) * (h-80);
-          const dist = Math.sqrt((dx-qx)**2+(dy-qy)**2);
-          if(dist < nearDist){ nearDist=dist; nearest={x:dx,y:dy,color:d.color,cluster:d.cluster}; }
-        });
-        if(nearest){
-          ctx.globalAlpha = ga*lineA*0.6;
-          ctx.strokeStyle = nearest.color;
-          ctx.lineWidth = 1.5;
-          ctx.setLineDash([4,3]);
-          ctx.lineDashOffset = -frame*0.3;
+      if(survives){
+        ctx.globalAlpha = reveal;
+        ctx.fillStyle = accent;
+        ctx.fillRect(pcx-psize/2, pcy-psize/2, psize, psize);
+      } else {
+        ctx.globalAlpha = resolved ? 0.85 : reveal*0.85;
+        ctx.fillStyle = t3;
+        ctx.fillRect(pcx-psize/2, pcy-psize/2, psize, psize);
+        if(resolved){
+          ctx.strokeStyle = red; ctx.lineWidth = 1;
+          var d = psize*0.32;
           ctx.beginPath();
-          ctx.moveTo(qx, qy);
-          const ex = qx+(nearest.x-qx)*lineA;
-          const ey = qy+(nearest.y-qy)*lineA;
-          ctx.lineTo(ex, ey);
+          ctx.moveTo(pcx-d,pcy-d); ctx.lineTo(pcx+d,pcy+d);
+          ctx.moveTo(pcx+d,pcy-d); ctx.lineTo(pcx-d,pcy+d);
           ctx.stroke();
-          ctx.setLineDash([]);
-
-          // Label the match
-          if(lineA > 0.8){
-            ctx.globalAlpha = ga*0.8;
-            ctx.font = '600 9px '+mono;
-            ctx.fillStyle = nearest.color;
-            const matchLabel = nearest.cluster===1 ? 'NEAREST: Marketing (correct)' : 'NEAREST: Finance (wrong dept!)';
-            ctx.textAlign = 'center';
-            ctx.fillText(matchLabel, (qx+nearest.x)/2, Math.min(qy,nearest.y)-12);
-          }
         }
       }
       ctx.restore();
+
+      if(survives){
+        var slot = slots[i];
+        var rcol=slot%rc, rrow=Math.floor(slot/rc);
+        var rcx = rightX+rcol*rcw+rcw/2, rcy = gridTop+rrow*rch+rch/2;
+        var rAlpha = phase===1 ? clamp((reveal-0.85)/0.15,0,1) : 1;
+        if(rAlpha>0){
+          ctx.save();
+          ctx.globalAlpha = rAlpha;
+          ctx.fillStyle = accent;
+          ctx.fillRect(rcx-rsize/2, rcy-rsize/2, rsize, rsize);
+          ctx.restore();
+        }
+      }
     }
 
-    // Phase labels
-    ctx.save();
-    ctx.globalAlpha = ga*0.8;
-    ctx.font = '600 11px '+mono;
-    ctx.textAlign = 'center';
-    if(phase <= 1){
-      ctx.fillStyle = red;
-      ctx.fillText('WITHOUT contextual prefix', w/2, h-20);
-      ctx.font = '400 9px '+mono;
-      ctx.fillStyle = t3;
-      ctx.fillText('All departments mixed in vector space', w/2, h-6);
-    } else if(phase >= 3){
-      ctx.fillStyle = green;
-      ctx.fillText('WITH contextual prefix', w/2, h-20);
-      ctx.font = '400 9px '+mono;
-      ctx.fillStyle = t3;
-      ctx.fillText('Departments naturally separated by embedding metadata', w/2, h-6);
-    } else if(phase === 2){
-      const a = prog;
-      ctx.fillStyle = `rgba(90,154,90,${a})`;
-      ctx.fillText('WITH contextual prefix', w/2, h-20);
+    ctx.font=fpx(8)+'px '+mono; ctx.fillStyle=t2; ctx.textAlign='right';
+    ctx.fillText(fitText('25 → top 5', cw-12), x+cw-6, y+ch-4);
+    ctx.textAlign='left';
+  }
+
+  function drawReorder(x,y,cw,ch,phase,ep){
+    var n=6, cellW=cw/n;
+    var cellSize = Math.min(cellW*0.7, ch*0.7);
+    var t = phase===4 ? ep : 1;
+    var te = easeInOut(clamp(t,0,1));
+    ctx.textAlign='center';
+    for(var k=0;k<n;k++){
+      var x0 = x+k*cellW+cellW/2;
+      var x1 = x+FINAL_SLOT[k]*cellW+cellW/2;
+      var cx = lerp(x0,x1,te);
+      var cy = y+ch/2;
+      drawRR(cx-cellSize/2, cy-cellSize/2, cellSize, cellSize, 3, inset, accent+'44', 1);
+      ctx.font=fpx(8)+'px '+mono; ctx.fillStyle=t2;
+      ctx.fillText(String(k+1), cx, cy+3);
     }
-    ctx.restore();
+    ctx.textAlign='left';
+  }
+
+  /* renderFrame draws one frame for an arbitrary frame index f, so the
+     same function serves the running rAF loop and the single static
+     frame drawn for prefers-reduced-motion. */
+  function renderFrame(fIn){
+    ctx.clearRect(0,0,w,h);
+
+    var f = fIn % totalF;
+    var phase=0, pf=0, acc=0;
+    for(var i=0;i<P.length;i++){
+      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
+      acc += P[i].dur;
+    }
+    var prog = pf/P[phase].dur;
+    var ep = easeInOut(prog);
+
+    var globalAlpha = 1;
+    if(phase === 0) globalAlpha = ep;
+    if(phase === P.length-1) globalAlpha = 1-ep;
+    ctx.globalAlpha = globalAlpha;
+
+    fontScale = w<400 ? 0.8 : (w<600 ? 0.9 : 1);
+
+    /* ---- layout: every x/y derives from w/h with caps/floors, so
+       nothing below clips. Verified against w = 343, 375, 600, 900,
+       1344 in the accompanying build notes. ---- */
+    var marginX = clamp(w*0.015, 4, 14);
+    var gap     = clamp(w*0.01, 3, 10);
+    var lanesW  = clamp(w*0.23, 78, 190);
+    var fuseW   = clamp(w*0.15, 54, 130);
+    var pdpW    = clamp(w*0.17, 62, 145);
+    var rerankW = clamp(w*0.15, 54, 130);
+    var ctxW    = clamp(w*0.13, 48, 115);
+    var groupW  = lanesW+gap+fuseW+gap+pdpW+gap+rerankW+gap+ctxW;
+    var leftX   = Math.max(marginX, (w-groupW)/2);
+    var lanesX  = leftX;
+    var fuseX   = lanesX+lanesW+gap;
+    var pdpX    = fuseX+fuseW+gap;
+    var rerankX = pdpX+pdpW+gap;
+    var ctxX    = rerankX+rerankW+gap;
+
+    var topY   = clamp(h*0.10, 30, 46);
+    var boxH   = h*0.60;
+    var laneGapY = 10;
+    var subH   = (boxH-laneGapY)/2;
+    var denseY = topY;
+    var sparseY = topY+subH+laneGapY;
+
+    // ===== Stage 1: lanes =====
+    if(phase >= 1){
+      var lanesAlpha = phase===1 ? ep : 1;
+      ctx.save(); ctx.globalAlpha = lanesAlpha*globalAlpha;
+      drawLane(lanesX, denseY, lanesW, subH, 'DENSE · CHROMADB', 'where role_marketing=true', denseSurvives, DENSE_SLOTS, phase, ep);
+      drawLane(lanesX, sparseY, lanesW, subH, 'SPARSE · BM25', 'over prefiltered index', sparseSurvives, SPARSE_SLOTS, phase, ep);
+      ctx.restore();
+    }
+
+    // ===== Stage 2: RRF fusion =====
+    if(phase >= 2){
+      var fuseAlpha = phase===2 ? ep : 1;
+      ctx.save(); ctx.globalAlpha = fuseAlpha*globalAlpha;
+      drawArrow(lanesX+lanesW+2, denseY+subH/2, fuseX-4, topY+boxH*0.35, accent, 0.4);
+      drawArrow(lanesX+lanesW+2, sparseY+subH/2, fuseX-4, topY+boxH*0.65, accent, 0.4);
+      drawRR(fuseX, topY, fuseW, boxH, 7, raised, 'rgba(255,255,255,0.03)', 1);
+      ctx.textAlign='center';
+      ctx.font='600 '+fpx(9)+'px '+mono; ctx.fillStyle=accent;
+      ctx.fillText(fitText('RRF FUSION', fuseW-10), fuseX+fuseW/2, topY+16);
+      ctx.font=fpx(7)+'px '+mono; ctx.fillStyle=t3;
+      ctx.fillText('k=60', fuseX+fuseW/2, topY+29);
+
+      var mergeProg = phase===2 ? clamp((ep-0.15)/0.55,0,1) : 1;
+      if(mergeProg>0){
+        ctx.save(); ctx.globalAlpha=mergeProg;
+        ctx.font=fpx(8)+'px '+mono; ctx.fillStyle=t2;
+        ctx.fillText(fitText('5 + 5 merged', fuseW-10), fuseX+fuseW/2, topY+boxH*0.5);
+        ctx.font=fpx(7)+'px '+mono; ctx.fillStyle=t3;
+        ctx.fillText(fitText('dedup by section', fuseW-10), fuseX+fuseW/2, topY+boxH*0.5+15);
+        ctx.restore();
+      }
+      var dedupProg = phase===2 ? clamp((ep-0.6)/0.4,0,1) : 1;
+      if(dedupProg>0){
+        ctx.save(); ctx.globalAlpha=dedupProg;
+        ctx.font='600 '+fpx(9)+'px '+mono; ctx.fillStyle=accent;
+        ctx.fillText(fitText('→ top 5', fuseW-10), fuseX+fuseW/2, topY+boxH-14);
+        ctx.restore();
+      }
+      ctx.textAlign='left';
+      ctx.restore();
+    }
+
+    // ===== Stage 3: PDP gate =====
+    if(phase >= 3){
+      var pdpAlpha = phase===3 ? ep : 1;
+      ctx.save(); ctx.globalAlpha = pdpAlpha*globalAlpha;
+      drawArrow(fuseX+fuseW+2, topY+boxH/2, pdpX-4, topY+boxH/2, accent, 0.4);
+
+      var glow = phase===3 ? Math.max(0, Math.sin(clamp(ep,0,1)*Math.PI))*0.6 : 0;
+      drawRR(pdpX, topY, pdpW, boxH, 7, raised, 'rgba(255,255,255,0.03)', 1);
+      if(glow>0){
+        ctx.save(); ctx.globalAlpha=glow;
+        ctx.shadowColor=red; ctx.shadowBlur=14;
+        drawRR(pdpX, topY, pdpW, boxH, 7, null, red, 2);
+        ctx.restore();
+      }
+      ctx.textAlign='center';
+      ctx.font='600 '+fpx(9)+'px '+mono; ctx.fillStyle=accent;
+      ctx.fillText(fitText('PDP GATE', pdpW-10), pdpX+pdpW/2, topY+16);
+      ctx.font=fpx(7)+'px '+mono; ctx.fillStyle=t3;
+      ctx.fillText('5 checked', pdpX+pdpW/2, topY+29);
+
+      var denyProg = phase===3 ? clamp((ep-0.25)/0.45,0,1) : 1;
+      if(denyProg>0){
+        ctx.save(); ctx.globalAlpha=denyProg;
+        ctx.font=fpx(8)+'px '+mono; ctx.fillStyle=red;
+        ctx.fillText(fitText('1 confidential', pdpW-10), pdpX+pdpW/2, topY+boxH*0.44);
+        ctx.font=fpx(7)+'px '+mono; ctx.fillStyle=t2;
+        ctx.fillText(fitText(DENIED_RULE, pdpW-10), pdpX+pdpW/2, topY+boxH*0.44+13);
+        ctx.fillStyle=red;
+        ctx.font='600 '+fpx(7)+'px '+mono;
+        ctx.fillText('denied', pdpX+pdpW/2, topY+boxH*0.44+26);
+        ctx.restore();
+      }
+      var pdpPassProg = phase===3 ? clamp((ep-0.78)/0.22,0,1) : 1;
+      if(pdpPassProg>0){
+        ctx.save(); ctx.globalAlpha=pdpPassProg;
+        ctx.font='600 '+fpx(9)+'px '+mono; ctx.fillStyle=accent;
+        ctx.fillText(fitText('→ 4 pass', pdpW-10), pdpX+pdpW/2, topY+boxH-14);
+        ctx.restore();
+      }
+      ctx.textAlign='left';
+      ctx.restore();
+    }
+
+    // ===== Stage 4: rerank (reorders only) =====
+    if(phase >= 4){
+      var rerankAlpha = phase===4 ? ep : 1;
+      ctx.save(); ctx.globalAlpha = rerankAlpha*globalAlpha;
+      drawArrow(pdpX+pdpW+2, topY+boxH/2, rerankX-4, topY+boxH/2, accent, 0.4);
+      drawRR(rerankX, topY, rerankW, boxH, 7, raised, 'rgba(255,255,255,0.03)', 1);
+      ctx.textAlign='center';
+      ctx.font='600 '+fpx(9)+'px '+mono; ctx.fillStyle=accent;
+      ctx.fillText(fitText('RERANK', rerankW-10), rerankX+rerankW/2, topY+16);
+      ctx.font=fpx(7)+'px '+mono; ctx.fillStyle=t3;
+      ctx.fillText('4 → 4', rerankX+rerankW/2, topY+29);
+
+      drawReorder(rerankX+8, topY+38, rerankW-16, boxH*0.42, phase, ep);
+
+      ctx.font='italic '+fpx(7)+'px '+mono; ctx.fillStyle=t2;
+      ctx.fillText(fitText('reorders, never re-widens', rerankW-10), rerankX+rerankW/2, topY+boxH-14);
+      ctx.textAlign='left';
+      ctx.restore();
+    }
+
+    // ===== Stage 5: context -> generate =====
+    if(phase >= 5){
+      var ctxAlpha = phase===5 ? ep : 1;
+      ctx.save(); ctx.globalAlpha = ctxAlpha*globalAlpha;
+      drawArrow(rerankX+rerankW+2, topY+boxH/2, ctxX-4, topY+boxH/2, accent, 0.5);
+      drawRR(ctxX, topY, ctxW, boxH, 7, raised, 'rgba(255,255,255,0.03)', 1);
+      ctx.textAlign='center';
+      ctx.font='600 '+fpx(9)+'px '+mono; ctx.fillStyle=accent;
+      ctx.fillText(fitText('CONTEXT', ctxW-8), ctxX+ctxW/2, topY+17);
+      var topKProg = phase===5 ? clamp(ep*2,0,1) : 1;
+      ctx.save(); ctx.globalAlpha=topKProg;
+      ctx.font=fpx(7)+'px '+mono; ctx.fillStyle=t2;
+      ctx.fillText(fitText('4 chunks', ctxW-8), ctxX+ctxW/2, topY+boxH*0.42);
+      ctx.restore();
+      ctx.textAlign='left';
+      ctx.restore();
+
+      var genProg = phase===5 ? clamp((ep-0.5)/0.5,0,1) : 1;
+      if(genProg>0){
+        ctx.save(); ctx.globalAlpha = genProg*globalAlpha;
+        ctx.textAlign='center';
+        ctx.font=fpx(8)+'px '+mono; ctx.fillStyle=t3;
+        ctx.fillText(fitText('→ generate', ctxW+24), ctxX+ctxW/2, topY+boxH+18);
+        ctx.textAlign='left';
+        ctx.restore();
+      }
+    }
 
     ctx.globalAlpha = 1;
+  }
+
+  function draw(){
+    if(!running) return;
+    renderFrame(frame);
     frame++;
     requestAnimationFrame(draw);
   }
 
-  const cObs = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting && !running){
-        running=true; initCanvas(); draw();
-      } else if(!entry.isIntersecting && running){
-        running=false;
-      }
-    });
-  },{threshold:0.15});
-  cObs.observe(wrap);
-  window.addEventListener('resize',()=>{ if(running) initCanvas(); });
-})();
+  function staticFrameIndex(){
+    // Deep into the 'hold' phase, one frame before it ends, so every
+    // earlier phase is fully settled (alpha 1) and the fade-out phase
+    // that follows never gets drawn in the static fallback.
+    var acc = 0;
+    for(var i=0;i<6;i++) acc += P[i].dur;
+    return acc + P[6].dur - 1;
+  }
 
-/* ═══════════════════════════════════════════════════════════════
-   ANIMATION 4: PDP Rule Evaluation (pdp-canvas)
-   Shows two requests evaluated against the 12 rules,
-   first-match-wins. One DENY, one PERMIT.
-   ═══════════════════════════════════════════════════════════════ */
+  function renderStatic(){
+    initCanvas();
+    renderFrame(staticFrameIndex());
+  }
+
+  if(reduceMotion){
+    renderStatic();
+    window.addEventListener('resize', renderStatic);
+  } else {
+    initCanvas(); // size the canvas at load; the 300x150 intrinsic ratio would otherwise hold until first scroll-in
+    var cObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting && !running){
+          running = true; frame = 0; initCanvas(); draw();
+        } else if(!entry.isIntersecting && running){
+          running = false;
+        }
+      });
+    }, {threshold:0.15});
+    cObs.observe(wrap);
+    window.addEventListener('resize', function(){ if(running) initCanvas(); });
+  }
+})();
+</script>
+<script>
+/* ===================================================================
+   ANIMATION: Vector Space, Prefixed by Department (embed-canvas)
+   Storyboard, three phases looping:
+     1. raw embeddings: five department point clouds, plus one finance
+        chunk and one marketing chunk sitting almost on top of each
+        other near the center (near-identical prose, near-identical
+        vectors, before any department tag is attached).
+     2. contextual prefixes: a [DEPARTMENT: ...] tag visually attaches
+        to each of the two twin chunks and they ease apart into their
+        real department clusters.
+     3. a marketing-role query lands; the where-filter dims every
+        cluster except marketing and general; nearest-neighbor lines
+        connect the query only to points in the two lit clusters.
+   Self-contained IIFE. Pairs with .graph-canvas-wrap markup holding
+   <canvas id="embed-canvas">. No inline height anywhere -- this
+   script owns canvas height.
+   =================================================================== */
 (function(){
-  const canvas = document.getElementById('pdp-canvas');
+  var canvas = document.getElementById('embed-canvas');
   if(!canvas) return;
-  const wrap = canvas.parentElement;
-  const accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
-  const mono='JetBrains Mono, monospace';
-  let ctx,w,h,frame=0,running=false;
+  var wrap = canvas.parentElement;
+
+  var accent='#d88c3a', green='#5a9a5a', red='#9a5a5a';
+  var t1='#e0e0e0', t2='#ababab', t3='#787880', raised='#1a1a1d', inset='#0a0a0c';
+  var blue='#5a7a9a', purple='#8a6a9a';
+  var mono='JetBrains Mono, monospace';
+  var ctx, w, h, frame=0, running=false;
+  var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   function initCanvas(){
-    const dpr=window.devicePixelRatio||1;
-    const rect=wrap.getBoundingClientRect();
-    w=rect.width; h=460;
-    canvas.width=w*dpr; canvas.height=h*dpr;
-    canvas.style.width=w+'px'; canvas.style.height=h+'px';
-    ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+    var dpr = window.devicePixelRatio || 1;
+    var rect = wrap.getBoundingClientRect();
+    w = rect.width;
+    h = (window.matchMedia && window.matchMedia('(max-width:768px)').matches) ? 400 : 480;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr);
   }
 
   function drawRR(x,y,rw,rh,r,fill,stroke,lw){
@@ -1409,214 +1480,699 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
     ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
     ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
     ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
-    if(fill){ctx.fillStyle=fill;ctx.fill();}
-    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
+    if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+    if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=lw||1; ctx.stroke(); }
   }
 
-  // Simplified rules (12 from policy.yaml)
-  const rules = [
-    {id:'R0',  name:'c_level_full_access',           effect:'permit'},
-    {id:'R1',  name:'general_docs_any_role',          effect:'permit'},
-    {id:'R2',  name:'same_dept_internal_docs',        effect:'permit'},
-    {id:'R3',  name:'employee_non_general_deny',      effect:'deny'},
-    {id:'R4',  name:'cross_department_deny',          effect:'deny'},
-    {id:'R5',  name:'hr_rows_hr_c_level_only',        effect:'permit'},
-    {id:'R6',  name:'non_hr_hr_rows_deny',            effect:'deny'},
-    {id:'R6b', name:'hr_masked_rows_if_enabled',      effect:'permit'},
-    {id:'R7',  name:'hr_aggregates_if_enabled',       effect:'permit'},
-    {id:'R8',  name:'hr_aggregates_hr_c_level',       effect:'permit'},
-    {id:'R9',  name:'high_sensitivity_deny',          effect:'deny'},
-    {id:'--',  name:'DEFAULT',                        effect:'deny'},
+  function easeInOut(t){ return t<0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+
+  // Truncates text to fit maxW, appending an ellipsis. ctx.font must
+  // already be set by the caller before this runs.
+  function fitText(text, maxW){
+    if(ctx.measureText(text).width <= maxW) return text;
+    var s = text;
+    while(s.length > 1 && ctx.measureText(s+'…').width > maxW){ s = s.slice(0,-1); }
+    return s+'…';
+  }
+
+  var fontScale = 1;
+  function fpx(n){ return Math.max(6, Math.round(n*fontScale)); }
+
+  // Seeded PRNG (mulberry32) so the point cloud is a fixed, repeatable
+  // layout rather than Math.random() noise redrawn every frame.
+  function mulberry32(seed){
+    return function(){
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      var t = Math.imul(seed ^ seed>>>15, 1 | seed);
+      t = t + Math.imul(t ^ t>>>7, 61 | t) ^ t;
+      return ((t ^ t>>>14) >>> 0) / 4294967296;
+    };
+  }
+
+  var CLUSTERS = [
+    {id:'engineering', label:'ENGINEERING', color:blue,   fx:0.16, fy:0.22},
+    {id:'finance',      label:'FINANCE',     color:purple, fx:0.82, fy:0.20},
+    {id:'marketing',    label:'MARKETING',   color:accent, fx:0.84, fy:0.76},
+    {id:'hr',           label:'HR',          color:green,  fx:0.14, fy:0.78},
+    {id:'general',      label:'GENERAL',     color:t2,     fx:0.50, fy:0.34}
   ];
+  var IDX_FINANCE=1, IDX_MARKETING=2, IDX_GENERAL=4;
+  var PERMITTED = {engineering:false, finance:false, marketing:true, hr:false, general:true};
 
-  // Two scenarios
-  const scenarios = [
-    {
-      label: 'Marketing user requests HR salary row',
-      ctx: 'role:"marketing" resource:{dept:"hr", type:"csv"} action:"view_row"',
-      matchIdx: 6, // R6: non_hr_hr_rows_deny → DENY
-    },
-    {
-      label: 'HR user requests HR salary row',
-      ctx: 'role:"hr" resource:{dept:"hr", type:"csv"} action:"view_row"',
-      matchIdx: 5, // R5: hr_rows_hr_c_level_only → PERMIT
-    },
+  var POINTS_PER_CLUSTER = 12;
+  var JITTER = [];
+  (function(){
+    var rng = mulberry32(20260714);
+    for(var ci=0; ci<CLUSTERS.length; ci++){
+      var arr = [];
+      for(var pi=0; pi<POINTS_PER_CLUSTER; pi++){
+        var ang = rng()*Math.PI*2;
+        var rad = 0.25 + rng()*0.75;
+        arr.push({dx:Math.cos(ang)*rad, dy:Math.sin(ang)*rad});
+      }
+      JITTER.push(arr);
+    }
+  })();
+
+  // Fixed indices, not random: the two "identical prose" twins, and a
+  // representative subset of nearest-neighbor targets once the
+  // where-filter has narrowed the field to marketing + general.
+  var FINANCE_TWIN_IDX = 6, MARKETING_TWIN_IDX = 3;
+  var NN_MARKETING_IDX = [0,2,5,8];
+  var NN_GENERAL_IDX = [1,4,9];
+
+  var COLLISION_FX = 0.50, COLLISION_FY = 0.58;
+  var QUERY_FX = 0.62, QUERY_FY = 0.50;
+
+  var P = [
+    {name:'arrive',         dur:50},
+    {name:'raw',            dur:190},  // phase 1: twins collided near center
+    {name:'contextualize',  dur:170},  // phase 2: tag attaches, twins separate
+    {name:'settle',         dur:90},
+    {name:'query',          dur:120},  // marketing query lands
+    {name:'filter',         dur:160},  // phase 3: where-filter dims, NN lines
+    {name:'hold',           dur:150},
+    {name:'fade',           dur:40}
   ];
+  var totalF = P.reduce(function(s,p){ return s+p.dur; }, 0);
 
-  const ruleH = 28; // height per rule row
-  const scanSpeed = 12; // frames per rule scan step
-  const holdAfterMatch = 90;
-  const scenarioPause = 60;
-  const resetPause = 90;
+  function drawPoint(x,y,color,alpha,size){
+    if(alpha<=0) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
 
-  // Phase 1: scenario 0 scan (scanSpeed * matchIdx + holdAfterMatch)
-  // Phase 2: pause
-  // Phase 3: scenario 1 scan
-  // Phase 4: hold + reset
-  const s0frames = scanSpeed * (scenarios[0].matchIdx + 1) + holdAfterMatch;
-  const s1frames = scanSpeed * (scenarios[1].matchIdx + 1) + holdAfterMatch;
-  const totalF = s0frames + scenarioPause + s1frames + resetPause;
+  function clusterAlpha(permitted, phase, ep){
+    if(phase<5) return 1;
+    if(phase===5) return lerp(1, permitted?1:0.15, ep);
+    return permitted?1:0.15;
+  }
 
-  function draw(){
-    if(!running) return;
+  function drawCaption(text, alpha, cx, cy, maxW){
+    if(alpha<=0) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.font = 'italic '+fpx(9)+'px '+mono;
+    var shown = fitText(text, maxW);
+    var tw = ctx.measureText(shown).width;
+    drawRR(cx-tw/2-10, cy-13, tw+20, 20, 5, inset, 'rgba(255,255,255,0.05)', 1);
+    ctx.fillStyle = t2; ctx.textAlign='center';
+    ctx.fillText(shown, cx, cy+2);
+    ctx.textAlign='left';
+    ctx.restore();
+  }
+
+  /* renderFrame draws one frame for an arbitrary frame index f, so the
+     same function serves the running rAF loop and the single static
+     frame drawn for prefers-reduced-motion. */
+  function renderFrame(fIn){
     ctx.clearRect(0,0,w,h);
-    const f = frame % totalF;
 
-    // Determine which scenario and scan position
-    let scenIdx, scanFrame, matched, holdFrame;
-    if(f < s0frames){
-      scenIdx = 0;
-      scanFrame = f;
-    } else if(f < s0frames + scenarioPause){
-      scenIdx = 0;
-      scanFrame = s0frames; // stay at matched
-    } else if(f < s0frames + scenarioPause + s1frames){
-      scenIdx = 1;
-      scanFrame = f - s0frames - scenarioPause;
-    } else {
-      scenIdx = 1;
-      scanFrame = s1frames;
+    var f = fIn % totalF;
+    var phase=0, pf=0, acc=0;
+    for(var i=0;i<P.length;i++){
+      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
+      acc += P[i].dur;
+    }
+    var prog = pf/P[phase].dur;
+    var ep = easeInOut(prog);
+
+    var globalAlpha = 1;
+    if(phase === 0) globalAlpha = ep;
+    if(phase === P.length-1) globalAlpha = 1-ep;
+    ctx.globalAlpha = globalAlpha;
+
+    fontScale = w<400 ? 0.8 : (w<600 ? 0.9 : 1);
+
+    /* ---- layout: every position derives from w/h with caps/floors.
+       Verified against w = 343, 375, 600, 900, 1344 in the
+       accompanying build notes. ---- */
+    var marginX = clamp(w*0.03, 10, 30);
+    var topMargin = clamp(h*0.09, 26, 42);
+    var bottomArea = clamp(h*0.11, 32, 48);
+    var plotX0 = marginX, plotY0 = topMargin;
+    var plotW = Math.max(20, w-2*marginX);
+    var plotH = Math.max(20, h-topMargin-bottomArea);
+    var minDim = Math.min(plotW, plotH);
+    var radius = clamp(minDim*0.11, 16, 44);
+    var pointSize = clamp(minDim*0.012, 1.6, 3.2);
+    var twinSize = pointSize*1.3;
+    var clusterLabelMaxW = clamp(plotW*0.30, 46, 130);
+
+    var collisionX = plotX0+COLLISION_FX*plotW, collisionY = plotY0+COLLISION_FY*plotH;
+    var queryX = plotX0+QUERY_FX*plotW, queryY = plotY0+QUERY_FY*plotH;
+
+    // ===== department clusters (persist across every phase) =====
+    for(var ci=0; ci<CLUSTERS.length; ci++){
+      var c = CLUSTERS[ci];
+      var permitted = PERMITTED[c.id];
+      var dimA = clusterAlpha(permitted, phase, ep);
+      var ccx = plotX0+c.fx*plotW, ccy = plotY0+c.fy*plotH;
+
+      ctx.save(); ctx.globalAlpha = dimA*globalAlpha;
+      ctx.font = '600 '+fpx(7)+'px '+mono; ctx.fillStyle = c.color; ctx.textAlign='center';
+      ctx.fillText(fitText(c.label, clusterLabelMaxW), ccx, ccy-radius-6);
+      ctx.restore();
+
+      for(var pi=0; pi<POINTS_PER_CLUSTER; pi++){
+        if((ci===IDX_FINANCE && pi===FINANCE_TWIN_IDX) || (ci===IDX_MARKETING && pi===MARKETING_TWIN_IDX)) continue;
+        var j = JITTER[ci][pi];
+        var px = ccx+j.dx*radius, py = ccy+j.dy*radius;
+        drawPoint(px, py, c.color, dimA*globalAlpha, pointSize);
+      }
     }
 
-    const sc = scenarios[scenIdx];
-    const totalScanFrames = scanSpeed * (sc.matchIdx + 1);
-    const currentRuleIdx = Math.min(Math.floor(scanFrame / scanSpeed), sc.matchIdx);
-    const scanDone = scanFrame >= totalScanFrames;
-    const scanProg = scanDone ? 1 : (scanFrame % scanSpeed) / scanSpeed;
+    // ===== the two twin chunks: collided, separating, or settled =====
+    var financeCC = {x:plotX0+CLUSTERS[IDX_FINANCE].fx*plotW, y:plotY0+CLUSTERS[IDX_FINANCE].fy*plotH};
+    var marketingCC = {x:plotX0+CLUSTERS[IDX_MARKETING].fx*plotW, y:plotY0+CLUSTERS[IDX_MARKETING].fy*plotH};
+    var financeJ = JITTER[IDX_FINANCE][FINANCE_TWIN_IDX], marketingJ = JITTER[IDX_MARKETING][MARKETING_TWIN_IDX];
+    var financeFinal = {x:financeCC.x+financeJ.dx*radius, y:financeCC.y+financeJ.dy*radius};
+    var marketingFinal = {x:marketingCC.x+marketingJ.dx*radius, y:marketingCC.y+marketingJ.dy*radius};
 
-    // Global fade at very end
-    let ga = 1;
-    const endF = totalF - resetPause;
-    if(f > endF) ga = 1 - (f - endF)/resetPause;
-    ctx.globalAlpha = ga;
-
-    // Layout
-    const ruleListX = Math.max(40, (w - 500) / 2);
-    const ruleListW = Math.min(500, w - 80);
-    const ruleListY = 80;
-
-    // Scenario label
-    ctx.save();
-    ctx.font = '600 11px '+mono;
-    ctx.fillStyle = accent;
-    ctx.textAlign = 'center';
-    ctx.fillText('Scenario: ' + sc.label, w/2, 25);
-    ctx.font = '400 9px '+mono;
-    ctx.fillStyle = t3;
-    ctx.fillText(sc.ctx, w/2, 42);
-    ctx.restore();
-
-    // "First match wins" label
-    ctx.save();
-    ctx.font = '500 9px '+mono;
-    ctx.fillStyle = t3;
-    ctx.textAlign = 'center';
-    ctx.fillText('▼  evaluating top-to-bottom  ▼', w/2, 65);
-    ctx.restore();
-
-    // Draw rules
-    for(let i = 0; i < rules.length; i++){
-      const r = rules[i];
-      const ry = ruleListY + i * ruleH;
-      const isMatch = i === sc.matchIdx && scanDone;
-      const isScanning = i === currentRuleIdx && !scanDone;
-      const isPast = i < currentRuleIdx;
-      const isFuture = i > currentRuleIdx && !scanDone;
-
-      // Background
-      let bgColor = inset;
-      let borderColor = 'rgba(255,255,255,0.02)';
-      let textAlpha = 0.3;
-
-      if(isMatch){
-        bgColor = r.effect === 'permit' ? 'rgba(90,154,90,0.12)' : 'rgba(154,90,90,0.12)';
-        borderColor = r.effect === 'permit' ? green : red;
-        textAlpha = 1;
-      } else if(isScanning){
-        bgColor = 'rgba(216,140,58,0.06)';
-        borderColor = accent;
-        textAlpha = 0.8;
-      } else if(isPast){
-        textAlpha = 0.25;
-      } else if(isFuture){
-        textAlpha = 0.15;
+    if(phase<=1){
+      var cAlpha = (phase===0 ? ep : 1)*globalAlpha;
+      drawPoint(collisionX-2, collisionY-1, purple, cAlpha, twinSize);
+      drawPoint(collisionX+2, collisionY+1, accent, cAlpha, twinSize);
+      if(phase===1){
+        ctx.save(); ctx.globalAlpha = cAlpha;
+        ctx.font = fpx(7)+'px '+mono; ctx.fillStyle = t2; ctx.textAlign='center';
+        ctx.fillText(fitText('two chunks, one point', clamp(plotW*0.4,80,180)), collisionX, collisionY-14);
+        ctx.textAlign='left';
+        ctx.restore();
       }
+    } else if(phase===2){
+      var t = easeInOut(clamp(ep,0,1));
+      var fx = lerp(collisionX, financeFinal.x, t), fy = lerp(collisionY, financeFinal.y, t);
+      var mx = lerp(collisionX, marketingFinal.x, t), my = lerp(collisionY, marketingFinal.y, t);
+      drawPoint(fx, fy, purple, globalAlpha, twinSize);
+      drawPoint(mx, my, accent, globalAlpha, twinSize);
 
-      ctx.save();
-      ctx.globalAlpha = ga * Math.max(textAlpha, 0.15);
-
-      drawRR(ruleListX, ry, ruleListW, ruleH-4, 4, bgColor, borderColor, isMatch ? 1.5 : 0.5);
-
-      // Rule ID
-      ctx.font = '600 9px '+mono;
-      ctx.fillStyle = t3;
-      ctx.textAlign = 'left';
-      ctx.fillText(r.id, ruleListX+8, ry+ruleH/2);
-
-      // Rule name
-      ctx.font = '400 9px '+mono;
-      ctx.fillStyle = isMatch ? t1 : t2;
-      ctx.fillText(r.name, ruleListX+40, ry+ruleH/2);
-
-      // Effect badge
-      const badgeW = 50, badgeH = 16;
-      const badgeX = ruleListX + ruleListW - badgeW - 8;
-      const badgeY = ry + (ruleH-4-badgeH)/2;
-      const badgeColor = r.effect === 'permit' ? green : red;
-      drawRR(badgeX, badgeY, badgeW, badgeH, 3, null, badgeColor, 0.5);
-      ctx.font = '600 8px '+mono;
-      ctx.fillStyle = badgeColor;
-      ctx.textAlign = 'center';
-      ctx.fillText(r.effect.toUpperCase(), badgeX+badgeW/2, badgeY+badgeH/2+1);
-
-      // Scan indicator (arrow)
-      if(isScanning){
-        ctx.globalAlpha = ga * (0.5+0.5*Math.sin(frame*0.15));
-        ctx.font = '600 12px '+mono;
+      var tagAlpha = clamp(ep*2.2, 0, 1)*globalAlpha;
+      if(tagAlpha>0){
+        ctx.save(); ctx.globalAlpha = tagAlpha;
+        ctx.font = '600 '+fpx(7)+'px '+mono; ctx.fillStyle = purple; ctx.textAlign='center';
+        ctx.fillText(fitText('[DEPARTMENT: FINANCE]', clamp(plotW*0.42,90,190)), fx, fy-11);
         ctx.fillStyle = accent;
-        ctx.textAlign = 'right';
-        ctx.fillText('▸', ruleListX-4, ry+ruleH/2+1);
+        ctx.fillText(fitText('[DEPARTMENT: MARKETING]', clamp(plotW*0.42,90,190)), mx, my-11);
+        ctx.textAlign='left';
+        ctx.restore();
       }
+    } else {
+      var financeDim = clusterAlpha(false, phase, ep)*globalAlpha;
+      var marketingDim = clusterAlpha(true, phase, ep)*globalAlpha;
+      drawPoint(financeFinal.x, financeFinal.y, purple, financeDim, twinSize);
+      drawPoint(marketingFinal.x, marketingFinal.y, accent, marketingDim, twinSize);
+    }
 
+    // ===== the marketing query point =====
+    if(phase>=4){
+      var qAlpha = (phase===4 ? clamp(ep*2,0,1) : 1)*globalAlpha;
+      var qScale = phase===4 ? Math.max(0.35, easeInOut(clamp(ep*2,0,1))) : 1;
+      ctx.save(); ctx.globalAlpha = qAlpha;
+      var qs = 6*qScale;
+      ctx.beginPath();
+      ctx.moveTo(queryX, queryY-qs); ctx.lineTo(queryX+qs, queryY);
+      ctx.lineTo(queryX, queryY+qs); ctx.lineTo(queryX-qs, queryY);
+      ctx.closePath();
+      ctx.fillStyle = t1; ctx.fill();
+      ctx.strokeStyle = accent; ctx.lineWidth = 1.3; ctx.stroke();
+      ctx.font = '600 '+fpx(7)+'px '+mono; ctx.fillStyle = t1; ctx.textAlign='center';
+      ctx.fillText('QUERY', queryX, queryY-qs-9);
+      ctx.font = fpx(7)+'px '+mono; ctx.fillStyle = t3;
+      ctx.fillText(fitText('role: marketing', clamp(plotW*0.3,60,120)), queryX, queryY+qs+13);
+      ctx.textAlign='left';
       ctx.restore();
     }
 
-    // Result banner
-    if(scanDone){
-      const bannerY = ruleListY + rules.length * ruleH + 12;
-      const matchRule = rules[sc.matchIdx];
-      const isPermit = matchRule.effect === 'permit';
-      ctx.save();
-      ctx.globalAlpha = ga;
-      ctx.font = '600 13px '+mono;
-      ctx.fillStyle = isPermit ? green : red;
-      ctx.textAlign = 'center';
-      ctx.fillText(
-        (isPermit ? '✓ PERMIT' : '✕ DENY') + '  (matched ' + matchRule.id + ': ' + matchRule.name + ')',
-        w/2, bannerY
-      );
-      ctx.font = '400 9px '+mono;
-      ctx.fillStyle = t3;
-      ctx.fillText('First match wins. No further rules evaluated.', w/2, bannerY+18);
+    // ===== where-filter label =====
+    if(phase>=5){
+      var wfAlpha = (phase===5 ? clamp(ep*3,0,1) : 1)*globalAlpha;
+      ctx.save(); ctx.globalAlpha = wfAlpha;
+      ctx.font = fpx(7)+'px '+mono; ctx.fillStyle = t3; ctx.textAlign='center';
+      ctx.fillText(fitText('where role_marketing=true', w-2*marginX), w/2, 14);
+      ctx.textAlign='left';
       ctx.restore();
+    }
+
+    // ===== nearest-neighbor lines: query to permitted clusters only =====
+    if(phase>=5){
+      var lineProg = (phase===5 ? clamp(ep*1.4,0,1) : 1)*globalAlpha;
+      if(lineProg>0){
+        ctx.save();
+        ctx.globalAlpha = lineProg*0.65;
+        ctx.strokeStyle = accent; ctx.lineWidth = 1;
+        ctx.setLineDash([3,3]);
+        var mkC = CLUSTERS[IDX_MARKETING], genC = CLUSTERS[IDX_GENERAL];
+        var mkccx = plotX0+mkC.fx*plotW, mkccy = plotY0+mkC.fy*plotH;
+        var genccx = plotX0+genC.fx*plotW, genccy = plotY0+genC.fy*plotH;
+        var m;
+        for(m=0; m<NN_MARKETING_IDX.length; m++){
+          var jm = JITTER[IDX_MARKETING][NN_MARKETING_IDX[m]];
+          ctx.beginPath(); ctx.moveTo(queryX, queryY);
+          ctx.lineTo(mkccx+jm.dx*radius, mkccy+jm.dy*radius);
+          ctx.stroke();
+        }
+        for(m=0; m<NN_GENERAL_IDX.length; m++){
+          var jg = JITTER[IDX_GENERAL][NN_GENERAL_IDX[m]];
+          ctx.beginPath(); ctx.moveTo(queryX, queryY);
+          ctx.lineTo(genccx+jg.dx*radius, genccy+jg.dy*radius);
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+    }
+
+    // ===== captions =====
+    var capText='', capAlpha=0;
+    var capMaxW = w-2*marginX-20;
+    if(phase===1){ capText='identical prose, near-identical vectors'; capAlpha=clamp(ep*4,0,1); }
+    else if(phase===2){ capText='same text, different vectors'; capAlpha=clamp(ep*4,0,1); }
+    else if(phase===3){ capText='same text, different vectors'; capAlpha=1-clamp(ep*1.5,0,1); }
+    else if(phase===5){ capText='unauthorized vectors are excluded at the database, not after scoring.'; capAlpha=clamp(ep*3,0,1); }
+    else if(phase===6){ capText='unauthorized vectors are excluded at the database, not after scoring.'; capAlpha=1; }
+    if(capAlpha>0){
+      drawCaption(capText, capAlpha*globalAlpha, w/2, h-bottomArea*0.55, capMaxW);
     }
 
     ctx.globalAlpha = 1;
+  }
+
+  function draw(){
+    if(!running) return;
+    renderFrame(frame);
     frame++;
     requestAnimationFrame(draw);
   }
 
-  const cObs = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting && !running){
-        running=true; initCanvas(); draw();
-      } else if(!entry.isIntersecting && running){
-        running=false;
+  function staticFrameIndex(){
+    // Deep into the 'hold' phase, one frame before it ends, so every
+    // earlier phase is fully settled (alpha 1) and the fade-out phase
+    // that follows never gets drawn in the static fallback.
+    var acc = 0;
+    for(var i=0;i<6;i++) acc += P[i].dur;
+    return acc + P[6].dur - 1;
+  }
+
+  function renderStatic(){
+    initCanvas();
+    renderFrame(staticFrameIndex());
+  }
+
+  if(reduceMotion){
+    renderStatic();
+    window.addEventListener('resize', renderStatic);
+  } else {
+    initCanvas(); // size the canvas at load; the 300x150 intrinsic ratio would otherwise hold until first scroll-in
+    var cObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting && !running){
+          running = true; frame = 0; initCanvas(); draw();
+        } else if(!entry.isIntersecting && running){
+          running = false;
+        }
+      });
+    }, {threshold:0.15});
+    cObs.observe(wrap);
+    window.addEventListener('resize', function(){ if(running) initCanvas(); });
+  }
+})();
+</script>
+<script>
+/* ===================================================================
+   ANIMATION: The cache partition (fingerprint-canvas)
+   Two roles ask the identical question. Each request's attributes
+   (role, tenant_id, policy_epoch, entitlement_epoch, flags) go through
+   PolicyFingerprint and come out as a different 16-hex hash. Each hash
+   routes to its own SQLite + FAISS file pair (pf_<hash>.db / .index):
+   the hr answer is written into the hr pair; the marketing lookup
+   opens only the marketing pair and misses, because it is a different
+   file, not a different key inside a shared one. Bumping policy_epoch
+   changes both hashes at once; the old file pairs are left behind,
+   unreachable and orphaned until cleaned up by hand.
+   Self-contained IIFE. Pair with .graph-canvas-wrap markup that holds
+   <canvas id="fingerprint-canvas" role="img" aria-label="...">.
+   No inline height anywhere -- this script owns canvas height.
+   =================================================================== */
+(function(){
+  var canvas = document.getElementById('fingerprint-canvas');
+  if(!canvas) return;
+  var wrap = canvas.parentElement;
+
+  var accent='#d88c3a', green='#5a9a5a', red='#9a5a5a';
+  var t1='#e0e0e0', t2='#ababab', t3='#787880', raised='#1a1a1d', inset='#0a0a0c';
+  var blue='#5a7a9a', purple='#8a6a9a';
+  var mono='JetBrains Mono, monospace';
+  var ctx, w, h, frame=0, running=false, loopEnabled=true;
+  var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  function initCanvas(){
+    var dpr = window.devicePixelRatio || 1;
+    var rect = wrap.getBoundingClientRect();
+    w = rect.width;
+    h = (window.matchMedia && window.matchMedia('(max-width:768px)').matches) ? 450 : 500;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+    if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=lw||1; ctx.stroke(); }
+  }
+
+  function easeInOut(t){ return t<0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+  // rises a->b, holds to c, falls to d (a<=b<=c<=d)
+  function trapezoid(x,a,b,c,d){
+    if(x<=a || x>=d) return 0;
+    if(x<b) return (x-a)/(b-a);
+    if(x<=c) return 1;
+    return 1-(x-c)/(d-c);
+  }
+  function riseOnly(x,a,b){ return clamp((x-a)/(b-a),0,1); }
+  function fitText(text,maxW){
+    if(ctx.measureText(text).width<=maxW) return text;
+    var s=text;
+    while(s.length>1 && ctx.measureText(s+'…').width>maxW){ s=s.slice(0,-1); }
+    return s+'…';
+  }
+
+  var P = [
+    {name:'arrive',          dur:70},
+    {name:'hr_travel',       dur:45},
+    {name:'hr_hash',         dur:55},
+    {name:'mkt_travel',      dur:45},
+    {name:'mkt_hash',        dur:55},
+    {name:'hold_hashes',     dur:90},
+    {name:'to_files',        dur:55},
+    {name:'hr_write',        dur:55},
+    {name:'mkt_open',        dur:55},
+    {name:'hold_files',      dur:110},
+    {name:'fade_files_cap',  dur:40},
+    {name:'epoch_bump',      dur:90},
+    {name:'hold_epoch',      dur:110},
+    {name:'end_fade',        dur:35}
+  ];
+  var totalF = P.reduce(function(s,p){ return s+p.dur; }, 0);
+  var CUM = (function(){ var arr=[], acc=0; for(var i=0;i<P.length;i++){ arr.push(acc); acc+=P[i].dur; } return arr; })();
+  // static frame for prefers-reduced-motion: deep in hold_files (phase 9),
+  // one frame before it ends, so the partition is fully settled: hr
+  // written, marketing missed, nothing mid-flight.
+  var STATIC_FRAME = CUM[9] + P[9].dur - 1;
+
+  // Illustrative fingerprint inputs and hex hashes; not measured output,
+  // demonstrate the mechanism only.
+  var PF_FIELDS = ['role','tenant_id','policy_epoch','entitlement_epoch','flags'];
+  var HR  = { role:'hr',        query:'"what is the parental leave policy?"', hash1:'a3f9c1e08b2d4a6f', hash2:'e81b53fa9c0d27a4', color:blue };
+  var MKT = { role:'marketing', query:'"what is the parental leave policy?"', hash1:'7c4e2b91fa083dd5', hash2:'2f6a94c1b8e0d357', color:purple };
+
+  function renderFrame(fIn){
+    ctx.clearRect(0,0,w,h);
+
+    var f = fIn % totalF;
+    var phase=0, pf=0, acc=0;
+    for(var i=0;i<P.length;i++){
+      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
+      acc += P[i].dur;
+    }
+    var prog = pf/P[phase].dur;
+    var ep = easeInOut(prog);
+
+    var globalAlpha = 1;
+    if(phase === 0) globalAlpha = ep;
+    if(phase === P.length-1) globalAlpha = 1-ep;
+    ctx.globalAlpha = globalAlpha;
+
+    /* ---- responsive layout: every position derives from w/h, with
+       floors/caps. Verified against clipping at w = 343, 375, 390, 500,
+       600, 768, 900, 1344. ---- */
+    var fontScale = w<400 ? 0.8 : (w<600 ? 0.9 : 1);
+    function fpx(n){ return Math.max(7, Math.round(n*fontScale)); }
+
+    var marginX = clamp(w*0.03, 10, 20);
+    var gap = clamp(w*0.018, 6, 14);
+    var queryW = clamp(w*0.16, 66, 112);
+    var pfW    = clamp(w*0.20, 92, 154);
+    var hashW  = clamp(w*0.13, 58, 92);
+    var fileW  = clamp(w*0.17, 74, 120);
+    var chipW = clamp(w*0.155, 74, 132);
+    // the hash slot is sized to hold a settled chip, so a docked chip
+    // never overlaps the fingerprint box or the file pair labels
+    var slotW = Math.max(hashW, chipW + 6);
+    var groupW = queryW+gap+pfW+gap+slotW+gap+fileW;
+    var leftX = clamp((w-groupW)/2, marginX, w-marginX-groupW);
+    var queryX = leftX;
+    var pfX = queryX+queryW+gap;
+    var hashX = pfX+pfW+gap;
+    var fileX = hashX+slotW+gap;
+
+    var startCX = queryX+queryW/2;
+    var pfCX = pfX+pfW/2;
+    var hashCX = hashX+slotW/2;
+    var fileCX = fileX+fileW/2;
+    var dockCX = hashCX;
+
+    var topReserve = clamp(h*0.13, 56, 68);
+    var bottomReserve = clamp(h*0.08, 30, 40);
+    var availH = h - topReserve - bottomReserve;
+    var hrLaneY = topReserve + availH*0.30;
+    var mktLaneY = topReserve + availH*0.76;
+
+    var laneCardH = fpx(46) < 34 ? 34 : 46;
+    var pfBoxTop = hrLaneY - laneCardH/2 - 14;
+    var pfBoxBottom = mktLaneY + laneCardH/2 + 14;
+    var pfBoxH = pfBoxBottom - pfBoxTop;
+
+    var fileBoxW = fileW;
+    var cellH = 22;
+    var fileBoxH = cellH*2 + 12;
+
+    // ===== which phase-driven state applies this frame =====
+    var oldA=1, newA=0; // hash1 -> hash2 crossfade weights
+    if(phase===11){ oldA=1-ep; newA=ep; }
+    else if(phase>=12){ oldA=0; newA=1; }
+
+    function laneX(role, phase, ep){
+      if(role==='hr'){
+        if(phase===0) return startCX;
+        if(phase===1) return lerp(startCX,pfCX,ep);
+        if(phase===2) return lerp(pfCX,hashCX,ep);
+        if(phase>=3 && phase<=5) return hashCX;
+        if(phase===6) return lerp(hashCX,dockCX,ep);
+        return dockCX;
+      } else {
+        if(phase<=2) return startCX;
+        if(phase===3) return lerp(startCX,pfCX,ep);
+        if(phase===4) return lerp(pfCX,hashCX,ep);
+        if(phase===5) return hashCX;
+        if(phase===6) return lerp(hashCX,dockCX,ep);
+        return dockCX;
       }
-    });
-  },{threshold:0.15});
-  cObs.observe(wrap);
-  window.addEventListener('resize',()=>{ if(running) initCanvas(); });
+    }
+    function laneMode(role, phase, ep){
+      if(role==='hr'){
+        if(phase===0 || phase===1) return 'query';
+        if(phase===2 && ep<0.45) return 'query';
+        return 'hash';
+      } else {
+        if(phase<=3) return 'query';
+        if(phase===4 && ep<0.45) return 'query';
+        return 'hash';
+      }
+    }
+
+    // ===== lane guide rails (faint, behind everything) =====
+    function laneRail(laneY, alpha){
+      ctx.save(); ctx.globalAlpha = alpha*globalAlpha;
+      ctx.strokeStyle = accent; ctx.lineWidth = 1; ctx.globalAlpha *= 0.16;
+      ctx.beginPath(); ctx.moveTo(startCX, laneY); ctx.lineTo(fileCX, laneY); ctx.stroke();
+      ctx.restore();
+    }
+    laneRail(hrLaneY, 1);
+    laneRail(mktLaneY, 1);
+
+    // ===== title label =====
+    ctx.save(); ctx.globalAlpha = globalAlpha; ctx.textAlign='left';
+    ctx.font = '600 '+fpx(10)+'px '+mono; ctx.fillStyle = accent;
+    ctx.fillText(fitText('POLICYFINGERPRINT → ONE FILE PAIR PER FINGERPRINT', w-marginX*2), marginX, 20);
+    ctx.restore();
+
+    // ===== PolicyFingerprint box =====
+    var pfGlow = 0;
+    if(phase===2 && ep<0.5) pfGlow = trapezoid(ep,0,0.1,0.35,0.5);
+    if(phase===4 && ep<0.5) pfGlow = trapezoid(ep,0,0.1,0.35,0.5);
+    ctx.save(); ctx.globalAlpha = globalAlpha;
+    drawRR(pfX, pfBoxTop, pfW, pfBoxH, 9, raised, 'rgba(255,255,255,0.05)', 1);
+    if(pfGlow>0){
+      ctx.save(); ctx.globalAlpha = pfGlow*globalAlpha;
+      ctx.shadowColor = accent; ctx.shadowBlur = 14;
+      drawRR(pfX, pfBoxTop, pfW, pfBoxH, 9, null, accent, 1.6);
+      ctx.restore();
+    }
+    ctx.textAlign='center';
+    ctx.font = '600 '+fpx(9)+'px '+mono; ctx.fillStyle = accent;
+    ctx.fillText(fitText('POLICYFINGERPRINT', pfW-14), pfX+pfW/2, pfBoxTop+16);
+    ctx.font = fpx(7)+'px '+mono; ctx.fillStyle = t3;
+    ctx.fillText('SHA-256, first 16 hex', pfX+pfW/2, pfBoxTop+28);
+    ctx.textAlign='left';
+    for(var pfI=0; pfI<PF_FIELDS.length; pfI++){
+      ctx.font = fpx(7)+'px '+mono; ctx.fillStyle = t2;
+      ctx.fillText(fitText(PF_FIELDS[pfI], pfW-20), pfX+10, pfBoxTop+44+pfI*13);
+    }
+    ctx.textAlign='center';
+    var epochOldText = 'policy_epoch: 1', epochNewText = 'policy_epoch: 2';
+    var epochY = pfBoxTop+pfBoxH-10;
+    if(oldA>0){ ctx.save(); ctx.globalAlpha=oldA*globalAlpha; ctx.font='700 '+fpx(8)+'px '+mono; ctx.fillStyle=t1; ctx.fillText(fitText(epochOldText,pfW-16), pfX+pfW/2, epochY); ctx.restore(); }
+    if(newA>0){ ctx.save(); ctx.globalAlpha=newA*globalAlpha; ctx.font='700 '+fpx(8)+'px '+mono; ctx.fillStyle=accent; ctx.fillText(fitText(epochNewText,pfW-16), pfX+pfW/2, epochY); ctx.restore(); }
+    ctx.textAlign='left';
+    ctx.restore();
+
+    // ===== flow card (query -> hash) per lane =====
+    function drawFlowCard(cx, cy, data, mode){
+      var cw = chipW, ch = laneCardH;
+      var x = cx-cw/2, y = cy-ch/2;
+      drawRR(x, y, cw, ch, 7, inset, data.color+'44', 1);
+      ctx.textAlign='left';
+      ctx.font = '600 '+fpx(8)+'px '+mono; ctx.fillStyle = data.color;
+      ctx.fillText(fitText('role: '+data.role, cw-12), x+7, y+15);
+      if(mode==='query'){
+        ctx.font = fpx(8)+'px '+mono; ctx.fillStyle = t2;
+        ctx.fillText(fitText(data.query, cw-12), x+7, y+ch-9);
+      } else {
+        if(oldA>0){
+          ctx.save(); ctx.globalAlpha = ctx.globalAlpha*oldA;
+          ctx.font = '700 '+fpx(9)+'px '+mono; ctx.fillStyle = t1;
+          ctx.fillText(fitText(data.hash1, cw-12), x+7, y+ch-9);
+          ctx.restore();
+        }
+        if(newA>0){
+          ctx.save(); ctx.globalAlpha = ctx.globalAlpha*newA;
+          ctx.font = '700 '+fpx(9)+'px '+mono; ctx.fillStyle = accent;
+          ctx.fillText(fitText(data.hash2, cw-12), x+7, y+ch-9);
+          ctx.restore();
+        }
+      }
+    }
+
+    var hrX_ = laneX('hr', phase, ep), hrMode = laneMode('hr', phase, ep);
+    var mktX_ = laneX('marketing', phase, ep), mktMode = laneMode('marketing', phase, ep);
+
+    // ===== file pair boxes (drawn before the settled chips so chips can
+    //       sit visually in front once they arrive) =====
+    function drawFilePair(cx, laneY, data, tagKind, tagAlpha, grayed){
+      var x = cx-fileBoxW/2, y = laneY-fileBoxH/2;
+      var lineColor = grayed ? t3 : data.color;
+      drawRR(x, y, fileBoxW, fileBoxH, 7, inset, lineColor+'55', 1);
+      var dbY = y+5, idxY = dbY+cellH+2;
+      drawRR(x+4, dbY, fileBoxW-8, cellH-4, 4, grayed?'rgba(255,255,255,0.02)':lineColor+'14', null, 0);
+      drawRR(x+4, idxY, fileBoxW-8, cellH-4, 4, grayed?'rgba(255,255,255,0.02)':lineColor+'14', null, 0);
+      ctx.textAlign='left';
+      ctx.font = fpx(7)+'px '+mono; ctx.fillStyle = grayed ? t3 : t2;
+      ctx.fillText(fitText('pf_'+data.hash1+'.db', fileBoxW-14), x+7, dbY+cellH/2-1);
+      ctx.fillText(fitText('pf_'+data.hash1+'.index', fileBoxW-14), x+7, idxY+cellH/2-1);
+      if(tagAlpha>0){
+        ctx.save(); ctx.globalAlpha = ctx.globalAlpha*tagAlpha;
+        var tagColor = tagKind==='write' ? green : accent;
+        var tagText = tagKind==='write' ? '✓ written' : '! miss';
+        ctx.font = '700 '+fpx(7)+'px '+mono; ctx.fillStyle = tagColor; ctx.textAlign='right';
+        ctx.fillText(tagText, x+fileBoxW-6, y-4);
+        ctx.textAlign='left';
+        ctx.restore();
+      }
+    }
+
+    var filesVisible = phase>=6;
+    var grayedNow = phase>=11;
+    if(filesVisible){
+      var hrTagAlpha = 0, mktTagAlpha = 0;
+      if(phase===7) hrTagAlpha = riseOnly(ep,0.2,0.85);
+      else if(phase>=8 && phase<=10) hrTagAlpha = 1;
+      else if(phase>=11) hrTagAlpha = (1-ep>0 && phase===11) ? clamp(1-ep*1.4,0,1) : 0;
+
+      if(phase===8) mktTagAlpha = riseOnly(ep,0.2,0.85);
+      else if(phase>=9 && phase<=10) mktTagAlpha = 1;
+      else if(phase===11) mktTagAlpha = clamp(1-ep*1.4,0,1);
+
+      var fileAlpha = grayedNow ? 0.4 : 1;
+      ctx.save(); ctx.globalAlpha = fileAlpha*globalAlpha;
+      // fade file boxes in as the phase 6 transition happens
+      if(phase===6) ctx.globalAlpha = riseOnly(ep,0.3,1)*fileAlpha*globalAlpha;
+      drawFilePair(fileCX, hrLaneY, HR, 'write', hrTagAlpha, grayedNow);
+      drawFilePair(fileCX, mktLaneY, MKT, 'miss', mktTagAlpha, grayedNow);
+      ctx.restore();
+    }
+
+    // ===== traveling / settled flow chips (drawn on top) =====
+    ctx.save(); ctx.globalAlpha = globalAlpha;
+    var hrReveal = phase===0 ? riseOnly(ep,0,0.5) : 1;
+    ctx.save(); ctx.globalAlpha = hrReveal*globalAlpha;
+    drawFlowCard(hrX_, hrLaneY, HR, hrMode);
+    ctx.restore();
+    var mktReveal = phase===0 ? riseOnly(ep,0.3,0.85) : 1;
+    ctx.save(); ctx.globalAlpha = mktReveal*globalAlpha;
+    drawFlowCard(mktX_, mktLaneY, MKT, mktMode);
+    ctx.restore();
+    ctx.restore();
+
+    // ===== bottom caption =====
+    var capText = '';
+    if(phase>=9 && phase<=10) capText = 'different files, not different keys';
+    else if(phase===11 || phase===12) capText = 'unreachable; the orphaned files remain until cleaned up';
+    if(capText){
+      var capAlpha = 1;
+      if(phase===10) capAlpha = 1-ep;
+      if(phase===11) capAlpha = riseOnly(ep,0.15,0.6);
+      ctx.save(); ctx.globalAlpha = capAlpha*globalAlpha; ctx.textAlign='center';
+      ctx.font = 'italic '+fpx(9)+'px '+mono; ctx.fillStyle = t2;
+      ctx.fillText(fitText(capText, w-marginX*2), w/2, h-14);
+      ctx.textAlign='left';
+      ctx.restore();
+    }
+
+    ctx.globalAlpha = 1;
+  }
+
+  function draw(){
+    if(!running) return;
+    renderFrame(frame);
+    if(loopEnabled){ frame++; requestAnimationFrame(draw); }
+  }
+
+  function renderStatic(){
+    initCanvas();
+    renderFrame(STATIC_FRAME);
+  }
+
+  if(reduceMotion){
+    renderStatic();
+    window.addEventListener('resize', renderStatic);
+  } else {
+    initCanvas(); // size the canvas at load; the 300x150 intrinsic ratio would otherwise hold until first scroll-in
+    var cObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting && !running){
+          running = true; loopEnabled = true; frame = 0; initCanvas(); draw();
+        } else if(!entry.isIntersecting && running){
+          running = false;
+        }
+      });
+    }, {threshold:0.15});
+    cObs.observe(wrap);
+    window.addEventListener('resize', function(){ if(running) initCanvas(); });
+  }
 })();
 </script>
 </body>

@@ -106,8 +106,8 @@
       <div class="main">
         <div class="rcat">Retrieval + access control</div>
         <p class="rname">Enterprise RAG &middot; ABAC</p>
-        <p class="rdesc">A RAG chatbot where access control lives outside the model. A 12-rule policy engine &mdash; not the LLM &mdash; decides what each user is allowed to retrieve, with hybrid dense/sparse retrieval and policy-fingerprinted caching. No cross-role leakage across 437 tests.</p>
-        <div class="tags"><span class="tag">RAG</span><span class="tag">ABAC</span><span class="tag">ChromaDB</span><span class="tag">K8s</span></div>
+        <p class="rdesc">The trust boundary sits outside the model: a 12-rule policy engine gates every retrieved chunk at four enforcement points before generation, and again inside the answer cache. A 7,200-combination access-control matrix, checked against an independently written reference policy, returns zero mismatches, backed by 494 offline tests.</p>
+        <div class="tags"><span class="tag">RAG</span><span class="tag">ABAC</span><span class="tag">PolicyFingerprint</span><span class="tag">ChromaDB</span></div>
       </div>
       <span class="go">&rarr;</span>
     </a>
