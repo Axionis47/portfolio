@@ -1,0 +1,73 @@
+/* ═══════════════════════════════════════════════════════════════
+   tokens.css — THE single source of truth for the whole site.
+   Every section/module reads its color, type, shadow, motion, and
+   layout values from here. Change a value once, it changes everywhere.
+   Nothing else in the codebase should hardcode a hex, a font, or a shadow.
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+    /* ── Surfaces ── */
+    --bg:#101012;
+    --bg2:#151517;
+    --raised:#1a1a1d;
+    --inset:#0a0a0c;
+
+    /* ── Neumorphic shadows ── */
+    --shd:rgba(2,2,4,0.75);        /* dark drop  */
+    --shl:rgba(42,42,46,0.16);     /* light lift */
+    --glow:rgba(216,140,58,0.04);  /* accent halo on hover */
+
+    /* ── Text ── */
+    --t1:#e0e0e0;   /* primary   */
+    --t2:#ababab;   /* secondary */
+    --t3:#787880;   /* tertiary / meta */
+    --white:#ffffff;
+
+    /* ── Accent (amber) ── */
+    --accent:#d88c3a;
+    --accent-hi:#eaa050;           /* hover / lift */
+    --as:rgba(216,140,58,0.08);    /* accent soft fill */
+    --accent-line:rgba(216,140,58,0.15);
+
+    /* ── Semantic (used inside project diagrams) ── */
+    --green:#5a9a5a;
+    --red:#9a5a5a;
+    --blue:#6a8fd8;
+
+    /* ── Radius ── */
+    --r:14px;
+    --r-sm:10px;
+    --r-pill:50px;
+
+    /* ── Type ── */
+    --mono:'JetBrains Mono',monospace;
+    --serif:'Source Serif 4',serif;
+    --sans:'DM Sans',sans-serif;
+
+    /* ── Fluid type scale (clamp: min, preferred, max) ── */
+    --fs-display:clamp(2.4rem,6vw,4.6rem);   /* hero provocation */
+    --fs-h1:clamp(1.9rem,4.5vw,3rem);
+    --fs-h2:clamp(1.5rem,3.2vw,2.2rem);
+    --fs-lead:clamp(1.05rem,1.6vw,1.28rem);  /* section intros */
+    --fs-body:1.05rem;
+    --fs-mono-sm:.82rem;
+    --fs-meta:.72rem;
+
+    /* ── Layout ── */
+    --maxw:1100px;
+    --maxw-wide:1440px;
+    --gutter:clamp(20px,5vw,44px);
+
+    /* ── Motion ── */
+    --ease-out:cubic-bezier(.22,.61,.36,1);
+    --ease-in-out:cubic-bezier(.65,.05,.36,1);
+    --ease-expo:cubic-bezier(.16,1,.3,1);   /* the "premium" settle */
+    --dur-fast:.25s;
+    --dur:.5s;
+    --dur-slow:.9s;
+
+    /* ── Z-layers (kept explicit so nothing fights) ── */
+    --z-cosmos:0;
+    --z-content:2;
+    --z-nav:100;
+    --z-cursor:9999;
+}

@@ -1,0 +1,93 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION: notes — "How I think." The engineering notes, elevated.
+     This is the moat: the thought process behind every system above.
+     ═══════════════════════════════════════════════════════════════ -->
+<style>
+  #notes{max-width:var(--maxw);margin:0 auto;padding:clamp(70px,10vh,120px) var(--gutter)}
+  #notes .n-head{margin-bottom:48px;max-width:60ch}
+  #notes .n-eyebrow{
+    font-family:var(--mono);font-size:var(--fs-meta);font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);opacity:.85;margin-bottom:16px;
+  }
+  #notes .n-h{font-family:var(--sans);font-size:var(--fs-h2);font-weight:500;letter-spacing:-.02em;color:var(--t1);line-height:1.2}
+  #notes .n-h .em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
+  #notes .n-lead{font-family:var(--sans);font-size:var(--fs-lead);color:var(--t2);line-height:1.7;margin-top:18px}
+
+  #notes .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media(max-width:720px){ #notes .grid{grid-template-columns:1fr} }
+
+  #notes .note{
+    position:relative;display:block;text-decoration:none;color:inherit;
+    padding:30px 30px 46px;background:var(--raised);border-radius:var(--r);
+    border:1px solid rgba(255,255,255,.02);
+    box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);
+    transition:transform var(--dur-fast) var(--ease-out),box-shadow var(--dur-fast) var(--ease-out);
+  }
+  #notes .note:hover{transform:translateY(-3px);box-shadow:7px 7px 20px var(--shd),-3px -3px 10px var(--shl),0 0 22px var(--glow)}
+  #notes .num{font-family:var(--mono);font-size:.7rem;color:var(--accent);opacity:.6;margin-bottom:12px}
+  #notes .title{font-family:var(--mono);font-size:1rem;font-weight:600;color:var(--t1);line-height:1.4;margin-bottom:12px}
+  #notes .hint{font-family:var(--sans);font-size:.92rem;color:var(--t2);line-height:1.6}
+  #notes .hint em{font-family:var(--serif);font-style:italic;color:var(--accent);font-weight:400}
+  #notes .arw{position:absolute;bottom:22px;right:24px;font-family:var(--mono);font-size:.8rem;color:var(--t3);
+    transition:transform var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out)}
+  #notes .note:hover .arw{transform:translateX(3px);color:var(--accent)}
+</style>
+
+<section id="notes">
+  <div class="n-head">
+    <div class="n-eyebrow" data-reveal>Notes</div>
+    <h2 class="n-h" data-reveal>A few things I <span class="em">got wrong first,</span> then wrote down.</h2>
+    <p class="n-lead" data-reveal>Short notes on where to draw the line between what a model decides and what it doesn&rsquo;t &mdash; mostly written after something went wrong once.</p>
+  </div>
+
+  <div class="grid">
+    <a class="note" href="articles/bounded-responsibility.html" data-reveal>
+      <div class="num">01</div>
+      <div class="title">Parametric vs. Grounded Knowledge</div>
+      <p class="hint">The OSCE grader kept hallucinating clinical assessments until I <em>locked out the model&rsquo;s own knowledge.</em></p>
+      <span class="arw">&rsaquo;</span>
+    </a>
+    <a class="note" href="articles/context-budget.html" data-reveal>
+      <div class="num">02</div>
+      <div class="title">Confidence is Not Calibration</div>
+      <p class="hint">The segmentation model was <em>98% confident</em> on pixels it got completely wrong.</p>
+      <span class="arw">&rsaquo;</span>
+    </a>
+    <a class="note" href="articles/action-surface.html" data-reveal>
+      <div class="num">03</div>
+      <div class="title">Who Owns the Explanation</div>
+      <p class="hint">I generated ECOA decline codes from SHAP, not the model, because regulators <em>do not accept vibes.</em></p>
+      <span class="arw">&rsaquo;</span>
+    </a>
+    <a class="note" href="articles/recoverability.html" data-reveal>
+      <div class="num">04</div>
+      <div class="title">Compression Preserves What You Measure</div>
+      <p class="hint">I removed entire layers from the GNN and accuracy went <em>up, not down.</em></p>
+      <span class="arw">&rsaquo;</span>
+    </a>
+    <a class="note" href="articles/delegation.html" data-reveal>
+      <div class="num">05</div>
+      <div class="title">Deterministic Boundaries</div>
+      <p class="hint">One prompt injection against the RAG system, and I knew access control could <em>never be a model decision.</em></p>
+      <span class="arw">&rsaquo;</span>
+    </a>
+    <a class="note" href="articles/memory.html" data-reveal>
+      <div class="num">06</div>
+      <div class="title">The Verification Surface</div>
+      <p class="hint">Every system I built had a different way to catch itself being wrong &mdash; none of them was <em>&ldquo;hope.&rdquo;</em></p>
+      <span class="arw">&rsaquo;</span>
+    </a>
+    <a class="note" href="articles/plumbing.html" data-reveal>
+      <div class="num">07</div>
+      <div class="title">Autonomy is a Spectrum</div>
+      <p class="hint">The GNN has zero autonomy, the causal agent has a lot &mdash; I had to <em>learn where to draw that line</em> each time.</p>
+      <span class="arw">&rsaquo;</span>
+    </a>
+    <a class="note" href="articles/eval.html" data-reveal>
+      <div class="num">08</div>
+      <div class="title">Eval Defines the Trust Contract</div>
+      <p class="hint">I shipped things I thought worked until I built the right eval and found out <em>they did not.</em></p>
+      <span class="arw">&rsaquo;</span>
+    </a>
+  </div>
+</section>

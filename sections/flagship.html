@@ -1,0 +1,156 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION: flagship — the cinematic centerpiece (Causal Inference Agent).
+     A living orbital diagram: 13 specialist agents orbiting one ReAct
+     orchestrator. Orbits = bounded autonomy, echoing the cosmos. Pure
+     CSS animation so it runs when the fragment is injected.
+     ═══════════════════════════════════════════════════════════════ -->
+<style>
+  #flagship{
+    position:relative;max-width:var(--maxw-wide);margin:0 auto;
+    padding:clamp(80px,14vh,160px) var(--gutter);
+    display:grid;grid-template-columns:1fr;gap:56px;align-items:center;
+  }
+  @media(min-width:960px){ #flagship{grid-template-columns:1.05fr .95fr;gap:64px} }
+
+  #flagship .fl-eyebrow{
+    font-family:var(--mono);font-size:var(--fs-meta);font-weight:600;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--accent);opacity:.85;margin-bottom:20px;
+    display:flex;align-items:center;gap:10px;
+  }
+  #flagship .fl-eyebrow .rule{width:34px;height:1px;background:var(--accent);opacity:.5}
+  #flagship .fl-title{
+    font-family:var(--sans);font-size:clamp(1.9rem,3.8vw,2.9rem);font-weight:500;
+    line-height:1.14;letter-spacing:-.025em;color:var(--t1);max-width:16ch;
+  }
+  #flagship .fl-title .em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
+  #flagship .fl-name{
+    font-family:var(--mono);font-size:.9rem;color:var(--accent);letter-spacing:.02em;
+    margin-top:26px;margin-bottom:10px;
+  }
+  #flagship .fl-sub{
+    font-family:var(--sans);font-size:var(--fs-lead);color:var(--t2);line-height:1.7;max-width:52ch;
+  }
+  #flagship .fl-sub b{color:var(--t1);font-weight:500}
+
+  #flagship .fl-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:34px 0 30px}
+  #flagship .fl-stat{
+    background:var(--raised);border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.02);
+    box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);
+    padding:18px 14px;text-align:center;
+  }
+  #flagship .fl-stat .v{font-family:var(--mono);font-size:1.25rem;font-weight:600;color:var(--accent);margin-bottom:4px}
+  #flagship .fl-stat .k{font-family:var(--mono);font-size:.6rem;color:var(--t2);letter-spacing:.04em;text-transform:uppercase;line-height:1.5}
+  @media(max-width:560px){ #flagship .fl-stats{grid-template-columns:repeat(2,1fr)} }
+
+  #flagship .fl-caption{font-family:var(--mono);font-size:.72rem;color:var(--t3);letter-spacing:.02em;margin-bottom:30px}
+  #flagship .fl-caption b{color:var(--accent);font-weight:500}
+
+  /* ── The orbital orchestrator ── */
+  /* overflow:hidden contains the invisible rotated .spoke bounding boxes
+     (the visible rings + dots sit inside the inscribed circle, so nothing
+     visible is clipped) */
+  #flagship .orch-wrap{display:flex;justify-content:center;align-items:center;overflow:hidden}
+  #flagship .orch{position:relative;width:min(480px,86vw);aspect-ratio:1}
+  #flagship .ring{position:absolute;border-radius:50%;border:1px dashed rgba(216,140,58,.18)}
+  #flagship .ring-1{inset:0;animation:orbSpin 64s linear infinite}
+  #flagship .ring-2{inset:20%;border-color:rgba(216,140,58,.12);animation:orbSpin 46s linear infinite reverse}
+  @keyframes orbSpin{to{transform:rotate(360deg)}}
+
+  #flagship .spoke{position:absolute;inset:0;transform-origin:50% 50%}
+  #flagship .dot{
+    position:absolute;top:-6px;left:50%;width:12px;height:12px;border-radius:50%;
+    background:var(--accent);box-shadow:0 0 12px var(--accent);
+    transform:translateX(-50%);animation:nodePulse 3.2s var(--ease-in-out) infinite;
+  }
+  #flagship .dot.sm{width:8px;height:8px;top:-4px}
+  #flagship .dot.adv{background:var(--green);box-shadow:0 0 12px var(--green)}
+  #flagship .dot.skp{background:var(--red);box-shadow:0 0 12px var(--red)}
+  #flagship .dot.mth{background:var(--blue);box-shadow:0 0 12px var(--blue)}
+  @keyframes nodePulse{0%,100%{opacity:.55;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.3)}}
+  #flagship .spoke:nth-child(2) .dot{animation-delay:.3s}
+  #flagship .spoke:nth-child(3) .dot{animation-delay:.6s}
+  #flagship .spoke:nth-child(4) .dot{animation-delay:.9s}
+  #flagship .spoke:nth-child(5) .dot{animation-delay:1.2s}
+  #flagship .spoke:nth-child(6) .dot{animation-delay:1.5s}
+  #flagship .spoke:nth-child(7) .dot{animation-delay:1.8s}
+  #flagship .spoke:nth-child(8) .dot{animation-delay:2.1s}
+
+  #flagship .orch-core{
+    position:absolute;inset:33%;border-radius:50%;
+    background:radial-gradient(circle at 50% 38%, var(--raised), var(--inset));
+    box-shadow:inset 3px 3px 9px var(--shd),inset -2px -2px 6px var(--shl),0 0 40px rgba(216,140,58,.14);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    z-index:2;
+  }
+  #flagship .orch-core::before{
+    content:'';position:absolute;inset:-10%;border-radius:50%;
+    border:1px solid rgba(216,140,58,.25);animation:coreHalo 3s var(--ease-in-out) infinite;
+  }
+  @keyframes coreHalo{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:.6;transform:scale(1.06)}}
+  #flagship .orch-core .c1{font-family:var(--mono);font-size:.66rem;color:var(--accent);letter-spacing:.06em}
+  #flagship .orch-core .c2{font-family:var(--mono);font-size:.8rem;font-weight:600;color:var(--t1);line-height:1.3;margin-top:2px}
+  #flagship .orch-core .c3{font-family:var(--mono);font-size:.56rem;color:var(--t3);margin-top:6px;letter-spacing:.04em}
+
+  #flagship .fl-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+</style>
+
+<section id="flagship">
+  <div class="fl-text">
+    <div class="fl-eyebrow" data-reveal><span class="rule"></span> One project, in detail</div>
+    <h2 class="fl-title" data-reveal>Encoding a careful causal analysis into <span class="em">a system that doesn&rsquo;t skip steps.</span></h2>
+
+    <div class="fl-name" data-reveal>Causal Inference Agent</div>
+    <p class="fl-sub" data-reveal>
+      Thirteen specialist agents run the steps a careful analyst would &mdash; method
+      selection, confounder identification, sensitivity analysis &mdash; coordinated by a
+      ReAct orchestrator. An advocate, a skeptic, and a methodologist review each result
+      against the actual data and can send it back to be redone. You give it a dataset;
+      it returns a notebook you can run and check.
+    </p>
+
+    <div class="fl-stats" data-reveal>
+      <div class="fl-stat"><div class="v">13</div><div class="k">Specialist agents</div></div>
+      <div class="fl-stat"><div class="v">12</div><div class="k">Causal methods</div></div>
+      <div class="fl-stat"><div class="v">5</div><div class="k">DAG algorithms</div></div>
+      <div class="fl-stat"><div class="v">70%</div><div class="k">Fewer tokens</div></div>
+    </div>
+
+    <div class="fl-caption" data-reveal>
+      Pulls context on demand &middot; reviewed from three perspectives &middot; five layers of failure handling
+    </div>
+
+    <div class="fl-cta" data-reveal>
+      <a href="projects/causal-inference-agent.html" class="btn btn-primary">
+        Read the full write-up <span class="arrow">&rarr;</span>
+      </a>
+      <a href="https://github.com/Axionis47/causal-inference-agent" target="_blank" rel="noopener" class="btn">Code</a>
+    </div>
+  </div>
+
+  <div class="orch-wrap" data-reveal>
+    <div class="orch" aria-hidden="true">
+      <div class="ring ring-1">
+        <div class="spoke" style="transform:rotate(0deg)"><span class="dot"></span></div>
+        <div class="spoke" style="transform:rotate(45deg)"><span class="dot adv"></span></div>
+        <div class="spoke" style="transform:rotate(90deg)"><span class="dot"></span></div>
+        <div class="spoke" style="transform:rotate(135deg)"><span class="dot skp"></span></div>
+        <div class="spoke" style="transform:rotate(180deg)"><span class="dot"></span></div>
+        <div class="spoke" style="transform:rotate(225deg)"><span class="dot mth"></span></div>
+        <div class="spoke" style="transform:rotate(270deg)"><span class="dot"></span></div>
+        <div class="spoke" style="transform:rotate(315deg)"><span class="dot"></span></div>
+      </div>
+      <div class="ring ring-2">
+        <div class="spoke" style="transform:rotate(0deg)"><span class="dot sm"></span></div>
+        <div class="spoke" style="transform:rotate(72deg)"><span class="dot sm"></span></div>
+        <div class="spoke" style="transform:rotate(144deg)"><span class="dot sm"></span></div>
+        <div class="spoke" style="transform:rotate(216deg)"><span class="dot sm"></span></div>
+        <div class="spoke" style="transform:rotate(288deg)"><span class="dot sm"></span></div>
+      </div>
+      <div class="orch-core">
+        <div class="c1">ReAct</div>
+        <div class="c2">Orchestrator</div>
+        <div class="c3">13 specialists</div>
+      </div>
+    </div>
+  </div>
+</section>

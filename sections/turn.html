@@ -1,0 +1,62 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION: turn — the curiosity gap that bridges into the flagship.
+     Line-mask reveals (data-reveal-line) fire as the section enters view.
+     ═══════════════════════════════════════════════════════════════ -->
+<style>
+  #turn{
+    position:relative;
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:clamp(90px,20vh,220px) var(--gutter);
+  }
+  #turn .turn-eyebrow{
+    font-family:var(--mono);font-size:var(--fs-meta);font-weight:600;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+    opacity:.85;margin-bottom:28px;
+  }
+  #turn .turn-statement{
+    font-family:var(--sans);
+    font-size:clamp(1.6rem,3.6vw,2.7rem);
+    font-weight:500;
+    line-height:1.24;
+    letter-spacing:-.02em;
+    color:var(--t2);
+    max-width:20ch;
+  }
+  @media(min-width:900px){ #turn .turn-statement{max-width:26ch} }
+  #turn .line-mask{display:block;overflow:hidden;padding-bottom:.06em}
+  #turn .turn-statement .hot{color:var(--t1)}
+  #turn .turn-statement .punch{color:var(--accent);font-family:var(--serif);font-style:italic;font-weight:400}
+
+  #turn .turn-lead{
+    font-family:var(--sans);font-size:var(--fs-lead);font-weight:400;
+    color:var(--t2);line-height:1.75;max-width:54ch;margin-top:40px;
+  }
+  #turn .turn-lead b{color:var(--t1);font-weight:500}
+  #turn .turn-cta{margin-top:36px}
+</style>
+
+<section id="turn">
+  <div class="turn-eyebrow" data-reveal>Why I built it</div>
+
+  <div class="turn-statement">
+    <span class="line-mask"><span data-reveal-line>Causal questions are easy to</span></span>
+    <span class="line-mask"><span data-reveal-line>answer badly. Use the wrong method</span></span>
+    <span class="line-mask"><span data-reveal-line>and you still get a clean coefficient,</span></span>
+    <span class="line-mask"><span data-reveal-line>a p-value, a confidence interval.</span></span>
+    <span class="line-mask"><span data-reveal-line>Nothing in the output says <span class="punch">it&rsquo;s wrong.</span></span></span>
+  </div>
+
+  <p class="turn-lead" data-reveal>
+    A trained researcher would draw a DAG, check the assumptions, and run a
+    sensitivity analysis before trusting an estimate. I wanted to see how much of
+    that care could be encoded in a system that doesn&rsquo;t skip steps &mdash; so I
+    built one, and had it check its own work.
+  </p>
+
+  <div class="turn-cta" data-reveal>
+    <a href="projects/causal-inference-agent.html" class="btn btn-primary">
+      The causal inference agent <span class="arrow">&rarr;</span>
+    </a>
+  </div>
+</section>

@@ -1,0 +1,54 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION: education — compact timeline.
+     ═══════════════════════════════════════════════════════════════ -->
+<style>
+  #education{max-width:var(--maxw);margin:0 auto;padding:clamp(50px,6vh,90px) var(--gutter) clamp(70px,10vh,120px)}
+  #education .e-eyebrow{
+    font-family:var(--mono);font-size:var(--fs-meta);font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);opacity:.85;margin-bottom:32px;
+  }
+  #education .tl{position:relative;padding-left:30px}
+  #education .tl::before{content:'';position:absolute;left:6px;top:10px;bottom:10px;width:1px;background:var(--t3);opacity:.14}
+  #education .ec{position:relative;display:grid;grid-template-columns:44px 1fr;gap:18px;align-items:center;
+    padding:22px 0;}
+  #education .ec::before{content:'';position:absolute;left:-29px;top:32px;width:9px;height:9px;border-radius:50%;
+    background:var(--accent);opacity:.6;box-shadow:0 0 8px var(--accent)}
+  #education .logo{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.04);
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+    box-shadow:inset 2px 2px 5px var(--shd),inset -1px -1px 3px var(--shl)}
+  #education .logo img{width:30px;height:30px;object-fit:contain}
+  #education .year{font-family:var(--mono);font-size:.68rem;color:var(--t3);letter-spacing:.03em;margin-bottom:4px}
+  #education .school{font-family:var(--mono);font-size:.92rem;font-weight:500;color:var(--accent);margin-bottom:2px}
+  #education .degree{font-family:var(--mono);font-size:.8rem;color:var(--t1)}
+  @media(max-width:560px){ #education .ec{grid-template-columns:1fr} #education .logo{display:none} }
+</style>
+
+<section id="education">
+  <div class="e-eyebrow" data-reveal>Education</div>
+  <div class="tl">
+    <div class="ec" data-reveal>
+      <div class="logo"><img src="assets/princeton-logo.png" alt="Princeton University"></div>
+      <div>
+        <div class="year">2024 &ndash; 2025</div>
+        <div class="school">Princeton University</div>
+        <div class="degree">Exchange Student</div>
+      </div>
+    </div>
+    <div class="ec" data-reveal>
+      <div class="logo"><img src="assets/rutgers-logo.png" alt="Rutgers University"></div>
+      <div>
+        <div class="year">Jan 2024 &ndash; Dec 2025</div>
+        <div class="school">Rutgers University</div>
+        <div class="degree">M.S. Statistics &amp; Data Science</div>
+      </div>
+    </div>
+    <div class="ec" data-reveal>
+      <div class="logo"><img src="assets/bits-pilani-logo.png" alt="BITS Pilani"></div>
+      <div>
+        <div class="year">2019 &ndash; 2023</div>
+        <div class="school">BITS Pilani</div>
+        <div class="degree">B.E. Electrical &amp; Electronics Engineering</div>
+      </div>
+    </div>
+  </div>
+</section>

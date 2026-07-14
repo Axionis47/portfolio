@@ -1,0 +1,64 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION: close — the resolution. Cosmos is most settled here.
+     One quiet quote, one clear call to action, the footer.
+     ═══════════════════════════════════════════════════════════════ -->
+<style>
+  #contact{max-width:var(--maxw);margin:0 auto;padding:clamp(60px,10vh,120px) var(--gutter) 40px;text-align:center}
+  #contact .quote{max-width:60ch;margin:0 auto clamp(70px,12vh,130px)}
+  #contact .quote .q{
+    font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(1.15rem,2.4vw,1.6rem);
+    color:var(--t2);line-height:1.7;
+  }
+  #contact .quote .line-mask{display:block;overflow:hidden;padding-bottom:.05em}
+  #contact .quote .attr{font-family:var(--mono);font-size:.66rem;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-top:22px}
+
+  #contact .c-eyebrow{font-family:var(--mono);font-size:var(--fs-meta);font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);opacity:.85;margin-bottom:20px}
+  #contact .c-h{
+    font-family:var(--sans);font-size:clamp(2rem,5vw,3.4rem);font-weight:500;letter-spacing:-.03em;
+    color:var(--t1);line-height:1.1;max-width:18ch;margin:0 auto;
+  }
+  #contact .c-h .em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
+  #contact .c-sub{font-family:var(--sans);font-size:var(--fs-lead);color:var(--t2);line-height:1.7;max-width:52ch;margin:26px auto 40px}
+  #contact .c-cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+
+  footer{border-top:1px solid rgba(255,255,255,.04);margin-top:clamp(70px,12vh,130px);padding-top:34px}
+  footer .ft{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+  footer .ft-c{font-family:var(--mono);font-size:.7rem;color:var(--t3)}
+  footer .ft-l{display:flex;gap:18px}
+  footer .ft-l a{font-family:var(--mono);font-size:.74rem;color:var(--t3)}
+  footer .ft-l a:hover{color:var(--accent)}
+</style>
+
+<section id="contact">
+  <div class="quote">
+    <div class="q">
+      <span class="line-mask"><span data-reveal-line>&ldquo;The first principle is that you must not fool yourself</span></span>
+      <span class="line-mask"><span data-reveal-line>&mdash; and you are the easiest person to fool.&rdquo;</span></span>
+    </div>
+    <div class="attr" data-reveal>Richard Feynman</div>
+  </div>
+
+  <div class="c-eyebrow" data-reveal>Contact</div>
+  <h2 class="c-h" data-reveal>I&rsquo;m looking for my next <span class="em">machine learning role.</span></h2>
+  <p class="c-sub" data-reveal>
+    Classical modeling or LLM systems &mdash; I care most about teams that want to get
+    it right. If that sounds like yours, I&rsquo;d be glad to talk.
+  </p>
+  <div class="c-cta" data-reveal>
+    <a href="mailto:sidsy04@gmail.com" class="btn btn-primary">Get in touch <span class="arrow">&rarr;</span></a>
+    <a href="assets/resume.pdf" target="_blank" rel="noopener" class="btn">Resume</a>
+    <a href="https://github.com/Axionis47" target="_blank" rel="noopener" class="btn">GitHub</a>
+  </div>
+
+  <footer>
+    <div class="ft">
+      <div class="ft-c">&copy; 2026 Sai Siddharth Yalamanchili</div>
+      <div class="ft-l">
+        <a href="https://github.com/Axionis47" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/siddharth-yalamanchili/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="mailto:sidsy04@gmail.com">Contact</a>
+      </div>
+    </div>
+  </footer>
+</section>
