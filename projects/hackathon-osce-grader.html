@@ -94,156 +94,512 @@
     .results{grid-template-columns:repeat(2,1fr)}
     .dia-row{flex-direction:column;gap:0}
     .dia-arrow{transform:rotate(90deg);padding:6px 0}
-    .graph-canvas-wrap canvas{height:320px}
     .ft{flex-direction:column;gap:10px;text-align:center}
   }
+
+  /* ── Subtitle beneath proj-title ── */
+  .proj-subtitle{font-family:var(--mono);font-size:.84rem;color:var(--t3);margin-bottom:2.5rem;line-height:1.8}
+
+  /* ── The harness diagram (Chapter 1) ── */
+  .harness-frame{position:relative;background:var(--raised);border:1px dashed rgba(216,140,58,0.28);border-radius:var(--r);box-shadow:6px 6px 16px var(--shd),-3px -3px 9px var(--shl);padding:48px 34px 34px;margin:28px 0 20px}
+  .harness-label{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--raised);padding:2px 16px;font-family:var(--mono);font-size:.68rem;font-weight:600;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+  .harness-flow{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;row-gap:20px}
+  .harness-inputs{display:flex;flex-direction:column;gap:12px}
+  .harness-box{background:var(--inset);border-radius:10px;padding:14px 18px;text-align:center;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);min-width:128px}
+  .harness-box-title{font-family:var(--mono);font-size:.74rem;font-weight:500;color:var(--t1);margin-bottom:4px;letter-spacing:.01em}
+  .harness-box-sub{font-family:var(--mono);font-size:.64rem;color:var(--t2);line-height:1.6}
+  .harness-input{min-width:150px;padding:12px 16px}
+  .harness-input .harness-box-title{font-size:.7rem}
+  .harness-arrow{font-family:var(--mono);font-size:1rem;font-weight:500;color:var(--accent);opacity:.5;padding:0 16px;flex-shrink:0}
+  .harness-model-wrap{display:flex;flex-direction:column;align-items:center;gap:9px;flex-shrink:0}
+  .harness-model{background:var(--inset);border-radius:8px;padding:9px 14px;text-align:center;box-shadow:inset 3px 3px 9px var(--shd),inset -2px -2px 5px var(--shl);min-width:74px}
+  .harness-model-title{font-family:var(--mono);font-size:.62rem;font-weight:500;color:var(--t1);line-height:1.4}
+  .harness-model-tag{font-family:var(--mono);font-size:.56rem;color:var(--t3);margin-top:2px}
+  .harness-model-caption{font-family:var(--mono);font-size:.6rem;color:var(--t3);letter-spacing:.03em;white-space:nowrap}
+  @media(max-width:1100px){
+    .harness-frame{padding:44px 20px 28px}
+    .harness-flow{flex-direction:column;gap:16px}
+    .harness-arrow{transform:rotate(90deg);padding:8px 0}
+  }
+
+  /* ── Comparison tables ── */
+  .rtable{width:100%;border-collapse:collapse;margin:16px 0}
+  .rtable th{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .rtable td{font-family:var(--mono);font-size:.76rem;color:var(--t2);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.02);vertical-align:top;line-height:1.8}
+  .rtable tr.best td{color:var(--accent);font-weight:500}
+
+  /* ── Worked-example judgment cards ── */
+  .example-output{background:var(--inset);border-radius:10px;padding:20px 22px;box-shadow:inset 2px 2px 6px var(--shd),inset -1px -1px 3px var(--shl);font-family:var(--mono);font-size:.78rem;color:var(--t2);line-height:2;text-align:left;margin:16px 0}
+  .example-output .eo-header{color:var(--t3);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
+  .example-output.eo-good{border-left:2px solid rgba(90,154,90,0.35)}
+  .example-output.eo-bad{border-left:2px solid rgba(154,90,90,0.35)}
+  .json-block{margin:0;white-space:pre-wrap;word-break:break-word;font-family:var(--mono);font-size:.8rem;line-height:1.9;color:var(--t2)}
+  .json-block .jk{color:var(--accent)}
+  .json-block .jv{color:var(--t1)}
+  .json-block .jv-sat{color:var(--green);font-weight:500}
+  .json-block .jv-notsat{color:var(--red);font-weight:500}
+  .json-block .jp{color:var(--t3)}
+  .example-caption{font-family:var(--mono);font-size:.76rem;color:var(--t3);text-align:center;margin-top:14px;line-height:1.7}
+
+  /* ── Tables scroll inside their card on narrow screens instead of widening the page ── */
+  .dia{overflow-x:auto}
+  @media(max-width:768px){
+    .rtable{min-width:520px}
+  }
+
+  /* ── Static diagram additions ── */
+  .dia-arrow-down{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--accent);opacity:.5;text-align:center;padding:8px 0}
+  .dia-good{border:1px solid rgba(90,154,90,0.2)}
+  .dia-code-label{font-family:var(--mono);font-size:.68rem;color:var(--t3);text-align:center;margin:14px 0 8px;letter-spacing:.02em}
 </style>
 </head>
 <body>
 
 <nav>
   <a href="../" class="logo">sai.</a>
-  <a href="../#projects" class="back">&larr; projects</a>
+  <a href="../#work" class="back">&larr; projects</a>
 </nav>
 
 <main>
 
-  <div class="proj-label fade">Hackathon &middot; Winner</div>
-  <div class="proj-title fade">RU Health Hack 3: Citation-Gated OSCE Grader</div>
-  <div class="divider fade"></div>
+<!-- ═══════════════════════════════════════
+     TITLE BLOCK
+     ═══════════════════════════════════════ -->
+<div class="proj-label fade">Hackathon &middot; Winner</div>
+<div class="proj-title fade">RU Health Hack 3: Citation-Gated OSCE Grader</div>
+<div class="proj-subtitle fade">The model is the only untrusted component in the system. Every judgment must cite one verbatim transcript line, and the citation is checked in code.</div>
+<div class="divider fade"></div>
 
-  <div class="brief fade">
-    <div class="brief-label">Engineering Brief</div>
-    <div class="brief-grid">
-      <span class="brief-key">Event</span>
-      <span class="brief-val">RU Health Hack 3, 9-person team lead</span>
-      <span class="brief-key">Problem</span>
-      <span class="brief-val">OSCE grading is manual, slow, and inconsistent across evaluators. No evidence trail for grade disputes.</span>
-      <span class="brief-key">Approach</span>
-      <span class="brief-val">6-step async evaluation pipeline where every LLM judgment must cite exact transcript quotes with line numbers. The LLM is the language expert, never the medical expert.</span>
-      <span class="brief-key">Result</span>
-      <span class="brief-val">Citation-gated grading system with 3-level grounding architecture. Zero hallucinated assessments by design. Hackathon winner.</span>
-      <span class="brief-key">Stack</span>
-      <span class="brief-val">Gemini 2.0 Flash, FastAPI, Streamlit, aiosqlite, Pydantic</span>
+<!-- ═══════════════════════════════════════
+     ENGINEERING BRIEF
+     ═══════════════════════════════════════ -->
+<div class="brief fade">
+  <div class="brief-label">Engineering Brief</div>
+  <div class="brief-grid">
+    <span class="brief-key">Event</span>
+    <span class="brief-val">RU Health Hack 3, 9-person team, author as team lead, winner.</span>
+    <span class="brief-key">Problem</span>
+    <span class="brief-val">OSCE grading is slow, inconsistent across evaluators, and leaves no evidence trail when a student disputes a score.</span>
+    <span class="brief-key">Approach</span>
+    <span class="brief-val">A per-section, fully-cited design: segment the transcript once, then grade each section or teacher category against only its matched or full-transcript evidence. Every judgment is gated behind three layers, a prompt contract, constrained decoding plus field validation, and a code-level quote verification against the transcript.</span>
+    <span class="brief-key">Result</span>
+    <span class="brief-val">~18 model calls per evaluation, down from ~150 in the original build. Every cited quote is verified against the transcript in code.</span>
+    <span class="brief-key">Why it matters</span>
+    <span class="brief-val">Wrong feedback shapes how a future doctor practices. Every failure in this system traces back to a human decision, not a model guess.</span>
+    <span class="brief-key">Stack</span>
+    <span class="brief-val">Gemini 2.5 Flash, Vertex AI, FastAPI, Streamlit, aiosqlite, asyncio, Pydantic, Python</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     STATS ROW
+     ═══════════════════════════════════════ -->
+<div class="results fade">
+  <div class="stat">
+    <div class="stat-val">18</div>
+    <div class="stat-label">Model calls per evaluation</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">3</div>
+    <div class="stat-label">Citation gate layers</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">1</div>
+    <div class="stat-label">Verbatim quote per judgment</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">0.0</div>
+    <div class="stat-label">Temperature, all calls</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CHAPTER 1: THE LLM IS NOT THE DOCTOR
+     ═══════════════════════════════════════ -->
+<div class="sec fade">Chapter 1. The LLM is not the doctor</div>
+<div class="prose fade">
+  <p>An OSCE, an objective structured clinical exam, puts a medical student in a room with a standardized patient and scores the whole encounter: the history taken, the exam performed, the diagnosis reasoned through, the plan explained back to the patient. Grading it by hand is slow, and it drifts. Two evaluators watching the identical encounter disagree about whether a question got asked at all. Once the encounter ends, the record of what happened is an evaluator's memory and a page of handwritten notes. A student who disputes the score has nothing to point to, and neither does the evaluator.</p>
+  <p>The obvious fix is wrong. Point a large language model at the transcript and ask it to grade, and the model answers with everything it already believes about medicine, invited or not. Handed a gap in the history, it fills the gap with training-data medicine nobody in the room said. Handed an ambiguous answer, it reasons forward to a diagnosis the student never reached and grades as though the student reached it. The grade that comes back is confident. Confidence is not the same thing as evidence.</p>
+  <p>The separation we built instead: <strong>the LLM is the language expert, never the medical expert.</strong> A clinician writes the rubric, and the rubric carries every piece of clinical knowledge in the system: which questions matter, which diagnoses to expect, which can't-miss conditions have to surface somewhere in the encounter. The model answers one narrow question, over and over: does this piece of transcript text satisfy this one rubric criterion, and if so, cite the line. We treat the model as a component that will sometimes lie with total confidence, so the harness is built so a lie cannot become a grade. The quote it cites is checked against the transcript by code, not taken on faith.</p>
+</div>
+
+<div class="harness-frame fade">
+  <div class="harness-label">The Harness</div>
+  <div class="harness-flow">
+    <div class="harness-inputs">
+      <div class="harness-box harness-input">
+        <div class="harness-box-title">Rubric Contract</div>
+        <div class="harness-box-sub">clinician YAML</div>
+      </div>
+      <div class="harness-box harness-input">
+        <div class="harness-box-title">Scope Walls</div>
+        <div class="harness-box-sub">matched segment only</div>
+      </div>
+    </div>
+    <div class="harness-arrow">&rarr;</div>
+    <div class="harness-model-wrap">
+      <div class="harness-model">
+        <div class="harness-model-title">Gemini<br>2.5 Flash</div>
+        <div class="harness-model-tag">replaceable</div>
+      </div>
+      <div class="harness-model-caption">swappable component</div>
+    </div>
+    <div class="harness-arrow">&rarr;</div>
+    <div class="harness-box">
+      <div class="harness-box-title">Field Gate</div>
+      <div class="harness-box-sub">_validate_grounding_fields()</div>
+    </div>
+    <div class="harness-arrow">&rarr;</div>
+    <div class="harness-box">
+      <div class="harness-box-title">Quote Verifier</div>
+      <div class="harness-box-sub">checked against transcript</div>
+    </div>
+    <div class="harness-arrow">&rarr;</div>
+    <div class="harness-box">
+      <div class="harness-box-title">Synthesis Firewall</div>
+      <div class="harness-box-sub">narrative never sees transcript</div>
     </div>
   </div>
+</div>
 
-  <div class="results fade">
-    <div class="stat">
-      <div class="stat-val">6</div>
-      <div class="stat-label">Pipeline steps</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">3</div>
-      <div class="stat-label">Grounding levels</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">0.0</div>
-      <div class="stat-label">Temperature</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">12</div>
-      <div class="stat-label">OSCE sections</div>
-    </div>
+<!-- ═══════════════════════════════════════
+     CHAPTER 2: HOW MUCH AGENCY DOES THE MODEL GET
+     ═══════════════════════════════════════ -->
+<div class="sec fade">Chapter 2. How much agency does the model get</div>
+<div class="prose fade">
+  <p>Before a line of grading code existed, the team argued about how much clinical agency the model should get. Three options sat on the table. We rejected two of them.</p>
+</div>
+
+<div class="dia fade">
+  <div class="dia-title">Agency deliberation</div>
+  <table class="rtable">
+    <tr><th>Option</th><th>What the model decides</th><th>Verdict</th></tr>
+    <tr>
+      <td>Full agency</td>
+      <td>Everything: what to ask, what is correct, what matters</td>
+      <td>Rejected. Frozen knowledge, confident hallucination, wrong grades invisible until disputed.</td>
+    </tr>
+    <tr>
+      <td>Retrieval-grounded</td>
+      <td>Grades from a medical-literature knowledge base</td>
+      <td>Rejected. Months of work, and partial grounding is worse than none.</td>
+    </tr>
+    <tr class="best">
+      <td>Zero clinical agency</td>
+      <td>Nothing clinical: only whether transcript text satisfies a rubric criterion</td>
+      <td>Chosen. Every failure traceable to a human decision.</td>
+    </tr>
+  </table>
+</div>
+
+<div class="prose fade">
+  <p>The tradeoff sits underneath the chosen row. The system is only as good as the rubric a clinician writes: a vague item still grades badly even with a perfect harness wrapped around it. But that failure mode is <strong>visible and fixable</strong>. A teacher opens a YAML file, spots the gap, and edits it. A model quietly inventing clinical judgment fails in a way nobody can see until a student disputes a grade, and that is neither visible nor fixable in the same way. What actually makes a rubric good enough to grade against gets its own chapter.</p>
+</div>
+<div class="sec fade">Chapter 3. Three steps, eighteen calls</div>
+
+<div class="prose fade">
+  <p>The pipeline is three steps, and only two of them touch the model at all. Step 1 is a single call: the transcript arrives with every line numbered in code, and the model's only job is to return line ranges for each of the 12 structural sections, nothing else. It never writes the segment text back; the harness reconstructs each segment from the line map the model returns, so a garbled word inside a range can't corrupt what the grader actually reads. Any section ID the model invents that isn't one of the 12 gets dropped, with a warning logged, not silently accepted. Step 2 is where the real work happens, and it happens all at once: one call per section, all of it under a single nested <code>asyncio.gather</code>. The structural sections and the teacher sections each gather internally, and the outer call gathers those two gathers, so eighteen calls in flight cost about the same wall-clock time as one. The 12 structural sections each see only their matched segment, and if a student circles back to a topic later in the encounter, every occurrence is aggregated together under its true starting line number, not just the first one found. The teacher sections, one per checklist category plus investigations, management, and a synthesized Diagnosis &amp; Safety section, each see the full numbered transcript instead, because a case-specific behavior like ordering a stat ECG can surface anywhere in the encounter, not only in the section named for it. Step 3 touches the model exactly once more, for the narrative. Everything else in it is arithmetic.</p>
+  <p>A section with no matched segment never reaches the model at all. If Step 1 can't find History of Present Illness anywhere in the transcript, its items are marked <code>not_satisfied</code> in code, reasoning fixed to "Section not found in transcript," and that's the entire cost: no tokens, no latency, no chance of the model fishing for evidence in a segment that was never the right one. Retries only cover failures that are actually transient. A JSON parse failure or a dropped connection gets up to three attempts with exponential backoff, one second then two. A contract violation, a response missing a required grounding field, never gets a second try: it's a defect in that response, not a network hiccup, and retrying it would just spend tokens rediscovering the same defect.</p>
+</div>
+
+<div class="prose fade">
+  <p>I chose per-section calls over per-item calls because the original build made one call per rubric item, roughly 150 of them per evaluation, and batching a section's items into a single call cuts that to about 18 with no loss the schema can't catch: every item in a batched section still returns its own <code>judgment</code>, its own <code>evidence_quote</code>, its own <code>reasoning</code>, so nothing about per-item accountability is lost by sharing a prompt. <code>asyncio.gather</code> keeps wall-clock time flat under either design, so the drop from 150 to 18 is pure cost saved, not a latency tradeoff accepted.</p>
+  <p>I chose to let sections fail closed rather than search harder for them. A section the segmenter can't find gets marked <code>not_satisfied</code> without ever reaching the model, which is cheaper, but the real reason is honesty. A missing section is genuinely missing, and the harness would rather say so in code than send the model rummaging through the wrong segment looking for evidence that was never going to be there.</p>
+</div>
+
+<div class="dia fade">
+  <div class="dia-title">Evaluation pipeline</div>
+  <div class="dia-row">
+    <div class="dia-box"><div class="dia-box-title">Transcript</div><div class="dia-box-sub">Line-numbered<br>in code</div></div>
+    <div class="dia-arrow">&rarr;</div>
+    <div class="dia-box"><div class="dia-box-title">Step 1. Segment</div><div class="dia-box-sub">1 model call<br>returns line ranges</div></div>
   </div>
-
-  <!-- Chapter 1 -->
-  <div class="sec fade">Chapter 1. The LLM is not the doctor</div>
-  <div class="prose fade">
-    <p>OSCE grading is slow and inconsistent. Two evaluators watching the same student encounter can disagree on whether a question was asked, whether the reasoning was sound, whether the closure was adequate. There is no evidence trail. When a student disputes a grade, the evaluator reconstructs from memory.</p>
-    <p>The obvious move is to point an LLM at the transcript and ask it to grade the student. That is the wrong move. The LLM has medical knowledge from training data, and it will use that knowledge to fill in gaps. It will infer that the student probably asked about family history even if the transcript shows they did not. It will hallucinate clinical reasoning that sounds plausible but was never spoken.</p>
-    <p>The separation that made this system work, and that won the hackathon: <strong>the LLM is the language expert, not the medical expert.</strong> The rubric carries all clinical knowledge. What questions matter, what diagnoses to consider, what order is correct. The LLM's only job is text matching: does this transcript segment satisfy this rubric criterion? If yes, cite the exact lines. If no, say not satisfied. The LLM never decides what the right clinical answer is. If the rubric is wrong, the grading is wrong, but the LLM never invents clinical judgment.</p>
-    <p>This means every single grade in the system traces back to specific transcript lines. A teacher can click on any "not satisfied" judgment and see exactly which lines the system looked at, what it found (or did not find), and why it made the call. No black box. No trust-me assessments.</p>
+  <div class="dia-arrow-down">&darr;</div>
+  <div class="dia-code-label">asyncio.gather</div>
+  <div class="dia-row" style="gap:10px">
+    <div class="dia-box"><div class="dia-box-title">12 structural sections</div><div class="dia-box-sub">Matched segment<br>only</div></div>
+    <div class="dia-box"><div class="dia-box-title">Teacher sections</div><div class="dia-box-sub">Full transcript</div></div>
+    <div class="dia-box"><div class="dia-box-title">Diagnosis &amp; Safety</div><div class="dia-box-sub">Synthesized from<br>differential + can't-miss</div></div>
   </div>
-
-  <!-- Chapter 2 -->
-  <div class="sec fade">Chapter 2. How much agency does the model get</div>
-  <div class="prose fade">
-    <p>Before writing any code, we sat down and debated how much clinical agency the LLM should have. Three options were on the table.</p>
-    <p><strong>Option A: Full agency.</strong> Let the model use its medical knowledge to grade. It decides what the student should have asked, what diagnoses are correct, what order makes sense. The problem is obvious: the model's medical knowledge is frozen at training time, unverifiable at runtime, and hallucinates with confidence. There is no way to audit whether the model's clinical reasoning is correct for a specific case. When it is wrong, nobody knows until a student disputes a grade and someone manually checks.</p>
-    <p><strong>Option B: Retrieval-grounded agency.</strong> Build a retrieval system over medical literature, clinical guidelines, and textbooks. The model grades by pulling from a verified knowledge base. This is the principled approach, but we had a hackathon timeframe. Building a reliable medical RAG system that does not miss critical information or surface irrelevant guidelines is months of work. Partial grounding is worse than no grounding, because it creates false confidence. A system that cites three out of five relevant guidelines looks authoritative but is still incomplete, and you cannot tell which cases have gaps.</p>
-    <p><strong>Option C: Zero clinical agency.</strong> Strip the model of all medical judgment. The rubric is the single source of clinical truth. A human clinician writes the rubric: what questions matter, what diagnoses to expect, what order to follow. The model only matches transcript text against rubric criteria and cites evidence. It never decides what the right clinical answer is.</p>
-    <p>We chose Option C. The tradeoff is real: the system is only as good as the rubric. A bad rubric produces bad grades. But that failure mode is <strong>visible and fixable</strong>. A teacher can read the rubric, spot the gap, and update it. An LLM hallucinating clinical judgment is invisible and unfixable at runtime. In a domain where wrong feedback can shape how a future doctor practices, we wanted every failure to be traceable to a human decision, not a model guess.</p>
+  <div class="dia-arrow-down">&darr;</div>
+  <div class="dia-row">
+    <div class="dia-box dia-good"><div class="dia-box-title">Step 3. Report</div><div class="dia-box-sub">0.4 / 0.6 blend in code<br>+ 1 narrative call, never sees transcript</div></div>
   </div>
+</div>
 
-  <!-- Chapter 3 -->
-  <div class="sec fade">Chapter 3. The pipeline</div>
-  <div class="prose fade">
-    <p>The evaluation runs in 6 steps. Step 1 segments the raw transcript into 12 canonical OSCE sections (Introduction, Chief Complaint, History of Present Illness, Review of Systems, Past Medical History, Transition, Physical Exam, Differential Diagnosis, Investigations, Diagnosis Communication, Management Plan, Closure). Each transcript line maps to exactly one section. Lines that do not fit any section are flagged as unmatched.</p>
-    <p>Step 2 analyzes section order using a longest-common-subsequence algorithm in pure Python. No LLM call. Missing sections get a 0.15 penalty, out-of-order sections get 0.08, repeated sections get 0.03. These weights are tunable without prompt engineering.</p>
-    <p>Steps 3, 4, and 5 run concurrently via <code>asyncio.gather</code>. Step 3 grades structural rubric items against their matched segment only. Step 4 grades teacher-specific checklist items against the full transcript (because case-specific behaviors can appear in any section). Step 5 evaluates clinical reasoning: differential coverage, reasoning chain quality, and whether the approach is hypothesis-driven or shotgun. Within each step, individual item evaluations also run concurrently, so the system issues dozens of parallel LLM calls per evaluation.</p>
-    <p>Step 6 computes global ratings and assembles the report. The overall score is a weighted combination: structural items (30%), teacher rubric (40%), reasoning (30%). Weights live in <code>config.yaml</code>, not in code.</p>
+<div class="graph-canvas-wrap fade">
+  <canvas id="pipeline-canvas" role="img" aria-label="Animated diagram of the three-step OSCE grading pipeline. Step 1 makes one model call to segment the line-numbered transcript into sections, returning line ranges and flagging any section it cannot find. Step 2 fires one call per section concurrently under asyncio.gather: structural sections see only their matched segment, teacher sections see the full transcript, and the section with no matched segment resolves instantly with no call and a not-satisfied judgment. Step 3 blends the structural and teacher scores in code at 0.4 and 0.6 and adds one narrative call that reads only the graded report, never the transcript."></canvas>
+</div>
+
+<!-- Chapter 4 -->
+<div class="sec fade">Chapter 4. The life of one section</div>
+<div class="prose fade">
+  <p>The fastest way to understand the harness is to follow one section through it, from a raw line in the transcript to a number sitting in the final report.</p>
+</div>
+
+<div class="pipeline fade">
+  <div class="pipe-step">
+    <div class="pipe-num">01</div>
+    <div class="pipe-title">The transcript gets line numbers</div>
+    <div class="pipe-desc">Every line is prefixed with its number in code, "14: When did the pain start?", before anything reaches a model. Citations later in the pipeline point back at these numbers, so the numbering has to exist before grading starts, not after.</div>
   </div>
-
-  <div class="prose fade">
-    <p>I chose per-item evaluation over batch evaluation because sending all items in one prompt causes LLMs to lose focus on later items, a single parsing failure would lose all results, and individual calls run concurrently via <code>asyncio.gather</code> so wall-clock time is roughly the same as one long call. Each <code>ItemGradeResult</code> is self-contained and independently auditable.</p>
-    <p>I chose pure-code order analysis (LCS algorithm) over an LLM call because order comparison is deterministic and well-defined. Using an LLM would add latency, cost, and non-determinism for a task that has an exact algorithmic solution. The penalty weights are tunable without retraining.</p>
+  <div class="pipe-step">
+    <div class="pipe-num">02</div>
+    <div class="pipe-title">Segmentation returns ranges, not text</div>
+    <div class="pipe-desc">One model call maps the numbered transcript to the 12 structural sections and returns only line ranges plus a list of unmatched lines, never the segment text itself. The ranges are enough: the harness rebuilds each segment from its own line map, so the citation for <code>S3.1a</code> will point at a line the model never rewrote.</div>
   </div>
-
-  <div class="graph-canvas-wrap fade" style="padding:0">
-    <canvas id="pipeline-canvas" style="height:440px"></canvas>
+  <div class="pipe-step">
+    <div class="pipe-num">03</div>
+    <div class="pipe-title">One call grades a whole section</div>
+    <div class="pipe-desc"><code>S3_HPI</code>, History of Present Illness, carries 10 checklist sub-items, <code>S3.1a</code> through <code>S3.1j</code>. All 10 go to the model in a single call, and that call sees only the matched HPI segment, nothing else in the transcript. Teacher sections, the case's checklist categories, investigations, management, and a synthesized Diagnosis &amp; Safety section, each get the full transcript instead, because case-specific behavior can turn up anywhere in the encounter. Every section call, structural and teacher alike, runs concurrently under <code>asyncio.gather</code>.</div>
   </div>
-
-  <!-- Chapter 4 -->
-  <div class="sec fade">Chapter 4. Three levels of grounding</div>
-  <div class="prose fade">
-    <p>Grounding is enforced at three levels. At the prompt level, every evaluation prompt includes explicit instructions: cite exact transcript quotes, include line numbers, do not fabricate evidence, return "not_satisfied" when no evidence exists. At the schema level, the Vertex AI JSON response mode enforces that every response includes <code>evidence_quotes</code>, <code>evidence_locations</code>, and <code>reasoning</code> as required fields. The <code>_validate_grounding_fields()</code> method rejects responses missing these fields. At the scope level, structural rubric items are evaluated against only their matched transcript segment, not the full transcript. A question about the introduction is evaluated based on what happened during the introduction, not something the student said during the physical exam.</p>
-    <p>Global ratings use a second layer of grounding. The global rater never sees the raw transcript. Instead, it receives pre-collected evidence from item grades: the judgments, quotes, and reasoning the system already produced. It rates three dimensions (Communication, Clinical Reasoning, Organization) on a 1-5 Likert scale, with each rating justifying itself by referencing specific item IDs. This two-stage approach means global ratings are grounded in grounded evidence. A chain of trust from transcript text to final rating.</p>
+  <div class="pipe-step">
+    <div class="pipe-num">04</div>
+    <div class="pipe-title">Every item comes back cited or empty</div>
+    <div class="pipe-desc">Each item in the response carries <code>judgment</code>, <code>evidence_quote</code>, <code>evidence_location</code>, and <code>reasoning</code>. The contract is fabrication-free: no evidence in the transcript means empty strings in both evidence fields and a <code>not_satisfied</code> judgment, never a guess dressed up as a finding.</div>
   </div>
-
-  <div class="prose fade">
-    <p>I chose to treat the LLM as a language expert, not a medical expert, because clinical knowledge changes and models hallucinate. The rubric encodes all medical judgment: what questions matter, what diagnoses to consider, what order is correct. The LLM's only job is text matching: does this transcript segment satisfy this rubric criterion? If yes, cite the exact lines. If no, say not satisfied. The LLM never decides what the right clinical answer is.</p>
-    <p>I chose segment-scoped structural grading over full-transcript grading because a question about the introduction should be evaluated based on what happened during the introduction, not on something the student said during the physical exam. Scoping prevents cross-contamination of evidence and reduces LLM confusion on long transcripts. Teacher rubric items use the full transcript since case-specific behaviors can appear in any section.</p>
-    <p>I chose two-stage global ratings over direct transcript evaluation because it prevents the LLM from inventing new observations at the synthesis stage. By feeding it only the evidence it already produced during item grading, the global rating becomes a synthesis of grounded facts rather than a new, potentially hallucinated assessment.</p>
+  <div class="pipe-step">
+    <div class="pipe-num">05</div>
+    <div class="pipe-title">The quote is checked, in code</div>
+    <div class="pipe-desc"><code>_verify_citation()</code> normalizes both the quote and the transcript and requires the quote to appear as a literal substring. A quote that fails is blanked and " [citation unverified]" is appended to the reasoning. The judgment itself never changes: verification only ever removes evidence, it does not re-grade.</div>
   </div>
-
-  <!-- Chapter 5 -->
-  <div class="sec fade">Chapter 5. Reasoning decomposition</div>
-  <div class="prose fade">
-    <p>Clinical reasoning is not one thing. A student who mentions all the right differentials but cannot justify their ranking is different from one who provides excellent justification but misses diagnoses. The reasoning score decomposes into three independently computed components: differential coverage at 40% (ratio of mentioned to expected diagnoses, with heavy penalties for missing "can't miss" conditions), reasoning chain grades at 40% (R1 through R4: links history to differential, justifies prioritization, supports with evidence, connects to management), and reasoning quality at 20% (hypothesis-driven vs shotgun classification based on evidence from the transcript).</p>
-    <p>All three sub-evaluations run concurrently within Step 5. The differential coverage checker compares mentioned diagnoses against the rubric's expected list. The reasoning chain grader evaluates each R-item with the same citation-gated approach as structural items. The reasoning quality assessor classifies the student's overall approach with evidence.</p>
+  <div class="pipe-step">
+    <div class="pipe-num">06</div>
+    <div class="pipe-title">Scores are arithmetic, not vibes</div>
+    <div class="pipe-desc">A section score is a weighted mean of its item judgments: satisfied counts 1.0, partial 0.5, not_satisfied 0.0. A code backstop, <code>_coerce_judgment()</code>, bars binary and critical items from keeping partial credit: even if a model hands one out, it's coerced to <code>not_satisfied</code> before scoring runs. The overall score is <code>0.4 &times; structural + 0.6 &times; teacher</code>, both weights read from <code>config.yaml</code>, not decided at grading time.</div>
   </div>
-
-  <div class="prose fade">
-    <p>I chose temperature 0.0 for all grading calls because grading should be reproducible. The same transcript evaluated twice against the same rubric should produce the same judgments. Only the narrative feedback synthesis uses temperature 0.3 to allow more natural prose without affecting scores.</p>
+  <div class="pipe-step">
+    <div class="pipe-num">07</div>
+    <div class="pipe-title">The report holds every citation</div>
+    <div class="pipe-desc">The student sees each item's judgment badge next to the verified quote and its line number, or "no evidence cited" where none exists. Sections with no matched segment never reached the model at all: their items were marked <code>not_satisfied</code> in code, at zero model cost.</div>
   </div>
+</div>
 
-  <!-- Chapter 6 -->
-  <div class="sec fade">Chapter 6. What I would change</div>
-  <div class="prose fade">
-    <p>No inter-rater reliability testing. A single LLM is a single rater. To know if the system is consistent, you would need to compare its grades against human evaluators on the same transcripts. We did not have time to run that study during the hackathon.</p>
-    <p>Grounding checks verify field presence but not quote accuracy. The system confirms that <code>evidence_quotes</code> and <code>evidence_locations</code> exist in the response, but it does not verify that the quoted text actually appears at the cited line numbers. The LLM could cite the wrong lines and the validation would pass.</p>
-    <p>No streaming feedback. The student submits a transcript and waits for the entire 6-step pipeline to finish before seeing any results. A streaming approach that shows segmentation first, then item grades as they complete, would feel faster.</p>
-    <p>SQLite with aiosqlite works for a hackathon demo but would not scale to concurrent classrooms running evaluations simultaneously. PostgreSQL with connection pooling would be the production path.</p>
-    <p>Reasoning quality classification is binary: hypothesis-driven or shotgun. Reality is a spectrum. A student might start hypothesis-driven and switch to shotgun when they get stuck. The classifier does not capture that transition.</p>
-    <p>No rubric version control. Uploading a new rubric overwrites the previous one. In a real deployment, you would want to track rubric changes over time so you can compare grades across rubric versions.</p>
-    <p>The biggest expansion path is LLM-assisted rubric authoring. Right now, evaluators write YAML rubrics by hand: 12 sections, dozens of checklist items, reasoning chains, expected differentials. That is the bottleneck. The LLM could draft rubric items from a case description, suggest can't-miss diagnoses from clinical guidelines, and flag gaps in coverage. The evaluator reviews and edits, not writes from scratch. The LLM stays in its lane as the language expert: it structures and surfaces information, the clinician makes the judgment calls. Faster rubric iteration means more cases covered, which means better training.</p>
+<div class="dia fade">
+  <div class="dia-title">Worked example: one item's response</div>
+  <div class="example-output eo-good">
+    <div class="eo-header">Judgment &middot; Item S3.1a &middot; HPI segment &middot; gemini-2.5-flash &middot; temp 0.0</div>
+    <pre class="json-block">{
+  <span class="jk">"item_id"</span><span class="jp">:</span> <span class="jv">"S3.1a"</span><span class="jp">,</span>
+  <span class="jk">"judgment"</span><span class="jp">:</span> <span class="jv-sat">"satisfied"</span><span class="jp">,</span>
+  <span class="jk">"evidence_quote"</span><span class="jp">:</span> <span class="jv">"When did the pain start?"</span><span class="jp">,</span>
+  <span class="jk">"evidence_location"</span><span class="jp">:</span> <span class="jv">"Line 14"</span><span class="jp">,</span>
+  <span class="jk">"reasoning"</span><span class="jp">:</span> <span class="jv">"Student elicited symptom onset directly."</span>
+}</pre>
   </div>
-
-  <!-- Stack -->
-  <div class="sec fade">Stack</div>
-  <div class="stack fade">
-    <span class="stack-tag">Gemini 2.0 Flash</span>
-    <span class="stack-tag">Vertex AI SDK</span>
-    <span class="stack-tag">FastAPI</span>
-    <span class="stack-tag">Streamlit</span>
-    <span class="stack-tag">aiosqlite</span>
-    <span class="stack-tag">asyncio</span>
-    <span class="stack-tag">Pydantic</span>
-    <span class="stack-tag">SQLite</span>
-    <span class="stack-tag">Python</span>
+  <div class="example-output eo-bad">
+    <div class="eo-header">Judgment &middot; Item S5.2 &middot; Past Medical History segment &middot; gemini-2.5-flash &middot; temp 0.0</div>
+    <pre class="json-block">{
+  <span class="jk">"item_id"</span><span class="jp">:</span> <span class="jv">"S5.2"</span><span class="jp">,</span>
+  <span class="jk">"judgment"</span><span class="jp">:</span> <span class="jv-notsat">"not_satisfied"</span><span class="jp">,</span>
+  <span class="jk">"evidence_quote"</span><span class="jp">:</span> <span class="jv">""</span><span class="jp">,</span>
+  <span class="jk">"evidence_location"</span><span class="jp">:</span> <span class="jv">""</span><span class="jp">,</span>
+  <span class="jk">"reasoning"</span><span class="jp">:</span> <span class="jv">"No question about family history appears in this segment."</span>
+}</pre>
   </div>
+  <div class="example-caption">An honest empty result passes. A fabricated quote gets blanked by the verifier and flagged.</div>
+</div>
+<!-- Chapter 5 -->
+<div class="sec fade">Chapter 5. The citation gate, three layers</div>
+<div class="prose fade">
+  <p>Layer one is a prompt contract. Every grading call is told to cite exactly one verbatim quote, no paraphrase, plus the line it came from, "Line 14", and if nothing in the transcript supports the item, to leave <code>evidence_quote</code> and <code>evidence_location</code> as empty strings and return <code>not_satisfied</code> instead of inventing something to fill the gap. Layer two is structural. The response has to arrive as <code>application/json</code> with five required fields, <code>item_id</code>, <code>judgment</code>, <code>evidence_quote</code>, <code>evidence_location</code>, <code>reasoning</code>, and that schema is handed to Vertex AI's generation config for constrained decoding: a restriction applied at the token level, so the model cannot emit invalid JSON even if it wanted to. That still leaves room for a technically valid response missing one of the five, so the client independently re-checks every required field anyway, top level and inside each graded item, in <code>_validate_grounding_fields()</code>. A missing field is not a retry candidate. It is a contract violation, and the call aborts on the spot; only JSON-parse failures and connection errors get a second try, up to three attempts with exponential backoff, one second then two. Layer three is the part most systems skip. After grading finishes, the harness reopens the transcript and checks, in code, that each cited quote actually appears in it: <code>_verify_citation()</code> normalizes both sides first, lowercasing the text, stripping line-number and speaker prefixes like "Student:" and "Patient:", collapsing whitespace, and turning curly quotes into straight ones, then requires the quote to be a literal substring of what remains. A prompt can be ignored, and a schema can be satisfied by a fluent lie. Only reading the transcript back catches that.</p>
+  <p>Stack the three layers and look at what they do to incentives, not just to correctness. An empty <code>evidence_quote</code> paired with <code>not_satisfied</code> costs nothing: it is the honest answer when a transcript does not support an item, and it clears every layer without friction. A missing field costs the whole call: no retry, the request aborts, and the gap becomes a bug to fix in the harness, not a response to quietly accept. An invented quote gets further before it is caught. It satisfies the prompt's instructions on its face and the schema's required fields in full, and only breaks at layer three, where it is blanked and "[citation unverified]" is appended to the reasoning, the judgment itself left untouched. No judgment in this system ships without a verifiable citation or an explicit <code>not_satisfied</code>, and every quote that does ship is checked against the transcript in code, not assumed from the prompt. Honesty is cheap. Fabrication is expensive, and it gets more expensive the later it survives.</p>
+</div>
 
-  <a href="https://github.com/Axionis47/RU_Health_Hack_3" target="_blank" class="proj-link fade">View on GitHub &rsaquo;</a>
+<div class="dia fade">
+  <div class="dia-title">Three layers of enforcement</div>
+  <table class="rtable">
+    <tr><th>Layer</th><th>Mechanism</th><th>What it stops</th></tr>
+    <tr>
+      <td>Prompt</td>
+      <td>One verbatim quote plus its line number required per item; empty string and <code>not_satisfied</code> when nothing qualifies; never fabricate.</td>
+      <td>Casual ungrounded judgments, the model asserting a verdict without pointing at text.</td>
+    </tr>
+    <tr>
+      <td>Schema</td>
+      <td>Constrained decoding restricts output at the token level; <code>_validate_grounding_fields()</code> independently re-checks every required field; a violation aborts the call, no retry.</td>
+      <td>Structurally ungrounded output reaching the pipeline, and quiet degradation into a response nobody checked.</td>
+    </tr>
+    <tr>
+      <td>Code</td>
+      <td>Each cited quote is checked as a literal substring of the normalized transcript; a failed check blanks the quote and tags the reasoning, judgment left untouched.</td>
+      <td>Fabricated or misattributed quotes surviving into a report a teacher reads as evidence.</td>
+    </tr>
+  </table>
+</div>
+
+<div class="prose fade">
+  <p>The clip below runs four graded responses through all three layers at once. One arrives missing its quote and never reaches the grade book. One arrives honestly cited and clears both checks. One arrives confidently citing a line that says something else entirely, caught only after the fact. One arrives with nothing to cite and passes anyway, because saying so is the correct answer.</p>
+</div>
+
+<div class="graph-canvas-wrap fade">
+  <canvas id="gate-canvas" aria-label="Animation of four grading responses moving through the citation gate's three layers. One response is missing its evidence_quote field and is rejected at the field gate with no retry. One response cites a verified quote at Line 14 and passes the field gate and the quote verifier into the grade book with a clean badge. One response cites a quote that does not appear in the transcript: it passes the field gate but fails the quote verifier, so the quote is blanked and tagged citation unverified while its satisfied judgment stands, landing in the grade book with a flagged badge. One response is honestly not_satisfied with no quote to check, and passes both layers into the grade book with a neutral badge."></canvas>
+</div>
+
+<div class="prose fade">
+  <p>I chose to keep verification and judgment separate: the verifier can blank evidence but never flip a judgment, because a grading pass and an evidence audit are different jobs, and mixing them would let a string-matching bug silently change a student's score. The cost is stated plainly: a right judgment with a wrong citation keeps its points and loses its proof, and the flag makes that visible to the teacher.</p>
+</div>
+<!-- Chapter 6 -->
+<div class="sec fade">Chapter 6. The rubric contract</div>
+<div class="prose fade">
+  <p>The rubric is the single source of clinical truth in this system. The model never decides what counts as good history-taking, or which diagnosis is too dangerous to miss; a clinician decides that once, in a YAML file, and every evaluation afterward draws on the same decision. Rubric quality is therefore the ceiling on grading quality: a flawless harness scoring a vague rubric still returns a vague grade, just with a citation attached to the vagueness.</p>
+  <p>Two rubrics exist, and they carry different kinds of truth. A universal structural rubric, owned by the program rather than any single case, defines 12 sections and 49 gradeable items: the shape every OSCE encounter is expected to follow, from introduction and rapport through closure. A per-case teacher rubric carries everything specific to one patient scenario, and its contract is exactly 7 required blocks: <code>case_name</code>, <code>case_description</code>, <code>checklist</code>, <code>diagnosis</code>, <code>investigations</code>, <code>management</code>, <code>reasoning_links</code>.</p>
+</div>
+
+<div class="pipeline fade">
+  <div class="pipe-step">
+    <div class="pipe-num">01</div>
+    <div class="pipe-title">Checkable from text, not vibes</div>
+    <div class="pipe-desc">The authoring guide runs a vague-vs-checkable table for exactly this reason: "Adequately explores gynecological history" becomes "Asks the date of the last menstrual period." If a clinician cannot point at the line that would satisfy an item, neither can the model.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">02</div>
+    <div class="pipe-title">Weight and critical, on every item</div>
+    <div class="pipe-desc">Every item declares a weight and a critical flag. Critical items get no partial credit and no benefit of the doubt: ambiguous evidence resolves to <code>not_satisfied</code>, by design, not by accident.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">03</div>
+    <div class="pipe-title">Can't-miss diagnoses default to critical</div>
+    <div class="pipe-desc">A can't-miss diagnosis is critical by default, even if the author forgets the flag. Each one becomes its own binary item in the synthesized Diagnosis &amp; Safety section, judged against the full transcript: considered or not, with no partial credit available.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">04</div>
+    <div class="pipe-title">Uploads are validated on arrival</div>
+    <div class="pipe-desc">Rubrics are YAML, and they're validated the moment they arrive: a bad first upload bounces with a 400, a bad update with a 422, neither grades silently. An update validates against a temporary file before an atomic replace, and an identical re-upload dedupes by SHA-256 content hash instead of creating a duplicate record.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">05</div>
+    <div class="pipe-title">A checklist written for clinicians</div>
+    <div class="pipe-desc">The authoring guide closes with a 10-item pre-flight checklist, written for the clinicians who own the rubric, not the engineers who own the pipeline.</div>
+  </div>
+</div>
+
+<div class="prose fade">
+  <p>The honest boundary: the structural rubric also defines a reasoning chain, <code>R1</code> through <code>R4</code>, and three 1-5 global dimensions, <code>G1</code> through <code>G3</code>, that the restructured grader parses but does not yet score. They sit on the open list, not silently pretended away.</p>
+</div>
+
+<!-- Chapter 7 -->
+<div class="sec fade">Chapter 7. What the harness buys, and what it costs</div>
+<div class="prose fade">
+  <p>Every guarantee has a bill; the ledger, stated plainly.</p>
+</div>
+
+<div class="dia fade">
+  <div class="dia-title">Mechanism ledger</div>
+  <table class="rtable">
+    <tr><th>Mechanism</th><th>What it buys</th><th>What it costs</th></tr>
+    <tr>
+      <td>Per-section batched calls</td>
+      <td>~18 calls per evaluation instead of ~150. One parse failure loses one section, not one item.</td>
+      <td>A weak model could lose focus partway through a section; the schema and per-item validation are what make batching safe.</td>
+    </tr>
+    <tr>
+      <td>Citation gate, three layers</td>
+      <td>No judgment ships without a verifiable citation or an explicit <code>not_satisfied</code>; disputes resolve by reading the cited line.</td>
+      <td>More tokens per call, and a hard failure mode: a grounding violation aborts the evaluation rather than degrading silently.</td>
+    </tr>
+    <tr>
+      <td>Code-level quote verification</td>
+      <td>A fabricated quote cannot survive into a report.</td>
+      <td>Verification never flips judgments, so a right judgment with a wrong citation keeps its score and loses only its evidence.</td>
+    </tr>
+    <tr>
+      <td>Rubric as single source of clinical truth</td>
+      <td>Failure is visible and fixable by a clinician editing YAML.</td>
+      <td>Authoring is the bottleneck; a bad rubric grades badly at scale.</td>
+    </tr>
+    <tr>
+      <td>Synthesis firewall</td>
+      <td>The narrative never sees the transcript, so it cannot cite evidence that was never graded.</td>
+      <td>Narrative quality is capped by what item grading surfaced.</td>
+    </tr>
+  </table>
+</div>
+
+<div class="prose fade">
+  <p>These costs were paid knowingly. When auditability and elegance pulled apart, I chose auditability.</p>
+</div>
+
+<!-- Chapter 8 -->
+<div class="sec fade">Chapter 8. The version that won was heavier</div>
+<div class="prose fade">
+  <p>The build that won the hackathon graded every rubric item with its own model call, then layered more on top: second-opinion dual grading, score bands, a review queue, reasoning-chain graph extraction, and global 1-5 ratings. Roughly 150 model calls per evaluation.</p>
+  <p>The restructure removed all of it from the grading path and kept the guarantees. One call per section, structural and teacher alike. Every item is still individually judged and individually cited, exactly as before. What changed is where the citation gets checked: not by a second model call marking its own homework, but by <code>_verify_citation()</code> in code, a plain substring match against the transcript. Eighteen calls per evaluation, down from roughly 150. Complexity was not what made the grades trustworthy; the citations were.</p>
+  <p>Two pieces of the old build still sit in the repo, unused since the restructure: an LCS-based (longest common subsequence, a string-matching algorithm) section-order analyzer, and the review queue's database table. The analyzer never touched a model, order is a deterministic string problem, so if it returns it will return as a cheap pure-code order score, not another call.</p>
+</div>
+
+<!-- Chapter 9 -->
+<div class="sec fade">Chapter 9. What is proven, what is open</div>
+<div class="prose fade">
+  <p>What exists today is tested where it counts, not everywhere. Thirty-two mocked tests cover the pipeline end to end: section segmentation, scoring arithmetic, judgment coercion on binary and critical items, citation verification against the transcript, auth scoping, and rubric upload hygiene. All of it runs against a <code>FakeLLMClient</code>, zero network calls, so the suite checks the harness logic, not the model's mood that day.</p>
+  <p>Listing what is not yet built is the boundary of what is done, not an apology.</p>
+</div>
+
+<div class="pipeline fade">
+  <div class="pipe-step">
+    <div class="pipe-num">01</div>
+    <div class="pipe-title">Golden-transcript regression harness</div>
+    <div class="pipe-desc">Thirty-two sample transcripts, five students across five cases plus quality variants, exist for manual QA today. None of them are wired into an automated grading regression yet, so a prompt change is checked by eye, not by a diff against known-good grades.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">02</div>
+    <div class="pipe-title">Score or remove the unscored dimensions</div>
+    <div class="pipe-desc">The structural rubric still carries a reasoning chain (R1-R4) and global dimensions (G1-G3, 1-5 Likert). Both are parsed out of the YAML and neither is scored after the restructure. An honest open item: decide whether they earn a scoring path back in or come out of the schema entirely.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">03</div>
+    <div class="pipe-title">Inter-rater reliability study</div>
+    <div class="pipe-desc">Grade the same transcripts with the system and with human evaluators, then measure where the two agree and where they don't. No claim about grading quality holds without this comparison.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">04</div>
+    <div class="pipe-title">Real authentication</div>
+    <div class="pipe-desc">Current auth is synthetic and demo-only, flagged as such in the code. It has no place in front of a real classroom.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">05</div>
+    <div class="pipe-title">PostgreSQL for concurrent classrooms</div>
+    <div class="pipe-desc">SQLite serves the demo fine. It is not the answer for multiple classrooms running evaluations against the same database at once.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">06</div>
+    <div class="pipe-title">Streaming results</div>
+    <div class="pipe-desc">Segmentation first, then sections as they land, instead of one wait for the full pipeline to finish before anything renders.</div>
+  </div>
+  <div class="pipe-step">
+    <div class="pipe-num">07</div>
+    <div class="pipe-title">LLM-assisted rubric authoring</div>
+    <div class="pipe-desc">The model drafts rubric items from a case description, the clinician judges. Authoring, not grading, is the actual bottleneck in scaling this system, and the model stays in the same role it holds everywhere else on this page: it drafts language, it does not decide what counts as good medicine.</div>
+  </div>
+</div>
+
+<!-- Stack -->
+<div class="sec fade">Stack</div>
+<div class="stack fade">
+  <span class="stack-tag">Gemini 2.5 Flash</span>
+  <span class="stack-tag">Vertex AI</span>
+  <span class="stack-tag">FastAPI</span>
+  <span class="stack-tag">Streamlit</span>
+  <span class="stack-tag">aiosqlite</span>
+  <span class="stack-tag">asyncio</span>
+  <span class="stack-tag">Pydantic</span>
+  <span class="stack-tag">PyYAML</span>
+  <span class="stack-tag">Python</span>
+</div>
+
+<!-- No GitHub pill: the repo has no public remote yet. Deliberate omission, not an oversight.
+     Code lives locally at /Users/sid47/Desktop/aws-med-health-grader. -->
 
 </main>
 
+<!-- Footer (matches current page's footer exactly) -->
 <footer>
   <div class="ft">
-    <span class="ft-c">&copy; 2025 Sai Siddharth Yalamanchili</span>
+    <div class="ft-c">&copy; 2026 Sai Siddharth Yalamanchili</div>
     <div class="ft-l">
       <a href="https://github.com/Axionis47" target="_blank">GitHub</a>
-      <a href="https://linkedin.com/in/sai-siddharth-yalamanchili" target="_blank">LinkedIn</a>
+      <a href="https://www.linkedin.com/in/siddharth-yalamanchili/" target="_blank">LinkedIn</a>
+      <a href="mailto:sy832@scarletmail.rutgers.edu">Contact</a>
     </div>
   </div>
 </footer>
@@ -255,24 +611,494 @@ const obs = new IntersectionObserver(es => {
   });
 }, { threshold: .12 });
 document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+</script>
 
+<script>
 /* ===================================================================
-   ANIMATION: Evaluation Pipeline (pipeline-canvas)
+   ANIMATION: Three steps, eighteen calls (pipeline-canvas)
+   Chapter 3. Segment -> concurrent per-section grading -> report.
+   Self-contained IIFE. Pair with the .graph-canvas-wrap markup that
+   holds <canvas id="pipeline-canvas" role="img" aria-label="...">.
+   No inline height anywhere -- this script owns canvas height.
    =================================================================== */
 (function(){
   var canvas = document.getElementById('pipeline-canvas');
   if(!canvas) return;
   var wrap = canvas.parentElement;
 
-  var accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',bg='#101012',raised='#1a1a1d',inset='#0a0a0c';
-  var blue='#5a7a9a',purple='#8a6a9a',teal='#5a9a8a';
+  var accent='#d88c3a', green='#5a9a5a', red='#9a5a5a';
+  var t1='#e0e0e0', t2='#ababab', t3='#787880', raised='#1a1a1d', inset='#0a0a0c';
+  var blue='#5a7a9a', purple='#8a6a9a';
   var mono='JetBrains Mono, monospace';
-  var ctx,w,h,frame=0,running=false;
+  var ctx, w, h, frame=0, running=false;
+  var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  function initCanvas(){
+    var dpr = window.devicePixelRatio || 1;
+    var rect = wrap.getBoundingClientRect();
+    w = rect.width; h = 440;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    canvas.style.width = w+'px'; canvas.style.height = h+'px';
+    ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  }
+
+  function drawRR(x,y,rw,rh,r,fill,stroke,lw){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+rw-r,y);
+    ctx.quadraticCurveTo(x+rw,y,x+rw,y+r); ctx.lineTo(x+rw,y+rh-r);
+    ctx.quadraticCurveTo(x+rw,y+rh,x+rw-r,y+rh); ctx.lineTo(x+r,y+rh);
+    ctx.quadraticCurveTo(x,y+rh,x,y+rh-r); ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+    if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=lw||1; ctx.stroke(); }
+  }
+
+  function easeInOut(t){ return t<0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+
+  function drawArrow(x1,y1,x2,y2,col,alpha){
+    ctx.save();
+    ctx.globalAlpha = alpha||1;
+    ctx.strokeStyle = col; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    var a = Math.atan2(y2-y1, x2-x1);
+    ctx.fillStyle = col; ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-8*Math.cos(a-0.4), y2-8*Math.sin(a-0.4));
+    ctx.lineTo(x2-8*Math.cos(a+0.4), y2-8*Math.sin(a+0.4));
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawDashedLine(x1,y1,x2,y2,col,alpha){
+    ctx.save();
+    ctx.globalAlpha = alpha||1;
+    ctx.strokeStyle = col; ctx.lineWidth = 1.25;
+    ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawProhibit(x,y,r,col,alpha){
+    ctx.save();
+    ctx.globalAlpha = alpha||1;
+    ctx.strokeStyle = col; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.stroke();
+    var d = r*0.7;
+    ctx.beginPath(); ctx.moveTo(x-d,y-d); ctx.lineTo(x+d,y+d); ctx.stroke();
+    ctx.restore();
+  }
+
+  // Truncates text to fit maxW, appending an ellipsis. ctx.font must
+  // already be set by the caller before this runs.
+  function fitText(text, maxW){
+    if(ctx.measureText(text).width <= maxW) return text;
+    var s = text;
+    while(s.length > 1 && ctx.measureText(s+'…').width > maxW){ s = s.slice(0,-1); }
+    return s+'…';
+  }
+
+  var P = [
+    {name:'arrive',    dur:55},
+    {name:'segment',   dur:95},
+    {name:'fork',      dur:35},
+    {name:'grade',     dur:130},
+    {name:'merge',     dur:70},
+    {name:'narrative', dur:70},
+    {name:'hold',      dur:90},
+    {name:'fade',      dur:35}
+  ];
+  var totalF = P.reduce(function(s,p){ return s+p.dur; }, 0);
+
+  // 12-section canonical order; the 5 the segmenter matches, plus the
+  // one it doesn't (S4 ROS), rendered in true transcript order.
+  var chips = [
+    {id:'S1',  name:'Intro',    range:'L1–4',       found:true},
+    {id:'S3',  name:'HPI',      range:'L5–12',      found:true},
+    {id:'S4',  name:'ROS',      range:'not found',  found:false},
+    {id:'S7',  name:'Exam',     range:'L15–19',     found:true},
+    {id:'S8',  name:'DDx',      range:'L20–23',     found:true},
+    {id:'S12', name:'Closure',  range:'L28–31',     found:true}
+  ];
+
+  // Section-call cards fired concurrently in Step 2. Structural cards
+  // see only their matched segment; teacher cards see the full
+  // transcript; the not-found card never reaches the model at all.
+  var cards = [
+    {id:'S1',   label:'Intro',       kind:'structural', scope:'segment only',    status:'good',    badge:'satisfied',               cite:'L2'},
+    {id:'S3',   label:'HPI',         kind:'structural', scope:'segment only',    status:'partial', badge:'partial',                 cite:'L9'},
+    {id:'S4',   label:'ROS',         kind:'notfound',   scope:'',                status:'gray',    badge:'no call · not_satisfied', cite:''},
+    {id:'S7',   label:'Exam',        kind:'structural', scope:'segment only',    status:'good',    badge:'satisfied',               cite:'L17'},
+    {id:'S8',   label:'DDx',         kind:'structural', scope:'segment only',    status:'good',    badge:'satisfied',               cite:'L21'},
+    {id:'S12',  label:'Closure',     kind:'structural', scope:'segment only',    status:'good',    badge:'satisfied',               cite:'L29'},
+    {id:'T-Hx', label:'Teacher: Hx', kind:'teacher',     scope:'full transcript', status:'good',    badge:'satisfied',               cite:'L9'},
+    {id:'T-DS', label:'Dx & Safety', kind:'teacher',     scope:'full transcript', status:'partial', badge:'partial',                 cite:'L21'}
+  ];
+  var KIND_COLOR = { structural: blue, teacher: purple, notfound: t3 };
+  var STATUS_COLOR = { good: green, partial: accent, bad: red, gray: t3 };
+
+  var transcriptLines = [
+    '"Hi, I\'m a third-year student..."',
+    '"When did the chest pain start?"',
+    '"Any similar episodes before?"',
+    '"I\'m considering a few things..."'
+  ];
+  var lineNums = [1,5,9,17];
+
+  /* renderFrame draws one frame for an arbitrary frame index f, so the
+     same function serves the running rAF loop and the single static
+     frame drawn for prefers-reduced-motion. */
+  function renderFrame(fIn){
+    ctx.clearRect(0,0,w,h);
+
+    var f = fIn % totalF;
+    var phase=0, pf=0, acc=0;
+    for(var i=0;i<P.length;i++){
+      if(f < acc+P[i].dur){ phase=i; pf=f-acc; break; }
+      acc += P[i].dur;
+    }
+    var prog = pf/P[phase].dur;
+    var ep = easeInOut(prog);
+
+    var globalAlpha = 1;
+    if(phase === 0) globalAlpha = ep;
+    if(phase === P.length-1) globalAlpha = 1-ep;
+    ctx.globalAlpha = globalAlpha;
+
+    /* ---- responsive layout: every position derives from w, with
+       floors/caps, so nothing below ever reads a value defined later
+       than it needs. Verified against clipping at w = 343, 375, 390,
+       500, 768, 1344 in the accompanying build notes. ---- */
+    var fontScale = w<400 ? 0.8 : (w<600 ? 0.9 : 1);
+    function fpx(n){ return Math.max(7, Math.round(n*fontScale)); }
+
+    var padX = Math.max(12, Math.min(24, w*0.03));
+    var gap  = Math.max(8,  Math.min(18, w*0.02));
+    var leftW = Math.max(96, Math.min(190, w*0.22));
+    var rightX = padX + leftW + gap;
+    var rightW = w - rightX - padX;
+
+    // ---- left column: transcript -> report -> narrative, stacked ----
+    var txY = 26, txH = 140;
+    var repY = txY + txH + 18, repH = 92;
+    var narY = repY + repH + 18, narH = 92;
+
+    // ---- right column: step 1 box, then the concurrent grid ----
+    var s1Y = 26, s1H = 150;
+    var gridY = 202;
+    var gridBottom = narY + narH; // align grid's bottom with narrative's
+    var gridH = gridBottom - gridY;
+
+    var withheld = phase >= 5; // transcript dims once the narrative stage starts
+
+    // ===== Transcript card (persists, dims from phase 5 on) =====
+    var txAlpha = phase===0 ? ep : 1;
+    var dimFactor = withheld ? 0.32 : 1;
+    ctx.save(); ctx.globalAlpha = txAlpha*dimFactor*globalAlpha;
+    drawRR(padX, txY, leftW, txH, 8, inset, 'rgba(255,255,255,0.04)', 1);
+    ctx.font = fpx(10)+'px '+mono; ctx.fillStyle = accent; ctx.textAlign = 'left';
+    ctx.fillText('TRANSCRIPT', padX+12, txY+20);
+    ctx.font = fpx(9)+'px '+mono; ctx.fillStyle = t3;
+    ctx.fillText(fitText('line-numbered in code', leftW-24), padX+12, txY+34);
+    for(var i=0;i<transcriptLines.length;i++){
+      var lineAlpha = phase===0 ? Math.max(0, Math.min(1,(ep*5)-i)) : 1;
+      ctx.save(); ctx.globalAlpha = lineAlpha*txAlpha*dimFactor*globalAlpha;
+      ctx.font = fpx(9)+'px '+mono;
+      var prefix = 'L'+lineNums[i]+': ';
+      ctx.fillStyle = accent;
+      ctx.fillText(prefix, padX+12, txY+52+i*22);
+      var pw = ctx.measureText(prefix).width;
+      ctx.fillStyle = t2;
+      ctx.fillText(fitText(transcriptLines[i], leftW-24-pw), padX+12+pw, txY+52+i*22);
+      ctx.restore();
+    }
+    ctx.restore();
+
+    // ===== Step 1: Segment box (right column, top) =====
+    if(phase >= 1){
+      var s1Alpha = phase===1 ? ep : 1;
+      ctx.save(); ctx.globalAlpha = s1Alpha*globalAlpha;
+      drawArrow(padX+leftW+4, txY+txH/2, rightX-4, s1Y+s1H/2, accent, 0.5);
+      drawRR(rightX, s1Y, rightW, s1H, 8, raised, 'rgba(255,255,255,0.03)', 1);
+      ctx.font = '600 '+fpx(10)+'px '+mono; ctx.fillStyle = accent; ctx.textAlign = 'left';
+      ctx.fillText('STEP 1 · SEGMENT', rightX+12, s1Y+18);
+      ctx.font = fpx(9)+'px '+mono; ctx.fillStyle = t3;
+      ctx.fillText('1 model call → line ranges', rightX+12, s1Y+32);
+
+      var chipAreaX = rightX+10, chipAreaW = rightW-20;
+      var chipGapX = 8, chipW = (chipAreaW-chipGapX)/2;
+      var chipRowH = 26, chipGapY = 6;
+      var chipStartY = s1Y+42;
+      for(var c=0;c<chips.length;c++){
+        var col = c%2, row = Math.floor(c/2);
+        var cx = chipAreaX + col*(chipW+chipGapX);
+        var cy = chipStartY + row*(chipRowH+chipGapY);
+        var chipProg = phase===1 ? Math.max(0, Math.min(1,(ep*chips.length)-c)) : 1;
+        ctx.save(); ctx.globalAlpha = chipProg*s1Alpha*globalAlpha;
+        var chip = chips[c];
+        var chipColor = chip.found ? accent : t3;
+        drawRR(cx, cy, chipW, chipRowH, 5, chipColor+'1a', chipColor+'44', 1);
+        ctx.font = '500 '+fpx(9)+'px '+mono; ctx.fillStyle = chipColor; ctx.textAlign='left';
+        ctx.fillText(chip.id, cx+7, cy+16);
+        var idw = ctx.measureText(chip.id).width;
+        ctx.font = fpx(8)+'px '+mono; ctx.fillStyle = chip.found ? t2 : t3;
+        ctx.fillText(fitText(chip.name+' '+chip.range, chipW-idw-16), cx+11+idw, cy+16);
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+
+    // ===== Fork: asyncio.gather label + single arrow down to the grid =====
+    if(phase >= 2){
+      var forkAlpha = phase===2 ? ep : 1;
+      ctx.save(); ctx.globalAlpha = forkAlpha*globalAlpha;
+      ctx.font = '600 '+fpx(9)+'px '+mono; ctx.fillStyle = accent; ctx.textAlign = 'center';
+      ctx.fillText('asyncio.gather', rightX+rightW/2, s1Y+s1H+13);
+      drawArrow(rightX+rightW/2, s1Y+s1H+16, rightX+rightW/2, gridY-6, accent, 0.5);
+      ctx.restore();
+    }
+
+    // ===== Grid: concurrent per-section calls =====
+    var cardRects = null;
+    if(phase >= 3){
+      var cols = rightW>420 ? 4 : (rightW>260 ? 3 : 2);
+      var rows = Math.ceil(cards.length/cols);
+      var cardGap = 8;
+      var rawCardW = (rightW-(cols-1)*cardGap)/cols;
+      var cardW = Math.min(200, rawCardW);
+      var gridW = cols*cardW + (cols-1)*cardGap;
+      var gx0 = rightX + Math.max(0, (rightW-gridW)/2);
+      var cardH = (gridH-(rows-1)*cardGap)/rows;
+
+      ctx.save(); ctx.globalAlpha = globalAlpha;
+      ctx.font = fpx(9)+'px '+mono; ctx.fillStyle = t3; ctx.textAlign='left';
+      ctx.fillText(fitText('STEP 2 · GRADE, concurrent, one call per section', rightW), rightX, gridY-2);
+      ctx.restore();
+
+      cardRects = [];
+      for(var k=0;k<cards.length;k++){
+        var col2 = k%cols, row2 = Math.floor(k/cols);
+        var rx = gx0 + col2*(cardW+cardGap);
+        var ry = gridY + 10 + row2*(cardH-2+cardGap);
+        var rect = {x:rx, y:ry, w:cardW, h:cardH-10};
+        cardRects.push(rect);
+        var card = cards[k];
+        var isNotFound = card.kind==='notfound';
+
+        // The not-found card resolves instantly (no call fired); every
+        // other card stages in, then its badge lands a beat later, to
+        // read as calls actually returning rather than static labels.
+        var cardAlpha, badgeAlpha;
+        if(isNotFound){
+          cardAlpha = (phase>=3) ? 1 : 0;
+          badgeAlpha = cardAlpha;
+        } else if(phase===3){
+          cardAlpha = Math.max(0, Math.min(1, (ep*cards.length)-k));
+          badgeAlpha = Math.max(0, Math.min(1, (ep*cards.length)-k-1.5));
+        } else {
+          cardAlpha = 1; badgeAlpha = 1;
+        }
+
+        ctx.save(); ctx.globalAlpha = cardAlpha*globalAlpha;
+        var kindColor = KIND_COLOR[card.kind];
+        drawRR(rect.x, rect.y, rect.w, rect.h, 6, kindColor+'0c', kindColor+'2e', 1);
+
+        var innerW = rect.w-16;
+
+        // id and badge are non-negotiable: their slots are reserved
+        // from rect.h first (top and bottom), so they render at every
+        // canvas width down to 343px. scope/cite are optional and only
+        // drawn if what's left in the middle actually fits them --
+        // that's the "truncate gracefully" behavior at small sizes.
+        var idSlotH = fpx(10)+6;
+        var badgeSlotH = fpx(9)+10;
+        var slotGap = 3;
+        var middleTop = rect.y + idSlotH + slotGap;
+        var middleBottom = rect.y + rect.h - badgeSlotH - slotGap;
+        var middleH = Math.max(0, middleBottom - middleTop);
+        var optLineH = fpx(8)+3;
+        var optLinesAvail = Math.floor(middleH/optLineH);
+
+        ctx.font = '500 '+fpx(10)+'px '+mono; ctx.fillStyle = t1; ctx.textAlign='left';
+        ctx.fillText(fitText(card.id+' '+card.label, innerW), rect.x+8, rect.y+fpx(10)+3);
+
+        var optY = middleTop+fpx(8);
+        var shown = 0;
+        if(card.scope && shown < optLinesAvail){
+          ctx.font = fpx(8)+'px '+mono; ctx.fillStyle = kindColor;
+          ctx.fillText(fitText(card.scope, innerW), rect.x+8, optY+shown*optLineH);
+          shown++;
+        }
+        if(card.cite && shown < optLinesAvail){
+          ctx.font = fpx(8)+'px '+mono; ctx.fillStyle = accent;
+          ctx.fillText(fitText('"'+card.cite+'"', innerW), rect.x+8, optY+shown*optLineH);
+          shown++;
+        }
+
+        ctx.save(); ctx.globalAlpha = badgeAlpha*cardAlpha*globalAlpha;
+        var bColor = STATUS_COLOR[card.status];
+        ctx.font = fpx(8)+'px '+mono;
+        var badgeText = fitText(card.badge, innerW-14);
+        var badgeW = Math.min(innerW, ctx.measureText(badgeText).width+14);
+        var pillH = badgeSlotH-4;
+        var pillY = rect.y+rect.h-badgeSlotH+2;
+        drawRR(rect.x+8, pillY, badgeW, pillH, 4, bColor+'22', bColor+'55', 1);
+        ctx.fillStyle = bColor;
+        ctx.fillText(badgeText, rect.x+14, pillY+pillH-5);
+        ctx.restore();
+
+        ctx.restore();
+      }
+    }
+
+    // ===== Merge: grid evidence flows into the report card only =====
+    if(phase >= 4 && cardRects){
+      var mergeAlpha = phase===4 ? ep : 1;
+      ctx.save(); ctx.globalAlpha = mergeAlpha*globalAlpha;
+      var structIdx = [0,1,2,3,4,5], teachIdx = [6,7];
+      function centroidY(idxs){
+        var sum=0; for(var j=0;j<idxs.length;j++){ var r=cardRects[idxs[j]]; sum += r.y+r.h/2; }
+        return sum/idxs.length;
+      }
+      var structY = centroidY(structIdx), teachY = centroidY(teachIdx);
+      drawArrow(rightX+2, structY, padX+leftW+4, repY+34, blue, 0.4*mergeAlpha);
+      drawArrow(rightX+2, teachY, padX+leftW+4, repY+50, purple, 0.4*mergeAlpha);
+      ctx.restore();
+    }
+
+    // ===== Report card (Step 3, code arithmetic) =====
+    if(phase >= 4){
+      var repAlpha = phase===4 ? ep : 1;
+      ctx.save(); ctx.globalAlpha = repAlpha*globalAlpha;
+      drawRR(padX, repY, leftW, repH, 8, green+'11', green+'33', 1);
+      ctx.font = '600 '+fpx(10)+'px '+mono; ctx.fillStyle = green; ctx.textAlign='left';
+      ctx.fillText(fitText('STEP 3 · REPORT', leftW-24), padX+12, repY+17);
+
+      var lineProg = phase===4 ? Math.max(0, Math.min(1, (ep*3))) : 1;
+      ctx.save(); ctx.globalAlpha = lineProg*repAlpha*globalAlpha;
+      ctx.font = fpx(9)+'px '+mono; ctx.fillStyle = blue;
+      ctx.fillText(fitText('Structural  82%', leftW-24), padX+12, repY+34);
+      ctx.fillStyle = purple;
+      ctx.fillText(fitText('Teacher     71%', leftW-24), padX+12, repY+48);
+      ctx.restore();
+
+      var pillProg = phase===4 ? Math.max(0, Math.min(1,(ep-0.55)/0.45)) : 1;
+      if(pillProg > 0){
+        ctx.save(); ctx.globalAlpha = pillProg*repAlpha*globalAlpha;
+        ctx.font = '600 '+fpx(10)+'px '+mono;
+        var overallText = '0.4×82 + 0.6×71 = 75.4%';
+        var ow = Math.min(leftW-24, ctx.measureText(overallText).width+16);
+        drawRR(padX+12, repY+60, ow, 22, 5, accent+'22', accent+'55', 1);
+        ctx.fillStyle = accent;
+        ctx.fillText(fitText(overallText, ow-10), padX+18, repY+75);
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+
+    // ===== Narrative box: reached only from the report card =====
+    if(phase >= 5){
+      var narAlpha = phase===5 ? ep : 1;
+      ctx.save(); ctx.globalAlpha = narAlpha*globalAlpha;
+
+      drawArrow(padX+leftW/2, repY+repH+2, padX+leftW/2, narY-4, green, 0.6);
+
+      drawRR(padX, narY, leftW, narH, 8, raised, 'rgba(255,255,255,0.03)', 1);
+      ctx.font = '600 '+fpx(10)+'px '+mono; ctx.fillStyle = accent; ctx.textAlign='left';
+      ctx.fillText('NARRATIVE', padX+12, narY+17);
+      ctx.font = fpx(8)+'px '+mono; ctx.fillStyle = t3;
+      ctx.fillText(fitText('reads the report only', leftW-24), padX+12, narY+32);
+      ctx.fillText(fitText('300–500 words, cites item IDs', leftW-24), padX+12, narY+45);
+
+      // Dashed line + crossed circle: the transcript is physically
+      // withheld from this stage. Routed through the left margin, just
+      // outside the column's x-range, so it never crosses the report
+      // card sitting between transcript and narrative.
+      var dashedX = Math.max(4, padX-6);
+      var midY = (txY+txH + narY)/2;
+      drawDashedLine(dashedX, txY+txH, dashedX, narY, t3, 0.6*narAlpha);
+      drawProhibit(dashedX, midY, fpx(6), red, 0.85*narAlpha);
+
+      ctx.restore();
+
+      ctx.save(); ctx.globalAlpha = narAlpha*globalAlpha;
+      ctx.font = fpx(9)+'px '+mono; ctx.fillStyle = t3; ctx.textAlign='center';
+      ctx.fillText('narrative never sees the transcript', w/2, narY+narH+22);
+      ctx.restore();
+    }
+
+    ctx.globalAlpha = 1;
+  }
+
+  function draw(){
+    if(!running) return;
+    renderFrame(frame);
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  function staticFrameIndex(){
+    // Deep into the 'hold' phase, one frame before it ends, so every
+    // earlier phase is fully settled (alpha 1) and the fade-out phase
+    // that follows never gets drawn in the static fallback.
+    var acc = 0;
+    for(var i=0;i<6;i++) acc += P[i].dur;
+    return acc + P[6].dur - 1;
+  }
+
+  function renderStatic(){
+    initCanvas();
+    renderFrame(staticFrameIndex());
+  }
+
+  if(reduceMotion){
+    renderStatic();
+    window.addEventListener('resize', renderStatic);
+  } else {
+    var cObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting && !running){
+          running = true; frame = 0; initCanvas(); draw();
+        } else if(!entry.isIntersecting && running){
+          running = false;
+        }
+      });
+    }, {threshold:0.15});
+    cObs.observe(wrap);
+    window.addEventListener('resize', function(){ if(running) initCanvas(); });
+  }
+})();
+
+</script>
+
+<script>
+/* ===================================================================
+   ANIMATION: The Citation Gate, Three Layers (gate-canvas)
+   Storyboard: four graded responses cross a field gate (schema/required
+   fields) and a quote verifier (code-level substring check) on their way
+   to the grade book.
+     G1  satisfied, evidence_quote MISSING      -> rejected at field gate
+     G2  satisfied, quote verified at Line 14   -> passes both, green badge
+     G3  satisfied, quote NOT in transcript     -> passes field gate, fails
+                                                    verifier: blanked + tagged,
+                                                    judgment untouched
+     G4  not_satisfied, quote empty             -> passes both (nothing to
+                                                    verify), neutral badge
+   =================================================================== */
+(function(){
+  var canvas = document.getElementById('gate-canvas');
+  if(!canvas) return;
+  var wrap = canvas.parentElement;
+
+  var accent='#d88c3a',green='#5a9a5a',red='#9a5a5a',t1='#e0e0e0',t2='#ababab',t3='#787880',raised='#1a1a1d',inset='#0a0a0c';
+  var mono='JetBrains Mono, monospace';
+  var ctx,w,h,frame=0,running=false,loopEnabled=true;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function initCanvas(){
     var dpr=window.devicePixelRatio||1;
     var rect=wrap.getBoundingClientRect();
-    w=rect.width; h=440;
+    w=rect.width;
+    h = (window.matchMedia && window.matchMedia('(max-width:768px)').matches) ? 360 : 420;
     canvas.width=w*dpr; canvas.height=h*dpr;
     canvas.style.width=w+'px'; canvas.style.height=h+'px';
     ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
@@ -289,38 +1115,6 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
     if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1;ctx.stroke();}
   }
 
-  function easeInOut(t){ return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2; }
-
-  var P = [
-    {name:'arrive',    dur:60},
-    {name:'segment',   dur:100},
-    {name:'order',     dur:80},
-    {name:'fork',      dur:40},
-    {name:'grade',     dur:140},
-    {name:'merge',     dur:60},
-    {name:'global',    dur:100},
-    {name:'report',    dur:80},
-    {name:'hold',      dur:70},
-    {name:'reset',     dur:40}
-  ];
-  var totalF = P.reduce(function(s,p){return s+p.dur;},0);
-
-  var sections = [
-    {id:'S1',name:'Intro',color:'#4a7a5a'},
-    {id:'S3',name:'HPI',color:'#5a7a9a'},
-    {id:'S5',name:'PMH',color:'#7a6a8a'},
-    {id:'S8',name:'DDx',color:accent},
-    {id:'S12',name:'Closure',color:'#5a9a8a'}
-  ];
-
-  var transcriptLines = [
-    'L1: "Good morning, I\'m a medical student..."',
-    'L5: "When did the pain start?"',
-    'L9: "Any surgeries in the past?"',
-    'L14: "I\'m considering three possibilities..."',
-    'L22: "Do you have any questions for me?"'
-  ];
-
   function drawArrow(x1,y1,x2,y2,col,alpha){
     ctx.save();
     ctx.globalAlpha=alpha||1;
@@ -329,10 +1123,118 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
     var a=Math.atan2(y2-y1,x2-x1);
     ctx.fillStyle=col;ctx.beginPath();
     ctx.moveTo(x2,y2);
-    ctx.lineTo(x2-8*Math.cos(a-0.4),y2-8*Math.sin(a-0.4));
-    ctx.lineTo(x2-8*Math.cos(a+0.4),y2-8*Math.sin(a+0.4));
+    ctx.lineTo(x2-7*Math.cos(a-0.4),y2-7*Math.sin(a-0.4));
+    ctx.lineTo(x2-7*Math.cos(a+0.4),y2-7*Math.sin(a+0.4));
     ctx.fill();
     ctx.restore();
+  }
+
+  function easeInOut(t){ return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2; }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+  // rises a->b, holds to c, falls to d (a<=b<=c<=d)
+  function trapezoid(x,a,b,c,d){
+    if(x<=a || x>=d) return 0;
+    if(x<b) return (x-a)/(b-a);
+    if(x<=c) return 1;
+    return 1-(x-c)/(d-c);
+  }
+  function riseOnly(x,a,b){ return clamp((x-a)/(b-a),0,1); }
+  function fitText(text,maxW){
+    if(ctx.measureText(text).width<=maxW) return text;
+    var t=text;
+    while(t.length>1 && ctx.measureText(t+'…').width>maxW){ t=t.slice(0,-1); }
+    return t+'…';
+  }
+
+  var P = [
+    {name:'arrive',     dur:50},
+    {name:'g1_move',    dur:38},
+    {name:'g1_reject',  dur:52},
+    {name:'g2_move',    dur:38},
+    {name:'g2_gate1',   dur:30},
+    {name:'g2_gate2',   dur:50},
+    {name:'g2_settle',  dur:34},
+    {name:'g3_move',    dur:38},
+    {name:'g3_gate1',   dur:28},
+    {name:'g3_gate2',   dur:56},
+    {name:'g3_settle',  dur:36},
+    {name:'g4_move',    dur:38},
+    {name:'g4_gates',   dur:40},
+    {name:'g4_settle',  dur:32},
+    {name:'hold',       dur:65},
+    {name:'fadeout',    dur:30}
+  ];
+  var totalF = P.reduce(function(s,p){return s+p.dur;},0);
+  var CUM = (function(){ var arr=[], acc=0; for(var i=0;i<P.length;i++){ arr.push(acc); acc+=P[i].dur; } return arr; })();
+  // static frame for prefers-reduced-motion: settled inside 'hold' phase (14)
+  var STATIC_FRAME = CUM[14] + Math.floor(P[14].dur*0.45);
+
+  var transcriptLines = [
+    {loc:'Line 4',  text:'Can you describe the pain?'},
+    {loc:'Line 9',  text:'Any chest tightness now?'},
+    {loc:'Line 14', text:'When did the pain start?'}
+  ];
+  var gateFields = ['item_id','judgment','evidence_quote','evidence_location','reasoning'];
+
+  var G1 = {id:'G1', item:'S3.5',  judgment:'satisfied'};
+  var G2 = {id:'G2', item:'S3.1a', judgment:'satisfied',     quote:'When did the pain start?', loc:'Line 14'};
+  var G3 = {id:'G3', item:'S7.2',  judgment:'satisfied',     quote:'Patient denies chest pain', loc:'Line 9'};
+  var G4 = {id:'G4', item:'S5.4',  judgment:'not_satisfied', quote:'', loc:''};
+
+  /* mode: 'full' (in-transit card) or 'badge' (settled in grade book).
+     state (full mode only): 'missing' | 'claim' | 'strike' | 'blanked' | 'empty'
+     badgeStatus (badge mode only): 'good' | 'flag' | 'neutral' */
+  function drawCard(cx,cy,cw,ch,data,mode,state,badgeStatus){
+    var x=cx-cw/2, y=cy-ch/2;
+    drawRR(x,y,cw,ch,7,inset,'rgba(255,255,255,0.06)',1);
+    ctx.textAlign='left';
+    if(mode==='badge'){
+      ctx.font='600 10px '+mono; ctx.fillStyle=t1;
+      ctx.fillText(fitText(data.id+' · '+data.item,cw-30), x+9, y+ch/2-2);
+      ctx.font='8px '+mono; ctx.fillStyle=t3;
+      ctx.fillText(fitText(data.judgment,cw-30), x+9, y+ch/2+12);
+      var iconColor = badgeStatus==='good'?green:(badgeStatus==='flag'?accent:t2);
+      var glyph = badgeStatus==='good'?'✓':(badgeStatus==='flag'?'!':'–');
+      ctx.beginPath(); ctx.arc(x+cw-13,y+ch/2,6,0,Math.PI*2);
+      ctx.fillStyle=iconColor+'33'; ctx.fill();
+      ctx.strokeStyle=iconColor; ctx.lineWidth=1.2; ctx.stroke();
+      ctx.font='700 9px '+mono; ctx.fillStyle=iconColor; ctx.textAlign='center';
+      ctx.fillText(glyph, x+cw-13, y+ch/2+3);
+      ctx.textAlign='left';
+      return;
+    }
+    ctx.font='600 8px '+mono; ctx.fillStyle=t3;
+    ctx.fillText(fitText(data.id+' · '+data.item, cw-16), x+8, y+12);
+    ctx.font='500 9px '+mono; ctx.fillStyle=t1;
+    ctx.fillText(fitText('judgment: '+data.judgment, cw-16), x+8, y+24);
+    if(state==='missing'){
+      ctx.font='9px '+mono; ctx.fillStyle=red;
+      ctx.fillText(fitText('evidence_quote: MISSING', cw-16), x+8, y+38);
+    } else if(state==='strike'){
+      ctx.font='8px '+mono; ctx.fillStyle=accent;
+      var qt = fitText('"'+data.quote+'"', cw-16);
+      ctx.fillText(qt, x+8, y+38);
+      var qw = ctx.measureText(qt).width;
+      ctx.strokeStyle=accent; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(x+8,y+35); ctx.lineTo(x+8+qw,y+35); ctx.stroke();
+      ctx.font='8px '+mono; ctx.fillStyle=t3;
+      ctx.fillText(fitText('loc: '+data.loc, cw-16), x+8, y+50);
+    } else if(state==='blanked'){
+      ctx.font='8px '+mono; ctx.fillStyle=t3;
+      ctx.fillText(fitText('evidence_quote: ""', cw-16), x+8, y+38);
+      ctx.font='700 8px '+mono; ctx.fillStyle=accent;
+      ctx.fillText(fitText('[citation unverified]', cw-16), x+8, y+50);
+    } else if(state==='empty'){
+      ctx.font='8px '+mono; ctx.fillStyle=t2;
+      ctx.fillText(fitText('evidence_quote: ""', cw-16), x+8, y+38);
+      ctx.fillText(fitText('evidence_location: ""', cw-16), x+8, y+50);
+    } else { // 'claim'
+      ctx.font='8px '+mono; ctx.fillStyle=t2;
+      ctx.fillText(fitText('"'+data.quote+'"', cw-16), x+8, y+38);
+      ctx.fillStyle=accent;
+      ctx.fillText(fitText(data.loc, cw-16), x+8, y+50);
+    }
   }
 
   function draw(){
@@ -348,279 +1250,303 @@ document.querySelectorAll('.fade').forEach(el => obs.observe(el));
     var prog = pf/P[phase].dur;
     var ep = easeInOut(prog);
 
-    var globalAlpha = 1;
-    if(phase === 0) globalAlpha = ep;
-    if(phase === 9) globalAlpha = 1 - ep;
-    ctx.globalAlpha = globalAlpha;
+    var globalAlpha=1;
+    if(phase===0) globalAlpha=ep;
+    if(phase===15) globalAlpha=1-ep;
+    ctx.globalAlpha=globalAlpha;
 
-    var mx = w/2;
-    var colW = Math.min(160, w*0.14);
-    var laneW = Math.min(180, w*0.16);
+    /* ---------- layout: fractions of w, capped, verified against
+       w = 343, 375, 600, 900, 1344 (see notes) ---------- */
+    var marginX = clamp(w*0.02, 6, 18);
+    var gap     = clamp(w*0.014, 5, 13);
+    var txW     = clamp(w*0.19, 76, 148);
+    var fgW     = clamp(w*0.135, 76, 132);
+    var qvW     = clamp(w*0.135, 76, 132);
+    var gbW     = clamp(w*0.115, 64, 112);
+    var groupW = txW+gap+fgW+gap+qvW+gap+gbW;
+    var leftX = clamp((w-groupW)/2, marginX, w-marginX-groupW);
+    var txX = leftX;
+    var fgX = txX+txW+gap;
+    var qvX = fgX+fgW+gap;
+    var gbX = qvX+qvW+gap;
 
-    // ===== Phase 0+: Transcript block (left side) =====
-    if(phase >= 0){
-      var txAlpha = phase===0 ? ep : 1;
-      ctx.save(); ctx.globalAlpha = txAlpha * globalAlpha;
-      var txX = 24, txY = 30;
-      drawRR(txX, txY, colW+40, 170, 8, inset, 'rgba(255,255,255,0.04)', 1);
-      ctx.font='600 10px '+mono; ctx.fillStyle=accent; ctx.textAlign='left';
-      ctx.fillText('TRANSCRIPT', txX+12, txY+20);
-      ctx.font='10px '+mono; ctx.fillStyle=t3;
-      for(var i=0;i<transcriptLines.length;i++){
-        var lineAlpha = phase===0 ? Math.max(0, Math.min(1, (ep*5)-i)) : 1;
-        ctx.save(); ctx.globalAlpha = lineAlpha * txAlpha * globalAlpha;
-        var txt = transcriptLines[i];
-        if(txt.length > 28) txt = txt.substring(0,28)+'...';
-        ctx.fillText(txt, txX+12, txY+40+i*26);
+    /* ---------- layout: fractions of h ---------- */
+    var statusY = clamp(h*0.045, 14, 20);
+    var boxTop  = statusY+16;
+    var txH     = clamp(h*0.30, 96, 132);
+    var boxH    = h*0.60;
+    var travelY = boxTop + boxH*0.68;
+    var captionY = h - clamp(h*0.055, 18, 24);
+
+    var cardW = clamp(w*0.155, 74, 138), cardH = 54;
+    var badgeW = gbW-16, badgeH = 40;
+
+    var startCX = fgX - gap*0.5;
+    var fgCX = fgX+fgW/2;
+    var qvCX = qvX+qvW/2;
+    var slotCX = gbX+gbW/2;
+    var slot0CY = boxTop+boxH*0.32;
+    var slot1CY = boxTop+boxH*0.58;
+    var slot2CY = boxTop+boxH*0.84;
+
+    /* ---------- anchor reveal stagger (phase 0) ---------- */
+    var a0 = phase===0? clamp(ep*4-0,0,1):1; // transcript
+    var a1 = phase===0? clamp(ep*4-1,0,1):1; // field gate
+    var a2 = phase===0? clamp(ep*4-2,0,1):1; // quote verifier
+    var a3 = phase===0? clamp(ep*4-3,0,1):1; // grade book
+
+    /* ---------- Line 14 evidence highlight (card G2 passing verifier) ---------- */
+    var l14Highlight = 0;
+    if(phase===5) l14Highlight = Math.max(0,Math.sin(Math.min(ep,1)*Math.PI));
+    else if(phase>5) l14Highlight = 0.14;
+
+    /* ---------- rail guides ---------- */
+    ctx.save(); ctx.globalAlpha = 0.24*Math.min(a0,a1)*globalAlpha;
+    drawArrow(txX+txW+2, travelY, fgX-5, travelY, accent, 1);
+    ctx.restore();
+    ctx.save(); ctx.globalAlpha = 0.24*Math.min(a1,a2)*globalAlpha;
+    drawArrow(fgX+fgW+2, travelY, qvX-5, travelY, accent, 1);
+    ctx.restore();
+    ctx.save(); ctx.globalAlpha = 0.24*Math.min(a2,a3)*globalAlpha;
+    drawArrow(qvX+qvW+2, travelY, gbX-5, travelY, accent, 1);
+    ctx.restore();
+
+    /* ---------- transcript card ---------- */
+    ctx.save(); ctx.globalAlpha=a0*globalAlpha;
+    var rx0 = txX-(1-a0)*16;
+    drawRR(rx0, boxTop, txW, txH, 8, inset, 'rgba(255,255,255,0.05)', 1);
+    ctx.textAlign='left';
+    ctx.font='600 9px '+mono; ctx.fillStyle=accent;
+    ctx.fillText(fitText('TRANSCRIPT', txW-16), rx0+10, boxTop+16);
+    for(var i=0;i<transcriptLines.length;i++){
+      var ly = boxTop+36+i*24;
+      var isL14 = transcriptLines[i].loc==='Line 14';
+      if(isL14 && l14Highlight>0){
+        ctx.save(); ctx.globalAlpha=l14Highlight*a0*globalAlpha;
+        drawRR(rx0+6, ly-12, txW-12, 18, 4, accent+'2a', null, 0);
         ctx.restore();
       }
+      ctx.font='8px '+mono;
+      ctx.fillStyle = (isL14 && l14Highlight>0.05) ? t1 : t3;
+      ctx.fillText(fitText(transcriptLines[i].loc+': "'+transcriptLines[i].text+'"', txW-20), rx0+10, ly);
+    }
+    ctx.restore();
+
+    /* ---------- field gate box + glow ---------- */
+    var fgGlowColor=accent, fgGlowAmt=0;
+    if(phase===2) { fgGlowColor=red;   fgGlowAmt=trapezoid(ep,0,0.08,0.5,0.7); }
+    if(phase===4) { fgGlowColor=green; fgGlowAmt=trapezoid(ep,0,0.1,0.6,0.85); }
+    if(phase===8) { fgGlowColor=green; fgGlowAmt=trapezoid(ep,0,0.1,0.6,0.85); }
+    if(phase===12){ fgGlowColor=green; fgGlowAmt=trapezoid(ep,0,0.08,0.35,0.5); }
+
+    ctx.save(); ctx.globalAlpha=a1*globalAlpha;
+    var fgY = boxTop-(1-a1)*10;
+    drawRR(fgX, fgY, fgW, boxH, 10, raised, 'rgba(255,255,255,0.06)', 1);
+    if(fgGlowAmt>0){
+      ctx.save(); ctx.globalAlpha=fgGlowAmt*a1*globalAlpha;
+      ctx.shadowColor=fgGlowColor; ctx.shadowBlur=16;
+      drawRR(fgX, fgY, fgW, boxH, 10, null, fgGlowColor, 2.2);
+      ctx.restore();
+    }
+    ctx.textAlign='center';
+    ctx.font='600 8px '+mono; ctx.fillStyle=accent;
+    ctx.fillText(fitText('FIELD GATE', fgW-16), fgX+fgW/2, fgY+18);
+    ctx.font='7px '+mono; ctx.fillStyle=t3;
+    ctx.fillText(fitText('_validate_grounding_', fgW-16), fgX+fgW/2, fgY+31);
+    ctx.fillText(fitText('fields()', fgW-16), fgX+fgW/2, fgY+42);
+    ctx.font='7px '+mono; ctx.fillStyle=t3;
+    ctx.fillText('REQUIRED FIELDS', fgX+fgW/2, fgY+58);
+    ctx.textAlign='left';
+    for(var gf=0; gf<gateFields.length; gf++){
+      ctx.font='8px '+mono; ctx.fillStyle=t2;
+      ctx.fillText(fitText(gateFields[gf], fgW-24), fgX+12, fgY+74+gf*16);
+    }
+    ctx.textAlign='center';
+    ctx.font='7px '+mono; ctx.fillStyle=t3;
+    ctx.fillText(fitText('miss one: abort, no retry', fgW-16), fgX+fgW/2, fgY+74+gateFields.length*16+14);
+    ctx.textAlign='left';
+    ctx.restore();
+
+    /* ---------- quote verifier box + glow ---------- */
+    var qvGlowColor=accent, qvGlowAmt=0;
+    if(phase===5) { qvGlowColor=green;  qvGlowAmt=trapezoid(ep,0,0.1,0.55,0.8); }
+    if(phase===9) { qvGlowColor=accent; qvGlowAmt=trapezoid(ep,0,0.1,0.5,0.75); }
+    if(phase===12){ qvGlowColor=green;  qvGlowAmt=trapezoid(ep,0.35,0.55,0.75,0.95); }
+
+    ctx.save(); ctx.globalAlpha=a2*globalAlpha;
+    var qvY = boxTop-(1-a2)*10;
+    drawRR(qvX, qvY, qvW, boxH, 10, raised, 'rgba(255,255,255,0.06)', 1);
+    if(qvGlowAmt>0){
+      ctx.save(); ctx.globalAlpha=qvGlowAmt*a2*globalAlpha;
+      ctx.shadowColor=qvGlowColor; ctx.shadowBlur=16;
+      drawRR(qvX, qvY, qvW, boxH, 10, null, qvGlowColor, 2.2);
+      ctx.restore();
+    }
+    ctx.textAlign='center';
+    ctx.font='600 8px '+mono; ctx.fillStyle=accent;
+    ctx.fillText(fitText('QUOTE VERIFIER', qvW-16), qvX+qvW/2, qvY+18);
+    ctx.font='7px '+mono; ctx.fillStyle=t3;
+    ctx.fillText(fitText('substring of', qvW-16), qvX+qvW/2, qvY+34);
+    ctx.fillText(fitText('transcript?', qvW-16), qvX+qvW/2, qvY+45);
+    ctx.font='7px '+mono; ctx.fillStyle=t3;
+    ctx.fillText(fitText('_verify_citation()', qvW-16), qvX+qvW/2, qvY+62);
+    ctx.fillText(fitText('case · space · quotes', qvW-16), qvX+qvW/2, qvY+74);
+    ctx.font='7px '+mono; ctx.fillStyle=t3;
+    ctx.fillText(fitText('fail: blank + tag, judgment stands', qvW-16), qvX+qvW/2, qvY+92);
+    ctx.textAlign='left';
+    ctx.restore();
+
+    /* ---------- grade book zone ---------- */
+    ctx.save(); ctx.globalAlpha=a3*globalAlpha;
+    var gbY = boxTop;
+    var rx3 = gbX+(1-a3)*16;
+    drawRR(rx3, gbY, gbW, boxH, 10, raised, 'rgba(255,255,255,0.04)', 1);
+    ctx.textAlign='center';
+    ctx.font='600 9px '+mono; ctx.fillStyle=accent;
+    ctx.fillText(fitText('GRADE BOOK', gbW-14), rx3+gbW/2, gbY+18);
+    ctx.textAlign='left';
+    ctx.restore();
+
+    /* ---------- status stamps ---------- */
+    var stampY = statusY+4;
+    function stamp(text,color,alpha,cx){
+      if(alpha<=0) return;
+      ctx.save(); ctx.globalAlpha=alpha*globalAlpha; ctx.textAlign='center';
+      ctx.font='700 11px '+mono; ctx.fillStyle=color;
+      ctx.fillText(text, cx, stampY);
+      ctx.textAlign='left'; ctx.restore();
+    }
+    if(phase===2) stamp('REJECTED', red, trapezoid(ep,0.05,0.15,0.5,0.75), fgCX);
+    if(phase===5) stamp('VERIFIED', green, trapezoid(ep,0.15,0.3,0.6,0.85), qvCX);
+    if(phase===9) stamp('UNVERIFIED', accent, trapezoid(ep,0.15,0.3,0.55,0.8), qvCX);
+    if(phase===12) stamp('PASSED', green, trapezoid(ep,0.3,0.45,0.7,0.9), (fgCX+qvCX)/2);
+
+    /* ---------- card G1: move to field gate, rejected, drops ---------- */
+    if(phase===1){
+      var cx1 = lerp(startCX, fgCX, ep);
+      drawCard(cx1, travelY, cardW, cardH, G1, 'full', 'missing');
+    }
+    if(phase===2){
+      var dp = clamp((ep-0.3)/0.7, 0, 1);
+      var cy1 = travelY + dp*(boxH*0.5);
+      var a1c = 1-dp;
+      if(a1c>0.01){
+        ctx.save(); ctx.globalAlpha=a1c*globalAlpha;
+        drawCard(fgCX, cy1, cardW, cardH, G1, 'full', 'missing');
+        ctx.restore();
+      }
+    }
+
+    /* ---------- card G2: move, gate, verify, settle (good) ---------- */
+    if(phase===3){
+      var cx2 = lerp(startCX, fgCX, ep);
+      drawCard(cx2, travelY, cardW, cardH, G2, 'full', 'claim');
+    }
+    if(phase===4){
+      drawCard(fgCX, travelY, cardW, cardH, G2, 'full', 'claim');
+    }
+    if(phase===5){
+      var x2 = lerp(fgCX, qvCX, ep);
+      drawCard(x2, travelY, cardW, cardH, G2, 'full', 'claim');
+    }
+    if(phase>=6){
+      var prog2 = phase===6? ep : 1;
+      var x2b = lerp(qvCX, slotCX, prog2);
+      var y2b = lerp(travelY, slot0CY, prog2);
+      var cw2 = lerp(cardW, badgeW, prog2);
+      var ch2 = lerp(cardH, badgeH, prog2);
+      if(prog2>0.55) drawCard(x2b, y2b, cw2, ch2, G2, 'badge', null, 'good');
+      else drawCard(x2b, y2b, cw2, ch2, G2, 'full', 'claim');
+    }
+
+    /* ---------- card G3: move, gate, verify fails, settle (flagged) ---------- */
+    if(phase===7){
+      var cx3 = lerp(startCX, fgCX, ep);
+      drawCard(cx3, travelY, cardW, cardH, G3, 'full', 'claim');
+    }
+    if(phase===8){
+      drawCard(fgCX, travelY, cardW, cardH, G3, 'full', 'claim');
+    }
+    if(phase===9){
+      var x3 = lerp(fgCX, qvCX, ep);
+      var st = ep<0.5 ? 'strike' : 'blanked';
+      drawCard(x3, travelY, cardW, cardH, G3, 'full', st);
+    }
+    if(phase>=10){
+      var prog3 = phase===10? ep : 1;
+      var x3b = lerp(qvCX, slotCX, prog3);
+      var y3b = lerp(travelY, slot1CY, prog3);
+      var cw3 = lerp(cardW, badgeW, prog3);
+      var ch3 = lerp(cardH, badgeH, prog3);
+      if(prog3>0.55) drawCard(x3b, y3b, cw3, ch3, G3, 'badge', null, 'flag');
+      else drawCard(x3b, y3b, cw3, ch3, G3, 'full', 'blanked');
+    }
+
+    /* ---------- card G4: move, both gates trivially pass, settle (neutral) ---------- */
+    if(phase===11){
+      var cx4 = lerp(startCX, fgCX, ep);
+      drawCard(cx4, travelY, cardW, cardH, G4, 'full', 'empty');
+    }
+    if(phase===12){
+      var x4 = lerp(fgCX, qvCX, ep);
+      drawCard(x4, travelY, cardW, cardH, G4, 'full', 'empty');
+    }
+    if(phase>=13){
+      var prog4 = phase===13? ep : 1;
+      var x4b = lerp(qvCX, slotCX, prog4);
+      var y4b = lerp(travelY, slot2CY, prog4);
+      var cw4 = lerp(cardW, badgeW, prog4);
+      var ch4 = lerp(cardH, badgeH, prog4);
+      if(prog4>0.55) drawCard(x4b, y4b, cw4, ch4, G4, 'badge', null, 'neutral');
+      else drawCard(x4b, y4b, cw4, ch4, G4, 'full', 'empty');
+    }
+
+    /* ---------- captions ---------- */
+    var cap1 = trapezoid(f, CUM[2]+P[2].dur*0.25, CUM[2]+P[2].dur*0.55, CUM[3]+P[3].dur*0.25, CUM[3]+P[3].dur*0.7);
+    var cap2 = trapezoid(f, CUM[6]+P[6].dur*0.1,  CUM[6]+P[6].dur*0.4,  CUM[7]+P[7].dur*0.2,  CUM[7]+P[7].dur*0.6);
+    var cap3 = trapezoid(f, CUM[10]+P[10].dur*0.1,CUM[10]+P[10].dur*0.4,CUM[11]+P[11].dur*0.2,CUM[11]+P[11].dur*0.6);
+    var cap4 = riseOnly(f, CUM[13]+P[13].dur*0.15, CUM[13]+P[13].dur*0.5);
+
+    var capText='', capAlpha=0;
+    if(cap1>capAlpha){ capText='contract violation: no retry'; capAlpha=cap1; }
+    if(cap2>capAlpha){ capText='cited and verified'; capAlpha=cap2; }
+    if(cap3>capAlpha){ capText='judgment stands, evidence removed'; capAlpha=cap3; }
+    if(cap4>capAlpha){ capText='honesty passes'; capAlpha=cap4; }
+    if(capAlpha>0){
+      ctx.save(); ctx.globalAlpha=capAlpha*globalAlpha;
+      ctx.font='italic 10px '+mono; ctx.fillStyle=t2; ctx.textAlign='center';
+      ctx.fillText(capText, w/2, captionY);
+      ctx.textAlign='left';
       ctx.restore();
     }
 
-    // ===== Phase 1+: Segmentation =====
-    if(phase >= 1){
-      var segAlpha = phase===1 ? ep : 1;
-      ctx.save(); ctx.globalAlpha = segAlpha * globalAlpha;
-      var segX = colW + 90;
-      drawArrow(colW+68, 115, segX-4, 115, accent, segAlpha*0.5);
-
-      ctx.font='600 10px '+mono; ctx.fillStyle=accent; ctx.textAlign='left';
-      ctx.fillText('STEP 1: SEGMENT', segX+8, 46);
-
-      for(var i=0;i<sections.length;i++){
-        var sy = 60 + i*32;
-        var segProg = phase===1 ? Math.max(0, Math.min(1, (ep*sections.length)-i)) : 1;
-        ctx.save(); ctx.globalAlpha = segProg * segAlpha * globalAlpha;
-        drawRR(segX, sy, colW-10, 26, 5, sections[i].color+'22', sections[i].color+'55', 1);
-        ctx.font='500 10px '+mono; ctx.fillStyle=sections[i].color;
-        ctx.fillText(sections[i].id, segX+8, sy+17);
-        ctx.fillStyle=t2; ctx.font='10px '+mono;
-        ctx.fillText(sections[i].name, segX+30, sy+17);
-        ctx.restore();
-      }
-      ctx.restore();
-    }
-
-    // ===== Phase 2+: Order analysis =====
-    if(phase >= 2){
-      var ordAlpha = phase===2 ? ep : 1;
-      ctx.save(); ctx.globalAlpha = ordAlpha * globalAlpha;
-      var ordX = segX, ordY = 230;
-
-      drawRR(ordX, ordY, colW-10, 60, 6, inset, 'rgba(255,255,255,0.03)', 1);
-      ctx.font='600 10px '+mono; ctx.fillStyle=green; ctx.textAlign='left';
-      ctx.fillText('STEP 2: ORDER (LCS)', ordX+8, ordY+18);
-      ctx.font='10px '+mono; ctx.fillStyle=t3;
-      ctx.fillText('Pure Python, no LLM', ordX+8, ordY+34);
-
-      if(phase===2 && ep > 0.6){
-        var scoreAlpha = (ep-0.6)/0.4;
-        ctx.save(); ctx.globalAlpha = scoreAlpha * ordAlpha * globalAlpha;
-        ctx.font='500 11px '+mono; ctx.fillStyle=green;
-        ctx.fillText('Score: 0.85', ordX+8, ordY+50);
-        ctx.restore();
-      } else if(phase > 2){
-        ctx.font='500 11px '+mono; ctx.fillStyle=green;
-        ctx.fillText('Score: 0.85', ordX+8, ordY+50);
-      }
-      ctx.restore();
-    }
-
-    // ===== Phase 3+: Fork into 3 lanes =====
-    var laneStartX = colW*2 + 120;
-    var laneNames = ['Structural','Teacher','Reasoning'];
-    var laneColors = [blue, purple, teal];
-
-    if(phase >= 3){
-      var forkAlpha = phase===3 ? ep : 1;
-      ctx.save(); ctx.globalAlpha = forkAlpha * globalAlpha;
-
-      // asyncio.gather label
-      ctx.font='600 10px '+mono; ctx.fillStyle=accent; ctx.textAlign='center';
-      ctx.fillText('asyncio.gather', laneStartX + laneW*1.5 + 10, 30);
-
-      // Connecting line from segments to lanes
-      var forkFromX = segX + colW - 6;
-      var forkFromY = 140;
-      for(var i=0;i<3;i++){
-        var lx = laneStartX + i*(laneW+10);
-        var ly = 50 + i*5;
-        var forkProg = phase===3 ? Math.max(0, Math.min(1, (ep*3)-i)) : 1;
-        ctx.save(); ctx.globalAlpha = forkProg * forkAlpha * globalAlpha;
-        drawArrow(forkFromX, forkFromY - 30 + i*30, lx, ly+10, laneColors[i], 0.4);
-        ctx.restore();
-      }
-      ctx.restore();
-    }
-
-    // ===== Phase 4+: Concurrent grading =====
-    if(phase >= 4){
-      var gradeAlpha = phase===4 ? 1 : 1;
-
-      for(var lane=0;lane<3;lane++){
-        var lx = laneStartX + lane*(laneW+10);
-        var ly = 50;
-        var lh = 340;
-
-        ctx.save(); ctx.globalAlpha = gradeAlpha * globalAlpha;
-
-        // Lane background
-        drawRR(lx, ly, laneW, lh, 8, laneColors[lane]+'08', laneColors[lane]+'22', 1);
-
-        // Lane header
-        ctx.font='600 10px '+mono; ctx.fillStyle=laneColors[lane]; ctx.textAlign='left';
-        ctx.fillText('STEP '+(lane+3)+': '+laneNames[lane].toUpperCase(), lx+10, ly+20);
-
-        // Scope label
-        ctx.font='9px '+mono; ctx.fillStyle=t3;
-        if(lane===0) ctx.fillText('vs matched segment', lx+10, ly+34);
-        if(lane===1) ctx.fillText('vs full transcript', lx+10, ly+34);
-        if(lane===2) ctx.fillText('3 sub-evaluations', lx+10, ly+34);
-
-        // Item cards
-        var items;
-        if(lane===0) items = [{id:'S1.1',j:'satisfied',ev:'Line 1'},{id:'S3.1a',j:'satisfied',ev:'Line 5'},{id:'S5.1',j:'not_sat',ev:'none'},{id:'S8.1',j:'satisfied',ev:'Line 14'}];
-        else if(lane===1) items = [{id:'T_HX_01',j:'satisfied',ev:'Line 5'},{id:'T_HX_02',j:'partial',ev:'Line 9'},{id:'T_DX_01',j:'satisfied',ev:'Line 14'}];
-        else items = [{id:'Diff Cov',j:'4/5 found',ev:'40%'},{id:'R1-R4',j:'3/4 sat',ev:'40%'},{id:'Quality',j:'hypothesis',ev:'20%'}];
-
-        for(var it=0;it<items.length;it++){
-          var iy = ly + 48 + it*68;
-          var itemProg = phase===4 ? Math.max(0, Math.min(1, (ep*(items.length+1))-it)) : 1;
-          ctx.save(); ctx.globalAlpha = itemProg * gradeAlpha * globalAlpha;
-
-          drawRR(lx+8, iy, laneW-16, 56, 5, inset, 'rgba(255,255,255,0.02)', 1);
-
-          ctx.font='500 10px '+mono; ctx.fillStyle=t1; ctx.textAlign='left';
-          ctx.fillText(items[it].id, lx+16, iy+16);
-
-          // Judgment badge
-          var jColor = items[it].j==='satisfied'||items[it].j.indexOf('sat')>-1||items[it].j==='hypothesis' ? green : items[it].j==='not_sat' ? red : accent;
-          var jText = items[it].j;
-          drawRR(lx+16, iy+24, ctx.measureText(jText).width+16, 18, 4, jColor+'22', jColor+'55', 1);
-          ctx.font='9px '+mono; ctx.fillStyle=jColor;
-          ctx.fillText(jText, lx+24, iy+36);
-
-          // Evidence
-          if(lane < 2 && items[it].ev !== 'none'){
-            ctx.font='9px '+mono; ctx.fillStyle=accent;
-            ctx.fillText('"'+items[it].ev+'"', lx+16, iy+50);
-          } else if(lane===2){
-            ctx.font='9px '+mono; ctx.fillStyle=t3;
-            ctx.fillText('weight: '+items[it].ev, lx+16, iy+50);
-          }
-          if(items[it].ev==='none'){
-            ctx.font='9px '+mono; ctx.fillStyle=red;
-            ctx.fillText('no evidence found', lx+16, iy+50);
-          }
-
-          ctx.restore();
-        }
-
-        ctx.restore();
-      }
-    }
-
-    // ===== Phase 5+: Merge =====
-    if(phase >= 5){
-      var mergeAlpha = phase===5 ? ep : 1;
-      ctx.save(); ctx.globalAlpha = mergeAlpha * globalAlpha;
-
-      var mergeY = 400;
-      for(var i=0;i<3;i++){
-        var lx = laneStartX + i*(laneW+10) + laneW/2;
-        drawArrow(lx, 390, mx + laneW, mergeY+10, laneColors[i], 0.3 * mergeAlpha);
-      }
-      ctx.restore();
-    }
-
-    // ===== Phase 6+: Global ratings =====
-    if(phase >= 6){
-      var gAlpha = phase===6 ? ep : 1;
-      ctx.save(); ctx.globalAlpha = gAlpha * globalAlpha;
-
-      var gx = 24, gy = 310;
-      drawRR(gx, gy, colW + 50, 120, 8, raised, 'rgba(255,255,255,0.03)', 1);
-      ctx.font='600 10px '+mono; ctx.fillStyle=accent; ctx.textAlign='left';
-      ctx.fillText('STEP 6: GLOBAL RATINGS', gx+10, gy+18);
-      ctx.font='9px '+mono; ctx.fillStyle=t3;
-      ctx.fillText('Grounded in grounded evidence', gx+10, gy+32);
-
-      var dims = [{name:'Communication',score:4},{name:'Clin. Reasoning',score:3},{name:'Organization',score:5}];
-      for(var i=0;i<dims.length;i++){
-        var dy = gy + 44 + i*24;
-        var dimProg = phase===6 ? Math.max(0, Math.min(1, (ep*4)-i)) : 1;
-        ctx.save(); ctx.globalAlpha = dimProg * gAlpha * globalAlpha;
-
-        ctx.font='10px '+mono; ctx.fillStyle=t2;
-        ctx.fillText(dims[i].name, gx+14, dy+4);
-
-        // Score dots
-        for(var d=0;d<5;d++){
-          var dx = gx + colW - 10 + d*14;
-          ctx.beginPath();
-          ctx.arc(dx, dy, 4, 0, Math.PI*2);
-          ctx.fillStyle = d < dims[i].score ? accent : inset;
-          ctx.fill();
-          if(d >= dims[i].score){
-            ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.lineWidth=1; ctx.stroke();
-          }
-        }
-        ctx.restore();
-      }
-      ctx.restore();
-    }
-
-    // ===== Phase 7: Report =====
-    if(phase >= 7){
-      var repAlpha = phase===7 ? ep : 1;
-      ctx.save(); ctx.globalAlpha = repAlpha * globalAlpha;
-
-      var rx = 24, ry = 215;
-      drawRR(rx, ry, colW + 50, 80, 8, green+'11', green+'33', 1);
-      ctx.font='600 11px '+mono; ctx.fillStyle=green; ctx.textAlign='left';
-      ctx.fillText('FINAL REPORT', rx+12, ry+20);
-
-      ctx.font='10px '+mono; ctx.fillStyle=t2;
-      ctx.fillText('Structural: 78%', rx+12, ry+38);
-      ctx.fillText('Teacher: 82%', rx+12, ry+52);
-      ctx.fillText('Reasoning: 71%', rx+12, ry+66);
-
-      // Overall score
-      var ow = ctx.measureText('Overall: 77.2%').width + 20;
-      drawRR(rx + colW - 10, ry+30, ow, 26, 5, accent+'22', accent+'55', 1);
-      ctx.font='600 11px '+mono; ctx.fillStyle=accent;
-      ctx.fillText('Overall: 77.2%', rx + colW, ry+48);
-
-      // Winner pulse
-      if(phase===7 && ep > 0.5){
-        var pulse = 0.4 + 0.6*Math.sin((ep-0.5)*Math.PI*4)*0.5+0.5;
-        ctx.save(); ctx.globalAlpha = pulse * repAlpha * globalAlpha;
-        ctx.font='600 12px '+mono; ctx.fillStyle=accent;
-        ctx.textAlign='center';
-        ctx.fillText('★ WINNER ★', rx + (colW+50)/2, ry - 8);
-        ctx.restore();
-      }
-
-      ctx.restore();
-    }
-
-    ctx.globalAlpha = 1;
-    frame++;
-    requestAnimationFrame(draw);
+    ctx.globalAlpha=1;
+    if(loopEnabled){ frame++; requestAnimationFrame(draw); }
   }
 
   var cObs = new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
       if(entry.isIntersecting && !running){
-        running=true; initCanvas(); draw();
+        initCanvas();
+        if(reduceMotion){
+          frame = STATIC_FRAME; loopEnabled=false; running=true; draw();
+        } else {
+          frame = 0; loopEnabled=true; running=true; draw();
+        }
       } else if(!entry.isIntersecting && running){
         running=false;
       }
     });
   },{threshold:0.15});
   cObs.observe(wrap);
-  window.addEventListener('resize',function(){ if(running) initCanvas(); });
+
+  window.addEventListener('resize', function(){
+    if(!running) return;
+    initCanvas();
+    if(!loopEnabled) draw();
+  });
 })();
+
 </script>
 
 </body>
