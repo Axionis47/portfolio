@@ -117,7 +117,7 @@
       <div class="main">
         <div class="rcat">Model distillation</div>
         <p class="rname">Semantic Search via Knowledge Distillation</p>
-        <p class="rdesc">Compressing a 560M cross-encoder&rsquo;s ranking judgment into a 33M bi-encoder: a three-loss KD objective (MarginMSE + KL + contrastive, 0.6/0.2/0.2), temperature annealed 4.0&rarr;2.0, and a three-stage hard-negative curriculum. The page audits the repo&rsquo;s own claims &mdash; code-backed facts kept, unbacked numbers labeled as targets.</p>
+        <p class="rdesc">Compressing a 560M cross-encoder&rsquo;s ranking judgment into a 33M bi-encoder: a three-loss KD objective (MarginMSE + KL + contrastive), temperature annealed 4.0&rarr;2.0, and a three-stage hard-negative curriculum. The page audits the repo&rsquo;s claims, then recovers the real evidence &mdash; a measured +43% nDCG@10 (0.380 &rarr; 0.543 on 200 held-out queries), distilled on a laptop CPU.</p>
         <div class="tags"><span class="tag">KL Divergence</span><span class="tag">FAISS</span><span class="tag">FastAPI</span><span class="tag">MS MARCO</span></div>
       </div>
       <span class="go">&rarr;</span>

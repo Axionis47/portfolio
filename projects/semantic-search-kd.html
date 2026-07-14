@@ -127,7 +127,7 @@
       <span class="brief-key">Approach</span>
       <span class="brief-val">Knowledge distillation with a 3-component loss (MarginMSE + KL divergence + contrastive, weighted 0.6/0.2/0.2), a 3-stage hard-negative mining curriculum (BM25, teacher-scored, ANCE self-mining), and temperature annealed linearly from T=4.0 to T=2.0. All of that is committed, tested code.</span>
       <span class="brief-key">Result</span>
-      <span class="brief-val">Audited, not asserted. Verifiable in the repo: the loss and mining implementations, a FastAPI serving layer with real rate limiting, 177 test functions, and 8 architecture decision records. Reported in the repo's docs but backed by no artifact: 0.882 nDCG@10, 97% of teacher quality, $4 to train. This page labels every number as one or the other. Chapter 6 is the audit.</span>
+      <span class="brief-val">Audited, then recovered. The repo's docs claim 0.882 nDCG@10 and "97% of teacher" with no artifact behind them. The audit found the original training workspace on the author's machine: the student was really trained, locally on CPU, and its production evaluation measured nDCG@10 0.3796 &rarr; 0.5432 (+43.1%) over the vanilla student on 200 held-out queries, with 8.24ms mean measured latency. Chapter 6 separates the measured from the claimed, line by line.</span>
       <span class="brief-key">Why it matters</span>
       <span class="brief-val">Distillation is a trust transfer: the student is only worth deploying to the extent it reproduces the teacher's judgment, measured. The same standard applies to the project itself, so claims without artifacts are labeled as targets, not results.</span>
       <span class="brief-key">Stack</span>
@@ -332,26 +332,26 @@
 
   <div class="prose fade">
     <p>
-      This project's docs report results that its repo cannot currently reproduce. The honest move is not to delete the numbers or to repeat them louder; it is to say exactly which claims have evidence and which are design targets. So this chapter is an audit, run against the repo's own artifacts. The rule is the one used everywhere on this site: a number is real if code, a config, or a committed artifact backs it; otherwise it is labeled as reported.
+      This project's docs report results its repo cannot reproduce. The honest move is not to delete the numbers or repeat them louder; it is to say exactly which claims have evidence and which are design targets. So this chapter is an audit. The rule is the one used everywhere on this site: a number is real if code, a config, or a checkable artifact backs it; otherwise it is labeled as reported. The audit then did what audits occasionally get to do: it found the evidence. The original training workspace still exists on the author's machine, with the packages the repo lost, the trained model, the training logs, and the evaluation artifacts. The measured numbers are smaller than the claimed ones, and they are real.
     </p>
   </div>
 
   <div class="results fade">
     <div class="stat">
-      <div class="stat-val">0.6/0.2/0.2</div>
-      <div class="stat-label">Loss Weights, In Code</div>
+      <div class="stat-val">+43.1%</div>
+      <div class="stat-label">Measured nDCG@10 Lift</div>
     </div>
     <div class="stat">
-      <div class="stat-val">4.0 &rarr; 2.0</div>
-      <div class="stat-label">Temperature, In Code</div>
+      <div class="stat-val">0.5432</div>
+      <div class="stat-label">KD Student, 200 Queries</div>
     </div>
     <div class="stat">
-      <div class="stat-val">177</div>
-      <div class="stat-label">Test Functions</div>
+      <div class="stat-val">8.24ms</div>
+      <div class="stat-label">Mean Latency, Measured</div>
     </div>
     <div class="stat">
-      <div class="stat-val">8</div>
-      <div class="stat-label">Decision Records</div>
+      <div class="stat-val">128MB</div>
+      <div class="stat-label">Registered Student v1.0.0</div>
     </div>
   </div>
 
@@ -364,9 +364,9 @@
       <tr><td>3-stage mining: BM25, teacher-scored, ANCE</td><td>src/mining/miners.py</td><td>Code-backed structure; stage percentages are ADR targets</td></tr>
       <tr><td>Rate limiting: 100 req/min, burst 20</td><td>src/serve/middleware.py</td><td>Code-backed (ADR-008 says 10/s; the code ships ~1.7/s)</td></tr>
       <tr><td>560M teacher / 33M student</td><td>README, ADR-001/002</td><td>Match the public model cards; one repo doc says 110M/22M for the same models</td></tr>
-      <tr><td>nDCG@10 0.719 / 0.882 / 0.910, "97% of teacher"</td><td>docs, from a 200-query eval</td><td>Reported only. No eval artifact exists, committed or local</td></tr>
-      <tr><td>MRR@10 for the same three models</td><td>two overview docs</td><td>Contradicted: 0.632/0.775/0.80 in one doc, 0.685/0.854/0.891 in the other</td></tr>
-      <tr><td>"100x faster", ~1ms vs ~100ms; "$4 to train"</td><td>README, results doc</td><td>Reported only. No benchmark or billing artifact</td></tr>
+      <tr><td>nDCG@10 0.719 / 0.882 / 0.910, "97% of teacher"</td><td>docs, from a 200-query eval</td><td>Superseded by the recovered artifact: the production eval measured 0.3796 (vanilla) &rarr; 0.5432 (KD) on 200 queries over a 9,992-chunk corpus. The docs' figures mix a tiny quick-demo run (0.8804) with a differently configured eval</td></tr>
+      <tr><td>MRR@10 for the same three models</td><td>two overview docs</td><td>Contradicted by each other; the recovered artifact measured 0.3218 &rarr; 0.5429 (+68.7%)</td></tr>
+      <tr><td>"100x faster", ~1ms vs ~100ms; "$4 to train"</td><td>README, results doc</td><td>Contradicted on latency: the model registry's own measurement is 8.24ms mean / 13.07ms p95 per query on CPU. The $4 remains unbacked; the recovered logs show training ran on a laptop CPU</td></tr>
       <tr><td>Per-epoch loss table with T = 4.0 / 3.0 / 2.0</td><td>results doc</td><td>Contradicted: the code's schedule yields 3.33 / 2.67 / 2.0 for a 3-epoch run</td></tr>
       <tr><td>Prometheus metrics, "calibrated ONNX" serving</td><td>GitHub description, ops docs</td><td>Contradicted: no instrumentation code; ADR-007 chose PyTorch over ONNX</td></tr>
     </table>
@@ -374,11 +374,24 @@
 
   <div class="prose fade">
     <p>
-      Then there is the finding that explains the others. Every training, evaluation, and serving entry point imports <code>src.models</code>: the <code>StudentModel</code> and <code>TeacherModel</code> wrappers and the ONNX exporter. That package exists in no commit and is not on disk. The cause is one line: <code>.gitignore</code> contains <code>models/</code> without a leading slash, a rule written to exclude trained weights that also matches <code>src/models/</code> and silently swallowed it. A fresh clone of this repo cannot train, evaluate, or serve. The 177 tests are real and well-built, and the suite cannot even finish collecting, because the imports fail first. The one recorded run of the ML pipeline in CI died at the first stage.
+      Then there is the finding that explains the others. Every training, evaluation, and serving entry point imports <code>src.models</code>: the <code>StudentModel</code> and <code>TeacherModel</code> wrappers and the ONNX exporter. That package exists in no commit. The cause is one line: <code>.gitignore</code> contains <code>models/</code> without a leading slash, a rule written to exclude trained weights that also matches <code>src/models/</code> and silently swallowed it, along with <code>src/index/</code> and the CLI. A fresh clone of this repo cannot train, evaluate, or serve. The 177 tests are real and well-built, and the suite cannot finish collecting, because the imports fail first.
     </p>
     <p>
-      The reported numbers may well be honest; the training scripts target a GCP VM where the missing package presumably lived, and the figures are internally plausible. But a repo is a chain of custody, and this one is broken at the first link. That is the lesson of the audit: the difference between a result and a claim is an artifact someone else can check, from your repo, without asking you.
+      The audit went looking for the original workspace, and found it. The missing packages, the trained student (128MB, registered v1.0.0), a dozen training logs, and the evaluation artifacts all exist in the local project the repo was extracted from. The logs settle how it was trained: on a laptop CPU, the teacher grinding through hard-negative mining at ten seconds per query for the better part of two hours. The evidence exists. It just never made it into the chain of custody, and that is the lesson: the difference between a result and a claim is an artifact someone else can check, from your repo, without asking you.
     </p>
+  </div>
+
+  <div class="dia fade">
+    <div class="dia-title">Recovered from the original training workspace</div>
+    <table class="rtable">
+      <tr><th>Artifact</th><th>Contents</th><th>What it settles</th></tr>
+      <tr><td>evaluation_results.json</td><td>vanilla vs KD student, 200 test queries</td><td>nDCG@10 0.3796 &rarr; 0.5432 (+43.1%), MRR@10 0.3218 &rarr; 0.5429 (+68.7%)</td></tr>
+      <tr><td>kd_student_production/</td><td>model.safetensors, 128.25MB, e5-small architecture, 384-dim</td><td>The distilled student exists and is loadable</td></tr>
+      <tr><td>model_registry/registry.json</td><td>kd-student v1.0.0, stage: production</td><td>Measured inference latency: 8.24ms mean, 13.07ms p95</td></tr>
+      <tr><td>Training logs (12 files)</td><td>full runs, GCP attempts, mining progress bars</td><td>Trained locally on CPU, 2025-10-19; 9,992-chunk corpus, 603 training queries; TeacherMiner threshold 0.6 live in the logs</td></tr>
+      <tr><td>bm25_msmarco index, metrics_epoch JSONs</td><td>BM25 artifacts, per-epoch loss records</td><td>The pipeline's intermediate stages ran as designed</td></tr>
+    </table>
+    <div class="dia-note">The measured numbers are lower than the docs' claims and use a 9,992-document corpus subset, so they are not comparable to full MS MARCO benchmarks. They are also the only numbers here that are real.</div>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -441,18 +454,18 @@
   <div class="pipeline fade">
     <div class="pipe-step">
       <div class="pipe-num">01</div>
-      <div class="pipe-title">Restore the missing package</div>
-      <div class="pipe-desc">Recreate <code>src/models/</code> (the StudentModel and TeacherModel wrappers, the ONNX exporter) and change one line of <code>.gitignore</code>: <code>models/</code> to <code>/models/</code>. Until then the repo is a car with no engine block and excellent documentation.</div>
+      <div class="pipe-title">Restore the missing packages from the recovered workspace</div>
+      <div class="pipe-desc">Copy <code>src/models/</code>, <code>src/index/</code>, and the CLI back into the repo, and change one line of <code>.gitignore</code>: <code>models/</code> to <code>/models/</code>. The code exists and is proven by the logs; the repo just never received it. Until then the repo is a car with no engine block and excellent documentation.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">02</div>
-      <div class="pipe-title">Run it once, commit the evidence</div>
-      <div class="pipe-desc">One end-to-end run with the eval JSONs, latency benchmark, and training history committed. Every "reported" row in the Chapter 6 audit either becomes "measured" or gets corrected. This single step converts the page's weakest chapter into its strongest.</div>
+      <div class="pipe-title">Commit the recovered evidence</div>
+      <div class="pipe-desc">The eval JSONs, the registry entry with measured latency, the per-epoch metrics, and the key training logs are small files. Committing them moves every "recovered" row of the Chapter 6 audit into the repo's chain of custody, where a stranger can check them.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">03</div>
       <div class="pipe-title">Reconcile the docs with the code and each other</div>
-      <div class="pipe-desc">One set of parameter counts (560M/33M, matching the model cards), one MRR table, an annealing table that matches the implemented schedule, chunking defaults that match <code>src/utils/chunk.py</code>, and ADR cross-links that point at the right ADRs. Every one of these currently has two versions.</div>
+      <div class="pipe-desc">One set of parameter counts (560M/33M, matching the model cards), one results table anchored to the measured 0.5432, an annealing table that matches the implemented schedule, chunking defaults that match <code>src/utils/chunk.py</code>, and ADR cross-links that point at the right ADRs. Every one of these currently has two versions.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">04</div>
