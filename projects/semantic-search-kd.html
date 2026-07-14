@@ -116,7 +116,7 @@
 
   <div class="proj-label fade">Project</div>
   <h1 class="proj-title fade">Semantic Search via Knowledge Distillation</h1>
-  <div class="proj-subtitle fade">A 560M cross-encoder's judgment, compressed into a 33M student. The code is real. This page audits which numbers are.</div>
+  <div class="proj-subtitle fade">I compressed a 560M cross-encoder's judgment into a 33M student. Then I audited my own claims, and kept only the numbers I can prove.</div>
   <div class="divider"></div>
 
   <div class="brief fade">
@@ -127,9 +127,9 @@
       <span class="brief-key">Approach</span>
       <span class="brief-val">Knowledge distillation with a 3-component loss (MarginMSE + KL divergence + contrastive, weighted 0.6/0.2/0.2), a 3-stage hard-negative mining curriculum (BM25, teacher-scored, ANCE self-mining), and temperature annealed linearly from T=4.0 to T=2.0. All of that is committed, tested code.</span>
       <span class="brief-key">Result</span>
-      <span class="brief-val">Audited, then recovered. The repo's docs claim 0.882 nDCG@10 and "97% of teacher" with no artifact behind them. The audit found the original training workspace on the author's machine: the student was really trained, locally on CPU, and its production evaluation measured nDCG@10 0.3796 &rarr; 0.5432 (+43.1%) over the vanilla student on 200 held-out queries, with 8.24ms mean measured latency. Chapter 6 separates the measured from the claimed, line by line.</span>
+      <span class="brief-val">Audited, then recovered. My docs claimed 0.882 nDCG@10 and "97% of teacher" with no artifact behind them. So I audited myself, found my original training workspace, and recovered the real evidence: I trained the student locally on CPU, and its production evaluation measured nDCG@10 0.3796 &rarr; 0.5432 (+43.1%) over the vanilla student on 200 held-out queries, at 8.24ms mean measured latency. The evidence is now committed in the repo under <code>evidence/</code>. Chapter 6 separates what I measured from what I merely claimed, line by line.</span>
       <span class="brief-key">Why it matters</span>
-      <span class="brief-val">Distillation is a trust transfer: the student is only worth deploying to the extent it reproduces the teacher's judgment, measured. The same standard applies to the project itself, so claims without artifacts are labeled as targets, not results.</span>
+      <span class="brief-val">Distillation is a trust transfer: the student is only worth deploying to the extent it reproduces the teacher's judgment, measured. I hold my own project to the same standard, so my claims without artifacts are labeled as targets, not results.</span>
       <span class="brief-key">Stack</span>
       <span class="brief-val">PyTorch, Sentence-Transformers, FAISS HNSW, BM25, MS MARCO, FastAPI, Docker, GitHub Actions, pytest, mypy, ruff</span>
     </div>
@@ -147,7 +147,7 @@
       <strong>Cross-encoders</strong> read the query and document together, word by word. They catch that "Python" in the context of "exceptions" means the programming language. They see that "exception management" is the same concept as "handle exceptions" even though the words differ. But they cannot pre-compute anything. Every new query means re-reading every candidate document. They work as rerankers for small candidate sets, not as first-stage retrievers.
     </p>
     <p>
-      The project's docs put the gap at 0.719 vs 0.910 nDCG@10 for the two models involved, a number this page treats as reported rather than proven, and audits in Chapter 6. The question stands regardless of the exact figure: <strong>can the cross-encoder's ranking judgment be transferred into the bi-encoder, so it gets the quality without paying for the architecture?</strong>
+      My docs put the gap at 0.719 vs 0.910 nDCG@10 for the two models involved, a number I treat as reported rather than proven, and audit in Chapter 6. The question stands regardless of the exact figure: <strong>can I transfer the cross-encoder's ranking judgment into the bi-encoder, so it gets the quality without paying for the architecture?</strong>
     </p>
   </div>
 
@@ -164,8 +164,8 @@
         XLM-RoBERTa-large, 560M params (published size)<br>
         Reads query + document together<br>
         Scores: [-10, +10], wide margins<br>
-        Docs report: ~100ms per (query, doc) pair<br>
-        Docs report: nDCG@10 0.910
+        My docs report: ~100ms per (query, doc) pair<br>
+        My docs report: nDCG@10 0.910
       </div>
     </div>
     <div class="compare-card dia-good">
@@ -175,12 +175,12 @@
         MiniLM, 33M params (published size), 384-dim output<br>
         Encodes query and docs independently<br>
         Native "query:" and "passage:" prefixes<br>
-        Docs report: ~1ms per query on CPU<br>
-        Docs report: nDCG@10 0.719 &rarr; <strong>0.882 after KD</strong>
+        My docs report: ~1ms per query on CPU<br>
+        My docs report: nDCG@10 0.719 &rarr; <strong>0.882 after KD</strong>
       </div>
     </div>
   </div>
-  <div class="dia-note fade" style="margin:-8px 0 16px">Parameter counts are the models' published sizes (one repo doc contradicts them; audited in Chapter 6). Latency and nDCG figures are the repo docs' reported values, with no artifact behind them.</div>
+  <div class="dia-note fade" style="margin:-8px 0 16px">Parameter counts are the models' published sizes (one of my own docs contradicts them; I audit that in Chapter 6). The latency and nDCG figures here are what I wrote in my docs; the measured production numbers in Chapter 6 are lower, and real.</div>
 
   <div class="prose fade">
     <p>
@@ -201,7 +201,7 @@
       The core of knowledge distillation is not matching the teacher's top-1 prediction. It is matching the teacher's <strong>entire probability distribution</strong> over documents. When the teacher says "70% Doc A, 20% Doc B, 10% Doc C," that 20% on Doc B contains information. The student needs to learn that B is a plausible answer, just not the best one. Three loss functions capture three different aspects of this signal.
     </p>
     <p>
-      I chose a 60/20/20 weighted combination of MarginMSE, KL divergence, and contrastive loss because each teaches something different. MarginMSE (60%) transfers pairwise ranking preferences, the dominant training signal. KL divergence (20%) transfers the full score distribution shape, preserving dark knowledge about non-obvious candidates. Contrastive loss (20%) regularizes embedding geometry so similar items cluster together in vector space. The weights are real: <code>CombinedKDLoss</code> in <code>src/kd/losses.py</code> ships them as defaults, matched by <code>configs/kd.yaml</code> and exercised by the test suite. ADR-004 records single-loss runs plateauing several points below the combination; those ablation figures have no artifact behind them, so read them as the design record, not measurements.
+      I chose a 60/20/20 weighted combination of MarginMSE, KL divergence, and contrastive loss because each teaches something different. MarginMSE (60%) transfers pairwise ranking preferences, the dominant training signal. KL divergence (20%) transfers the full score distribution shape, preserving dark knowledge about non-obvious candidates. Contrastive loss (20%) regularizes embedding geometry so similar items cluster together in vector space. The weights are real: my <code>CombinedKDLoss</code> in <code>src/kd/losses.py</code> ships them as defaults, matched by <code>configs/kd.yaml</code> and exercised by the test suite. In ADR-004 I recorded single-loss runs plateauing several points below the combination; I kept no artifact from those runs, so read them as my design notes, not measurements.
     </p>
   </div>
 
@@ -235,6 +235,7 @@
     <canvas id="lossCanvas" style="height:360px"></canvas>
     <div class="anim-status" id="lossStatus"></div>
   </div>
+  <div class="dia-note fade" style="margin:-8px 0 20px">What you are watching: one query, five candidate documents, all three losses acting on the same training step. Left: the student's score gaps converge to the teacher's, and the live number is the actual mean-squared error between the margin vectors. Middle: the student's softmax distribution takes the teacher's shape at the current temperature, KL falling as they match, T annealing 4.0 to 2.0 exactly as the code does. Right: the contrastive term reorganizes embedding space, positive pulled in, negatives pushed out, no teacher involved. Gaps, shape, geometry: three different lessons from the same five documents. The document scores are illustrative; the loss values are computed live from them.</div>
 
   <!-- ═══════════════════════════════════════
        CH 4: TEMPERATURE ANNEALING
@@ -245,10 +246,10 @@
       Temperature controls the sharpness of the probability distribution. At T=4.0, the softmax output is smooth: the teacher says "A is slightly better than B, and B is slightly better than C." The student learns the big picture, the overall ranking structure. At T=2.0, the distribution sharpens: "A is clearly the best, and everything else is distant." The student learns fine-grained top-rank precision.
     </p>
     <p>
-      The schedule is code, not aspiration: <code>temperature_start=4.0</code> and <code>temperature_end=2.0</code> are the shipped defaults, interpolated linearly by training progress. One honest detail the code settles: the annealed temperature is shared by both teacher-matching losses, MarginMSE and Listwise-KD, while ADR-005 claims only the listwise term anneals. The code wins that argument, and the audit notes the drift.
+      The schedule is code, not aspiration: <code>temperature_start=4.0</code> and <code>temperature_end=2.0</code> are the defaults I ship, interpolated linearly by training progress. One honest detail the code settles: the annealed temperature is shared by both teacher-matching losses, MarginMSE and Listwise-KD, while my ADR-005 claims only the listwise term anneals. The code wins that argument, and my audit notes the drift.
     </p>
     <p>
-      I chose linear annealing from T=4.0 to T=2.0 because high temperature early exposes the student to broad ranking signal across all candidates (the "dark knowledge" in low-ranked results), while low temperature late sharpens focus on the top results that matter for retrieval. ADR-005 records annealing as worth 1-2% nDCG@10 over fixed T=2.0 and cosine as within 0.3% of linear; both figures are the ADR's own, without artifacts. The contrastive loss temperature stays fixed at 0.05 throughout, which is standard for InfoNCE and confirmed in code.
+      I chose linear annealing from T=4.0 to T=2.0 because high temperature early exposes the student to broad ranking signal across all candidates (the "dark knowledge" in low-ranked results), while low temperature late sharpens focus on the top results that matter for retrieval. In ADR-005 I recorded annealing as worth 1-2% nDCG@10 over fixed T=2.0, and cosine as within 0.3% of linear; I kept no artifact for either figure, so they stay notes. The contrastive loss temperature stays fixed at 0.05 throughout, which is standard for InfoNCE and confirmed in my code.
     </p>
   </div>
 
@@ -282,10 +283,10 @@
   <div class="sec fade">Chapter 5. Three-stage hard negative mining</div>
   <div class="prose fade">
     <p>
-      The quality of training examples matters more than the training algorithm. A negative that shares no words with the query teaches the student nothing it did not already know. The negatives that teach are the ones that <em>almost</em> fool it. The repo implements a 3-stage curriculum, in <code>src/mining/miners.py</code>, that makes the almosts progressively harder.
+      The quality of training examples matters more than the training algorithm. A negative that shares no words with the query teaches the student nothing it did not already know. The negatives that teach are the ones that <em>almost</em> fool it. I implemented a 3-stage curriculum, in <code>src/mining/miners.py</code>, that makes the almosts progressively harder.
     </p>
     <p>
-      I chose a 3-stage curriculum (BM25, then teacher-scored, then ANCE self-mining) because each stage targets a different failure mode. BM25 negatives teach lexical discrimination: keyword overlap is not relevance. Teacher-scored negatives are the most plausible wrong answers: the miner keeps the candidates the teacher scores highest above a 0.6 confidence floor, the ones closest to fooling everyone. ANCE negatives target the student's own blind spots: passages the current student ranks confidently that the teacher rejects (margin 0.1). ADR-003 records the progression as roughly 85% of teacher quality from BM25 alone, 93% adding teacher-scored, 97% adding ANCE; no artifact backs those percentages, so the table below is labeled for what it is.
+      I chose a 3-stage curriculum (BM25, then teacher-scored, then ANCE self-mining) because each stage targets a different failure mode. BM25 negatives teach lexical discrimination: keyword overlap is not relevance. Teacher-scored negatives are the most plausible wrong answers: my miner keeps the candidates the teacher scores highest above a 0.6 confidence floor, the ones closest to fooling everyone. ANCE negatives target the student's own blind spots: passages the current student ranks confidently that the teacher rejects (margin 0.1). In ADR-003 I recorded the progression as roughly 85% of teacher quality from BM25 alone, 93% adding teacher-scored, 97% adding ANCE; I have no artifact for those percentages, so the table below is labeled for what it is.
     </p>
   </div>
 
@@ -295,6 +296,7 @@
     <canvas id="miningCanvas"></canvas>
     <div class="anim-status" id="miningStatus"></div>
   </div>
+  <div class="dia-note fade" style="margin:-8px 0 20px">What you are watching: the negatives getting harder in stages. First keyword traps from BM25, then the teacher's most plausible wrong answers, then the student's own confident mistakes. The meter climbs to the recovery targets I recorded in ADR-003 when I designed the curriculum; they are design targets, not measurements, which is why the animation says so.</div>
 
   <div class="pipeline fade">
     <div class="pipe-step">
@@ -322,7 +324,7 @@
       <tr><td>2: Teacher-scored</td><td>Plausible wrong answers</td><td>~93%</td><td>Semantic deception</td></tr>
       <tr class="best"><td>3: ANCE</td><td>Student's blind spots</td><td>~97%</td><td>Model-specific errors</td></tr>
     </table>
-    <div class="dia-note">The percentages are the ADR's recorded reasoning for a three-stage design. The repo contains no eval artifact that measures them.</div>
+    <div class="dia-note">The percentages are the reasoning I recorded when designing the three stages. I have no eval artifact that measures them stage by stage.</div>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -332,7 +334,7 @@
 
   <div class="prose fade">
     <p>
-      This project's docs report results its repo cannot reproduce. The honest move is not to delete the numbers or repeat them louder; it is to say exactly which claims have evidence and which are design targets. So this chapter is an audit. The rule is the one used everywhere on this site: a number is real if code, a config, or a checkable artifact backs it; otherwise it is labeled as reported. The audit then did what audits occasionally get to do: it found the evidence. The original training workspace still exists on the author's machine, with the packages the repo lost, the trained model, the training logs, and the evaluation artifacts. The measured numbers are smaller than the claimed ones, and they are real.
+      My docs reported results my repo could not reproduce. The honest move is not to delete the numbers or repeat them louder; it is to say exactly which of my claims have evidence and which were only ever targets. So I audited myself. The rule is the one I use everywhere on this site: a number is real if code, a config, or a checkable artifact backs it; otherwise it gets labeled as reported. Then the audit did what audits occasionally get to do: it found the evidence. My original training workspace still existed on this machine, with the packages the repo lost, the trained model, the training logs, and the evaluation artifacts. The measured numbers are smaller than the ones I claimed. They are also real, and they are now committed.
     </p>
   </div>
 
@@ -360,29 +362,29 @@
     <table class="rtable">
       <tr><th>Claim</th><th>Where it lives</th><th>Audit</th></tr>
       <tr><td>3-loss KD objective, 0.6/0.2/0.2, KL via F.kl_div</td><td>src/kd/losses.py + configs + tests</td><td>Code-backed</td></tr>
-      <tr><td>Temperature annealing 4.0 &rarr; 2.0, linear</td><td>src/config.py, src/kd/losses.py</td><td>Code-backed (anneals both teacher-matching losses; ADR-005 says only one)</td></tr>
-      <tr><td>3-stage mining: BM25, teacher-scored, ANCE</td><td>src/mining/miners.py</td><td>Code-backed structure; stage percentages are ADR targets</td></tr>
-      <tr><td>Rate limiting: 100 req/min, burst 20</td><td>src/serve/middleware.py</td><td>Code-backed (ADR-008 says 10/s; the code ships ~1.7/s)</td></tr>
-      <tr><td>560M teacher / 33M student</td><td>README, ADR-001/002</td><td>Match the public model cards; one repo doc says 110M/22M for the same models</td></tr>
-      <tr><td>nDCG@10 0.719 / 0.882 / 0.910, "97% of teacher"</td><td>docs, from a 200-query eval</td><td>Superseded by the recovered artifact: the production eval measured 0.3796 (vanilla) &rarr; 0.5432 (KD) on 200 queries over a 9,992-chunk corpus. The docs' figures mix a tiny quick-demo run (0.8804) with a differently configured eval</td></tr>
-      <tr><td>MRR@10 for the same three models</td><td>two overview docs</td><td>Contradicted by each other; the recovered artifact measured 0.3218 &rarr; 0.5429 (+68.7%)</td></tr>
-      <tr><td>"100x faster", ~1ms vs ~100ms; "$4 to train"</td><td>README, results doc</td><td>Contradicted on latency: the model registry's own measurement is 8.24ms mean / 13.07ms p95 per query on CPU. The $4 remains unbacked; the recovered logs show training ran on a laptop CPU</td></tr>
-      <tr><td>Per-epoch loss table with T = 4.0 / 3.0 / 2.0</td><td>results doc</td><td>Contradicted: the code's schedule yields 3.33 / 2.67 / 2.0 for a 3-epoch run</td></tr>
-      <tr><td>Prometheus metrics, "calibrated ONNX" serving</td><td>GitHub description, ops docs</td><td>Contradicted: no instrumentation code; ADR-007 chose PyTorch over ONNX</td></tr>
+      <tr><td>Temperature annealing 4.0 &rarr; 2.0, linear</td><td>src/config.py, src/kd/losses.py</td><td>Code-backed (anneals both teacher-matching losses; my ADR-005 says only one)</td></tr>
+      <tr><td>3-stage mining: BM25, teacher-scored, ANCE</td><td>src/mining/miners.py</td><td>Code-backed structure; the stage percentages are my ADR targets</td></tr>
+      <tr><td>Rate limiting: 100 req/min, burst 20</td><td>src/serve/middleware.py</td><td>Code-backed (my ADR-008 says 10/s; the code ships ~1.7/s)</td></tr>
+      <tr><td>560M teacher / 33M student</td><td>README, ADR-001/002</td><td>Match the public model cards; one of my docs says 110M/22M for the same models</td></tr>
+      <tr><td>nDCG@10 0.719 / 0.882 / 0.910, "97% of teacher"</td><td>my docs, from a 200-query eval</td><td>Superseded by the recovered artifact: my production eval measured 0.3796 (vanilla) &rarr; 0.5432 (KD) on 200 queries over a 9,992-chunk corpus. My docs' figures mixed a tiny quick-demo run (0.8804) with a differently configured eval</td></tr>
+      <tr><td>MRR@10 for the same three models</td><td>two of my docs</td><td>They contradict each other; the recovered artifact measured 0.3218 &rarr; 0.5429 (+68.7%)</td></tr>
+      <tr><td>"100x faster", ~1ms vs ~100ms; "$4 to train"</td><td>README, results doc</td><td>Contradicted on latency: my own registry measured 8.24ms mean / 13.07ms p95 per query on CPU. The $4 remains unbacked; my logs show I trained on my laptop's CPU</td></tr>
+      <tr><td>Per-epoch loss table with T = 4.0 / 3.0 / 2.0</td><td>results doc</td><td>Contradicted: my code's schedule yields 3.33 / 2.67 / 2.0 for a 3-epoch run</td></tr>
+      <tr><td>Prometheus metrics, "calibrated ONNX" serving</td><td>my GitHub description, ops docs</td><td>Contradicted: I never wrote the instrumentation, and my ADR-007 chose PyTorch over ONNX</td></tr>
     </table>
   </div>
 
   <div class="prose fade">
     <p>
-      Then there is the finding that explains the others. Every training, evaluation, and serving entry point imports <code>src.models</code>: the <code>StudentModel</code> and <code>TeacherModel</code> wrappers and the ONNX exporter. That package exists in no commit. The cause is one line: <code>.gitignore</code> contains <code>models/</code> without a leading slash, a rule written to exclude trained weights that also matches <code>src/models/</code> and silently swallowed it, along with <code>src/index/</code> and the CLI. A fresh clone of this repo cannot train, evaluate, or serve. The 177 tests are real and well-built, and the suite cannot finish collecting, because the imports fail first.
+      Then there is the finding that explains the others. Every training, evaluation, and serving entry point imports <code>src.models</code>: my <code>StudentModel</code> and <code>TeacherModel</code> wrappers and the ONNX exporter. For nine months that package existed in no commit. The cause is one line I wrote: my <code>.gitignore</code> contained <code>models/</code> without a leading slash, a rule meant to exclude trained weights that also matched <code>src/models/</code> and silently swallowed it, along with <code>src/index/</code> and the CLI. Every fresh clone of my repo was a car with no engine block and excellent documentation. My 177 tests are real, and the suite could not even finish collecting, because the imports failed first.
     </p>
     <p>
-      The audit went looking for the original workspace, and found it. The missing packages, the trained student (128MB, registered v1.0.0), a dozen training logs, and the evaluation artifacts all exist in the local project the repo was extracted from. The logs settle how it was trained: on a laptop CPU, the teacher grinding through hard-negative mining at ten seconds per query for the better part of two hours. The evidence exists. It just never made it into the chain of custody, and that is the lesson: the difference between a result and a claim is an artifact someone else can check, from your repo, without asking you.
+      So I went looking for my original workspace, and found it: the missing packages, the trained student (128MB, registered v1.0.0), a dozen training logs, and the evaluation artifacts. The logs settle how I trained it: on my laptop's CPU, the teacher grinding through hard-negative mining at ten seconds per query for the better part of two hours. I have now restored the packages to the repo, anchored the gitignore rules, and committed the evidence under <code>evidence/</code>, verbatim. The lesson keeps: the difference between a result and a claim is an artifact a stranger can check, from my repo, without asking me.
     </p>
   </div>
 
   <div class="dia fade">
-    <div class="dia-title">Recovered from the original training workspace</div>
+    <div class="dia-title">Recovered from my original training workspace &middot; now committed under evidence/</div>
     <table class="rtable">
       <tr><th>Artifact</th><th>Contents</th><th>What it settles</th></tr>
       <tr><td>evaluation_results.json</td><td>vanilla vs KD student, 200 test queries</td><td>nDCG@10 0.3796 &rarr; 0.5432 (+43.1%), MRR@10 0.3218 &rarr; 0.5429 (+68.7%)</td></tr>
@@ -391,7 +393,7 @@
       <tr><td>Training logs (12 files)</td><td>full runs, GCP attempts, mining progress bars</td><td>Trained locally on CPU, 2025-10-19; 9,992-chunk corpus, 603 training queries; TeacherMiner threshold 0.6 live in the logs</td></tr>
       <tr><td>bm25_msmarco index, metrics_epoch JSONs</td><td>BM25 artifacts, per-epoch loss records</td><td>The pipeline's intermediate stages ran as designed</td></tr>
     </table>
-    <div class="dia-note">The measured numbers are lower than the docs' claims and use a 9,992-document corpus subset, so they are not comparable to full MS MARCO benchmarks. They are also the only numbers here that are real.</div>
+    <div class="dia-note">The measured numbers are lower than the ones I claimed, and they use a 9,992-document corpus subset, so they are not comparable to full MS MARCO benchmarks. They are also the only numbers here that are real.</div>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -410,35 +412,35 @@
       <div class="dia-arrow">&rarr;</div>
       <div class="dia-box dia-good"><div class="dia-box-title">Top-K Results</div><div class="dia-box-sub">scores + doc ids<br>optional teacher rerank</div></div>
     </div>
-    <div class="dia-note">Documents encoded once, stored in the HNSW index: 1M docs &times; 384 dims &times; float32 &asymp; 1.5GB. The docs' latency figures for this path are reported, not benchmarked; see the audit.</div>
+    <div class="dia-note">Documents encoded once, stored in the HNSW index: 1M docs &times; 384 dims &times; float32 &asymp; 1.5GB. My registry measured the student's encode at 8.24ms mean per query; the rest of my latency figures for this path are reported, not benchmarked.</div>
   </div>
 
   <div class="pipeline fade">
     <div class="pipe-step">
       <div class="pipe-num">01</div>
       <div class="pipe-title">FastAPI with security middleware</div>
-      <div class="pipe-desc">POST /search and POST /encode endpoints. Token-bucket rate limiting at <strong>100 requests/minute with a burst of 20</strong>, implemented and tested in <code>src/serve/middleware.py</code> (ADR-008's prose says 10/sec; the code is the truth). API-key auth, security headers, CORS, request IDs. Prometheus appears in the dependency list and the ops docs, and nowhere in the code; the audit counts that as a claim, not a feature.</div>
+      <div class="pipe-desc">POST /search and POST /encode endpoints. Token-bucket rate limiting at <strong>100 requests/minute with a burst of 20</strong>, implemented and tested in <code>src/serve/middleware.py</code> (my ADR-008 says 10/sec; the code is the truth). API-key auth, security headers, CORS, request IDs. Prometheus appears in my dependency list and my ops docs, and nowhere in my code; the audit counts it as a claim, not a feature.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">02</div>
       <div class="pipe-title">FAISS HNSW index</div>
-      <div class="pipe-desc">Hierarchical Navigable Small World graph. <strong>M=32 connections per node, efConstruction=200, efSearch=64</strong>, straight from <code>configs/index.yaml</code>. Inner product on L2-normalized vectors, which is cosine similarity. ADR-006 chose HNSW over IVF-PQ for recall at this scale and keeps <code>efSearch</code> tunable at query time, with a recorded migration path to IVF-PQ if the corpus grows by an order of magnitude.</div>
+      <div class="pipe-desc">Hierarchical Navigable Small World graph. <strong>M=32 connections per node, efConstruction=200, efSearch=64</strong>, straight from <code>configs/index.yaml</code>. Inner product on L2-normalized vectors, which is cosine similarity. In ADR-006 I chose HNSW over IVF-PQ for recall at this scale, keeping <code>efSearch</code> tunable at query time, with a recorded migration path to IVF-PQ if the corpus grows by an order of magnitude.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">03</div>
       <div class="pipe-title">Optional teacher reranking</div>
-      <div class="pipe-desc">The design keeps the teacher available at serving time: for high-stakes queries it re-reads the top candidates and re-orders them, behind a timeout so the system degrades to student-only ranking instead of failing. The docs price this at roughly +100ms per query; a reported figure, like the rest of the latency story.</div>
+      <div class="pipe-desc">I keep the teacher available at serving time: for high-stakes queries it re-reads the top candidates and re-orders them, behind a timeout so the system degrades to student-only ranking instead of failing. My docs price this at roughly +100ms per query; a reported figure, like the rest of my latency story.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">04</div>
       <div class="pipe-title">Docker + Cloud Run deployment</div>
-      <div class="pipe-desc">Multi-stage Docker build with a non-root user, docker-compose for local orchestration. CI is configured to gate on ruff, mypy, and pytest with a 75% coverage floor; with <code>src.models</code> missing, test collection cannot pass, so the gate currently gates everything. The ops docs specify a Cloud Run deployment at ~$40/month; the deploy stage has never executed, so that lives on the reported side of the ledger.</div>
+      <div class="pipe-desc">Multi-stage Docker build with a non-root user, docker-compose for local orchestration. CI gates on ruff, mypy, and pytest with a 75% coverage floor; with the packages restored, the suite finally collects, and what still fails is legacy pins and one wrong-assertion test. My ops docs specify a Cloud Run deployment at ~$40/month; the deploy stage has never executed, so that lives on the reported side of my ledger.</div>
     </div>
   </div>
 
   <div class="prose fade">
     <p>
-      I chose HNSW over IVF-PQ because, per ADR-006's analysis, graph search holds high recall at the 1M-document scale where product quantization starts trading recall for memory, and because <code>efSearch</code> can be tuned per query without rebuilding the index. The arithmetic that is checkable holds: 1M documents at 384 float32 dims is about 1.5GB of vectors, small enough to serve from memory in a modest container. The recall percentages the ADR cites for each index type are its recorded reasoning, not benchmarks run in this repo.
+      I chose HNSW over IVF-PQ because graph search holds high recall at the 1M-document scale where product quantization starts trading recall for memory, and because <code>efSearch</code> can be tuned per query without rebuilding the index. The arithmetic that is checkable holds: 1M documents at 384 float32 dims is about 1.5GB of vectors, small enough to serve from memory in a modest container. The recall percentages I cited in ADR-006 for each index type are my recorded reasoning, not benchmarks I ran.
     </p>
   </div>
 
@@ -448,39 +450,34 @@
   <div class="sec fade">Chapter 8. What I would change</div>
 
   <div class="prose fade">
-    <p>Listing these is the point of the audit. In order of expected value per engineering hour:</p>
+    <p>Restoring the packages and committing the evidence were the first two items on this list; they are done. What remains, in order of expected value per engineering hour:</p>
   </div>
 
   <div class="pipeline fade">
     <div class="pipe-step">
       <div class="pipe-num">01</div>
-      <div class="pipe-title">Restore the missing packages from the recovered workspace</div>
-      <div class="pipe-desc">Copy <code>src/models/</code>, <code>src/index/</code>, and the CLI back into the repo, and change one line of <code>.gitignore</code>: <code>models/</code> to <code>/models/</code>. The code exists and is proven by the logs; the repo just never received it. Until then the repo is a car with no engine block and excellent documentation.</div>
+      <div class="pipe-title">Reconcile my docs with my code and each other</div>
+      <div class="pipe-desc">One set of parameter counts (560M/33M, matching the model cards), one results table anchored to the measured 0.5432, an annealing table that matches the schedule I implemented, chunking defaults that match <code>src/utils/chunk.py</code>, and ADR cross-links that point at the right ADRs. Every one of these currently has two versions in my docs.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">02</div>
-      <div class="pipe-title">Commit the recovered evidence</div>
-      <div class="pipe-desc">The eval JSONs, the registry entry with measured latency, the per-epoch metrics, and the key training logs are small files. Committing them moves every "recovered" row of the Chapter 6 audit into the repo's chain of custody, where a stranger can check them.</div>
+      <div class="pipe-title">Make CI green for the first time</div>
+      <div class="pipe-desc">With the packages restored, the test suite finally collects and mostly passes. What remains is legacy: one test asserting the wrong status code, Poetry pins that no longer resolve on Python 3.10, and a dependency-vulnerability scan that needs updated pins. This repo has never had a green run; it is now close enough to earn one.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">03</div>
-      <div class="pipe-title">Reconcile the docs with the code and each other</div>
-      <div class="pipe-desc">One set of parameter counts (560M/33M, matching the model cards), one results table anchored to the measured 0.5432, an annealing table that matches the implemented schedule, chunking defaults that match <code>src/utils/chunk.py</code>, and ADR cross-links that point at the right ADRs. Every one of these currently has two versions.</div>
+      <div class="pipe-title">Implement what I declared, or undeclare it</div>
+      <div class="pipe-desc">Prometheus instrumentation exists in my dependency list, my ops docs, and my GitHub description, and not in my code. Either register the /metrics route with real counters and histograms, or remove the claims. Same choice for the ONNX serving story my own ADR-007 already rejected.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">04</div>
-      <div class="pipe-title">Implement what is declared, or undeclare it</div>
-      <div class="pipe-desc">Prometheus instrumentation exists in the dependency list, the ops docs, and the GitHub description, and not in the code. Either register the /metrics route with real counters and histograms, or remove the claims. Same choice for the ONNX serving story that ADR-007 already rejected.</div>
+      <div class="pipe-title">Evaluate at full scale</div>
+      <div class="pipe-desc">My eval basis is 200 held-out queries over a 9,992-chunk corpus. MS MARCO's dev set has 6,980 queries. Whatever the true numbers are, they deserve the full set, and tail queries are where a distilled student is most likely to give back its gains.</div>
     </div>
     <div class="pipe-step">
       <div class="pipe-num">05</div>
-      <div class="pipe-title">Evaluate at full scale</div>
-      <div class="pipe-desc">The docs' own eval basis is 200 held-out queries. MS MARCO's dev set has 6,980. Whatever the true numbers are, they deserve the full set, and tail queries are where a distilled student is most likely to give back its gains.</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">06</div>
-      <div class="pipe-title">Fix the GitHub description</div>
-      <div class="pipe-desc">"Help desk ticket triage" appears nowhere in the repo; the corpus is MS MARCO web passages. "Calibrated ONNX" contradicts ADR-007. The one-line description is the repo's most-read sentence, and currently its least accurate.</div>
+      <div class="pipe-title">Fix my GitHub description</div>
+      <div class="pipe-desc">"Help desk ticket triage" appears nowhere in the repo; the corpus is MS MARCO web passages. "Calibrated ONNX" contradicts my ADR-007. The one-line description is the repo's most-read sentence, and currently its least accurate.</div>
     </div>
   </div>
 
